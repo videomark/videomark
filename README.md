@@ -19,7 +19,7 @@ ChromeExtension/sodium.js
     // playback quality の取得インターバル(ミリ秒単位)
     Config.collect_interval = 1 * 1000;
     // 送信インターバル(ミリ秒単位)
-    Config.trans_interval = 3 * 1000;
+    Config.trans_interval = 5 * 1000;
     // videoタグ検索インターバル(ミリ秒単位)
     Config.search_video_interval = 1 * 1000;
     // 暫定QoE値取得(回数)　Config.trans_interval x この値 が暫定QoE値取得インターバルになる
@@ -156,6 +156,7 @@ ChromeExtension/sodium.js
               bitrate                 : ビットレート
               receiveBuffer           : 受信済み動画再生時間 取得不可能の場合 -1
               framerate               : フレームレート
+              speed                   : 再生速度
             },
             ...
           ],
@@ -269,15 +270,41 @@ TVerは、Video.jsで実装されている。上記のフィールドの値は�
 
 #### YouTube 固有の対応
 
-  TBA
+YouTubeのiFrameAPIを使用して上記のフィールドの値を取得している
 
-#### YouTube (モバイル) 固有の対応
+-   userAgent
+    -   window.navigator.userAgentの値
+-   appVersion
+    -   window.navigator.appVersion
+-   video.property.mediaSize 
+    -   getDuration()
+-   video.property.domainName
+    -   getVideoStats() getPlayerResponse()
+-   video.playback_quality.bitrate
+    -   getVideoStats() getPlayerResponse()
+-   video.playback_quality.receiveBuffer
+    -   getVideoLoadedFraction() getDuration()
+-   video.playback_quality.framerate
+    -   getVideoStats() getPlayerResponse()
+-   video.property.playStartTime
+    -   video tagの play event
+-   video.event\_\*.datetime
+    -   Date.nwo()の値
+-   video.event\_\*.playPos
+    -   videojs.Player currentTime()
+-   video.event\_\*.playTime
+    -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
 
-  TBA
+##### YouTube (モバイル) 固有の対応
 
-#### YouTube Live 固有の対応
+モバイル版YouTubeは、PC版のYouTubeとiFrameAPIの仕様が違うため、以下の部分が違います。
 
-  TBA
+-   video.property.domainName
+    -   getVideoStats()
+-   video.playback_quality.bitrate
+    -   getPlaybackQuality() getVideoStats()
+-   video.playback_quality.framerate
+    -   getVideoStats()
 
 ## 保存データ構造
 
@@ -342,7 +369,8 @@ Chrome Extension のストレージに以下のデータを記録する。
           "deltaTime": 1000.5999999702908,
           "bitrate": 4805000,
           "receiveBuffer": 370.042,
-          "framerate": -1
+          "framerate": -1,
+          "speed": 1
         }, {
           "totalVideoFrames": 4120,
           "droppedVideoFrames": 19,
@@ -352,7 +380,8 @@ Chrome Extension のストレージに以下のデータを記録する。
           "deltaTime": 998.699999996461,
           "bitrate": 4805000,
           "receiveBuffer": 370.042,
-          "framerate": -1
+          "framerate": -1,
+          "speed": 1
         }, {
           "totalVideoFrames": 4130,
           "droppedVideoFrames": 19,
@@ -362,7 +391,8 @@ Chrome Extension のストレージに以下のデータを記録する。
           "deltaTime": 1000,
           "bitrate": 4805000,
           "receiveBuffer": 370.042,
-          "framerate": -1
+          "framerate": -1,
+          "speed": 1
         }],
         "event_play": [],
         "event_play_delta": [],
@@ -403,6 +433,5 @@ Chrome Extension のストレージに以下のデータを記録する。
         "event_canplay": [],
         "event_canplay_delta": []
       }],
-      "resource_timing": [],
-      "REMOTE_ADDR": "182.171.253.140"
+      "resource_timing": []
     }
