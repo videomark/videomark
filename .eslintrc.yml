@@ -1,0 +1,13 @@
+extends:
+  - airbnb-base
+  - prettier
+env:
+  browser: true
+plugins:
+  - prettier
+rules:
+  camelcase: "warn"
+  no-underscore-dangle: "warn"
+globals:
+  sodium: true
+  videojs: true
