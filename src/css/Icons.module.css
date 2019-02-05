@@ -1,0 +1,16 @@
+.siteIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.help {
+  width: 24px;
+  height: auto;
+}
+
+@media (max-width: 480px) {
+  .help {
+    width: 18px;
+  }
+}

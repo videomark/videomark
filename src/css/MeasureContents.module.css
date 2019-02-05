@@ -1,0 +1,208 @@
+.content {
+  position: relative;
+  transition-duration: 100ms;
+  margin: 20px;
+  width: 100%;
+  margin: 0;
+  height: auto;
+}
+
+.content:focus {
+  outline: 0px;
+}
+
+.contentHover {
+  transform: scale(1.5, 1.5);
+  z-index: 20;
+}
+
+.main {
+  box-shadow: inset 0 0 1px 1px rgba(192, 192, 192, 0.5);
+  background-color: white;
+  height: 200px;
+  border-color: #ccc;
+  height: auto;
+
+  min-height: 280px;
+}
+
+.main > div {
+  position: relative;
+}
+
+.main button {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+}
+
+.thumbnail {
+  width: 100%;
+  object-fit: cover;
+  min-height: 100%;
+  max-height: calc(236px * 9 / 16);
+}
+
+.removeButton {
+  z-index: 10;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.removeFab {
+  min-width: 24px !important;
+  min-height: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 20px;
+  word-wrap: break-word;
+
+  font-size: 18px;
+  padding: 0 10px;
+  margin: 14px 0;
+  width: auto;
+}
+
+.movieInfo {
+  background-color: rgba(192, 192, 192, 0.5);
+  font-size: 0.6rem;
+  color: #444444;
+  padding: 0.2em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  height: auto;
+}
+
+.serviceName {
+}
+
+.startTime {
+}
+
+.qoeDate {
+  position: relative;
+  padding: 0 10px;
+}
+
+.userGraph {
+  position: relative;
+  z-index: 1;
+}
+
+.graph {
+  width: 100%;
+  height: 50px;
+  height: auto;
+}
+
+.qoeGraph {
+  justify-content: center;
+}
+
+.expanded {
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.image {
+  display: inline-block;
+}
+
+.card {
+  width: 100%;
+}
+
+.cardHeaderRoot {
+}
+
+.cardHeaderTitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  white-space: initial;
+  overflow: hidden;
+  width: 100%;
+  height: 40px;
+  line-height: 20px;
+  word-wrap: break-word;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.actions {
+  justify-content: flex-end;
+}
+
+.average {
+  display: inline-block;
+}
+
+.removedStateInfoText {
+  color: red;
+  font-size: 0.4rem;
+  width: 100%;
+  line-height: 20px;
+}
+
+.removedStateButtons {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  position: absolute !important;
+  bottom: 0;
+}
+
+.removedStateButton {
+  margin: auto !important;
+}
+
+.removedStateButton img {
+  width: 18px;
+  height: 18px;
+}
+
+.removedThumbnail {
+  filter: grayscale(1);
+}
+
+/* .hidden {
+  visibility: hidden;
+} */
+
+/* modal state */
+.modalMain {
+}
+
+.modalMain button {
+  width: 100%;
+}
+
+.modalThumbnail {
+  width: 100%;
+  height: initial;
+  min-height: 136px;
+  max-height: 250px;
+}
+
+.modalMain .movieInfo {
+  font-size: 1rem;
+}
+
+.modalTitle {
+  text-overflow: clip;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+}

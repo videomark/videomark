@@ -1,0 +1,184 @@
+.root {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  padding: 0 20px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 60px;
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 0;
+    height: 100px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 9;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+}
+
+.monthRoot {
+  display: flex;
+  align-items: flex-end;
+  margin: auto;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-flex: 2;
+  -ms-flex-positive: 2;
+  flex-grow: 2;
+}
+
+.monthRoot svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 480px) {
+  .monthRoot {
+    -ms-flex-item-align: end;
+    align-self: flex-end;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+.monthNext {
+  padding: 0;
+  margin: 0px 15px;
+  vertical-align: bottom;
+
+  font-size: 100% !important;
+  padding: 0 !important;
+}
+
+.monthBack {
+  padding: 0;
+  margin: 0px 15px;
+  vertical-align: bottom;
+
+  font-size: 100% !important;
+  padding: 0 !important;
+}
+
+.monthArrow {
+}
+
+.month {
+  margin: 0 20px;
+}
+
+.monthText {
+  margin: auto;
+  font-size: 120%;
+}
+
+.iconRoot {
+  flex-grow: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  -webkit-box-flex: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  margin-right: 20px;
+}
+
+@media (max-width: 480px) {
+  .iconRoot {
+    -ms-flex-item-align: start;
+  }
+}
+
+.iconRoot > * {
+  margin-left: 10px;
+}
+
+.siteFilter {
+}
+
+.icon {
+  height: 30px;
+}
+
+@media (max-width: 480px) {
+  .icon {
+    height: 22px;
+  }
+}
+
+.paravi {
+  display: inline-block;
+  vertical-align: bottom;
+  padding: 0px;
+}
+
+.youtube {
+  display: inline-block;
+  vertical-align: bottom;
+  padding: 0px;
+}
+
+.tver {
+  display: inline-block;
+  vertical-align: bottom;
+  padding: 0px;
+}
+
+.siteIconDisabled {
+  opacity: 0.4;
+}
+
+.helpRoot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 480px) {
+  .helpRoot {
+    -ms-flex-item-align: stretch;
+    -ms-grid-row-align: stretch;
+    align-self: stretch;
+  }
+}
+
+.monthBack > span > div {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.monthNext > span > div {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.helpButton {
+  font-size: 100% !important;
+  padding: 0 !important;
+}

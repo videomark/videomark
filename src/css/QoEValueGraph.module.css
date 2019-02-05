@@ -1,0 +1,119 @@
+.qoeGraphRoot {
+  width: 100%;
+  height: auto;
+}
+
+.label {
+  align-items: center;
+  margin: 0;
+  position: relative;
+  width: 100px;
+  vertical-align: middle;
+  text-align: center;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  height: auto;
+  font-size: 10px;
+}
+
+.qoeValue {
+  font-size: 10px;
+  margin: 0;
+  white-space: nowrap;
+  position: relative;
+  z-index: 2;
+  width: 30%;
+  height: auto;
+}
+
+.qoeValueGraph {
+  display: flex;
+  width: 100%;
+  height: auto;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.qoeBarGraphBaseRoot {
+  display: flex;
+  /* width: 70%; */
+  height: 100%;
+}
+
+.qoeBarGraphBase {
+  background-color: rgba(255, 255, 0, 0.0);
+  outline-style: solid;
+  outline-color: rgba(0, 0, 0, 0.5);
+  width: 20%;
+  z-index: 1;
+  border: none;
+  border-right: 1px solid #fff;
+  outline-width: 0;
+}
+
+.qoeBarGraph {
+  position: relative;
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+.qoeValueBar {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #75c6ac;
+}
+
+.modalQoeValueGraph {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.modalQoeValueGraph .label {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1px;
+}
+
+.modalQoeValueGraph .qoeBarGraph {
+  -ms-flex-preferred-size: 92%;
+  flex-basis: 92%;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .modalQoeValueGraph .qoeBarGraph {
+    -ms-flex-preferred-size: 90%;
+    flex-basis: 90%;
+  }
+}
+
+.modalQoeValueGraph .qoeValue {
+  -ms-flex-preferred-size: 5%;
+  flex-basis: 5%;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  text-align: right;
+  margin: 0;
+  font-size: 100%;
+}
+
+.modalQoeValueGraph .qoeValue {
+    margin-left: 10px;
+    font-size: 14px;
+}
+.modalQoeValueGraph .label {
+    font-size: 14px;
+  }

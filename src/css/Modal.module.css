@@ -1,0 +1,124 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.modal > .modal_bg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: rgba(255, 255, 255, 0.9);
+  left: 0;
+  top: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.modal .modal_close {
+  position: absolute;
+  right: 4rem;
+  top: 4rem;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  z-index: 5;
+}
+
+@media all and (orientation: landscape) {
+    .modal .modal_close {
+        right: 2rem;
+        top: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+  .modal .modal_close {
+    top: 5%;
+    right: 5%;
+  }
+}
+
+.modal .modal_close::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  opacity: 0;
+}
+
+.modal .modal_close:hover::after {
+  -webkit-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal .modal_close img {
+  width: 20px;
+  height: auto;
+  position: relative;
+  z-index: 2;
+  opacity: 0.5;
+}
+
+.modal .modal_inner {
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+  z-index: 1;
+}
+
+@media all and (orientation: landscape) {
+    .modal .modal_inner {
+        overflow: scroll;   
+    }
+}
+
+@media (max-width: 480px){
+  .modal .modal_inner {
+    width: 90%;
+  }
+}
+
+.is-modal-open .modal {
+  z-index: 10;
+  opacity: 1;
+}

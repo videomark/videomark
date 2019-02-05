@@ -1,0 +1,79 @@
+.gridContainer {
+  text-align: center;
+  max-width: 1024px;
+  margin: auto;
+}
+
+@media (max-width: 480px) {
+  .gridContainer {
+    margin-top: 100px;
+  }
+}
+
+.day {
+  text-align: center;
+}
+
+.nonContents {
+  width: calc(80% - 2rem);
+  max-width: 800px;
+  font-size: 1.2rem;
+  margin: auto;
+}
+
+.nonContents h1 {
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 2.5em 0 1.2em;
+}
+
+.nonContents p {
+  text-align: left;
+}
+
+.grid {
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.grid > div {
+  min-width: 236px;
+  width: calc(25% - 20px);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+/* 結果を 3 列以下で表示する場合 */
+@media (max-width: 1023px) {
+  .grid {
+    justify-content: center;
+  }
+
+  /* Hack: Flexbox 最終行だけ左詰 (3列まで対応) */
+  .grid:last-child::before,
+  .grid:last-child::after {
+    content: "";
+    display: flex;
+    min-width: 236px;
+    width: calc(25% - 20px);
+    height: 0px;
+    margin: 0px 10px;
+    order: 1;
+  }
+}
+
+/* 結果を 1 列表示する場合 */
+@media (max-width: 480px) {
+  .grid > div {
+    width: 100%;
+  }
+}
+
+.grid > div:hover {
+  -webkit-box-shadow: 0 2px 12px #ccc;
+  box-shadow: 0 2px 12px #ccc;
+}
