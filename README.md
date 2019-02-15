@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.com/sites/sodium-js/deploys)
+
 # sodium.js
 
 計測用スクリプト (sodium.js) の設定方法、送信データ構造、サンプルデータについて説明します。
