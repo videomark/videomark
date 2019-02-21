@@ -276,10 +276,11 @@ export default class YouTubeTypeHandler {
     }
 
     is_main_video(video) {
-        if (!this.player.contains(video))
-            return false;
+        return this.player.contains(video)
+    }
 
-        return !this.cm;
+    is_cm(video) {
+        return this.cm;
     }
 
     add_cm_listener(listener) {

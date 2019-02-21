@@ -55,6 +55,22 @@ export default class Config {
   static get_DEFAULT_RESOURCE_BUFFER_SIZE() {
     return this.DEFAULT_RESOURCE_BUFFER_SIZE;
   }
+
+  static get_check_state_interval() {
+    return this.check_state_interval;
+  }
+
+  static get_send_data_count_for_qoe() {
+    return this.send_data_count_for_qoe;
+  }
+
+  static get_prev_count_for_qoe() {
+    return this.prev_count_for_qoe;
+  }
+
+  static get_max_count_for_qoe() {
+    return this.max_count_for_qoe;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
@@ -171,3 +187,21 @@ Config.style.paravi = `.paravi-player .controls:after {
 
 // デフォルトResourceTiminingAPIのバッファサイズ
 Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
+
+// 状態監視インターバル
+Config.check_state_interval = 1 * 1000;
+
+// 最新QoE値が取得できるまでのデータ送信回数
+// デフォルトでは、最新QoE値が取得することができると予想される時間は、 trans_interval(5000) * send_data_count_for_qoe(3) の 15000ms になる
+Config.send_data_count_for_qoe = 3;
+
+// 最新QoE値を取得し始めるカウントの設定
+// 最新QoE値が取得することができると予想される時間の何秒前から短いインターバルで問い合わせに行うかを設定する
+// デフォルトの値では、trans_interval(5000) * send_data_count_for_qoe(3) - check_state_interval(1000) * prev_count_for_qoe(2) になり、
+// 13000ms 後から 1000msごとに問い合わせを行う
+Config.prev_count_for_qoe = 2;
+
+// 最新QoE値を取得の最大カウント
+// デフォルトの20では、視聴開始、13000ms 後から、33000(13000 + max_count_for_qoe * check_state_interval)ms まで1000msごとに問い合わせを行う
+// 以降は latest_qoe_update * trans_interval の 10秒ごとのリクエストになる
+Config.max_count_for_qoe = 20;
