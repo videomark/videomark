@@ -10,16 +10,8 @@ export default class Config {
     return this.collect_interval;
   }
 
-  static get_trans_interval() {
-    return this.trans_interval;
-  }
-
   static get_search_video_interval() {
     return this.search_video_interval;
-  }
-
-  static get_latest_qoe_update() {
-    return this.latest_qoe_update;
   }
 
   static get_fluent_url() {
@@ -60,6 +52,14 @@ export default class Config {
     return this.check_state_interval;
   }
 
+  static get_trans_interval() {
+    return this.trans_interval;
+  }
+
+  static get_latest_qoe_update() {
+    return this.latest_qoe_update;
+  }
+
   static get_send_data_count_for_qoe() {
     return this.send_data_count_for_qoe;
   }
@@ -76,14 +76,8 @@ export default class Config {
 // playback quality の取得インターバル(ミリ秒単位)
 Config.collect_interval = 1 * 1000;
 
-// 送信インターバル(ミリ秒単位)
-Config.trans_interval = 5 * 1000;
-
 // videoタグ検索インターバル(ミリ秒単位)
 Config.search_video_interval = 1 * 1000;
-
-// 暫定QoE値取得(回数) Config.trans_interval x この値 が暫定QoE値取得インターバルになる
-Config.latest_qoe_update = 2;
 
 // fluentd サーバーのエンドポイント
 //  Config.fluent_url = 'https://soar2.dhcp.acutus.co.jp:7889/sodium';
@@ -188,20 +182,30 @@ Config.style.paravi = `.paravi-player .controls:after {
 // デフォルトResourceTiminingAPIのバッファサイズ
 Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 
-// 状態監視インターバル
+// 状態監視インターバル(ミリ秒)
 Config.check_state_interval = 1 * 1000;
 
+// 送信インターバル(回数)
+// check_state_interval * trans_interval が、時間単位のデータ送信インターバル
+Config.trans_interval = 5; // 5000ms
+
+// 暫定QoE値取得(回数)
+// trans_interval x latest_qoe_update が、時間単位の暫定QoE値取得インターバル
+Config.latest_qoe_update = 2; // 10000ms
+
 // 最新QoE値が取得できるまでのデータ送信回数
-// デフォルトでは、最新QoE値が取得することができると予想される時間は、 trans_interval(5000) * send_data_count_for_qoe(3) の 15000ms になる
-Config.send_data_count_for_qoe = 3;
+// 最新QoE値が取得することができると予想される時間は、 動画視聴開始から15秒後
+// trans_interval(5) * send_data_count_for_qoe(3) * check_state_interval(1000)
+Config.send_data_count_for_qoe = 3; // 15000ms 
 
-// 最新QoE値を取得し始めるカウントの設定
-// 最新QoE値が取得することができると予想される時間の何秒前から短いインターバルで問い合わせに行うかを設定する
-// デフォルトの値では、trans_interval(5000) * send_data_count_for_qoe(3) - check_state_interval(1000) * prev_count_for_qoe(2) になり、
+// 短い間隔(check_state_interval)で最新QoE値を取得し始めるカウント
+// 最新QoE値が取得することができると予想される時間の何回前から短いインターバルで問い合わせに行うかを設定する
+// (trans_interval(5) * send_data_count_for_qoe(3) - prev_count_for_qoe(2)) * check_state_interval(1000) 
 // 13000ms 後から 1000msごとに問い合わせを行う
-Config.prev_count_for_qoe = 2;
+Config.prev_count_for_qoe = 2; // 13000ms
 
-// 最新QoE値を取得の最大カウント
-// デフォルトの20では、視聴開始、13000ms 後から、33000(13000 + max_count_for_qoe * check_state_interval)ms まで1000msごとに問い合わせを行う
-// 以降は latest_qoe_update * trans_interval の 10秒ごとのリクエストになる
-Config.max_count_for_qoe = 20;
+// 短い間隔(check_state_interval)で最新QoE値を取得の試行する最大カウント
+// (trans_interval(5) * send_data_count_for_qoe(3) - prev_count_for_qoe(2) + max_count_for_qoe) * check_state_interval(1000) 
+// 最新QoE値が取得できた場合、最大カウントまで到達したが値が取得できなかった場合、いずれかの場合であっても
+// 以降は latest_qoe_update * trans_interval * check_state_interval の10000ms毎の問い合わせになる
+Config.max_count_for_qoe = 20; // 33000ms

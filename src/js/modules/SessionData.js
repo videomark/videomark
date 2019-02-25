@@ -126,9 +126,7 @@ export default class SessionData {
 
   async _play_started(main_video) {
 
-    const trans_interval = Config.get_trans_interval() / 1000;
-
-    const qoe_request_start = trans_interval * Config.get_send_data_count_for_qoe() - Config.get_prev_count_for_qoe();
+    const qoe_request_start = Config.get_trans_interval() * Config.get_send_data_count_for_qoe() - Config.get_prev_count_for_qoe();
     const qoe_request_timeout = qoe_request_start + Config.get_max_count_for_qoe();
 
     let i = 0;
@@ -141,7 +139,7 @@ export default class SessionData {
       let request = false;
 
       if (main_video.is_available()) {
-        data = i % trans_interval === 0;
+        data = i % Config.get_trans_interval() === 0;
         request = i > qoe_request_start;
       }
 
@@ -161,8 +159,8 @@ export default class SessionData {
       let request = false;
 
       if (main_video.is_available()) {
-        data = i % trans_interval === 0;
-        request = i % (trans_interval * Config.get_latest_qoe_update()) === 0;
+        data = i % Config.get_trans_interval() === 0;
+        request = i % (Config.get_trans_interval() * Config.get_latest_qoe_update()) === 0;
       }
 
       // eslint-disable-next-line no-await-in-loop
@@ -223,7 +221,7 @@ export default class SessionData {
         throw new Error('fluent response was not ok.');
       }
     } catch (err) {
-      console.log(`VIDEOMARK: ${err}`);
+      console.error(`VIDEOMARK: ${err}`);
     }
   }
 
@@ -248,7 +246,7 @@ export default class SessionData {
       const qoe = Number.parseFloat(json.qoe);
       return Number.isNaN(qoe) ? null : qoe;
     } catch (err) {
-      console.log(`VIDEOMARK: ${err}`);
+      console.error(`VIDEOMARK: ${err}`);
     }
   }
 
@@ -274,7 +272,7 @@ export default class SessionData {
         console.log(`${id}:${JSON.stringify(value)}`);
         sodium.storage.local.set({ [id]: value });
       } catch (err) {
-        console.log(`VIDEOMARK: ${err}`);
+        console.error(`VIDEOMARK: ${err}`);
       }
     } else {
       try {
@@ -288,7 +286,7 @@ export default class SessionData {
           "*"
         );
       } catch (err) {
-        console.log(`VIDEOMARK: ${err}`);
+        console.error(`VIDEOMARK: ${err}`);
       }
     }
   }
@@ -320,16 +318,16 @@ export default class SessionData {
   }
 
   static event_wait(elm, type, ms) {
-    let f;
+    let eventResolver;
     const event = new Promise(resolve => {
-      f = () => {
-        elm.removeEventListener(type, f, false);
-        resolve();
-      };
-      elm.addEventListener(type, f, false)
+      eventResolver = resolve;
+      elm.addEventListener(type, resolve, false);
     });
-    // eslint-disable-next-line no-unused-vars
-    const timeout = new Promise(resolve => setTimeout(() => f && f(), ms));
-    return Promise.race([event, timeout]);
+    const timeout = new Promise(resolve => setTimeout(() => resolve(null), ms));
+    return new Promise(async resolve => {
+      const ret = await Promise.race([event, timeout]);
+      elm.removeEventListener(type, eventResolver, false);
+      resolve(ret);
+    });
   }
 }
