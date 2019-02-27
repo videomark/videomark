@@ -3,3 +3,5 @@ node_modules
 src/js/.bak
 src/js/*~
 src/js/modules/*~
+dist/
+dist-dev/

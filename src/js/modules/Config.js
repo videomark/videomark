@@ -69,13 +69,11 @@ Config.search_video_interval = 1 * 1000;
 // 暫定QoE値取得(回数) Config.trans_interval x この値 が暫定QoE値取得インターバルになる
 Config.latest_qoe_update = 2;
 
-// fluentd サーバーのエンドポイント
-//  Config.fluent_url = 'https://soar2.dhcp.acutus.co.jp:7889/sodium';
-Config.fluent_url = "https://sodium.webdino.org/sodium";
+// fluent-d サーバーのエンドポイント
+Config.fluent_url = FLUENT_URL;
 
 // Sodium Server のエンドポイント
-//  Config.sodium_server_url = 'https://soar2.dhcp.acutus.co.jp:9889/api';
-Config.sodium_server_url = "https://sodium.webdino.org:8443/api";
+Config.sodium_server_url = SODIUM_SERVER_URL;
 
 // 暫定QoE値保持数
 Config.num_of_latest_qoe = 20;

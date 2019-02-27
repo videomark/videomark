@@ -11,3 +11,5 @@ rules:
 globals:
   sodium: true
   videojs: true
+  FLUENT_URL: false
+  SODIUM_SERVER_URL: false
