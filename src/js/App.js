@@ -78,6 +78,6 @@ function video_search() {
     ui.update_status(total, dropped, qoe);
   }, Config.get_collect_interval());
 
-  // --- send to fluentd --- //
-  window.setInterval(() => session.send(), Config.get_trans_interval());
+  // --- main loop --- //
+  session.start();
 })();
