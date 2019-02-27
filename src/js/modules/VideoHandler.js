@@ -109,6 +109,18 @@ export default class VideoHandler {
         return id_by_video_holder;
     }
 
+    is_main_video(video) {
+        if (this.handler.is_main_video instanceof Function)
+            return this.handler.is_main_video(video);
+        return true;
+    }
+
+    is_cm(video) {
+        if (this.handler.is_cm instanceof Function)
+            return this.handler.is_cm(video);
+        return false;
+    }
+
     add_cm_listener(listener) {
         if (this.handler.add_cm_listener instanceof Function)
             this.handler.add_cm_listener(listener);

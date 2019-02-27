@@ -121,7 +121,9 @@ export default class VideoData {
      */
     is_available() {
         // eslint-disable-next-line no-underscore-dangle
-        if (!this._is_main_video())  // TVerの広告用
+        if (!this.is_main_video())  // TVer IMA3 video 、YouTubeの広告、チャンネルページの動画を除去
+            return false;
+        if (this._is_cm())  // YouTubeの広告時は送信を行わない
             return false;
         // eslint-disable-next-line no-underscore-dangle
         if (!this._is_started())    // 再生開始前
@@ -248,10 +250,12 @@ export default class VideoData {
         console.log(`VIDEOMARK: delete video uuid[${this.uuid}]`);
     }
 
-    _is_main_video() {
-        if (this.video_handler.handler.is_main_video instanceof Function)
-            return this.video_handler.handler.is_main_video(this.video_elm);
-        return true;
+    is_main_video() {
+        return this.video_handler.is_main_video(this.video_elm);
+    }
+
+    _is_cm() {
+        return this.video_handler.is_cm(this.video_elm);
     }
 
     _is_started() {
@@ -289,7 +293,8 @@ export default class VideoData {
         const e = new EventData(event.target, event.type, playPos, playTime, this.last_events[event.type]);
 
         if (playPos < 0 ||  // 開始前のイベントは無視
-            !this._is_main_video()) {
+            !this.is_main_video() ||
+            this._is_cm()) {
             /* eslint-disable no-console */
             console.log(`VIDEOMARK: EVENT(D):${event.type}, VALUE:[${e.toJSON()}], ID:${this.uuid}[${
                 this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`);
@@ -309,7 +314,8 @@ export default class VideoData {
     * @param {Event} event 
     */
     _position_update_listener(event) {
-        if (!this._is_main_video())
+        if (!this.is_main_video() ||
+            this._is_cm())
             return;
 
         if (this.play_start_time === -1) {
