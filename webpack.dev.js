@@ -11,14 +11,14 @@ module.exports = merge(common, {
   plugins: [
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      // https://sodium-dev.webdino.org/sodium
+      // https://dev-sodium.webdino.org/sodium
       // https://soar2.dhcp.acutus.co.jp:7889/sodium
-      FLUENT_URL: JSON.stringify("https://sodium-dev.webdino.org/sodium"),
+      FLUENT_URL: JSON.stringify("https://dev-sodium.webdino.org/sodium"),
 
-      // https://sodium-dev.webdino.org:8443/api
+      // https://dev-sodium.webdino.org:8443/api
       // https://soar2.dhcp.acutus.co.jp:9889/api
       SODIUM_SERVER_URL: JSON.stringify(
-        "https://sodium-dev.webdino.org:8443/api"
+        "https://dev-sodium.webdino.org:8443/api"
       )
     })
   ],
