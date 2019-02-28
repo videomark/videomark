@@ -183,27 +183,26 @@ Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 // 状態監視インターバル(ミリ秒)
 Config.check_state_interval = 1 * 1000;
 
-// 送信インターバル(回数)
+// データ送信頻度(状態監視の指定回数毎に一度)
 // check_state_interval * trans_interval が、時間単位のデータ送信インターバル
 Config.trans_interval = 5; // 5000ms
 
-// 暫定QoE値取得(回数)
+// 暫定QoE値取得頻度(データ送信の指定回数毎に一度)
 // trans_interval x latest_qoe_update が、時間単位の暫定QoE値取得インターバル
-Config.latest_qoe_update = 2; // 10000ms
+Config.latest_qoe_update = 1; // 5000ms
 
-// 最新QoE値が取得できるまでのデータ送信回数
-// 最新QoE値が取得することができると予想される時間は、 動画視聴開始から15秒後
+// 暫定QoE値を取得開始するまでのデータ送信回数
+// 暫定QoE値を最初に取得可能になるできると予想される時間は、 動画視聴開始から10秒前後
 // trans_interval(5) * send_data_count_for_qoe(3) * check_state_interval(1000)
-Config.send_data_count_for_qoe = 3; // 15000ms
+Config.send_data_count_for_qoe = 2; // 10000ms
 
 // 短い間隔(check_state_interval)で最新QoE値を取得し始めるカウント
 // 最新QoE値が取得することができると予想される時間の何回前から短いインターバルで問い合わせに行うかを設定する
 // (trans_interval(5) * send_data_count_for_qoe(3) - prev_count_for_qoe(2)) * check_state_interval(1000)
-// 13000ms 後から 1000msごとに問い合わせを行う
-Config.prev_count_for_qoe = 2; // 13000ms
+Config.prev_count_for_qoe = 3; // 7000ms から 1000ms 毎に問い合わせ
 
 // 短い間隔(check_state_interval)で最新QoE値を取得の試行する最大カウント
 // (trans_interval(5) * send_data_count_for_qoe(3) - prev_count_for_qoe(2) + max_count_for_qoe) * check_state_interval(1000)
 // 最新QoE値が取得できた場合、最大カウントまで到達したが値が取得できなかった場合、いずれかの場合であっても
-// 以降は latest_qoe_update * trans_interval * check_state_interval の10000ms毎の問い合わせになる
-Config.max_count_for_qoe = 20; // 33000ms
+// 以降は latest_qoe_update * trans_interval * check_state_interval ms毎の問い合わせになる
+Config.max_count_for_qoe = 20; // 27000ms
