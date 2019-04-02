@@ -2,11 +2,6 @@
 
 # 開発環境
 Node.js v10.6.0  
-Python  3.5.2  
-
-Python module  
-- beautifulsoup4
-
 
 # ビルド方法 
 
