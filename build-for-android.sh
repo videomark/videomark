@@ -1,5 +1,5 @@
 #!/bin/sh
-yarn build
+npm run build
 
 rm build/_headers
 rm build/asset-manifest.json
