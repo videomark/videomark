@@ -10,7 +10,8 @@
   "extends": ["airbnb", "plugin:prettier/recommended"],
   "plugins": ["react", "jsx-a11y", "import"],
   "rules": {
-    "arrow-body-style": 0
+    "arrow-body-style": 0,
+    "no-console": ["error", {"allow": ["error"]}]
   },
   "globals": {
     "chrome": true
