@@ -1,5 +1,5 @@
 import { isMobile, isDevelop } from "./Utils";
-import data from "./EmbededData";
+import data from "./EmbeddedData";
 
 const RemovedTargetKeys = "RemovedTargetKeys";
 const AgreedTerm = "AgreedTerm";

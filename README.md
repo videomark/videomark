@@ -36,4 +36,4 @@ develop モードでアプリケーションの起動をする。
 
 # developモードでの確認方法
 ブラウザのストレージに存在するデータをロードして画面を構築するため開発モードで実行するとデータのロードが行えず、空データの時と同じ挙動をする。
-developモードで確認をする場合 [EmbededData.js](https://github.com/webdino/sodium/blob/master/qoe-log-view/src/js/EmbededData.js) にストレージのデータを埋め込めば確認が可能。
+developモードで確認をする場合 [EmbeddedData.js](https://github.com/webdino/sodium/blob/master/qoe-log-view/src/js/EmbeddedData.js) にストレージのデータを埋め込めば確認が可能。
