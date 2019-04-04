@@ -1,14 +1,14 @@
 import * as React from "react";
-import GridContainer from "./js/GridContainer";
-import measureData from "./js/MeasureData";
-import { createKey } from "./js/Utils";
-import Header from "./js/Header/Header";
-import dataErase from "./js/DataErase";
-import Modal from "./js/Modal/Modal";
+import GridContainer from "./js/containers/GridContainer";
+import measureData from "./js/utils/MeasureData";
+import { createKey } from "./js/utils/Utils";
+import Header from "./js/containers/Header";
+import dataErase from "./js/utils/DataErase";
+import Modal from "./js/components/Modal";
 import "./App.css";
-import ChromeExtensionWrapper from "./js/ChromeExtensionWrapper";
-import appData from "./js/Data/AppData";
-import AppDataActions from "./js/Data/AppDataActions";
+import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
+import appData from "./js/utils/AppData";
+import AppDataActions from "./js/utils/AppDataActions";
 
 class App extends React.Component {
   constructor() {

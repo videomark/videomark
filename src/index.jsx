@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import ChromeExtensionWrapper from "./js/ChromeExtensionWrapper";
+import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 
 if (!ChromeExtensionWrapper.canUseVideoMarkApi()) {
   window.location.pathname = "unsupported.html";

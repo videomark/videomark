@@ -2,14 +2,14 @@ import * as React from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import AppDataActions from "./Data/AppDataActions";
-import appData from "./Data/AppData";
-import { CrossIcon, Refresh } from "./Icons";
-import QoEValueGraph from "./QoEValueGraph";
-import dataErase from "./DataErase";
-import style from "../css/MeasureContents.module.css";
-import * as Utils from "./Utils";
-import measureData from "./MeasureData";
+import AppDataActions from "../utils/AppDataActions";
+import appData from "../utils/AppData";
+import { CrossIcon, Refresh } from "../components/Icons";
+import QoEValueGraph from "../components/QoEValueGraph";
+import dataErase from "../utils/DataErase";
+import style from "../../css/MeasureContents.module.css";
+import * as Utils from "../utils/Utils";
+import measureData from "../utils/MeasureData";
 
 const toTimeString = date => {
   return `${date.getFullYear()}/${date.getMonth() +

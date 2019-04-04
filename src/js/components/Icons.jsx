@@ -1,9 +1,9 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import helpIcon from "../images/help.png";
-import style from "../css/Icons.module.css";
-import refresh from "../images/refresh.svg";
-import times from "../images/times.svg";
+import helpIcon from "../../images/help.png";
+import style from "../../css/Icons.module.css";
+import refresh from "../../images/refresh.svg";
+import times from "../../images/times.svg";
 
 export const Refresh = () => {
   return <img src={refresh} alt="refresh" />;

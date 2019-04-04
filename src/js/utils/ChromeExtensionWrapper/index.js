@@ -1,4 +1,4 @@
-import { isMobile, isDevelop } from "./Utils";
+import { isMobile, isDevelop } from "../Utils";
 import data from "./EmbeddedData";
 
 const RemovedTargetKeys = "RemovedTargetKeys";

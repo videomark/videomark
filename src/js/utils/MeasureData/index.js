@@ -1,14 +1,14 @@
 // 計測データの取得を行う
-import ChromeExtensionWrapper from "./ChromeExtensionWrapper";
-import Api from "./Api";
+import ChromeExtensionWrapper from "../ChromeExtensionWrapper";
+import Api from "../Api";
 import {
   viewingIdWithoutDateTimeFromSessionAndVideo,
   viewingIdWithoutDateTimeFromViewintId
-} from "./Utils";
-import AppData from "./Data/AppData";
-import AppDataActions from "./Data/AppDataActions";
-import Country from "./Data/Country";
-import Subdivision from "./Data/Subdivision";
+} from "../Utils";
+import AppData from "../AppData";
+import AppDataActions from "../AppDataActions";
+import Country from "./Country";
+import Subdivision from "./Subdivision";
 import MeasureState from "./MeasureState";
 
 const saturateQoe = average => {

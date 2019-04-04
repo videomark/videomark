@@ -1,7 +1,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import style from "../../css/Modal.module.css";
-import { CrossIcon } from "../Icons";
+import { CrossIcon } from "./Icons";
 
 class Modal extends React.Component {
   render() {

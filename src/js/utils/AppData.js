@@ -1,7 +1,7 @@
 // アプリケーションの全体データ
 // コールバックを指定をし、対象のデータが更新された時に全箇所に流す;
 import AppDataActions from "./AppDataActions";
-import { Services } from "../Utils";
+import { Services } from "./Utils";
 
 class Data {
   constructor() {

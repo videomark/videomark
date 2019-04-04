@@ -1,7 +1,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 
-import style from "../css/QoEValueGraph.module.css";
+import style from "../../css/QoEValueGraph.module.css";
 
 const QoeCalcWaiting = props => {
   const { state } = props;

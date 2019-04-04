@@ -2,10 +2,10 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import MeasureContents from "./MeasureContents";
-import { LocationToService } from "./Utils";
-import style from "../css/GridContainer.module.css";
-import AppData from "./Data/AppData";
-import AppDataActions from "./Data/AppDataActions";
+import { LocationToService } from "../utils/Utils";
+import style from "../../css/GridContainer.module.css";
+import AppData from "../utils/AppData";
+import AppDataActions from "../utils/AppDataActions";
 
 const contentsRender = data => {
   return data.map(value => {
