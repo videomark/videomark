@@ -285,7 +285,7 @@ export default class VideoData {
 
         if (event.type === 'seeking') {
             playPos = this.current_play_pos;
-            playTime = this.current_play_pos_date;
+            //  playTime = this.current_play_pos_date;
         } else if (event.type === 'ended') {
             this.play_end_time = Date.now();
         }
@@ -347,6 +347,13 @@ export default class VideoData {
         }
 
         const event = new EventData(this.video_elm, type, playPos, playTime, this.last_events[type]);
+
+        if (this.play_start_time === -1) {
+            /* eslint-disable no-console */
+            console.log(`VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${this.uuid}[${
+                this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`);
+            return;
+        }
 
         /* eslint-disable no-console */
         console.log(`VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${this.uuid}[${
