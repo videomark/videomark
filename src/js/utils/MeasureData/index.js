@@ -265,14 +265,22 @@ class MeasureData {
           const subdivisionAverage = this.average.subdivisions[country][
             subdivision
           ];
-          const label = Country.isJapan(country)
+          const region = Country.isJapan(country)
             ? Subdivision.codeToName(subdivision)
             : Country.codeToName(country);
-          average.push({
-            label,
-            modalLabel: `地域平均: ${label}`,
-            value: saturateQoe(subdivisionAverage)
-          });
+          if (region === undefined) {
+            average.push({
+              label: "不明",
+              modalLabel: `地域平均: 不明`,
+              value: "0.0"
+            });
+          } else {
+            average.push({
+              label: region,
+              modalLabel: `地域平均: ${region}`,
+              value: saturateQoe(subdivisionAverage)
+            });
+          }
         }
 
         const hour = startTime.getHours();

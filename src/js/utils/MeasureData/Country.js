@@ -257,7 +257,7 @@ export default class Country {
 
   static codeToName(country) {
     if (!(country in countryNameTable)) {
-      return "unknown";
+      return undefined;
     }
 
     return countryNameTable[country];

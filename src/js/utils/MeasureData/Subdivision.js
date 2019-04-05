@@ -52,7 +52,7 @@ export default class Subdivision {
   // subdivision code から名称に変更する
   static codeToName(code) {
     if (!(code in SubdivisionNames)) {
-      return "";
+      return undefined;
     }
     return SubdivisionNames[code];
   }
