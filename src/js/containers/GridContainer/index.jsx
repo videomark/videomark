@@ -1,49 +1,17 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import MeasureContents from "./MeasureContents";
-import { LocationToService } from "../utils/Utils";
-import style from "../../css/GridContainer.module.css";
-import AppData from "../utils/AppData";
-import AppDataActions from "../utils/AppDataActions";
+import MeasureContents from "../MeasureContents";
+import { LocationToService } from "../../utils/Utils";
+import style from "../../../css/GridContainer.module.css";
+import AppData from "../../utils/AppData";
+import AppDataActions from "../../utils/AppDataActions";
+import NoContents from "./NoContents";
 
 const contentsRender = data => {
   return data.map(value => {
     return <MeasureContents key={value.id} contentsData={value} />;
   });
-};
-
-const noContentsRender = title => {
-  return (
-    <div className={style.nonContents}>
-      <h1>{title}</h1>
-      <p>
-        Web VideoMark
-        では動画の再生時にビットレートや解像度などを記録し、体感品質値 (QoE:
-        Quality of Experience) を推定します。
-      </p>
-      <p>
-        まずは計測対象となる動画配信サービスで動画をご覧ください。
-        動画の視聴中は動画のコントローラーが表示されている間 QoE
-        の暫定値を動画の左上に表示します。動画の視聴終了後はこの計測結果一覧画面で
-        QoE 値を確認できます。
-      </p>
-      <p>
-        現在 QoE の計測が可能な動画配信サービスはこちらです:
-        <ul>
-          <li>
-            <a href="https://www.paravi.jp/">Paravi</a>
-          </li>
-          <li>
-            <a href="https://tver.jp/">TVer</a>
-          </li>
-          <li>
-            <a href="https://www.youtube.com/">YouTube</a>
-          </li>
-        </ul>
-      </p>
-    </div>
-  );
 };
 
 class GridContainer extends React.Component {
@@ -89,7 +57,7 @@ class GridContainer extends React.Component {
       return (
         <div className={style.gridContainer}>
           <Grid>
-            {noContentsRender("まだ計測対象となる動画を視聴していません")}
+            <NoContents title="まだ計測対象となる動画を視聴していません" />
           </Grid>
         </div>
       );
@@ -104,9 +72,11 @@ class GridContainer extends React.Component {
           id={style.con}
           className={renderData.length === 0 ? "" : style.grid}
         >
-          {renderData.length === 0
-            ? noContentsRender("該当する計測結果がありません")
-            : contentsRender(renderData)}
+          {renderData.length === 0 ? (
+            <NoContents />
+          ) : (
+            contentsRender(renderData)
+          )}
         </Grid>
       </div>
     );

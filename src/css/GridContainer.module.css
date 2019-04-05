@@ -14,23 +14,6 @@
   text-align: center;
 }
 
-.nonContents {
-  width: calc(80% - 2rem);
-  max-width: 800px;
-  font-size: 1.2rem;
-  margin: auto;
-}
-
-.nonContents h1 {
-  font-size: 1.5rem;
-  text-align: center;
-  margin: 2.5em 0 1.2em;
-}
-
-.nonContents p {
-  text-align: left;
-}
-
 .grid {
   width: auto !important;
   margin: 0 !important;
