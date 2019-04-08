@@ -12,7 +12,14 @@
     "96": "icons/videomark-96.png",
     "192": "icons/videomark-192.png"
   },
-  "permissions": ["webRequest", "webRequestBlocking", "storage"],
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "*://*.tver.jp/*",
+    "*://*.paravi.jp/*",
+    "*://*.youtube.com/*"
+  ],
   "browser_action": {
     "default_icon": {
       "16": "icons/videomark-simplified-16.png",
