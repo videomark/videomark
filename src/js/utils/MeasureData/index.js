@@ -237,7 +237,6 @@ class MeasureData {
       return [];
     }
 
-    this.updateStatsInfo(ids);
     error = await this.updateStatsInfo(ids);
     if (error) {
       return [];
