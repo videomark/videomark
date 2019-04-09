@@ -12,27 +12,30 @@ if (!isMobile() && window.sodium === undefined) {
 
 // 環境判定をしてchrome extension apiの実行とダミーデータの返却を実現する
 export default class ChromeExtensionWrapper {
-  static saveRemoveTarget(value) {
+  static save(key, value) {
     if (isDevelop()) {
+      data[key] = value;
       return;
     }
+    window.sodium.storage.local.set({ [key]: value });
+  }
 
-    const savedData = {};
-    savedData[RemovedTargetKeys] = value;
-    window.sodium.storage.local.set(savedData);
+  static saveRemoveTarget(value) {
+    this.save(RemovedTargetKeys, value);
+  }
+
+  static load(key, callback) {
+    if (isDevelop()) {
+      callback(data[key]);
+      return;
+    }
+    window.sodium.storage.local.get(key, items => callback(items[key]));
   }
 
   static loadRemovedTarget(callback) {
-    if (isDevelop()) {
-      callback([]);
-      return;
-    }
-
-    window.sodium.storage.local.get(RemovedTargetKeys, value => {
-      const removedTargets =
-        RemovedTargetKeys in value ? value[RemovedTargetKeys] : [];
-      callback(removedTargets);
-    });
+    this.load(RemovedTargetKeys, value =>
+      callback(Array.isArray(value) ? value : [])
+    );
   }
 
   static loadVideoIds(callback) {
@@ -50,9 +53,7 @@ export default class ChromeExtensionWrapper {
     };
 
     if (isDevelop()) {
-      const tmp = data;
-
-      callback(parse(tmp));
+      callback(parse(data));
       return;
     }
 
@@ -76,19 +77,9 @@ export default class ChromeExtensionWrapper {
       return;
     }
 
-    window.sodium.storage.local.get(AgreedTerm, value => {
-      const result = AgreedTerm in value ? value[AgreedTerm] : false;
-      callback(result);
+    this.load(AgreedTerm, value => {
+      callback(value || false);
     });
-  }
-
-  // 利用規約に同意
-  static agreeTerm() {
-    if (isDevelop()) {
-      return;
-    }
-
-    window.sodium.storage.local.set({ AgreedTerm: true });
   }
 
   static canUseVideoMarkApi() {
