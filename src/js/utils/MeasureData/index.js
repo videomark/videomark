@@ -324,23 +324,9 @@ class MeasureData {
   async update() {
     this.wait = true;
     ChromeExtensionWrapper.loadVideoIds(async value => {
-      // 一番手前の月を調べる
-      if (this.beforeMostMonth === null) {
-        let month = Date.now();
-        value.forEach(item => {
-          if (month < item.data.start_time) {
-            month = item.data.start_time;
-          }
-        });
-      }
-      // await 通信
       const renderData = await this.toRenderData(value);
-
-      // データを構成
-      if (this.updateListner !== null) {
-        this.wait = false;
-        this.updateListner(renderData);
-      }
+      this.wait = false;
+      this.updateListner(renderData);
     });
   }
 }
