@@ -97,12 +97,6 @@
   margin-right: 20px;
 }
 
-@media (max-width: 600px) {
-  .iconRoot {
-    -ms-flex-item-align: start;
-  }
-}
-
 .iconRoot > * {
   margin-left: 10px;
 }
@@ -112,12 +106,6 @@
 
 .icon {
   height: 30px;
-}
-
-@media (max-width: 600px) {
-  .icon {
-    height: 22px;
-  }
 }
 
 .paravi {
@@ -145,14 +133,6 @@
 .helpRoot {
   display: flex;
   justify-content: flex-end;
-}
-
-@media (max-width: 600px) {
-  .helpRoot {
-    -ms-flex-item-align: stretch;
-    -ms-grid-row-align: stretch;
-    align-self: stretch;
-  }
 }
 
 .monthBack > span > div {
