@@ -9,7 +9,7 @@
   height: auto;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .help {
     width: 18px;
   }

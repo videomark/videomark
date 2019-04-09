@@ -11,7 +11,7 @@
   height: 60px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .root {
     padding: 0;
     height: 100px;
@@ -43,7 +43,7 @@
   height: 20px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .monthRoot {
     -ms-flex-item-align: end;
     align-self: flex-end;
@@ -96,7 +96,7 @@
   margin-right: 20px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .iconRoot {
     -ms-flex-item-align: start;
   }
@@ -113,7 +113,7 @@
   height: 30px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .icon {
     height: 22px;
   }
@@ -146,7 +146,7 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .helpRoot {
     -ms-flex-item-align: stretch;
     -ms-grid-row-align: stretch;

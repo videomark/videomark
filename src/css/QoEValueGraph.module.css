@@ -93,7 +93,7 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .modalQoeValueGraph .qoeBarGraph {
     -ms-flex-preferred-size: 90%;
     flex-basis: 90%;

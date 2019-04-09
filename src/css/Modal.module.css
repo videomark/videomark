@@ -60,7 +60,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .modal .modal_close {
     top: 5%;
     right: 5%;
@@ -108,11 +108,11 @@
 
 @media all and (orientation: landscape) {
     .modal .modal_inner {
-        overflow: scroll;   
+        overflow: scroll;
     }
 }
 
-@media (max-width: 480px){
+@media (max-width: 600px){
   .modal .modal_inner {
     width: 90%;
   }
