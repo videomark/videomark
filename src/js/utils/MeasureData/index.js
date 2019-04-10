@@ -22,19 +22,6 @@ class MeasureData {
     this.beforeMostMonth = null;
   }
 
-  average() {
-    return this.average;
-  }
-
-  getQoe(id) {
-    return this.contents[id];
-  }
-
-  getData(id) {
-    const qoe = this.getQoe(id);
-    return { qoe };
-  }
-
   // データをリクエストするIDリスト
   toRequestIds(storageData) {
     const monthFilter = AppData.get(AppDataActions.MonthFilter);
@@ -235,7 +222,6 @@ class MeasureData {
     const qoeData = await this.toQoeInclusiveData(storageData);
     return qoeData.sort((a, b) => (a.startTime > b.startTime ? -1 : 1));
   }
-  // API
 
   // 外部からの呼び出し
   initialize(dataUpdateListner) {
