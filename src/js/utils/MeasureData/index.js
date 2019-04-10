@@ -1,15 +1,12 @@
 // 計測データの取得を行う
 import ChromeExtensionWrapper from "../ChromeExtensionWrapper";
 import Api from "../Api";
-import {
-  viewingIdWithoutDateTimeFromSessionAndVideo,
-  viewingIdWithoutDateTimeFromViewintId
-} from "../Utils";
 import AppData from "../AppData";
 import AppDataActions from "../AppDataActions";
 import Country from "./Country";
 import Subdivision from "./Subdivision";
 import MeasureState from "./MeasureState";
+import Viewing from "../Viewing";
 
 const saturateQoe = average => {
   const averageFloor = Math.floor(average * 10) / 10;
@@ -64,94 +61,6 @@ class MeasureData {
           video_id: item.data.video_id
         };
       });
-  }
-
-  toSubdivisions() {
-    const subdivisions = [];
-    Object.keys(this.qoeData).forEach(key => {
-      const { country, subdivision } = this.qoeData[key];
-      if (
-        subdivisions.find(
-          item => item.country === country && item.subdivision === subdivision
-        ) === undefined
-      ) {
-        subdivisions.push({ country, subdivision });
-      }
-    });
-
-    return subdivisions;
-  }
-
-  async updateFixedQoe(ids) {
-    if (ids.length === 0) {
-      return false;
-    }
-
-    let result = true;
-    await Api.fixed(ids)
-      .then(response => {
-        if (!response.ok) {
-          return new Error(response);
-        }
-        // エラーテスト
-        return response.json();
-      })
-      .then(body => {
-        body.forEach(data => {
-          const viewingId = data.viewing_id;
-          const id = viewingIdWithoutDateTimeFromViewintId(viewingId);
-          this.qoeData[id] = { qoe: data.qoe };
-        });
-        result = false;
-      })
-      .catch(error => {
-        console.error(`VIDEOMARK: ${error}`);
-      });
-
-    return result;
-  }
-
-  async updateStatsInfo(ids) {
-    if (ids.length === 0) {
-      return false;
-    }
-
-    const request = ids
-      .filter(item => {
-        const id = viewingIdWithoutDateTimeFromSessionAndVideo(
-          item.session_id,
-          item.video_id
-        );
-
-        return id in this.qoeData;
-      })
-      .map(item =>
-        Api.statsInfo(item.video_id, item.session_id)
-          .then(response => {
-            if (!response.ok) {
-              // TODO:後で
-              throw new Error(response);
-            }
-            return response.json();
-          })
-          .then(body => {
-            if (body.length === 0) {
-              return;
-            }
-
-            const id = viewingIdWithoutDateTimeFromSessionAndVideo(
-              body[0].session,
-              body[0].video
-            );
-            const { country, subdivision, isp } = body[0];
-            this.qoeData[id].country = country;
-            this.qoeData[id].subdivision = subdivision;
-            this.qoeData[id].isp = isp;
-          })
-      );
-
-    await Promise.all(request);
-    return false;
   }
 
   async updateSubdivision(subdivisions) {
@@ -231,80 +140,92 @@ class MeasureData {
   }
 
   async toQoeInclusiveData(storageData) {
-    const ids = this.toRequestIds(storageData);
-    let error = await this.updateFixedQoe(ids);
-    if (error) {
-      return [];
-    }
+    const viewingList = await Promise.all(
+      this.toRequestIds(storageData).map(
+        async ({ session_id: sessionId, video_id: videoId }) => {
+          const viewing = new Viewing({ sessionId, videoId });
+          const id = await viewing.init();
+          const title = await viewing.title;
+          const location = await viewing.location;
+          const thumbnail = await viewing.thumbnail;
+          const startTime = await viewing.startTime;
+          const qoe = await viewing.qoe;
+          const country = await viewing.country;
+          const subdivision = await viewing.subdivision;
+          const isp = await viewing.isp;
+          return {
+            id,
+            title,
+            location,
+            thumbnail,
+            startTime,
+            qoe: saturateQoe(qoe > 0 ? qoe : 0),
+            state: new MeasureState(qoe > 0 ? qoe : 0),
+            country,
+            subdivision,
+            isp
+          };
+        }
+      )
+    );
 
-    error = await this.updateStatsInfo(ids);
-    if (error) {
-      return [];
-    }
-    const subdivisions = this.toSubdivisions();
+    const subdivisions = viewingList
+      .map(({ country, subdivision }) => ({
+        country,
+        subdivision
+      }))
+      .filter(
+        (region, i, self) =>
+          i ===
+          self.findIndex(
+            r =>
+              r.country === region.country &&
+              r.subdivision === region.subdivision
+          )
+      );
     await this.updateSubdivision(subdivisions);
 
     await this.updateHour();
 
-    const result = [];
-    storageData.forEach(item => {
-      const hasApiData = item.id in this.qoeData;
+    const result = viewingList.map(viewing => {
+      const { country, subdivision } = viewing;
       const average = [];
-      const startTime = new Date(item.data.start_time);
-
-      let data = { qoe: 0.0 };
-      if (hasApiData) {
-        data = this.qoeData[item.id];
-        const { country, subdivision } = data;
-
-        if (
-          country in this.average.subdivisions &&
-          subdivision in this.average.subdivisions[country]
-        ) {
-          const subdivisionAverage = this.average.subdivisions[country][
-            subdivision
-          ];
-          const region = Country.isJapan(country)
-            ? Subdivision.codeToName(subdivision)
-            : Country.codeToName(country);
-          if (region === undefined) {
-            average.push({
-              label: "不明",
-              modalLabel: `地域平均: 不明`,
-              value: "0.0"
-            });
-          } else {
-            average.push({
-              label: region,
-              modalLabel: `地域平均: ${region}`,
-              value: saturateQoe(subdivisionAverage)
-            });
-          }
-        }
-
-        const hour = startTime.getHours();
-        // 時間のデータが存在する時
-        if (hour in this.average.hour) {
+      if (
+        country in this.average.subdivisions &&
+        subdivision in this.average.subdivisions[country]
+      ) {
+        const subdivisionAverage = this.average.subdivisions[country][
+          subdivision
+        ];
+        const region = Country.isJapan(country)
+          ? Subdivision.codeToName(subdivision)
+          : Country.codeToName(country);
+        if (region === undefined) {
           average.push({
-            label: `${hour}時`,
-            modalLabel: `時間平均: ${hour}時`,
-            value: saturateQoe(this.average.hour[hour])
+            label: "不明",
+            modalLabel: `地域平均: 不明`,
+            value: "0.0"
+          });
+        } else {
+          average.push({
+            label: region,
+            modalLabel: `地域平均: ${region}`,
+            value: saturateQoe(subdivisionAverage)
           });
         }
       }
 
-      const dataObject = {
-        id: item.id,
-        title: item.data.title,
-        location: item.data.location,
-        thumbnail: item.data.thumbnail,
-        qoe: saturateQoe(data.qoe),
-        average,
-        startTime,
-        state: new MeasureState(data.qoe)
-      };
+      const hour = viewing.startTime.getHours();
+      // 時間のデータが存在する時
+      if (hour in this.average.hour) {
+        average.push({
+          label: `${hour}時`,
+          modalLabel: `時間平均: ${hour}時`,
+          value: saturateQoe(this.average.hour[hour])
+        });
+      }
 
-      result.push(dataObject);
+      return Object.assign(viewing, { average });
     });
 
     return result;
