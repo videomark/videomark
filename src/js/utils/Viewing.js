@@ -97,33 +97,22 @@ class Viewing {
       .then(resHandler)
       .then(info => {
         if (info === undefined) return undefined;
+        const { country, subdivision, isp } = info;
         return this.save({
-          country: info.country,
-          subdivision: info.subdivision,
-          isp: info.isp
+          region: {
+            country,
+            subdivision,
+            isp
+          }
         });
       });
   }
 
-  get country() {
-    if (this.cache.country !== undefined) {
-      return Promise.resolve(this.cache.country);
+  get region() {
+    if (this.cache.region !== undefined) {
+      return Promise.resolve(this.cache.region);
     }
-    return this.fetchStatsInfoApi().then(() => this.cache.country);
-  }
-
-  get subdivision() {
-    if (this.cache.subdivision !== undefined) {
-      return Promise.resolve(this.cache.subdivision);
-    }
-    return this.fetchStatsInfoApi().then(() => this.cache.subdivision);
-  }
-
-  get isp() {
-    if (this.cache.isp !== undefined) {
-      return Promise.resolve(this.cache.isp);
-    }
-    return this.fetchStatsInfoApi().then(() => this.cache.isp);
+    return this.fetchStatsInfoApi().then(() => this.cache.region);
   }
 }
 

@@ -137,9 +137,7 @@ class MeasureData {
           const thumbnail = await viewing.thumbnail;
           const startTime = await viewing.startTime;
           const qoe = await viewing.qoe;
-          const country = await viewing.country;
-          const subdivision = await viewing.subdivision;
-          const isp = await viewing.isp;
+          const { country, subdivision, isp } = (await viewing.region) || {};
           return {
             id,
             title,
