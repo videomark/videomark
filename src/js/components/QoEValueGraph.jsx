@@ -52,7 +52,7 @@ const QoEValueGraph = props => {
 QoEValueGraph.propTypes = {
   label: PropTypes.string.isRequired,
   qoe: PropTypes.string.isRequired,
-  modal: PropTypes.bool.isRequired,
+  modal: PropTypes.bool,
   state: PropTypes.shape({
     state: PropTypes.number.isRequired
   })
@@ -60,7 +60,8 @@ QoEValueGraph.propTypes = {
 
 QoEValueGraph.defaultProps = {
   className: "",
-  state: null
+  state: null,
+  modal: false
 };
 
 export default QoEValueGraph;
