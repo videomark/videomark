@@ -13,8 +13,9 @@ const toTimeString = date => {
 };
 
 class Viewing extends Component {
-  constructor({ sessionId, videoId }) {
-    super();
+  constructor(props) {
+    super(props);
+    const { sessionId, videoId } = props;
     this.viewing = new ViewingModel({ sessionId, videoId });
     this.state = {
       title: "",
