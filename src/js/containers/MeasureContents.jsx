@@ -154,8 +154,7 @@ MeasureContents.propTypes = {
     thumbnail: PropTypes.string,
     qoe: PropTypes.string,
     average: PropTypes.array,
-    startTime: PropTypes.instanceOf(Date),
-    state: PropTypes.shape.isRequired
+    startTime: PropTypes.instanceOf(Date)
   }).isRequired
 };
 

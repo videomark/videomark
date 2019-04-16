@@ -5,7 +5,6 @@ import AppData from "../AppData";
 import AppDataActions from "../AppDataActions";
 import Country from "./Country";
 import Subdivision from "./Subdivision";
-import MeasureState from "./MeasureState";
 import Viewing from "../Viewing";
 
 const saturateQoe = average => {
@@ -145,7 +144,6 @@ class MeasureData {
             thumbnail,
             startTime,
             qoe: saturateQoe(qoe > 0 ? qoe : 0),
-            state: new MeasureState(qoe > 0 ? qoe : 0),
             country,
             subdivision,
             isp
