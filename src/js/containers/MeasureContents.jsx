@@ -5,11 +5,12 @@ import PropTypes from "prop-types";
 import AppDataActions from "../utils/AppDataActions";
 import appData from "../utils/AppData";
 import { CrossIcon, Refresh } from "../components/Icons";
-import QoEValueGraph from "../components/QoEValueGraph";
 import dataErase from "../utils/DataErase";
 import style from "../../css/MeasureContents.module.css";
 import * as Utils from "../utils/Utils";
 import measureData from "../utils/MeasureData";
+import ViewingDetail from "./ViewingDetail";
+import QoEValueGraphList from "../components/QoEValueGraphList";
 
 const toTimeString = date => {
   return `${date.getFullYear()}/${date.getMonth() +
@@ -26,43 +27,16 @@ class MeasureContents extends React.Component {
     this.state = { disabled };
   }
 
-  normalContentsRender(modal = false) {
+  normalContentsRender() {
     const {
-      contentsData: {
-        id,
-        title,
-        location,
-        thumbnail,
-        qoe,
-        average,
-        startTime,
-        state
-      }
+      contentsData: { title, location, thumbnail, qoe, average, startTime }
     } = this.props;
     const timeStr = toTimeString(startTime);
 
-    const linkMoviePage = () => {
-      if (modal) {
-        window.open(location);
-      }
-    };
     return (
-      <div className={`${style.main} ${modal ? style.modalMain : ""}`}>
+      <div className={style.main}>
         <div className={style.header}>
-          <button
-            type="button"
-            onClick={() => {
-              linkMoviePage();
-            }}
-          >
-            <img
-              className={`${style.thumbnail} ${
-                modal ? style.modalThumbnail : ""
-              }`}
-              src={thumbnail}
-              alt="movie thumbnail"
-            />
-          </button>
+          <img className={style.thumbnail} src={thumbnail} alt={title} />
           <div className={style.movieInfo}>
             <span className={style.serviceName}>
               {Utils.LocationToService(location)}
@@ -70,53 +44,9 @@ class MeasureContents extends React.Component {
             <span className={style.startTime}>{timeStr}</span>
           </div>
         </div>
-        <div
-          className={modal ? `${style.title} ${style.modalTitle}` : style.title}
-        >
-          {title}
-        </div>
+        <div className={style.title}>{title}</div>
         <div style={{ width: "100%", height: "20px" }} />
-        <div className={style.qoeDate}>
-          <div className={style.userGraph}>
-            <div className={style.graph}>
-              <QoEValueGraph
-                label="この動画再生時の体感品質値"
-                qoe={qoe}
-                modal={modal}
-                state={state}
-              />
-            </div>
-          </div>
-          <div className={style.expanded}>
-            {state.IsCompleted() &&
-              average.map(item => {
-                return (
-                  <div key={Utils.createKey()} className={style.graph}>
-                    <QoEValueGraph
-                      className={style.qoeGraph}
-                      label={modal ? item.modalLabel : item.label}
-                      qoe={item.value}
-                      modal={modal}
-                    />
-                  </div>
-                );
-              })}
-          </div>
-          {modal && (
-            <div>
-              <Button
-                color="secondary"
-                className={style.eraseButton}
-                onClick={() => {
-                  dataErase.add(id);
-                  appData.update(AppDataActions.Modal, null);
-                }}
-              >
-                この計測結果を削除する
-              </Button>
-            </div>
-          )}
-        </div>
+        <QoEValueGraphList qoe={qoe} average={average} />
       </div>
     );
   }
@@ -179,6 +109,9 @@ class MeasureContents extends React.Component {
   }
 
   render() {
+    const {
+      contentsData: { id, title, location, thumbnail, qoe, average, startTime }
+    } = this.props;
     const { disabled } = this.state;
     return (
       <Grid>
@@ -189,8 +122,18 @@ class MeasureContents extends React.Component {
             if (disabled) {
               return;
             }
-            const dom = this.normalContentsRender(true);
-            appData.update(AppDataActions.Modal, dom, "test");
+            appData.update(
+              AppDataActions.Modal,
+              <ViewingDetail
+                id={id}
+                title={title}
+                location={location}
+                thumbnail={thumbnail}
+                qoe={qoe}
+                average={average}
+                startTime={startTime}
+              />
+            );
           }}
           onKeyPress={this.handleKeyPress}
           tabIndex="0"
