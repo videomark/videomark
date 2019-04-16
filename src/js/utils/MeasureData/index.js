@@ -6,6 +6,7 @@ import AppDataActions from "../AppDataActions";
 import Country from "./Country";
 import Subdivision from "./Subdivision";
 import Viewing from "../Viewing";
+import HourlyAverageQoE from "../HourlyAverageQoE";
 
 const saturateQoe = average => {
   const averageFloor = Math.floor(average * 10) / 10;
@@ -98,33 +99,6 @@ class MeasureData {
     await Promise.all(requests);
   }
 
-  async updateHour() {
-    // 時間帯平均は一回で24時間分全部取得するためここでブロック
-    if ("hour" in this.average) {
-      return;
-    }
-
-    this.average.hour = {};
-    await Api.hour()
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(response);
-        }
-        return response.json();
-      })
-      .then(body => {
-        if (body.length === 0) {
-          return;
-        }
-        body.forEach(item => {
-          this.average.hour[item.hour] = item.average;
-        });
-      })
-      .catch(error => {
-        console.error(`VIDEOMARK: ${error}`);
-      });
-  }
-
   async toQoeInclusiveData(storageData) {
     const viewingList = await Promise.all(
       this.toRequestIds(storageData).map(
@@ -167,8 +141,8 @@ class MeasureData {
           )
       );
     await this.updateSubdivision(subdivisions);
-
-    await this.updateHour();
+    const hourlyAverage = new HourlyAverageQoE();
+    this.average.hour = await hourlyAverage.init();
 
     const result = viewingList.map(viewing => {
       const { country, subdivision } = viewing;
