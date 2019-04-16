@@ -1,5 +1,6 @@
 export default {
   SiteFilter: "SiteFilter",
   MonthFilter: "MonthFilter",
-  Modal: "Modal"
+  Modal: "Modal",
+  ViewingList: "ViewingList"
 };
