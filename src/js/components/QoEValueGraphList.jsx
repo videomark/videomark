@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import QoEValueGraph from "./QoEValueGraph";
 import style from "../../css/MeasureContents.module.css";
-import Country from "../utils/MeasureData/Country";
-import Subdivision from "../utils/MeasureData/Subdivision";
+import Country from "../utils/Country";
+import Subdivision from "../utils/Subdivision";
 
 const QoEValueGraphList = ({
   value,
