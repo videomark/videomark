@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import QoEValueGraphList from "../components/QoEValueGraphList";
-import dataErase from "../utils/DataErase";
+import DataErase from "../utils/DataErase";
 import AppDataActions from "../utils/AppDataActions";
 import AppData from "../utils/AppData";
 import { LocationToService } from "../utils/Utils";
@@ -102,7 +102,9 @@ class ViewingDetail extends Component {
           color="secondary"
           className={style.eraseButton}
           onClick={() => {
-            dataErase.add(id);
+            DataErase.add(id);
+            // FIXME: ViewingListをrender()しないと表示が変わらない
+            AppData.update(AppDataActions.ViewingList, state => state);
             AppData.update(AppDataActions.Modal, null);
           }}
         >

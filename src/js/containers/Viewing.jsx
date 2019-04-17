@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
 import ViewingModel from "../utils/Viewing";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import style from "../../css/MeasureContents.module.css";
 import { LocationToService } from "../utils/Utils";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
+import { CrossIcon, Refresh } from "../components/Icons";
+import DataErase from "../utils/DataErase";
+import AppData from "../utils/AppData";
+import AppDataActions from "../utils/AppDataActions";
 
 const toTimeString = date => {
   return `${date.getFullYear()}/${date.getMonth() +
@@ -17,21 +22,23 @@ const toTimeString = date => {
 class Viewing extends Component {
   constructor(props) {
     super(props);
-    const { sessionId, videoId } = props;
+    const { sessionId, videoId, disabled } = props;
     this.viewing = new ViewingModel({ sessionId, videoId });
     this.state = {
       title: "",
       location: "",
       thumbnail: "",
       startTime: new Date(),
-      qoe: 0
+      qoe: 0,
+      disabled
     };
   }
 
   async componentDidMount() {
     const { viewing } = this;
-    await viewing.init();
+    const id = await viewing.init();
     this.setState({
+      id,
       title: await viewing.title,
       location: LocationToService(await viewing.location),
       thumbnail: await viewing.thumbnail,
@@ -55,6 +62,7 @@ class Viewing extends Component {
 
   render() {
     const {
+      id,
       title,
       location,
       thumbnail,
@@ -63,19 +71,12 @@ class Viewing extends Component {
       region,
       regionalAverageQoE,
       hour,
-      hourlyAverageQoE
+      hourlyAverageQoE,
+      disabled
     } = this.state;
 
-    return (
-      <div className={style.main}>
-        <div className={style.header}>
-          <img className={style.thumbnail} src={thumbnail} alt={title} />
-          <div className={style.movieInfo}>
-            <span className={style.serviceName}>{location}</span>
-            <span className={style.startTime}>{toTimeString(startTime)}</span>
-          </div>
-        </div>
-        <div className={style.title}>{title}</div>
+    const graphList = (
+      <>
         <div style={{ width: "100%", height: "20px" }} />
         <QoEValueGraphList
           value={qoe}
@@ -84,6 +85,70 @@ class Viewing extends Component {
           hour={hour}
           hourlyAverage={hourlyAverageQoE}
         />
+      </>
+    );
+
+    const recoverOrRemoveButton = (
+      <div className={style.removedStateButtons}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={style.removedStateButton}
+          onClick={() => {
+            DataErase.recover(id);
+            // FIXME: ViewingListをrender()しないと表示が変わらない
+            AppData.update(AppDataActions.ViewingList, state => state);
+          }}
+        >
+          <Refresh />
+          <span>&nbsp;復元</span>
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={style.removedStateButton}
+          onClick={async () => {
+            await DataErase.remove(id);
+            AppData.update(AppDataActions.ViewingList, state =>
+              Object.assign(state, {
+                viewings: state.viewings.filter(viewing =>
+                  DataErase.contains(viewing.id)
+                )
+              })
+            );
+          }}
+        >
+          <CrossIcon />
+          <span>&nbsp;削除</span>
+        </Button>
+      </div>
+    );
+    const disabledInfo = (
+      <>
+        <div className={style.removedStateInfoText}>
+          次回起動時に削除します。復元を押すと削除を取り消し、削除ボタンを押すと今すぐ削除します。
+        </div>
+        {recoverOrRemoveButton}
+      </>
+    );
+
+    return (
+      <div className={style.main}>
+        <div className={style.header}>
+          <img
+            className={
+              style.thumbnail + (disabled ? ` ${style.removedThumbnail}` : "")
+            }
+            src={thumbnail}
+            alt={title}
+          />
+          <div className={style.movieInfo}>
+            <span className={style.serviceName}>{location}</span>
+            <span className={style.startTime}>{toTimeString(startTime)}</span>
+          </div>
+        </div>
+        <div className={style.title}>{title}</div>
+        {disabled ? disabledInfo : graphList}
       </div>
     );
   }
@@ -93,7 +158,12 @@ Viewing.propTypes = {
   sessionId: PropTypes.string.isRequired,
   videoId: PropTypes.string.isRequired,
   regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
-  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired
+  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
+  disabled: PropTypes.bool
+};
+
+Viewing.defaultProps = {
+  disabled: false
 };
 
 export default Viewing;

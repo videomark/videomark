@@ -9,6 +9,7 @@ import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import style from "../../css/GridContainer.module.css";
 import ViewingDetail from "./ViewingDetail";
+import DataErase from "../utils/DataErase";
 
 class ViewingList extends Component {
   constructor() {
@@ -27,7 +28,7 @@ class ViewingList extends Component {
     this.setState({
       viewings: viewings
         .map(({ id, data }) => ({
-          key: id,
+          id,
           sessionId: data.session_id,
           videoId: data.video_id,
           location: data.location,
@@ -74,15 +75,21 @@ class ViewingList extends Component {
           startTime.getFullYear() === date.getFullYear() &&
           startTime.getMonth() === date.getMonth()
       )
-      .map(({ key, sessionId, videoId }) => (
+      .map(viewing =>
+        Object.assign(viewing, {
+          disabled: DataErase.contains(viewing.id)
+        })
+      )
+      .map(({ id, sessionId, videoId, disabled }) => (
         <div
           className={`${style.content}`}
           role="button"
           onClick={() => {
+            if (disabled) return;
             AppData.update(
               AppDataActions.Modal,
               <ViewingDetail
-                key={key}
+                key={id}
                 sessionId={sessionId}
                 videoId={videoId}
                 regionalAverageQoE={regionalAverageQoE}
@@ -94,11 +101,12 @@ class ViewingList extends Component {
           tabIndex="0"
         >
           <Viewing
-            key={key}
+            key={id + (disabled ? "_disabled" : "")}
             sessionId={sessionId}
             videoId={videoId}
             regionalAverageQoE={regionalAverageQoE}
             hourlyAverageQoE={hourlyAverageQoE}
+            disabled={disabled}
           />
         </div>
       ));
