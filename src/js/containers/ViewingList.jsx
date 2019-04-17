@@ -8,6 +8,7 @@ import { Services, LocationToService } from "../utils/Utils";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import style from "../../css/GridContainer.module.css";
+import ViewingDetail from "./ViewingDetail";
 
 class ViewingList extends Component {
   constructor() {
@@ -74,13 +75,32 @@ class ViewingList extends Component {
           startTime.getMonth() === date.getMonth()
       )
       .map(({ key, sessionId, videoId }) => (
-        <Viewing
-          key={key}
-          sessionId={sessionId}
-          videoId={videoId}
-          regionalAverageQoE={regionalAverageQoE}
-          hourlyAverageQoE={hourlyAverageQoE}
-        />
+        <div
+          className={`${style.content}`}
+          role="button"
+          onClick={() => {
+            AppData.update(
+              AppDataActions.Modal,
+              <ViewingDetail
+                key={key}
+                sessionId={sessionId}
+                videoId={videoId}
+                regionalAverageQoE={regionalAverageQoE}
+                hourlyAverageQoE={hourlyAverageQoE}
+              />
+            );
+          }}
+          onKeyPress={this.handleKeyPress}
+          tabIndex="0"
+        >
+          <Viewing
+            key={key}
+            sessionId={sessionId}
+            videoId={videoId}
+            regionalAverageQoE={regionalAverageQoE}
+            hourlyAverageQoE={hourlyAverageQoE}
+          />
+        </div>
       ));
     return (
       <div className={style.gridContainer}>
