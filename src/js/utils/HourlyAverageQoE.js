@@ -1,6 +1,10 @@
 import Api from "./Api";
 
 class HourlyAverageQoE {
+  constructor() {
+    this.cache = [];
+  }
+
   async fetchHourlyQoEAPI() {
     if (!window.navigator.onLine) return undefined;
     const response = await Api.hour();
