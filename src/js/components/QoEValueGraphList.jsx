@@ -35,11 +35,11 @@ const QoEValueGraphList = ({
       break;
   }
 
-  const unknown = "不明";
   const { country, subdivision } = region || {};
   const regionDisplayName = Country.isJapan(country)
     ? Subdivision.codeToName(subdivision)
     : Country.codeToName(country);
+  const unknown = "不明";
   const regionLabel =
     regionDisplayName === undefined ? unknown : regionDisplayName;
   const regionalAverageValue =
@@ -73,13 +73,20 @@ const QoEValueGraphList = ({
 };
 QoEValueGraphList.propTypes = {
   value: PropTypes.number.isRequired,
-  region: PropTypes.shape.isRequired,
-  regionalAverage: PropTypes.number.isRequired,
-  hour: PropTypes.number.isRequired,
-  hourlyAverage: PropTypes.number.isRequired,
+  region: PropTypes.shape({
+    country: PropTypes.string,
+    subdivision: PropTypes.string
+  }),
+  regionalAverage: PropTypes.number,
+  hour: PropTypes.number,
+  hourlyAverage: PropTypes.number,
   isDetail: PropTypes.bool
 };
 QoEValueGraphList.defaultProps = {
+  region: undefined,
+  regionalAverage: undefined,
+  hour: undefined,
+  hourlyAverage: undefined,
   isDetail: false
 };
 export default QoEValueGraphList;

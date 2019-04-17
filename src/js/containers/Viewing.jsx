@@ -157,12 +157,14 @@ class Viewing extends Component {
 Viewing.propTypes = {
   sessionId: PropTypes.string.isRequired,
   videoId: PropTypes.string.isRequired,
-  regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
-  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
+  regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE),
+  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE),
   disabled: PropTypes.bool
 };
 
 Viewing.defaultProps = {
+  regionalAverageQoE: new RegionalAverageQoE(),
+  hourlyAverageQoE: new HourlyAverageQoE(),
   disabled: false
 };
 

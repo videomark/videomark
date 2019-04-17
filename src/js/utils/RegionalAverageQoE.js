@@ -3,6 +3,7 @@ import Api from "./Api";
 class RegionalAverageQoE {
   constructor(regions = []) {
     this.regions = regions;
+    this.cache = {};
   }
 
   async fetchSubbdivisionQoEAPI({ country, subdivision }) {

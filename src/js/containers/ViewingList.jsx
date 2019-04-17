@@ -93,6 +93,7 @@ class ViewingList extends Component {
       )
       .map(({ id, sessionId, videoId, disabled }) => (
         <div
+          key={id + (disabled ? "_disabled" : "")}
           className={`${style.content}`}
           role="button"
           onClick={() => {
