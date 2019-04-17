@@ -22,16 +22,18 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
 
-    const siteFilter = AppData.get(AppDataActions.SiteFilter);
+    const now = new Date();
     this.state = {
-      monthFilter: AppData.get(AppDataActions.MonthFilter),
-      siteFilter
+      monthFilter: new Date(now.getFullYear(), now.getMonth()),
+      siteFilter: Object.keys(Services).reduce(
+        (a, key) => Object.assign(a, { [key]: true }),
+        {}
+      )
     };
   }
 
   setMonthFilter(monthFilter) {
     if (!IsOverMonth(monthFilter)) {
-      AppData.update(AppDataActions.MonthFilter, monthFilter);
       AppData.update(AppDataActions.ViewingList, state =>
         Object.assign(state, { date: monthFilter })
       );
@@ -40,7 +42,6 @@ class Header extends React.Component {
   }
 
   setSiteFilter(siteFilter) {
-    AppData.update(AppDataActions.SiteFilter, siteFilter);
     AppData.update(AppDataActions.ViewingList, state =>
       Object.assign(state, {
         sites: Object.entries(siteFilter)

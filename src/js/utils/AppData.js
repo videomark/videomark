@@ -1,7 +1,6 @@
 // アプリケーションの全体データ
 // コールバックを指定をし、対象のデータが更新された時に全箇所に流す;
 import AppDataActions from "./AppDataActions";
-import { Services } from "./Utils";
 
 class Data {
   constructor() {
@@ -70,16 +69,4 @@ class AppData {
 }
 
 const instance = new AppData();
-
-// デフォルト値の設定
-const siteFilter = {};
-Object.keys(Services).forEach(key => {
-  siteFilter[Services[key]] = true;
-});
-instance.update(AppDataActions.SiteFilter, siteFilter);
-
-const current = new Date();
-const afterDate = new Date(current.getFullYear(), current.getMonth());
-instance.update(AppDataActions.MonthFilter, afterDate);
-
 export default instance;
