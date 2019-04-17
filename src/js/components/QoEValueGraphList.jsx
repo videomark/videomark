@@ -54,7 +54,7 @@ const QoEValueGraphList = ({ qoe, average, isDetail }) => {
 };
 QoEValueGraphList.propTypes = {
   qoe: PropTypes.string.isRequired,
-  average: PropTypes.shape.isRequired,
+  average: PropTypes.arrayOf(PropTypes.shape).isRequired,
   isDetail: PropTypes.bool
 };
 QoEValueGraphList.defaultProps = {
