@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import style from "../../css/QoEValueGraph.module.css";
 
 const QoEValueGraph = ({ label, qoe, modal }) => {
+  if (qoe === undefined) return null;
   const valueBarStyle = { width: `${(qoe / 5.0) * 100}%` };
   return (
     <div className={style.qoeGraphRoot}>
@@ -22,7 +23,7 @@ const QoEValueGraph = ({ label, qoe, modal }) => {
             <div className={style.qoeBarGraphBase} />
           </div>
         </div>
-        <p className={style.qoeValue}>{qoe}</p>
+        <p className={style.qoeValue}>{qoe.toPrecision(2)}</p>
       </div>
     </div>
   );
@@ -30,7 +31,7 @@ const QoEValueGraph = ({ label, qoe, modal }) => {
 
 QoEValueGraph.propTypes = {
   label: PropTypes.string.isRequired,
-  qoe: PropTypes.string.isRequired,
+  qoe: PropTypes.number.isRequired,
   modal: PropTypes.bool
 };
 

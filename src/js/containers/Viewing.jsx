@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ViewingModel from "../utils/Viewing";
-import QoEValueGraph from "../components/QoEValueGraph";
+import QoEValueGraphList from "../components/QoEValueGraphList";
 import style from "../../css/MeasureContents.module.css";
 import { LocationToService } from "../utils/Utils";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
@@ -41,12 +41,15 @@ class Viewing extends Component {
     const { regionalAverageQoE } = this.props;
     const region = (await viewing.region) || {};
     this.setState({
+      region,
       regionalAverageQoE: await regionalAverageQoE.at(region)
     });
     const { hourlyAverageQoE } = this.props;
     const startTime = await viewing.startTime;
+    const hour = startTime.getHours();
     this.setState({
-      hourlyAverageQoE: await hourlyAverageQoE.at(startTime.getHours())
+      hour,
+      hourlyAverageQoE: await hourlyAverageQoE.at(hour)
     });
   }
 
@@ -57,7 +60,9 @@ class Viewing extends Component {
       thumbnail,
       startTime,
       qoe,
+      region,
       regionalAverageQoE,
+      hour,
       hourlyAverageQoE
     } = this.state;
 
@@ -72,29 +77,13 @@ class Viewing extends Component {
         </div>
         <div className={style.title}>{title}</div>
         <div style={{ width: "100%", height: "20px" }} />
-        <div className={style.qoeDate}>
-          <div className={style.userGraph}>
-            <div className={style.graph}>
-              <QoEValueGraph label="QoE" qoe={qoe.toString()} />
-            </div>
-          </div>
-          <div className={style.expanded}>
-            <div className={style.graph}>
-              {regionalAverageQoE !== undefined && (
-                <QoEValueGraph
-                  label="Regional"
-                  qoe={regionalAverageQoE.toString()}
-                />
-              )}
-              {hourlyAverageQoE !== undefined && (
-                <QoEValueGraph
-                  label="Hourly"
-                  qoe={hourlyAverageQoE.toString()}
-                />
-              )}
-            </div>
-          </div>
-        </div>
+        <QoEValueGraphList
+          value={qoe}
+          region={region}
+          regionalAverage={regionalAverageQoE}
+          hour={hour}
+          hourlyAverage={hourlyAverageQoE}
+        />
       </div>
     );
   }

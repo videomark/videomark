@@ -2,10 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import QoEValueGraph from "./QoEValueGraph";
 import style from "../../css/MeasureContents.module.css";
-import { createKey } from "../utils/Utils";
+import Country from "../utils/MeasureData/Country";
+import Subdivision from "../utils/MeasureData/Subdivision";
 
-const QoEValueGraphList = ({ qoe, average, isDetail }) => {
-  switch (Number(qoe)) {
+const QoEValueGraphList = ({
+  value,
+  region,
+  regionalAverage,
+  hour,
+  hourlyAverage,
+  isDetail
+}) => {
+  switch (value) {
     case -1:
       return (
         <div className={style.qoeDate}>
@@ -14,7 +22,7 @@ const QoEValueGraphList = ({ qoe, average, isDetail }) => {
           </div>
         </div>
       );
-    case 0: // FIXME: 値が得られないとき0になる
+    case undefined:
     case -2:
       return (
         <div className={style.qoeDate}>
@@ -27,34 +35,48 @@ const QoEValueGraphList = ({ qoe, average, isDetail }) => {
       break;
   }
 
+  const unknown = "不明";
+  const { country, subdivision } = region || {};
+  const regionDisplayName = Country.isJapan(country)
+    ? Subdivision.codeToName(subdivision)
+    : Country.codeToName(country);
+  const regionLabel =
+    regionDisplayName === undefined ? unknown : regionDisplayName;
+  const regionalAverageValue =
+    regionDisplayName === undefined ? 0 : regionalAverage;
+  const hourDisplayName = hour === undefined ? unknown : `${hour}時`;
+  const hourlyAverageValue = hour === undefined ? 0 : hourlyAverage;
+
   return (
     <div className={style.qoeDate}>
       <div className={style.userGraph}>
         <div className={style.graph}>
-          <QoEValueGraph
-            label="この動画再生時の体感品質値"
-            qoe={qoe}
-            modal={isDetail}
-          />
+          <QoEValueGraph label="QoE" qoe={value} modal={isDetail} />
         </div>
       </div>
       <div className={style.expanded}>
-        {average.map(item => (
-          <div key={createKey()} className={style.graph}>
-            <QoEValueGraph
-              label={isDetail ? item.modalLabel : item.label}
-              qoe={item.value}
-              modal={isDetail}
-            />
-          </div>
-        ))}
+        <div className={style.graph}>
+          <QoEValueGraph
+            label={regionLabel}
+            qoe={regionalAverageValue}
+            modal={isDetail}
+          />
+          <QoEValueGraph
+            label={hourDisplayName}
+            qoe={hourlyAverageValue}
+            modal={isDetail}
+          />
+        </div>
       </div>
     </div>
   );
 };
 QoEValueGraphList.propTypes = {
-  qoe: PropTypes.string.isRequired,
-  average: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  value: PropTypes.number.isRequired,
+  region: PropTypes.shape.isRequired,
+  regionalAverage: PropTypes.number.isRequired,
+  hour: PropTypes.number.isRequired,
+  hourlyAverage: PropTypes.number.isRequired,
   isDetail: PropTypes.bool
 };
 QoEValueGraphList.defaultProps = {
