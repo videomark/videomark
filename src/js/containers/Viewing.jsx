@@ -4,6 +4,8 @@ import ViewingModel from "../utils/Viewing";
 import QoEValueGraph from "../components/QoEValueGraph";
 import style from "../../css/MeasureContents.module.css";
 import { LocationToService } from "../utils/Utils";
+import RegionalAverageQoE from "../utils/RegionalAverageQoE";
+import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 
 const toTimeString = date => {
   return `${date.getFullYear()}/${date.getMonth() +
@@ -36,10 +38,28 @@ class Viewing extends Component {
       startTime: await viewing.startTime,
       qoe: await viewing.qoe
     });
+    const { regionalAverageQoE } = this.props;
+    const region = (await viewing.region) || {};
+    this.setState({
+      regionalAverageQoE: await regionalAverageQoE.at(region)
+    });
+    const { hourlyAverageQoE } = this.props;
+    const startTime = await viewing.startTime;
+    this.setState({
+      hourlyAverageQoE: await hourlyAverageQoE.at(startTime.getHours())
+    });
   }
 
   render() {
-    const { title, location, thumbnail, startTime, qoe } = this.state;
+    const {
+      title,
+      location,
+      thumbnail,
+      startTime,
+      qoe,
+      regionalAverageQoE,
+      hourlyAverageQoE
+    } = this.state;
 
     return (
       <div className={style.main}>
@@ -58,6 +78,22 @@ class Viewing extends Component {
               <QoEValueGraph label="QoE" qoe={qoe.toString()} />
             </div>
           </div>
+          <div className={style.expanded}>
+            <div className={style.graph}>
+              {regionalAverageQoE !== undefined && (
+                <QoEValueGraph
+                  label="Regional"
+                  qoe={regionalAverageQoE.toString()}
+                />
+              )}
+              {hourlyAverageQoE !== undefined && (
+                <QoEValueGraph
+                  label="Hourly"
+                  qoe={hourlyAverageQoE.toString()}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -66,7 +102,9 @@ class Viewing extends Component {
 
 Viewing.propTypes = {
   sessionId: PropTypes.string.isRequired,
-  videoId: PropTypes.string.isRequired
+  videoId: PropTypes.string.isRequired,
+  regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
+  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired
 };
 
 export default Viewing;
