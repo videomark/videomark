@@ -5,7 +5,6 @@ import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
 import { Services } from "../../utils/Utils";
 import SiteFilterButton from "./SiteFilterButton";
-import measureData from "../../utils/MeasureData";
 import style from "../../../css/Header.module.css";
 import tooltipStyle from "../../../css/Tooltip.module.css";
 
@@ -33,15 +32,23 @@ class Header extends React.Component {
   setMonthFilter(monthFilter) {
     if (!IsOverMonth(monthFilter)) {
       AppData.update(AppDataActions.MonthFilter, monthFilter);
+      AppData.update(AppDataActions.ViewingList, state =>
+        Object.assign(state, { date: monthFilter })
+      );
       this.setState({ monthFilter });
-      measureData.update();
     }
   }
 
   setSiteFilter(siteFilter) {
     AppData.update(AppDataActions.SiteFilter, siteFilter);
+    AppData.update(AppDataActions.ViewingList, state =>
+      Object.assign(state, {
+        sites: Object.entries(siteFilter)
+          .filter(([, enable]) => enable)
+          .map(([site]) => site)
+      })
+    );
     this.setState({ siteFilter });
-    measureData.update();
   }
 
   render() {
@@ -54,10 +61,6 @@ class Header extends React.Component {
               color="primary"
               className={style.monthBack}
               onClick={() => {
-                if (measureData.wait) {
-                  return;
-                }
-
                 const changedMonth = new Date(monthFilter.getTime());
                 changedMonth.setMonth(monthFilter.getMonth() - 1);
                 this.setMonthFilter(changedMonth);
@@ -77,10 +80,6 @@ class Header extends React.Component {
               color="primary"
               className={style.monthNext}
               onClick={() => {
-                if (measureData.wait) {
-                  return;
-                }
-
                 const changedMonth = new Date(monthFilter.getTime());
                 changedMonth.setMonth(monthFilter.getMonth() + 1);
                 this.setMonthFilter(changedMonth);
