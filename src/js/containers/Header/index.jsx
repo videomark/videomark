@@ -8,23 +8,14 @@ import SiteFilterButton from "./SiteFilterButton";
 import style from "../../../css/Header.module.css";
 import tooltipStyle from "../../../css/Tooltip.module.css";
 
-const IsOverMonth = monthFilter => {
-  const current = new Date();
-  const year = current.getFullYear();
-  const month = current.getMonth();
-
-  const currentDate = new Date(year, month);
-
-  return currentDate < monthFilter;
-};
+const now = () => new Date();
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
 
-    const now = new Date();
     this.state = {
-      monthFilter: new Date(now.getFullYear(), now.getMonth()),
+      monthFilter: now(),
       siteFilter: Object.keys(Services).reduce(
         (a, key) => Object.assign(a, { [key]: true }),
         {}
@@ -33,12 +24,12 @@ class Header extends React.Component {
   }
 
   setMonthFilter(monthFilter) {
-    if (!IsOverMonth(monthFilter)) {
-      AppData.update(AppDataActions.ViewingList, state =>
-        Object.assign(state, { date: monthFilter })
-      );
-      this.setState({ monthFilter });
-    }
+    if (now() < monthFilter) return;
+
+    AppData.update(AppDataActions.ViewingList, state =>
+      Object.assign(state, { date: monthFilter })
+    );
+    this.setState({ monthFilter });
   }
 
   setSiteFilter(siteFilter) {
