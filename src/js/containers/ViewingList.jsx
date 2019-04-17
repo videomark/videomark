@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Grid from "@material-ui/core/Grid";
 import Viewing from "./Viewing";
 import ChromeExtensionWrapper from "../utils/ChromeExtensionWrapper";
 import AppData from "../utils/AppData";
@@ -6,6 +7,7 @@ import AppDataActions from "../utils/AppDataActions";
 import { Services, LocationToService } from "../utils/Utils";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
+import style from "../../css/GridContainer.module.css";
 
 class ViewingList extends Component {
   constructor() {
@@ -64,7 +66,7 @@ class ViewingList extends Component {
       hourlyAverageQoE
     } = this.state;
 
-    return viewings
+    const viewingList = viewings
       .filter(({ location }) => sites.includes(LocationToService(location)))
       .filter(
         ({ startTime }) =>
@@ -80,6 +82,20 @@ class ViewingList extends Component {
           hourlyAverageQoE={hourlyAverageQoE}
         />
       ));
+    return (
+      <div className={style.gridContainer}>
+        <Grid
+          container
+          spacing={24}
+          direction="row"
+          alignItems="flex-start"
+          id={style.con}
+          className={viewingList.length === 0 ? "" : style.grid}
+        >
+          {viewingList}
+        </Grid>
+      </div>
+    );
   }
 }
 export default ViewingList;

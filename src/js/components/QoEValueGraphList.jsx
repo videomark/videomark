@@ -51,7 +51,7 @@ const QoEValueGraphList = ({
     <div className={style.qoeDate}>
       <div className={style.userGraph}>
         <div className={style.graph}>
-          <QoEValueGraph label="QoE" qoe={value} modal={isDetail} />
+          <QoEValueGraph label="品質" qoe={value} modal={isDetail} />
         </div>
       </div>
       <div className={style.expanded}>
