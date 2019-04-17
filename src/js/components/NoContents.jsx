@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import style from "../../../css/NoContents.module.css";
+import style from "../../css/NoContents.module.css";
 
 const NoContents = ({ title }) => {
   return (

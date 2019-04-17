@@ -10,6 +10,7 @@ import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import style from "../../css/GridContainer.module.css";
 import ViewingDetail from "./ViewingDetail";
 import DataErase from "../utils/DataErase";
+import NoContents from "../components/NoContents";
 
 class ViewingList extends Component {
   constructor() {
@@ -68,6 +69,16 @@ class ViewingList extends Component {
       hourlyAverageQoE
     } = this.state;
 
+    if (viewings.length === 0) {
+      return (
+        <div className={style.gridContainer}>
+          <Grid>
+            <NoContents title="まだ計測対象となる動画を視聴していません" />
+          </Grid>
+        </div>
+      );
+    }
+
     const viewingList = viewings
       .filter(({ location }) => sites.includes(LocationToService(location)))
       .filter(
@@ -110,6 +121,17 @@ class ViewingList extends Component {
           />
         </div>
       ));
+
+    if (viewingList.length === 0) {
+      return (
+        <div className={style.gridContainer}>
+          <Grid>
+            <NoContents />
+          </Grid>
+        </div>
+      );
+    }
+
     return (
       <div className={style.gridContainer}>
         <Grid
@@ -118,7 +140,7 @@ class ViewingList extends Component {
           direction="row"
           alignItems="flex-start"
           id={style.con}
-          className={viewingList.length === 0 ? "" : style.grid}
+          className={style.grid}
         >
           {viewingList}
         </Grid>
