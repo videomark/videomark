@@ -1,12 +1,12 @@
 // 計測データの取得を行う
 import ChromeExtensionWrapper from "../ChromeExtensionWrapper";
-import Api from "../Api";
 import AppData from "../AppData";
 import AppDataActions from "../AppDataActions";
 import Country from "./Country";
 import Subdivision from "./Subdivision";
 import Viewing from "../Viewing";
 import HourlyAverageQoE from "../HourlyAverageQoE";
+import RegionalAverageQoE from "../RegionalAverageQoE";
 
 const saturateQoe = average => {
   const averageFloor = Math.floor(average * 10) / 10;
@@ -50,55 +50,6 @@ class MeasureData {
       });
   }
 
-  async updateSubdivision(subdivisions) {
-    if (!("subdivisions" in this.average)) {
-      this.average.subdivisions = {};
-    }
-
-    const requestSubdivisions = subdivisions.filter(item => {
-      if (!(item.country in this.average.subdivisions)) {
-        return true;
-      }
-
-      if (item.subdivision in this.average.subdivisions[item.country]) {
-        return false;
-      }
-      return true;
-    });
-
-    if (requestSubdivisions.length === 0) {
-      return;
-    }
-
-    const requests = [];
-    requestSubdivisions.forEach(item => {
-      const request = Api.subdivision(item.country, item.subdivision)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(response);
-          }
-          return response.json();
-        })
-        .then(body => {
-          if (body.length === 0) {
-            return;
-          }
-          const { country, subdivision, data } = body[0];
-          if (!(country in this.average.subdivisions)) {
-            this.average.subdivisions[country] = {};
-          }
-          const average = Math.floor(data[0].average * 10) / 10;
-          this.average.subdivisions[country][subdivision] = average;
-        })
-        .catch(error => {
-          console.error(`VIDEOMARK: ${error}`);
-        });
-      requests.push(request);
-    });
-
-    await Promise.all(requests);
-  }
-
   async toQoeInclusiveData(storageData) {
     const viewingList = await Promise.all(
       this.toRequestIds(storageData).map(
@@ -126,7 +77,7 @@ class MeasureData {
       )
     );
 
-    const subdivisions = viewingList
+    const regions = viewingList
       .map(({ country, subdivision }) => ({
         country,
         subdivision
@@ -140,36 +91,34 @@ class MeasureData {
               r.subdivision === region.subdivision
           )
       );
-    await this.updateSubdivision(subdivisions);
-    const hourlyAverage = new HourlyAverageQoE();
-    this.average.hour = await hourlyAverage.init();
+
+    if (this.average.region === undefined) {
+      const regionalAverage = new RegionalAverageQoE(regions);
+      this.average.region = await regionalAverage.init();
+    }
+    if (this.average.hour === undefined) {
+      const hourlyAverage = new HourlyAverageQoE();
+      this.average.hour = await hourlyAverage.init();
+    }
 
     const result = viewingList.map(viewing => {
       const { country, subdivision } = viewing;
       const average = [];
-      if (
-        country in this.average.subdivisions &&
-        subdivision in this.average.subdivisions[country]
-      ) {
-        const subdivisionAverage = this.average.subdivisions[country][
-          subdivision
-        ];
-        const region = Country.isJapan(country)
-          ? Subdivision.codeToName(subdivision)
-          : Country.codeToName(country);
-        if (region === undefined) {
-          average.push({
-            label: "不明",
-            modalLabel: `地域平均: 不明`,
-            value: "0.0"
-          });
-        } else {
-          average.push({
-            label: region,
-            modalLabel: `地域平均: ${region}`,
-            value: saturateQoe(subdivisionAverage)
-          });
-        }
+      const region = Country.isJapan(country)
+        ? Subdivision.codeToName(subdivision)
+        : Country.codeToName(country);
+      if (region === undefined) {
+        average.push({
+          label: "不明",
+          modalLabel: `地域平均: 不明`,
+          value: "0.0"
+        });
+      } else {
+        average.push({
+          label: region,
+          modalLabel: `地域平均: ${region}`,
+          value: saturateQoe(this.average.region[country][subdivision])
+        });
       }
 
       const hour = viewing.startTime.getHours();
