@@ -51,18 +51,30 @@ const QoEValueGraphList = ({
     <div className={style.qoeDate}>
       <div className={style.userGraph}>
         <div className={style.graph}>
-          <QoEValueGraph label="品質" qoe={value} modal={isDetail} />
+          <QoEValueGraph
+            label={isDetail ? "視聴時の体感品質" : "体感品質"}
+            qoe={value}
+            modal={isDetail}
+          />
         </div>
       </div>
       <div className={style.expanded}>
         <div className={style.graph}>
           <QoEValueGraph
-            label={regionLabel}
+            label={
+              isDetail
+                ? `同じ地域の体感品質の平均 (${regionLabel})`
+                : regionLabel
+            }
             qoe={regionalAverageValue}
             modal={isDetail}
           />
           <QoEValueGraph
-            label={hourDisplayName}
+            label={
+              isDetail
+                ? `同じ時間帯の体感品質の平均 (${hourDisplayName})`
+                : hourDisplayName
+            }
             qoe={hourlyAverageValue}
             modal={isDetail}
           />

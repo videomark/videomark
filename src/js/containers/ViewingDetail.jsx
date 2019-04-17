@@ -97,6 +97,7 @@ class ViewingDetail extends Component {
           regionalAverage={regionalAverageQoE}
           hour={hour}
           hourlyAverage={hourlyAverageQoE}
+          isDetail
         />
         <Button
           color="secondary"
