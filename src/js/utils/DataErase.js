@@ -10,30 +10,24 @@ class DataErase {
   }
 
   async initialize() {
-    const promise = new Promise(resolve => {
-      ChromeExtensionWrapper.loadRemovedTarget(removedTargetIds => {
-        const eraseIds = [];
-        removedTargetIds.forEach(id => eraseIds.push(id));
+    const targets = await new Promise(resolve =>
+      ChromeExtensionWrapper.loadRemovedTarget(resolve)
+    );
+    if (targets.length > 0) await this.remove(targets);
 
-        ChromeExtensionWrapper.loadVideoIds(async savedVideo => {
-          const video = savedVideo
-            .filter(id => !eraseIds.includes(id))
-            .sort((a, b) => a.data.start_time - b.data.start_time);
-
-          for (let i = 0; i < video.length - MaxSaveCount; i += 1) {
-            eraseIds.push(video[i].id);
-          }
-
-          this.removedIds = eraseIds;
-          if (this.removedIds.length > 0) {
-            await this.remove(eraseIds);
-          }
-          resolve();
-        });
-      });
-    });
-
-    await promise;
+    const viewings = await new Promise(resolve =>
+      ChromeExtensionWrapper.loadVideoIds(resolve)
+    );
+    const ascViewings = viewings.sort(
+      (a, b) => a.data.start_time - b.data.start_time
+    );
+    if (MaxSaveCount < ascViewings.length) {
+      await this.remove(
+        ascViewings
+          .slice(0, ascViewings.length - MaxSaveCount)
+          .map(({ id }) => id)
+      );
+    }
   }
 
   add(id) {
