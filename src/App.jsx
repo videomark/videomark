@@ -4,44 +4,46 @@ import dataErase from "./js/utils/DataErase";
 import Modal from "./js/components/Modal";
 import "./App.css";
 import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
-import appData from "./js/utils/AppData";
+import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
 import ViewingList from "./js/containers/ViewingList";
 
 class App extends React.Component {
   constructor() {
     super();
-    this.state = { modal: { show: false, contents: null } };
-    this.setup = false;
+    this.state = { setup: true, modal: { show: false, contents: null } };
     this.measureContentsData = null;
   }
 
   async componentDidMount() {
+    const agreed = await new Promise(resolve =>
+      ChromeExtensionWrapper.loadAgreedTerm(resolve)
+    );
+    if (!agreed) {
+      const url = new URL(window.location.href);
+      url.pathname = "/terms.html";
+      window.location.href = url.href;
+      return;
+    }
     await dataErase.initialize();
-    appData.add(AppDataActions.Modal, this, "modalDataUpdateCallback");
+    // FIXME: ViewingListをrender()しないと表示が反映されない
+    AppData.update(AppDataActions.ViewingList, state => state);
+    AppData.add(AppDataActions.Modal, this, "modalDataUpdateCallback");
+    this.setState({ setup: false });
+  }
 
-    ChromeExtensionWrapper.loadAgreedTerm(value => {
-      if (!value) {
-        this.setup = true;
-        const url = new URL(window.location.href);
-        url.pathname = "/terms.html";
-        window.location.href = url.href;
+  modalDataUpdateCallback(data) {
+    this.setState({
+      modal: {
+        show: data !== null,
+        contents: data
       }
     });
   }
 
-  modalDataUpdateCallback(data) {
-    this.setState(prevState => {
-      const state = prevState;
-      state.modal.show = data !== null;
-      state.modal.contents = data;
-      return state;
-    });
-  }
-
   render() {
-    const { modal } = this.state;
-    if (this.setup) return null;
+    const { setup, modal } = this.state;
+    if (setup) return null;
     return (
       <div className="App">
         <div>
