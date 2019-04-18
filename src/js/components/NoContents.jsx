@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import style from "../../css/NoContents.module.css";
+import videoPlatforms from "../utils/videoPlatforms.json";
 
 const NoContents = ({ title }) => {
   return (
@@ -19,15 +20,11 @@ const NoContents = ({ title }) => {
       </p>
       <p>現在 QoE の計測が可能な動画配信サービスはこちらです:</p>
       <ul>
-        <li>
-          <a href="https://www.paravi.jp/">Paravi</a>
-        </li>
-        <li>
-          <a href="https://tver.jp/">TVer</a>
-        </li>
-        <li>
-          <a href="https://www.youtube.com/">YouTube</a>
-        </li>
+        {videoPlatforms.map(({ id, name, url }) => (
+          <li key={id}>
+            <a href={url}>{name}</a>
+          </li>
+        ))}
       </ul>
     </div>
   );

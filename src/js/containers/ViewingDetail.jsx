@@ -5,7 +5,7 @@ import QoEValueGraphList from "../components/QoEValueGraphList";
 import DataErase from "../utils/DataErase";
 import AppDataActions from "../utils/AppDataActions";
 import AppData from "../utils/AppData";
-import { LocationToService } from "../utils/Utils";
+import { urlToVideoPlatform } from "../utils/Utils";
 import style from "../../css/MeasureContents.module.css";
 import ViewingModel from "../utils/Viewing";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
@@ -84,7 +84,7 @@ class ViewingDetail extends Component {
           </a>
           <div className={style.movieInfo}>
             <span className={style.serviceName}>
-              {LocationToService(location)}
+              {urlToVideoPlatform(location).name}
             </span>
             <span className={style.startTime}>{toTimeString(startTime)}</span>
           </div>

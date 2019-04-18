@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import ViewingModel from "../utils/Viewing";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import style from "../../css/MeasureContents.module.css";
-import { LocationToService } from "../utils/Utils";
+import { urlToVideoPlatform } from "../utils/Utils";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import { CrossIcon, Refresh } from "../components/Icons";
@@ -26,7 +26,7 @@ class Viewing extends Component {
     this.viewing = new ViewingModel({ sessionId, videoId });
     this.state = {
       title: "",
-      location: "",
+      location: "#",
       thumbnail: "",
       startTime: new Date(),
       qoe: 0,
@@ -40,7 +40,7 @@ class Viewing extends Component {
     this.setState({
       id,
       title: await viewing.title,
-      location: LocationToService(await viewing.location),
+      location: await viewing.location,
       thumbnail: await viewing.thumbnail,
       startTime: await viewing.startTime,
       qoe: await viewing.qoe
@@ -143,7 +143,9 @@ class Viewing extends Component {
             alt={title}
           />
           <div className={style.movieInfo}>
-            <span className={style.serviceName}>{location}</span>
+            <span className={style.serviceName}>
+              {urlToVideoPlatform(location).name}
+            </span>
             <span className={style.startTime}>{toTimeString(startTime)}</span>
           </div>
         </div>

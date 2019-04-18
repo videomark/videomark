@@ -4,20 +4,21 @@ import Viewing from "./Viewing";
 import ChromeExtensionWrapper from "../utils/ChromeExtensionWrapper";
 import AppData from "../utils/AppData";
 import AppDataActions from "../utils/AppDataActions";
-import { Services, LocationToService } from "../utils/Utils";
+import { urlToVideoPlatform } from "../utils/Utils";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import style from "../../css/GridContainer.module.css";
 import ViewingDetail from "./ViewingDetail";
 import DataErase from "../utils/DataErase";
 import NoContents from "../components/NoContents";
+import videoPlatforms from "../utils/videoPlatforms.json";
 
 class ViewingList extends Component {
   constructor() {
     super();
     this.state = {
       viewings: [],
-      sites: Object.values(Services),
+      sites: videoPlatforms.map(({ id }) => id),
       date: new Date()
     };
   }
@@ -80,7 +81,7 @@ class ViewingList extends Component {
     }
 
     const viewingList = viewings
-      .filter(({ location }) => sites.includes(LocationToService(location)))
+      .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
       .filter(
         ({ startTime }) =>
           startTime.getFullYear() === date.getFullYear() &&

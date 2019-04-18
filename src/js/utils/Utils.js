@@ -1,23 +1,9 @@
+import videoPlatforms from "./videoPlatforms.json";
+
 export const isDevelop = () => process.env.NODE_ENV === "development";
 
-export const Services = {
-  youtube: "youtube",
-  paravi: "paravi",
-  tver: "tver"
-};
-
-export const LocationToService = location => {
-  const url = new window.URL(location);
-  let result = "";
-  if (url.host.includes("youtube")) {
-    result = Services.youtube;
-  } else if (url.host.includes("paravi")) {
-    result = Services.paravi;
-  } else if (url.host.includes("tver")) {
-    result = Services.tver;
-  }
-  return result;
-};
+export const urlToVideoPlatform = url =>
+  videoPlatforms.find(({ id }) => new window.URL(url).host.includes(id)) || {};
 
 export const viewingIdWithoutDateTimeFromSessionAndVideo = (session, video) => {
   return `${session}_${video}`;

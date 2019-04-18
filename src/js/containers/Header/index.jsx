@@ -3,7 +3,7 @@ import { IconButton } from "@material-ui/core";
 import { ArrowRight, ArrowLeft, Help } from "../../components/Icons";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
-import { Services } from "../../utils/Utils";
+import videoPlatforms from "../../utils/videoPlatforms.json";
 import SiteFilterButton from "./SiteFilterButton";
 import style from "../../../css/Header.module.css";
 import tooltipStyle from "../../../css/Tooltip.module.css";
@@ -16,8 +16,8 @@ class Header extends React.Component {
 
     this.state = {
       monthFilter: now(),
-      siteFilter: Object.keys(Services).reduce(
-        (a, key) => Object.assign(a, { [key]: true }),
+      siteFilter: videoPlatforms.reduce(
+        (a, { id }) => Object.assign(a, { [id]: true }),
         {}
       )
     };
@@ -85,36 +85,18 @@ class Header extends React.Component {
           <span className={tooltipStyle.tooltiptext}>
             視聴結果を表示する動画をサービスで絞り込みできます
           </span>
-          <div className={style.siteFilter}>
-            <SiteFilterButton
-              enabled={siteFilter[Services.paravi]}
-              service={Services.paravi}
-              callback={() => {
-                siteFilter[Services.paravi] = !siteFilter[Services.paravi];
-                this.setSiteFilter(siteFilter);
-              }}
-            />
-          </div>
-          <div className={style.siteFilter}>
-            <SiteFilterButton
-              enabled={siteFilter[Services.tver]}
-              service={Services.tver}
-              callback={() => {
-                siteFilter[Services.tver] = !siteFilter[Services.tver];
-                this.setSiteFilter(siteFilter);
-              }}
-            />
-          </div>
-          <div className={style.siteFilter}>
-            <SiteFilterButton
-              enabled={siteFilter[Services.youtube]}
-              service={Services.youtube}
-              callback={() => {
-                siteFilter[Services.youtube] = !siteFilter[Services.youtube];
-                this.setSiteFilter(siteFilter);
-              }}
-            />
-          </div>
+          {videoPlatforms.map(({ id, name }) => (
+            <div key={id} className={style.siteFilter}>
+              <SiteFilterButton
+                enabled={siteFilter[id]}
+                service={name}
+                callback={() => {
+                  siteFilter[id] = !siteFilter[id];
+                  this.setSiteFilter(siteFilter);
+                }}
+              />
+            </div>
+          ))}
         </div>
         <div className={style.helpRoot}>
           <IconButton
