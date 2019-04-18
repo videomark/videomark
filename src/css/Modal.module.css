@@ -107,9 +107,9 @@
 }
 
 @media all and (orientation: landscape) {
-    .modal .modal_inner {
-        overflow: scroll;
-    }
+  .modal .modal_inner {
+    overflow: auto;
+  }
 }
 
 @media (max-width: 600px){
