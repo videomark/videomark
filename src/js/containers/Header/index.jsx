@@ -3,10 +3,8 @@ import { IconButton } from "@material-ui/core";
 import { ArrowRight, ArrowLeft, Help } from "../../components/Icons";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
-import videoPlatforms from "../../utils/videoPlatforms.json";
-import SiteFilterButton from "./SiteFilterButton";
 import style from "../../../css/Header.module.css";
-import tooltipStyle from "../../../css/Tooltip.module.css";
+import SiteSelect from "./SiteSelect";
 
 const now = () => new Date();
 
@@ -15,11 +13,7 @@ class Header extends React.Component {
     super(props);
 
     this.state = {
-      monthFilter: now(),
-      siteFilter: videoPlatforms.reduce(
-        (a, { id }) => Object.assign(a, { [id]: true }),
-        {}
-      )
+      monthFilter: now()
     };
   }
 
@@ -32,19 +26,8 @@ class Header extends React.Component {
     this.setState({ monthFilter });
   }
 
-  setSiteFilter(siteFilter) {
-    AppData.update(AppDataActions.ViewingList, state =>
-      Object.assign(state, {
-        sites: Object.entries(siteFilter)
-          .filter(([, enable]) => enable)
-          .map(([site]) => site)
-      })
-    );
-    this.setState({ siteFilter });
-  }
-
   render() {
-    const { monthFilter, siteFilter } = this.state;
+    const { monthFilter } = this.state;
     return (
       <div className={style.root}>
         <div className={style.monthRoot}>
@@ -81,22 +64,8 @@ class Header extends React.Component {
             </IconButton>
           </div>
         </div>
-        <div className={`${style.iconRoot} ${tooltipStyle.tooltip}`}>
-          <span className={tooltipStyle.tooltiptext}>
-            視聴結果を表示する動画をサービスで絞り込みできます
-          </span>
-          {videoPlatforms.map(({ id, name }) => (
-            <div key={id} className={style.siteFilter}>
-              <SiteFilterButton
-                enabled={siteFilter[id]}
-                service={name}
-                callback={() => {
-                  siteFilter[id] = !siteFilter[id];
-                  this.setSiteFilter(siteFilter);
-                }}
-              />
-            </div>
-          ))}
+        <div className={`${style.iconRoot}`}>
+          <SiteSelect />
         </div>
         <div className={style.helpRoot}>
           <IconButton
