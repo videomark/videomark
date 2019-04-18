@@ -7,19 +7,22 @@ import style from "../../../css/Header.module.css";
 import SiteSelect from "./SiteSelect";
 
 const now = () => new Date();
+const monthLater = (date, n) => {
+  const tmp = new Date(date);
+  tmp.setMonth(date.getMonth() + n);
+  return tmp;
+};
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      monthFilter: now()
+      monthFilter: new Date(now().getFullYear(), now().getMonth())
     };
   }
 
   setMonthFilter(monthFilter) {
-    if (now() < monthFilter) return;
-
     AppData.update(AppDataActions.ViewingList, state =>
       Object.assign(state, { date: monthFilter })
     );
@@ -36,9 +39,7 @@ class Header extends React.Component {
               color="primary"
               className={style.monthBack}
               onClick={() => {
-                const changedMonth = new Date(monthFilter.getTime());
-                changedMonth.setMonth(monthFilter.getMonth() - 1);
-                this.setMonthFilter(changedMonth);
+                this.setMonthFilter(monthLater(monthFilter, -1));
               }}
             >
               <ArrowLeft />
@@ -55,10 +56,9 @@ class Header extends React.Component {
               color="primary"
               className={style.monthNext}
               onClick={() => {
-                const changedMonth = new Date(monthFilter.getTime());
-                changedMonth.setMonth(monthFilter.getMonth() + 1);
-                this.setMonthFilter(changedMonth);
+                this.setMonthFilter(monthLater(monthFilter, +1));
               }}
+              disabled={now() < monthLater(monthFilter, +1)}
             >
               <ArrowRight />
             </IconButton>
