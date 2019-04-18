@@ -17,20 +17,18 @@ const NoContents = ({ title }) => {
         の暫定値を動画の左上に表示します。動画の視聴終了後はこの計測結果一覧画面で
         QoE 値を確認できます。
       </p>
-      <p>
-        現在 QoE の計測が可能な動画配信サービスはこちらです:
-        <ul>
-          <li>
-            <a href="https://www.paravi.jp/">Paravi</a>
-          </li>
-          <li>
-            <a href="https://tver.jp/">TVer</a>
-          </li>
-          <li>
-            <a href="https://www.youtube.com/">YouTube</a>
-          </li>
-        </ul>
-      </p>
+      <p>現在 QoE の計測が可能な動画配信サービスはこちらです:</p>
+      <ul>
+        <li>
+          <a href="https://www.paravi.jp/">Paravi</a>
+        </li>
+        <li>
+          <a href="https://tver.jp/">TVer</a>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/">YouTube</a>
+        </li>
+      </ul>
     </div>
   );
 };
