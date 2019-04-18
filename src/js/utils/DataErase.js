@@ -5,6 +5,10 @@ import Api from "./Api";
 const MaxSaveCount = 2000;
 
 class DataErase {
+  constructor() {
+    this.removedIds = [];
+  }
+
   async initialize() {
     const promise = new Promise(resolve => {
       ChromeExtensionWrapper.loadRemovedTarget(removedTargetIds => {
