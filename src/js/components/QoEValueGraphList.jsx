@@ -2,8 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import QoEValueGraph from "./QoEValueGraph";
 import style from "../../css/MeasureContents.module.css";
-import Country from "../utils/Country";
-import Subdivision from "../utils/Subdivision";
+import RegionalAverageQoEGraph from "./RegionalAverageQoEGraph";
 
 const QoEValueGraphList = ({
   value,
@@ -35,15 +34,7 @@ const QoEValueGraphList = ({
       break;
   }
 
-  const { country, subdivision } = region || {};
-  const regionDisplayName = Country.isJapan(country)
-    ? Subdivision.codeToName(subdivision)
-    : Country.codeToName(country);
   const unknown = "不明";
-  const regionLabel =
-    regionDisplayName === undefined ? unknown : regionDisplayName;
-  const regionalAverageValue =
-    regionDisplayName === undefined ? 0 : regionalAverage;
   const hourDisplayName = hour === undefined ? unknown : `${hour}時`;
   const hourlyAverageValue = hour === undefined ? 0 : hourlyAverage;
 
@@ -60,14 +51,10 @@ const QoEValueGraphList = ({
       </div>
       <div className={style.expanded}>
         <div className={style.graph}>
-          <QoEValueGraph
-            label={
-              isDetail
-                ? `同じ地域の体感品質の平均 (${regionLabel})`
-                : regionLabel
-            }
-            qoe={regionalAverageValue}
-            modal={isDetail}
+          <RegionalAverageQoEGraph
+            region={region}
+            regionalAverage={regionalAverage}
+            isDetail={isDetail}
           />
           <QoEValueGraph
             label={
