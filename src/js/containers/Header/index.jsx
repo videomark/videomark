@@ -52,16 +52,17 @@ class Header extends React.Component {
             </p>
           </div>
           <div>
-            <IconButton
-              color="primary"
-              className={style.monthNext}
-              onClick={() => {
-                this.setMonthFilter(monthLater(monthFilter, +1));
-              }}
-              disabled={now() < monthLater(monthFilter, +1)}
-            >
-              <ArrowRight />
-            </IconButton>
+            {now() < monthLater(monthFilter, +1) ? null : (
+              <IconButton
+                color="primary"
+                className={style.monthNext}
+                onClick={() => {
+                  this.setMonthFilter(monthLater(monthFilter, +1));
+                }}
+              >
+                <ArrowRight />
+              </IconButton>
+            )}
           </div>
         </div>
         <div className={`${style.iconRoot}`}>
