@@ -11,6 +11,7 @@ import { CrossIcon, Refresh } from "../components/Icons";
 import DataErase from "../utils/DataErase";
 import AppData from "../utils/AppData";
 import AppDataActions from "../utils/AppDataActions";
+import NoImage from "../../images/noimage.svg";
 
 const toTimeString = date => {
   return `${date.getFullYear()}/${date.getMonth() +
@@ -141,6 +142,9 @@ class Viewing extends Component {
             }
             src={thumbnail}
             alt={title}
+            onError={e => {
+              e.target.src = NoImage;
+            }}
           />
           <div className={style.movieInfo}>
             <span className={style.serviceName}>

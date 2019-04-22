@@ -10,6 +10,7 @@ import style from "../../css/MeasureContents.module.css";
 import ViewingModel from "../utils/Viewing";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
+import NoImage from "../../images/noimage.svg";
 
 const toTimeString = date => {
   return `${date.getFullYear()}/${date.getMonth() +
@@ -80,6 +81,9 @@ class ViewingDetail extends Component {
               className={`${style.thumbnail} ${style.modalThumbnail}`}
               src={thumbnail}
               alt={title}
+              onError={e => {
+                e.target.src = NoImage;
+              }}
             />
           </a>
           <div className={style.movieInfo}>
