@@ -14,7 +14,8 @@ chrome.webRequest.onHeadersReceived.addListener(
   ["blocking", "responseHeaders"]
 );
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason !== "install") return;
   chrome.browserAction.getPopup({}, url => {
     chrome.tabs.create({ url });
   });
