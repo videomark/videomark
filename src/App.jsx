@@ -7,6 +7,7 @@ import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
 import ViewingList from "./js/containers/ViewingList";
+import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 
 class App extends React.Component {
   constructor() {
@@ -50,6 +51,7 @@ class App extends React.Component {
           <div className="qoe-log-view">
             <Header />
             <ViewingList />
+            <OfflineNoticeSnackbar />
           </div>
           <Modal
             className={modal.show ? "modal-open" : ""}

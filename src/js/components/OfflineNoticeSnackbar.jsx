@@ -1,0 +1,55 @@
+import React, { Component } from "react";
+import { Snackbar, SnackbarContent, IconButton } from "@material-ui/core";
+import { Refresh } from "@material-ui/icons";
+
+class OfflineNoticeSnackbar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      message: "現在オフラインです。"
+    };
+    this.open = this.open.bind(this);
+    this.close = this.close.bind(this);
+  }
+
+  componentDidMount() {
+    if (!window.navigator.onLine) this.open();
+    window.addEventListener("offline", this.open);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("offline", this.open);
+  }
+
+  open() {
+    this.setState({ open: true });
+  }
+
+  close() {
+    this.setState({ open: false });
+  }
+
+  render() {
+    const { open, message } = this.state;
+    return (
+      <Snackbar open={open} onClose={this.close}>
+        <SnackbarContent
+          message={<span id="message-id">{message}</span>}
+          action={[
+            <IconButton
+              key="refresh"
+              aria-label="Refresh"
+              color="inherit"
+              onClick={() => window.location.reload()}
+            >
+              <Refresh />
+            </IconButton>
+          ]}
+        />
+      </Snackbar>
+    );
+  }
+}
+
+export default OfflineNoticeSnackbar;
