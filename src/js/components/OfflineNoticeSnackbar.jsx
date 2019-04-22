@@ -7,7 +7,8 @@ class OfflineNoticeSnackbar extends Component {
     super(props);
     this.state = {
       open: false,
-      message: "現在オフラインです。"
+      message:
+        "現在オフラインです。最新の計測結果を取得するには再接続してください。"
     };
     this.open = this.open.bind(this);
     this.close = this.close.bind(this);
