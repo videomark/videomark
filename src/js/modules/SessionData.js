@@ -7,8 +7,9 @@ import Config from "./Config";
 import VideoData from "./VideoData";
 
 export default class SessionData {
-  constructor(id) {
+  constructor(id, version) {
     this.session_id = id;
+    this.version = version;
     this.startTime = 0;
     this.endTime = 0;
     // eslint-disable-next-line no-nested-ternary
@@ -300,6 +301,7 @@ export default class SessionData {
     this.sequence += 1;
 
     return {
+      version: this.version,
       date: new Date().toISOString(),
       startTime: this.startTime,
       endTime: this.endTime,

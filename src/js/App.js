@@ -3,9 +3,10 @@ import uuidv4 from "uuid/v4";
 import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
+import { version } from "../../package.json";
 
 // --- New Session --- //
-const session = new SessionData(uuidv4());
+const session = new SessionData(uuidv4(), version);
 
 // --- UI --- //
 const ui = new UI(document.body);
