@@ -31,8 +31,8 @@ export default class YouTubeTypeHandler {
 
             if (!stats.fmt ||
                 !stats.afmt ||
-                !response.streamingData ||
-                !(response.streamingData.adaptiveFormats instanceof Array) ||
+                //  !response.streamingData ||
+                //  !(response.streamingData.adaptiveFormats instanceof Array) ||
                 !response.videoDetails ||
                 !response.videoDetails.title ||
                 !response.videoDetails.thumbnail ||
@@ -49,7 +49,7 @@ export default class YouTubeTypeHandler {
         return new URL(location.href).host === "m.youtube.com";
     }
 
-    static mobile_bitrate_table() {
+    static bitrate_table() {
         return {
             tiny: { l: 666666, h: 1000000 },
             small: { l: 666666, h: 1000000 },
@@ -57,7 +57,9 @@ export default class YouTubeTypeHandler {
             large: { l: 2500000, h: 4000000 },
             hd720: { l: 5000000, h: 7500000 },
             hd1080: { l: 8000000, h: 12000000 },
-            highres: { l: 16000000, h: 24000000 }
+            hd1440: { l: 16000000, h: 24000000 },
+            hd2160: { l: 45000000, h: 68000000 },
+            highres: { l: 45000000, h: 68000000 }
         }
     }
 
@@ -105,12 +107,7 @@ export default class YouTubeTypeHandler {
 
     get_video_width() {
         try {
-            if (YouTubeTypeHandler.is_mobile())
-                return this.elm.videoWidth;
-
-            const { video } = this.get_streaming_info();
-
-            return video.width;
+            return this.elm.videoWidth;
         } catch (e) {
             return -1;
         }
@@ -118,12 +115,7 @@ export default class YouTubeTypeHandler {
 
     get_video_height() {
         try {
-            if (YouTubeTypeHandler.is_mobile())
-                return this.elm.videoHeight;
-
-            const { video } = this.get_streaming_info();
-
-            return video.height;
+            return this.elm.videoHeight;
         } catch (e) {
             return -1;
         }
@@ -131,15 +123,9 @@ export default class YouTubeTypeHandler {
 
     get_bitrate() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
-                const f = this.get_framerate() === 60 ? 'h' : 'l';
-                const q = this.player.getPlaybackQuality();
-                return YouTubeTypeHandler.mobile_bitrate_table()[q][f];
-            }
-
-            const { video, audio } = this.get_streaming_info();
-
-            return video.bitrate + audio.bitrate;
+            const q = this.player.getPlaybackQuality();
+            const f = this.get_framerate() === 60 ? 'h' : 'l';
+            return YouTubeTypeHandler.bitrate_table()[q][f];
         } catch (e) {
             return -1;
         }
@@ -161,14 +147,8 @@ export default class YouTubeTypeHandler {
 
     get_framerate() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
-                const { optimal_format } = this.player.getVideoStats();
-                return optimal_format.endsWith('60') ? 60 : 30;
-            }
-
-            const { video } = this.get_streaming_info();
-
-            return video.fps;
+            const { optimal_format } = this.player.getVideoStats();
+            return optimal_format.endsWith('60') ? 60 : 30;
         } catch (e) {
             return -1;
         }
@@ -176,15 +156,8 @@ export default class YouTubeTypeHandler {
 
     get_segment_domain() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
-                const video_data = this.player.getVideoStats();
-                const { lvh } = video_data;
-                return lvh
-            }
-
-            const { video } = this.get_streaming_info();
-
-            return new URL(video.url).hostname
+            const { lvh } = this.player.getVideoStats();
+            return lvh
         } catch (e) {
             return null;
         }
@@ -256,24 +229,45 @@ export default class YouTubeTypeHandler {
         return videoId;
     }
 
-    get_streaming_info() {
-        const stats = this.player.getVideoStats();
-        const response = this.player.getPlayerResponse();
-
-        if (!stats || !stats.fmt || !stats.afmt || !response || !response.streamingData ||
-            !response.streamingData.adaptiveFormats)
-            return null;
-
-        let video = response.streamingData.adaptiveFormats.find(e => e.itag === Number.parseInt(stats.fmt, 10));
-        if (!video && response.streamingData.formats)
-            video = response.streamingData.formats.find(e => e.itag === Number.parseInt(stats.fmt, 10));
-
-        let audio = response.streamingData.adaptiveFormats.find(e => e.itag === Number.parseInt(stats.afmt, 10));
-        if (!audio && response.streamingData.formats)
-            audio = response.streamingData.formats.find(e => e.itag === Number.parseInt(stats.afmt, 10));
-
-        return { video, audio };
+    get_view_count() {
+        try {
+            if (YouTubeTypeHandler.is_mobile()) {
+                const e = document.querySelector('.slim-video-metadata-title-and-badges div span span');
+                if (!e) throw new Error();
+                const s = e.getAttribute('aria-label');
+                if (!s) throw new Error();
+                const n = s.match(/\d/g);
+                if (!n) throw new Error();
+                return Number.parseInt(n.join(''), 10);
+            }
+            const { videoDetails: { viewCount } } = this.player.getPlayerResponse();
+            if (!viewCount) throw new Error();
+            return Number.parseInt(viewCount, 10);
+        } catch (e) {
+            return -1;
+        }
     }
+
+    /*
+        get_streaming_info() {
+            const stats = this.player.getVideoStats();
+            const response = this.player.getPlayerResponse();
+    
+            if (!stats || !stats.fmt || !stats.afmt || !response || !response.streamingData ||
+                !response.streamingData.adaptiveFormats)
+                return null;
+    
+            let video = response.streamingData.adaptiveFormats.find(e => e.itag === Number.parseInt(stats.fmt, 10));
+            if (!video && response.streamingData.formats)
+                video = response.streamingData.formats.find(e => e.itag === Number.parseInt(stats.fmt, 10));
+    
+            let audio = response.streamingData.adaptiveFormats.find(e => e.itag === Number.parseInt(stats.afmt, 10));
+            if (!audio && response.streamingData.formats)
+                audio = response.streamingData.formats.find(e => e.itag === Number.parseInt(stats.afmt, 10));
+    
+            return { video, audio };
+        }
+    */
 
     is_main_video(video) {
         return this.player.contains(video)
