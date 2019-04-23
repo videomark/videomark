@@ -241,6 +241,8 @@ Paraviは、Video.js + Shaka Player で実装されている。上記のフィ�
 -   video.event\_\*.playTime
     -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
 
+プレイヤー依存実装と互換性確認のコードは [ParaviTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/ParaviTypeHandler.js) にて定義されている。
+
 #### TVer 固有の対応 (フジテレビ(CX)以外)
 
 TVerは、Video.jsで実装されている。上記のフィールドの値は以下の API を使用し取得している
@@ -267,6 +269,8 @@ TVerは、Video.jsで実装されている。上記のフィールドの値は�
     -   videojs.Player currentTime()
 -   video.event\_\*.playTime
     -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
+
+プレイヤー依存実装と互換性確認のコードは [TVerTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/TVerTypeHandler.js) にて定義されている。
 
 上記 2 つの対応は、実装時点 (20180827) のものに対応した、これらの取得方法は、提供者側のさじ加減ひとつで変わってしまう。そのため、より汎用的な取得方法が望ましい。
 
@@ -296,6 +300,8 @@ YouTubeのiFrameAPIを使用して上記のフィールドの値を取得して�
     -   videojs.Player currentTime()
 -   video.event\_\*.playTime
     -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
+
+プレイヤー依存実装と互換性確認のコードは [YouTubeTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/YouTubeTypeHandler.js) にて定義されている。
 
 ##### YouTube (モバイル) 固有の対応
 
