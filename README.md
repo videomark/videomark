@@ -8,9 +8,7 @@
 
 webpack. ビルド設定は `webpack.config.js` で変更するかコマンドラインで指定します。VideoMark 拡張機能用のディレクトリに直接書き込みたいときは `-o` オプションを指定します。
 
-```
-webpack -o path/to/videomark-extension/sodium.js
-```
+    webpack -o path/to/videomark-extension/sodium.js
 
 ## 設定方法
 
@@ -59,7 +57,7 @@ ChromeExtension/sodium.js
         #movie_player.ytp-autohide:hover:after {
             opacity: 0;
         }`;
-    
+
     // tver
     Config.style.tver = `#playerWrapper > .video-js:after {
                 content: 'QoE: ';
@@ -82,7 +80,7 @@ ChromeExtension/sodium.js
             #playerWrapper.vjs-paused > .video-js:hover:after {
                 opacity: 0;
             }`;
-    
+
     // paravi
     Config.style.paravi = `.paravi-player .controls:after {
             content: 'QoE: ';
@@ -105,7 +103,7 @@ ChromeExtension/sodium.js
         .paravi-player .controls.inactive:hover:after {
             opacity: 0;
     }`;
-    
+
     // デフォルトResourceTiminingAPIのバッファサイズ
     Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 
@@ -119,6 +117,7 @@ ChromeExtension/sodium.js
 ## 送信データ構造
 
     {
+      version                         : 送信を行ったsodium.jsのバージョン
       date                            : 送信日時(Date.now())
       startTime                       : データ収集開始時間(DOMHighResTimeStamp, 初回は0)
       endTime                         : データ収集終了時間(DOMHighResTimeStamp)
@@ -132,6 +131,7 @@ ChromeExtension/sodium.js
           property: {                 // videoのプロパティ
             uuid                      : videoを識別するためのUUID
             id                        : <video>タグのid属性
+            viewCount                 : 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1
             class                     : <video>タグのclass属性の配列
             src
             width
@@ -192,7 +192,7 @@ ChromeExtension/sodium.js
       resource_timing[]               : Resource Timing API(PerformaceResourceTiming)
       REMOTE_ADDR                     : fluentdが挿入した外部IPアドレス
     }
-    
+
     発生時刻や計測時刻は DOMHighResTimeStamp とする
     window.performance.now() で現在の DOMHighResTimeStamp を取得する
 
@@ -312,22 +312,20 @@ YouTubeのiFrameAPIを使用して上記のフィールドの値を取得して�
 
 Chrome Extension のストレージに以下のデータを記録する。
 
-```
-{
-    session_id              : セッション ID (UUID)
-    video_id                : videoを識別するための UUID
-    user_agent              : ユーザーエージェント
-    location                : window.location.href 
-    resolution              : 最大、最小の解像度
-    media_size              : videoの再生時間(秒)
-    domain_name             : videoのセグメント配布ドメイン
-    start_time              : 視聴開始時間
-    end_time                : -1
-    latest_qoe              : 最新(暫定) QoE 値の配列
-    thumbnail               : サムネイル画像の URL
-    title                   : 動画のタイトル
-}
-```
+    {
+        session_id              : セッション ID (UUID)
+        video_id                : videoを識別するための UUID
+        user_agent              : ユーザーエージェント
+        location                : window.location.href 
+        resolution              : 最大、最小の解像度
+        media_size              : videoの再生時間(秒)
+        domain_name             : videoのセグメント配布ドメイン
+        start_time              : 視聴開始時間
+        end_time                : -1
+        latest_qoe              : 最新(暫定) QoE 値の配列
+        thumbnail               : サムネイル画像の URL
+        title                   : 動画のタイトル
+    }
 
 ## 送信サンプルデータ
 
