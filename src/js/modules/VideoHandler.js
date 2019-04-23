@@ -109,6 +109,15 @@ export default class VideoHandler {
         return id_by_video_holder;
     }
 
+    get_view_count() {
+        let view_count = -1;
+
+        if (this.handler.get_view_count instanceof Function)
+            view_count = this.handler.get_view_count();
+
+        return view_count;
+    }
+
     is_main_video(video) {
         if (this.handler.is_main_video instanceof Function)
             return this.handler.is_main_video(video);

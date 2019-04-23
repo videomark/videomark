@@ -214,6 +214,7 @@ export default class VideoData {
             property: {
                 uuid: this.uuid,
                 id: id_val,
+                viewCount: this.video_handler.get_view_count(),
                 'class': class_val,
                 src: this.video_elm.src,
                 domainName: this.video_handler.get_segment_domain(),
