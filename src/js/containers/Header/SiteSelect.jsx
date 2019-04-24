@@ -39,6 +39,7 @@ class SiteSelect extends Component {
         page: 0
       })
     );
+    window.scrollTo(window.scrollX, 0);
   }
 
   render() {

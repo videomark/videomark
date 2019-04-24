@@ -10,6 +10,7 @@ const Pager = ({ page, maxPage }) => {
     AppData.update(AppDataActions.ViewingList, state =>
       Object.assign(state, { page: page - 1 })
     );
+    window.scrollTo(window.scrollX, 0);
   };
   const BackButton = (
     <Button size="small" onClick={handleBack} disabled={page === 0}>
@@ -21,6 +22,7 @@ const Pager = ({ page, maxPage }) => {
     AppData.update(AppDataActions.ViewingList, state =>
       Object.assign(state, { page: page + 1 })
     );
+    window.scrollTo(window.scrollX, 0);
   };
   const NextButton = (
     <Button size="small" onClick={handleNext} disabled={page === maxPage - 1}>

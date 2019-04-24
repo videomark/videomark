@@ -22,6 +22,7 @@ class MonthSelect extends Component {
       Object.assign(state, { date, page: 0 })
     );
     this.setState({ date });
+    window.scrollTo(window.scrollX, 0);
   }
 
   render() {
