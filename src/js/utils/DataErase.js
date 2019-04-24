@@ -2,7 +2,7 @@ import ChromeExtensionWrapper from "./ChromeExtensionWrapper";
 import Api from "./Api";
 
 // 保持する最大数
-const MaxSaveCount = 2000;
+const MaxSaveCount = 1e4;
 
 class DataErase {
   constructor() {
