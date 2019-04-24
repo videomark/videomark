@@ -1,17 +1,18 @@
 import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid";
-import Viewing from "./Viewing";
-import ChromeExtensionWrapper from "../utils/ChromeExtensionWrapper";
-import AppData from "../utils/AppData";
-import AppDataActions from "../utils/AppDataActions";
-import { urlToVideoPlatform } from "../utils/Utils";
-import RegionalAverageQoE from "../utils/RegionalAverageQoE";
-import HourlyAverageQoE from "../utils/HourlyAverageQoE";
-import style from "../../css/GridContainer.module.css";
-import ViewingDetail from "./ViewingDetail";
-import DataErase from "../utils/DataErase";
-import NoContents from "../components/NoContents";
-import videoPlatforms from "../utils/videoPlatforms.json";
+import Viewing from "../Viewing";
+import ChromeExtensionWrapper from "../../utils/ChromeExtensionWrapper";
+import AppData from "../../utils/AppData";
+import AppDataActions from "../../utils/AppDataActions";
+import { urlToVideoPlatform } from "../../utils/Utils";
+import RegionalAverageQoE from "../../utils/RegionalAverageQoE";
+import HourlyAverageQoE from "../../utils/HourlyAverageQoE";
+import style from "../../../css/GridContainer.module.css";
+import ViewingDetail from "../ViewingDetail";
+import DataErase from "../../utils/DataErase";
+import NoContents from "../../components/NoContents";
+import videoPlatforms from "../../utils/videoPlatforms.json";
+import Pager from "./Pager";
 
 class ViewingList extends Component {
   constructor() {
@@ -19,7 +20,9 @@ class ViewingList extends Component {
     this.state = {
       viewings: [],
       sites: videoPlatforms.map(({ id }) => id),
-      date: new Date()
+      date: new Date(),
+      page: 0,
+      perPage: 60
     };
   }
 
@@ -67,7 +70,9 @@ class ViewingList extends Component {
       sites,
       date,
       regionalAverageQoE,
-      hourlyAverageQoE
+      hourlyAverageQoE,
+      page,
+      perPage
     } = this.state;
 
     if (viewings.length === 0) {
@@ -134,6 +139,8 @@ class ViewingList extends Component {
       );
     }
 
+    const maxPage = Math.ceil(viewingList.length / perPage);
+
     return (
       <div className={style.gridContainer}>
         <Grid
@@ -144,8 +151,9 @@ class ViewingList extends Component {
           id={style.con}
           className={style.grid}
         >
-          {viewingList}
+          {viewingList.slice(page * perPage, (page + 1) * perPage)}
         </Grid>
+        {maxPage <= 1 ? null : <Pager page={page} maxPage={maxPage} />}
       </div>
     );
   }

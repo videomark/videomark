@@ -19,7 +19,7 @@ class MonthSelect extends Component {
 
   setDate(date) {
     AppData.update(AppDataActions.ViewingList, state =>
-      Object.assign(state, { date })
+      Object.assign(state, { date, page: 0 })
     );
     this.setState({ date });
   }

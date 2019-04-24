@@ -35,7 +35,8 @@ class SiteSelect extends Component {
       .filter(id => value === "" || value === id);
     AppData.update(AppDataActions.ViewingList, state =>
       Object.assign(state, {
-        sites: ids
+        sites: ids,
+        page: 0
       })
     );
   }
