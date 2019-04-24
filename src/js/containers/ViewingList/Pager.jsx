@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { MobileStepper, Button } from "@material-ui/core";
+import { Typography, MobileStepper, Button } from "@material-ui/core";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
 import AppDataActions from "../../utils/AppDataActions";
 import AppData from "../../utils/AppData";
@@ -32,14 +32,19 @@ const Pager = ({ page, maxPage }) => {
   );
 
   return (
-    <MobileStepper
-      variant="progress"
-      steps={maxPage}
-      position="static"
-      activeStep={page}
-      backButton={BackButton}
-      nextButton={NextButton}
-    />
+    <>
+      <Typography variant="caption" paragraph>
+        {`${page} / ${maxPage - 1}`}
+      </Typography>
+      <MobileStepper
+        variant="progress"
+        steps={maxPage}
+        position="static"
+        activeStep={page}
+        backButton={BackButton}
+        nextButton={NextButton}
+      />
+    </>
   );
 };
 
