@@ -36,7 +36,7 @@ class ViewingList extends Component {
           location: data.location,
           startTime: new Date(data.start_time)
         }))
-        .sort((a, b) => a.startTime - b.startTime)
+        .sort((a, b) => b.startTime - a.startTime)
     });
     const regions = viewings
       .map(({ data }) => {
