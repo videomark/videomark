@@ -16,6 +16,7 @@
     "webRequest",
     "webRequestBlocking",
     "storage",
+    "unlimitedStorage",
     "*://*.tver.jp/*",
     "*://*.paravi.jp/*",
     "*://*.youtube.com/*"
