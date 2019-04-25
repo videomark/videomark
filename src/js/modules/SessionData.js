@@ -30,13 +30,6 @@ export default class SessionData {
   }
 
   /**
-   * 保持しているvideoの数
-   */
-  get_video_length() {
-    return this.video.length;
-  }
-
-  /**
    * 保持しているvideoの総フレーム数、ドロップフレーム数
    */
   get_video_status() {
@@ -50,6 +43,15 @@ export default class SessionData {
       qoe = qoe === null && qoes.length !== 0 ? qoes[qoes.length - 1].qoe : qoe;
     });
     return [total, dropped, qoe];
+  }
+
+  /**
+   * videoの利用可否
+   */
+  get_video_availability() {
+    const main_video = this._get_main_video();
+    if (main_video === undefined) return false;
+    return main_video.is_available();
   }
 
   /**

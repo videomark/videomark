@@ -17,8 +17,8 @@ const ui = new UI(document.body);
 function video_search() {
   const video_elms = document.getElementsByTagName("video");
   session.set_video_elms(video_elms);
-  // ビデオ要素がないとき (YouTube でのビデオ切替時などにも発生)
-  if (session.get_video_length() === 0) {
+  // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
+  if (!session.get_video_availability()) {
     ui.remove_status();
   }
 }
@@ -72,7 +72,7 @@ function video_search() {
     // --- update quality info --- //
     session.update_quality_info();
 
-    if (session.get_video_length() === 0) return;
+    if (!session.get_video_availability()) return;
 
     // --- show status  --- //
     const [total, dropped, qoe] = session.get_video_status();
