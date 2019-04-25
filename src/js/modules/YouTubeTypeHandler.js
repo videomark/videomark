@@ -73,7 +73,7 @@ export default class YouTubeTypeHandler {
         this.observer = new MutationObserver(ms => {
             ms.forEach(m => {
                 if (m.attributeName === 'class') {
-                    const find = this.player.getAttribute(m.attributeName).split(' ').find(e => e === 'ad-showing')
+                    const find = this.player.classList.contains('ad-showing');
                     if (this.cm && !find) {
                         this.cm = false;
                         this.cm_listeners.forEach(e => e.call(null, {
