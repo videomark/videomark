@@ -90,7 +90,7 @@ export default class YouTubeTypeHandler {
                 }
             });
         });
-        this.observer.observe(this.player, { attributes: true });
+        this.observer.observe(this.player, { attributes: true, attributeFilter: ['class'] });
     }
 
     get_duration() {
