@@ -72,23 +72,21 @@ export default class YouTubeTypeHandler {
 
         this.observer = new MutationObserver(ms => {
             ms.forEach(m => {
-                if (m.attributeName === 'class') {
-                    const find = this.player.classList.contains('ad-showing');
-                    if (this.cm && !find) {
-                        this.cm = false;
-                        this.cm_listeners.forEach(e => e.call(null, {
-                            cm: this.cm,
-                            pos: this.get_current_time(null),
-                            time: Date.now()
-                        }));
-                    } else if (!this.cm && find) {
-                        this.cm = true;
-                        this.cm_listeners.forEach(e => e.call(null, {
-                            cm: this.cm,
-                            pos: this.get_current_time(null),
-                            time: Date.now()
-                        }));
-                    }
+                const find = this.player.classList.contains('ad-showing');
+                if (this.cm && !find) {
+                    this.cm = false;
+                    this.cm_listeners.forEach(e => e.call(null, {
+                        cm: this.cm,
+                        pos: this.get_current_time(null),
+                        time: Date.now()
+                    }));
+                } else if (!this.cm && find) {
+                    this.cm = true;
+                    this.cm_listeners.forEach(e => e.call(null, {
+                        cm: this.cm,
+                        pos: this.get_current_time(null),
+                        time: Date.now()
+                    }));
                 }
             });
         });
