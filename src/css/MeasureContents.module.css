@@ -39,6 +39,7 @@
   object-fit: cover;
   min-height: 100%;
   max-height: calc(236px * 9 / 16);
+  vertical-align: top;
 }
 
 .removeButton {
