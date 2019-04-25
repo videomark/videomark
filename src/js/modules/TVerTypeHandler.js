@@ -68,6 +68,17 @@ export default class TVerTypeHandler {
         return !videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].ima3.el.contains(video);
     }
 
+    static is_cm() {
+        const adVideoNodeList = videojs
+            .getPlayers()
+            [Object.keys(videojs.getPlayers())[0]].ima3.el.getElementsByTagName(
+                "video"
+            );
+        return Array.from(adVideoNodeList).some(
+            e => e.parentNode.style.display === "block"
+        );
+    }
+
     static is_tver_type() {
         try {
             if (videojs &&
