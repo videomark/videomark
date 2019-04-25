@@ -206,9 +206,8 @@ export default class VideoData {
      */
     get() {
         const id_str = this.video_elm.getAttribute('id');
-        const id_val = (id_str && id_str.length !== 0) ? id_str : "";
-        const class_str = this.video_elm.getAttribute('class');
-        const class_val = (class_str && class_str.length !== 0) ? class_str.split(' ') : [];
+        const id_val = (id_str && id_str.length !== 0) ? id_str : '';
+        const class_val = Array.from(this.video_elm.classList);
 
         const val = {
             property: {
