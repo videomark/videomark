@@ -3,6 +3,7 @@ import uuidv4 from "uuid/v4";
 import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
+import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import { version } from "../../package.json";
 
 // --- New Session --- //
@@ -54,6 +55,9 @@ function video_search() {
   console.log(
     `VIDEOMARK: New Session start Session ID[${session.get_session_id()}]`
   );
+
+  // --- YouTube Hook --- //
+  YouTubeTypeHandler.hook_loadVideoByPlayerVars();
 
   // --- video list --- //
   video_search();
