@@ -190,7 +190,7 @@ ChromeExtension/sodium.js
         ...
       ],
       resource_timing[]               : Resource Timing API(PerformaceResourceTiming)
-      REMOTE_ADDR                     : fluentdが挿入した外部IPアドレス
+      REMOTE_ADDR                     : fluentdが挿入した(末尾オクテット削除済み)外部IPアドレス
     }
 
     発生時刻や計測時刻は DOMHighResTimeStamp とする
