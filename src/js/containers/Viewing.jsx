@@ -112,9 +112,7 @@ class Viewing extends Component {
             await DataErase.remove(id);
             AppData.update(AppDataActions.ViewingList, state =>
               Object.assign(state, {
-                viewings: state.viewings.filter(viewing =>
-                  DataErase.contains(viewing.id)
-                )
+                viewings: state.viewings.filter(viewing => viewing.id !== id)
               })
             );
           }}
