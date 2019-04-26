@@ -2,7 +2,7 @@ import Config from "./Config";
 
 function generate_qoe_style(qoe) {
   let result = "";
-  let content = qoe ? `QoE: ${qoe}` : "計測中...";
+  const content = qoe ? `QoE: ${qoe}` : "計測中...";
   const { host } = new window.URL(window.location.href);
   if (host.includes("youtube")) {
     result = `#movie_player:after {
@@ -40,7 +40,7 @@ export default class UI {
   update_status(total, dropped, qoe) {
     console.log(
       `VIDEOMARK: latest qoe = ${
-        qoe ? qoe : "no data"
+        qoe || "no data"
       }, frame drop: ${dropped}/${total}`
     );
     if (!this.qoe_val_element) {
