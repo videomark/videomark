@@ -60,3 +60,7 @@
   -webkit-box-shadow: 0 2px 12px #ccc;
   box-shadow: 0 2px 12px #ccc;
 }
+
+.content:focus {
+  outline: 0px;
+}
