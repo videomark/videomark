@@ -19,7 +19,7 @@ function video_search() {
   session.set_video_elms(video_elms);
   // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
   if (!session.get_video_availability()) {
-    ui.remove_status();
+    ui.remove_element();
   }
 }
 
@@ -64,10 +64,10 @@ function video_search() {
     video_search();
   }, Config.get_search_video_interval());
 
-  // --- initialize latest qoe view element (style) --- //
-  ui.insert_style();
+  // --- initialize latest qoe view element --- //
+  ui.insert_element();
 
-  // --- update latest qoe view element (style) --- //
+  // --- update latest qoe view element --- //
   window.setInterval(() => {
     // --- update quality info --- //
     session.update_quality_info();

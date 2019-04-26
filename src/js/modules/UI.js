@@ -45,12 +45,12 @@ export default class UI {
     );
     if (!this.qoe_val_element) {
       console.warn(`VIDEOMARK: qoe_val_element not found`);
-      this.insert_style();
+      this.insert_element();
     }
     this.qoe_val_element.textContent = generate_qoe_style(qoe);
   }
 
-  remove_status() {
+  remove_element() {
     if (this.qoe_val_element) {
       const head = document.getElementsByTagName("head")[0];
       if (head) {
@@ -66,7 +66,7 @@ export default class UI {
     }
   }
 
-  insert_style() {
+  insert_element() {
     const style = document.createElement("style");
     const rule = document.createTextNode(Config.get_style());
     style.appendChild(rule);
