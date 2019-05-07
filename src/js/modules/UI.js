@@ -1,24 +1,7 @@
 import Config from "./Config";
 
-function generate_qoe_style(qoe) {
-  let result = "";
-  const content = qoe ? `QoE: ${qoe}` : "計測中...";
-  const { host } = new window.URL(window.location.href);
-  if (host.includes("youtube")) {
-    result = `#movie_player:after {
-        content: '${content}';
-      }`;
-  } else if (host.includes("tver")) {
-    result = `#playerWrapper > .video-js:after {
-        content: '${content}';
-      }`;
-  } else if (host.includes("paravi")) {
-    result = `.paravi-player .controls:after {
-        content: '${content}';
-      }`;
-  }
-
-  return result;
+function generate_qoe_content(qoe) {
+  return qoe ? `QoE: ${qoe}` : "計測中...";
 }
 
 /**
@@ -27,53 +10,55 @@ function generate_qoe_style(qoe) {
 export default class UI {
   /**
    *
-   * @param {HTMLElement} target insert status to target
+   * @param {string} target CSS selector string
    */
   constructor(target) {
     this.target = target;
-    // this.elm = document.createElement("div");
 
-    // Layout style
-    this.qoe_val_element = null;
+    // Inserted element
+    this.element = null;
   }
 
   update_status(total, dropped, qoe) {
     console.log(
-      `VIDEOMARK: latest qoe = ${
-        qoe || "no data"
-      }, frame drop: ${dropped}/${total}`
+      `VIDEOMARK: latest qoe = ${qoe ||
+        "no data"}, frame drop: ${dropped}/${total}`
     );
-    if (!this.qoe_val_element) {
-      console.warn(`VIDEOMARK: qoe_val_element not found`);
+    if (!this.element) {
       this.insert_element();
     }
-    this.qoe_val_element.textContent = generate_qoe_style(qoe);
+    this.element.textContent = generate_qoe_content(qoe);
   }
 
   remove_element() {
-    if (this.qoe_val_element) {
-      const head = document.getElementsByTagName("head")[0];
-      if (head) {
-        try {
-          head.removeChild(this.qoe_val_element);
-        } catch (error) {
-          console.log(
-            `VIDEOMARK: qoe_val_element not found under head element.`
-          );
-        }
-      }
-      this.qoe_val_element = null;
+    if (this.element) {
+      this.element.remove();
+      this.element = null;
     }
   }
 
   insert_element() {
-    const style = document.createElement("style");
-    const rule = document.createTextNode(Config.get_style());
-    style.appendChild(rule);
-    document.getElementsByTagName("head")[0].appendChild(style);
+    const target = document.querySelector(this.target);
+    if (target === null) {
+      console.error(
+        `VIDEOMARK: No element found matching query string "${this.target}"`
+      );
+      return;
+    }
 
-    this.qoe_val_element = document.createElement("style");
-    document.getElementsByTagName("head")[0].appendChild(this.qoe_val_element);
-    // this.qoe_val_element.appendChild(document.createTextNode(""));
+    const e = name => (childlen = []) => {
+      const element = document.createElement(name);
+      childlen.forEach(c => element.appendChild(c));
+      return element;
+    };
+    const style = e("style")([document.createTextNode(Config.get_style())]);
+    document.head.appendChild(style);
+
+    this.element = e("div")();
+    this.element.id = Config.get_ui_id();
+    Object.entries(Config.get_ui_inline_style()).forEach(([key, value]) => {
+      this.element.style[key] = value;
+    });
+    target.appendChild(this.element);
   }
 }

@@ -9,7 +9,7 @@ import { version } from "../../package.json";
 const session = new SessionData(uuidv4(), version);
 
 // --- UI --- //
-const ui = new UI(document.body);
+const ui = new UI(Config.get_ui_target());
 
 /**
  * video の検索と保持しているvideoの更新
@@ -63,9 +63,6 @@ function video_search() {
     // --- update video list --- //
     video_search();
   }, Config.get_search_video_interval());
-
-  // --- initialize latest qoe view element --- //
-  ui.insert_element();
 
   // --- update latest qoe view element --- //
   window.setInterval(() => {

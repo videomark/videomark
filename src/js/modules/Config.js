@@ -30,15 +30,37 @@ export default class Config {
     return this.event_type_names;
   }
 
+  static get_ui_id() {
+    return this.ui.id;
+  }
+
+  static get_ui_inline_style() {
+    return this.ui.inlineStyle;
+  }
+
+  static get_ui_target() {
+    const { host } = new window.URL(window.location.href);
+    let result = "";
+    if (host.includes("youtube")) {
+      result = this.ui.youtube.target;
+    } else if (host.includes("tver")) {
+      result = this.ui.tver.target;
+    } else if (host.includes("paravi")) {
+      result = this.ui.paravi.target;
+    }
+
+    return result;
+  }
+
   static get_style() {
     const { host } = new window.URL(window.location.href);
     let result = "";
     if (host.includes("youtube")) {
-      result = this.style.youtube;
+      result = this.ui.youtube.style;
     } else if (host.includes("paravi")) {
-      result = this.style.paravi;
+      result = this.ui.paravi.style;
     } else if (host.includes("tver")) {
-      result = this.style.tver;
+      result = this.ui.tver.style;
     }
 
     return result;
@@ -101,81 +123,73 @@ Config.event_type_names = [
   "canplay"
 ];
 
-// QoE値表示用のstyle
-// 動画サービスのプレイヤーでコントローラが表示されるタイミングだけQoE値を表示
+// 表示用
+// 動画サービスのプレイヤーでコントローラが表示されるタイミングだけ表示
 // :hover 疑似クラスなどでなく、表示タイミングはプレイヤー実装に委ねる
-// コントローラ表示時または非表示時にクラスが付与される要素に疑似要素を追加する
-Config.style = {};
+Config.ui = {
+  id: "__videomark_ui",
+  inlineStyle: {
+    background: "rgba(0, 161, 255, 0.5)",
+    padding: "5px 10px",
+    borderRadius: "12px",
+    color: "white",
+    fontSize: "16px",
+    lineHeight: 1
+  }
+};
 
-// YouTube ではコンロール非表示時に #movie_player に .ytp-qutohide 付与
-Config.style.youtube = `#movie_player:after {
-    position: absolute;
-    z-index: 1000001;
-    top: 12px;
-    left: 12px;
-    background: rgba(0, 161, 255, 0.5);
-    padding: 5px 10px;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    line-height: 1;
-    transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
+// YouTube ではコンロール非表示時に #movie_player に .ytp-autohide 付与
+Config.ui.youtube = {
+  target: "#movie_player",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
 }
-
-#movie_player.ytp-fullscreen:after {
-    top: calc(20px + 2em);
+.ytp-fullscreen > #${Config.ui.id} {
+  top: calc(20px + 2em);
 }
-
-#movie_player.ytp-autohide:after {
-    opacity: 0;
-}`;
+.ytp-autohide > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
 
 // TVer ではユーザ操作を見て .vjs-user-(in)active を .video-js に付与
 // .vjs-user-inactive になるより先にマウスホバー解除で .not-hover 付与
 // そのタイミングでは .vjs-user-active でもコントロールが隠れることに注意
 // .video-js 要素は複数あるので #playerWrapper 配下のものに限定する
-Config.style.tver = `#playerWrapper > .video-js:after {
-    position: absolute;
-    z-index: 1000001;
-    top: calc(12px + 2em);
-    left: 12px;
-    background: rgba(0, 161, 255, 0.5);
-    padding: 5px 10px;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    line-height: 1;
-    transition: 1.0s cubic-bezier(0.4, 0.09, 0, 1.6);
+Config.ui.tver = {
+  target: "#playerWrapper > .video-js",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: calc(12px + 2em);
+  left: 12px;
+  transition: 1.0s cubic-bezier(0.4, 0.09, 0, 1.6);
 }
-#playerWrapper > .video-js.vjs-user-active:after {
-    opacity: 1;
-}
-#playerWrapper > .video-js.vjs-user-inactive:after,
-#playerWrapper > .video-js.not-hover:after {
-    opacity: 0;
-}`;
+.vjs-user-inactive > #${Config.ui.id},
+.not-hover > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
 
 // Paravi ではコントロール非表示時に .(in)active を .controls に付与
 // .controls 要素は複数あるので .paravi-player 配下のものに限定する
-Config.style.paravi = `.paravi-player .controls:after {
-    position: absolute;
-    z-index: 1000001;
-    top: 12px;
-    left: 12px;
-    background: rgba(0, 161, 255, 0.5);
-    padding: 5px 10px;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    line-height: 1;
-    transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
+Config.ui.paravi = {
+  target: ".paravi-player .controls",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
 }
-.paravi-player .controls:active:after {
-    opacity: 1;
-}
-.paravi-player .controls.inactive:after {
-    opacity: 0;
-}`;
+.inactive > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
 
 // デフォルトResourceTiminingAPIのバッファサイズ
 Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
