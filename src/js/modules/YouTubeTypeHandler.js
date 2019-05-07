@@ -15,7 +15,7 @@ class YouTubeTypeHandler {
 
                 return false;
 
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const q = player.getPlaybackQuality();
                 if (!q || q === 'unknown')
                     return false;
@@ -42,7 +42,16 @@ class YouTubeTypeHandler {
         }
     }
 
+    static can_get_streaming_info() {
+        if (YouTubeTypeHandler.is_mobile())
+            return false;
+        //  YouTube for TV
+        //  music.youtube.com
+        return true;
+    }
+
     static is_mobile() {
+        // eslint-disable-next-line no-restricted-globals
         return new URL(location.href).host === "m.youtube.com";
     }
 
@@ -91,7 +100,7 @@ class YouTubeTypeHandler {
         }
     }
 
-    static converte_adaptive_formats(str) {
+    static convert_adaptive_formats(str) {
         const ret = [];
         // eslint-disable-next-line no-undef
         decodeURIComponent(str)
@@ -165,10 +174,10 @@ class YouTubeTypeHandler {
 
     get_bitrate() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const f = this.get_framerate() === 60 ? 'h' : 'l';
                 const q = this.player.getPlaybackQuality();
-                return YouTubeTypeHandler.mobile_bitrate_table()[q][f];
+                return YouTubeTypeHandler.bitrate_table()[q][f];
             }
 
             const { video, audio } = this.get_streaming_info();
@@ -195,14 +204,14 @@ class YouTubeTypeHandler {
 
     get_framerate() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const { optimal_format } = this.player.getVideoStats();
                 return optimal_format.endsWith('60') ? 60 : 30;
             }
 
             const { video } = this.get_streaming_info();
 
-            return Number.parseInt(video.fps, 10);
+            return Number.parseFloat(video.fps, 10);
         } catch (e) {
             return -1;
         }
@@ -210,7 +219,7 @@ class YouTubeTypeHandler {
 
     get_segment_domain() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const video_data = this.player.getVideoStats();
                 const { lvh } = video_data;
                 return lvh
@@ -248,7 +257,7 @@ class YouTubeTypeHandler {
     get_video_thumbnail() {
         let url;
 
-        if (YouTubeTypeHandler.is_mobile()) {
+        if (!YouTubeTypeHandler.can_get_streaming_info()) {
             const i = this.get_id_by_video_holder();
             return `https://img.youtube.com/vi/${i}/hqdefault.jpg`;
         }
@@ -267,7 +276,7 @@ class YouTubeTypeHandler {
     get_id_by_video_holder() {
         let videoId;
 
-        if (YouTubeTypeHandler.is_mobile()) {
+        if (!YouTubeTypeHandler.can_get_streaming_info()) {
             const q = this.player.getPlaybackQuality();
             if (!q || q === 'unknown')
                 return videoId;
@@ -292,7 +301,7 @@ class YouTubeTypeHandler {
 
     get_view_count() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const e = document.querySelector('.slim-video-metadata-title-and-badges div span span');
                 if (!e) throw new Error();
                 const s = e.getAttribute('aria-label');
@@ -311,7 +320,7 @@ class YouTubeTypeHandler {
 
     get_streaming_info() {
         const stats = this.player.getVideoStats();
-        const formats = YouTubeTypeHandler.converte_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
         const video = formats.find(e => e.itag === stats.fmt, 10);
         const audio = formats.find(e => e.itag === stats.afmt, 10);
         return { video, audio };
