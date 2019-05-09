@@ -1,4 +1,4 @@
-export default class YouTubeTypeHandler {
+class YouTubeTypeHandler {
     static is_youtube_type() {
         try {
 
@@ -15,13 +15,12 @@ export default class YouTubeTypeHandler {
 
                 return false;
 
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const q = player.getPlaybackQuality();
                 if (!q || q === 'unknown')
                     return false;
                 return true;
             }
-
 
             if (!(player.getPlayerResponse instanceof Function))
                 return false;
@@ -31,8 +30,6 @@ export default class YouTubeTypeHandler {
 
             if (!stats.fmt ||
                 !stats.afmt ||
-                //  !response.streamingData ||
-                //  !(response.streamingData.adaptiveFormats instanceof Array) ||
                 !response.videoDetails ||
                 !response.videoDetails.title ||
                 !response.videoDetails.thumbnail ||
@@ -45,7 +42,16 @@ export default class YouTubeTypeHandler {
         }
     }
 
+    static can_get_streaming_info() {
+        if (YouTubeTypeHandler.is_mobile())
+            return false;
+        //  YouTube for TV
+        //  music.youtube.com
+        return true;
+    }
+
     static is_mobile() {
+        // eslint-disable-next-line no-restricted-globals
         return new URL(location.href).host === "m.youtube.com";
     }
 
@@ -61,6 +67,53 @@ export default class YouTubeTypeHandler {
             hd2160: { l: 45000000, h: 68000000 },
             highres: { l: 45000000, h: 68000000 }
         }
+    }
+
+    /**
+     * ytd-palyerにsodium用のフィールド追加
+     * 初期化が終わっていない段階で値にアクセスした場合エラー値を返す
+     */
+    static async hook_loadVideoByPlayerVars() {
+        // eslint-disable-next-line no-restricted-globals
+        const { host } = new URL(location.href)
+        if (!(host === "www.youtube.com" || host === "m.youtube.com"))
+            return;
+
+        let elm;
+        for (; ;) {
+            elm = document.querySelector('#ytd-player');
+            if (elm) break;
+            // eslint-disable-next-line no-await-in-loop
+            await new Promise(resolve => setTimeout(() => resolve(), 300));
+        }
+        const player = await elm.getPlayerPromise();
+        if (!player.sodiumHookedFunc) {
+            //  console.log('--- registering ---');
+            // eslint-disable-next-line no-undef
+            YouTubeTypeHandler.sodiumAdaptiveFmts = ytplayer.config ? ytplayer.config.args.adaptive_fmts : null;
+            player.sodiumHookedFunc = player.loadVideoByPlayerVars;
+            // eslint-disable-next-line func-names, prefer-arrow-callback
+            player.loadVideoByPlayerVars = function (arg) { // thisを変えられないためアロー演算子は使わない
+                YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
+                return this.sodiumHookedFunc(arg);
+            }
+        }
+    }
+
+    static convert_adaptive_formats(str) {
+        const ret = [];
+        // eslint-disable-next-line no-undef
+        decodeURIComponent(str)
+            .split(',')
+            .forEach(s => {
+                const l = {};
+                s.split('&').map(ss => {
+                    const [key, value] = ss.split('=');
+                    l[key] = value;
+                });
+                ret.push(l);
+            })
+        return ret;
     }
 
     constructor(elm) {
@@ -121,9 +174,15 @@ export default class YouTubeTypeHandler {
 
     get_bitrate() {
         try {
-            const q = this.player.getPlaybackQuality();
-            const f = this.get_framerate() === 60 ? 'h' : 'l';
-            return YouTubeTypeHandler.bitrate_table()[q][f];
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
+                const f = this.get_framerate() === 60 ? 'h' : 'l';
+                const q = this.player.getPlaybackQuality();
+                return YouTubeTypeHandler.bitrate_table()[q][f];
+            }
+
+            const { video, audio } = this.get_streaming_info();
+
+            return Number.parseInt(video.bitrate, 10) + Number.parseInt(audio.bitrate, 10);
         } catch (e) {
             return -1;
         }
@@ -145,8 +204,14 @@ export default class YouTubeTypeHandler {
 
     get_framerate() {
         try {
-            const { optimal_format } = this.player.getVideoStats();
-            return optimal_format.endsWith('60') ? 60 : 30;
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
+                const { optimal_format } = this.player.getVideoStats();
+                return optimal_format.endsWith('60') ? 60 : 30;
+            }
+
+            const { video } = this.get_streaming_info();
+
+            return Number.parseFloat(video.fps, 10);
         } catch (e) {
             return -1;
         }
@@ -154,8 +219,15 @@ export default class YouTubeTypeHandler {
 
     get_segment_domain() {
         try {
-            const { lvh } = this.player.getVideoStats();
-            return lvh
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
+                const video_data = this.player.getVideoStats();
+                const { lvh } = video_data;
+                return lvh
+            }
+
+            const { video } = this.get_streaming_info();
+
+            return new URL(video.url).hostname
         } catch (e) {
             return null;
         }
@@ -185,7 +257,7 @@ export default class YouTubeTypeHandler {
     get_video_thumbnail() {
         let url;
 
-        if (YouTubeTypeHandler.is_mobile()) {
+        if (!YouTubeTypeHandler.can_get_streaming_info()) {
             const i = this.get_id_by_video_holder();
             return `https://img.youtube.com/vi/${i}/hqdefault.jpg`;
         }
@@ -204,7 +276,7 @@ export default class YouTubeTypeHandler {
     get_id_by_video_holder() {
         let videoId;
 
-        if (YouTubeTypeHandler.is_mobile()) {
+        if (!YouTubeTypeHandler.can_get_streaming_info()) {
             const q = this.player.getPlaybackQuality();
             if (!q || q === 'unknown')
                 return videoId;
@@ -229,7 +301,7 @@ export default class YouTubeTypeHandler {
 
     get_view_count() {
         try {
-            if (YouTubeTypeHandler.is_mobile()) {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const e = document.querySelector('.slim-video-metadata-title-and-badges div span span');
                 if (!e) throw new Error();
                 const s = e.getAttribute('aria-label');
@@ -246,26 +318,13 @@ export default class YouTubeTypeHandler {
         }
     }
 
-    /*
-        get_streaming_info() {
-            const stats = this.player.getVideoStats();
-            const response = this.player.getPlayerResponse();
-    
-            if (!stats || !stats.fmt || !stats.afmt || !response || !response.streamingData ||
-                !response.streamingData.adaptiveFormats)
-                return null;
-    
-            let video = response.streamingData.adaptiveFormats.find(e => e.itag === Number.parseInt(stats.fmt, 10));
-            if (!video && response.streamingData.formats)
-                video = response.streamingData.formats.find(e => e.itag === Number.parseInt(stats.fmt, 10));
-    
-            let audio = response.streamingData.adaptiveFormats.find(e => e.itag === Number.parseInt(stats.afmt, 10));
-            if (!audio && response.streamingData.formats)
-                audio = response.streamingData.formats.find(e => e.itag === Number.parseInt(stats.afmt, 10));
-    
-            return { video, audio };
-        }
-    */
+    get_streaming_info() {
+        const stats = this.player.getVideoStats();
+        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+        const video = formats.find(e => e.itag === stats.fmt, 10);
+        const audio = formats.find(e => e.itag === stats.afmt, 10);
+        return { video, audio };
+    }
 
     is_main_video(video) {
         return this.player.contains(video)
@@ -283,3 +342,7 @@ export default class YouTubeTypeHandler {
         this.observer.disconnect();
     }
 }
+
+YouTubeTypeHandler.sodiumAdaptiveFmts = null;
+
+export default YouTubeTypeHandler;
