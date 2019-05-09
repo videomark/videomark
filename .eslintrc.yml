@@ -1,16 +1,11 @@
 extends:
   - airbnb-base
   - prettier
-  - plugin:import/typescript
 env:
   browser: true
-parser: "@typescript-eslint/parser"
 plugins:
   - prettier
-  - "@typescript-eslint"
 rules:
-  "@typescript-eslint/no-unused-vars": error
-  no-unused-vars: "off"
   camelcase: "warn"
   no-underscore-dangle: "warn"
 globals:

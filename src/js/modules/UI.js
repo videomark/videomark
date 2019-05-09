@@ -1,6 +1,8 @@
-import ReactDOM from "react-dom";
-import Config from "../Config";
-import Status from "./components/Status";
+import Config from "./Config";
+
+function generate_qoe_content(qoe) {
+  return qoe ? `QoE: ${qoe}` : "計測中...";
+}
 
 /**
  *
@@ -25,7 +27,7 @@ export default class UI {
     if (!this.element) {
       this.insert_element();
     }
-    ReactDOM.render(Status({ qoe }), this.element);
+    this.element.textContent = generate_qoe_content(qoe);
   }
 
   remove_element() {
