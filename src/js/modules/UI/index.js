@@ -1,8 +1,5 @@
-import Config from "./Config";
-
-function generate_qoe_content(qoe) {
-  return qoe ? `QoE: ${qoe}` : "計測中...";
-}
+import Config from "../Config";
+import Status from "./Status";
 
 /**
  *
@@ -17,6 +14,7 @@ export default class UI {
 
     // Inserted element
     this.element = null;
+    this.status = new Status();
   }
 
   update_status(total, dropped, qoe) {
@@ -27,11 +25,12 @@ export default class UI {
     if (!this.element) {
       this.insert_element();
     }
-    this.element.textContent = generate_qoe_content(qoe);
+    this.status.update({ qoe });
   }
 
   remove_element() {
     if (this.element) {
+      this.status.detach();
       this.element.remove();
       this.element = null;
     }
@@ -56,9 +55,8 @@ export default class UI {
 
     this.element = e("div")();
     this.element.id = Config.get_ui_id();
-    Object.entries(Config.get_ui_inline_style()).forEach(([key, value]) => {
-      this.element.style[key] = value;
-    });
+    this.element.attachShadow({ mode: "open" });
+    this.status.attach(this.element.shadowRoot);
     target.appendChild(this.element);
   }
 }

@@ -34,10 +34,6 @@ export default class Config {
     return this.ui.id;
   }
 
-  static get_ui_inline_style() {
-    return this.ui.inlineStyle;
-  }
-
   static get_ui_target() {
     const { host } = new window.URL(window.location.href);
     let result = "";
@@ -127,15 +123,7 @@ Config.event_type_names = [
 // 動画サービスのプレイヤーでコントローラが表示されるタイミングだけ表示
 // :hover 疑似クラスなどでなく、表示タイミングはプレイヤー実装に委ねる
 Config.ui = {
-  id: "__videomark_ui",
-  inlineStyle: {
-    background: "rgba(0, 161, 255, 0.5)",
-    padding: "5px 10px",
-    borderRadius: "12px",
-    color: "white",
-    fontSize: "16px",
-    lineHeight: 1
-  }
+  id: "__videomark_ui"
 };
 
 // YouTube ではコンロール非表示時に #movie_player に .ytp-autohide 付与

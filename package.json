@@ -5,6 +5,7 @@
   "author": "soar-vixen@acutus.co.jp",
   "license": "ISC",
   "dependencies": {
+    "lit-html": "^1.0.0",
     "msgpack-lite": "^0.1.26",
     "uuid": "^3.3.2"
   },
