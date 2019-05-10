@@ -1,9 +1,13 @@
 import { html, render } from "lit-html";
 
+const details = state =>
+  html`
+    <pre>${JSON.stringify(state, null, "  ")}</pre>
+  `;
+
 export default class Status {
   constructor() {
-    this.root = null;
-    this.state = {};
+    this.detach();
   }
 
   attach(root) {
@@ -12,10 +16,13 @@ export default class Status {
 
   detach() {
     this.root = null;
+    this.state = {
+      open: false
+    };
   }
 
   get template() {
-    const { qoe } = this.state;
+    const { open, qoe } = this.state;
     return html`
       <style>
         .root {
@@ -26,16 +33,28 @@ export default class Status {
           font-size: 16px;
           line-height: 1;
         }
+        :focus {
+          outline: 0;
+        }
       </style>
       <div class="root">
-        ${qoe ? `QoE: ${qoe}` : "計測中..."}
+        <details
+          @toggle=${e => {
+            this.update({ open: e.currentTarget.open });
+          }}
+        >
+          <summary>
+            ${qoe ? `QoE: ${qoe}` : "計測中..."}
+          </summary>
+          ${open ? details(this.state) : ""}
+        </details>
       </div>
     `;
   }
 
   update(state = {}) {
-    this.state = state;
     if (this.root == null) return;
+    Object.assign(this.state, state);
     render(this.template, this.root);
   }
 }
