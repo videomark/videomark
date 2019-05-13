@@ -21,6 +21,9 @@ export default class VideoData {
     this.total = 0;
     this.dropped = 0;
     this.creation_time = 0;
+    this.delta_total = 0;
+    this.delta_dropped = 0;
+    this.delta_creation_time = 0;
     this.play_start_time = -1;
     this.play_end_time = -1;
     this.current_play_pos = -1;
@@ -105,6 +108,33 @@ export default class VideoData {
     return this.domain_name;
   }
 
+  get_viewport() {
+    return {
+      width: this.video_elm.width,
+      height: this.video_elm.height
+    };
+  }
+
+  get_quality() {
+    const bitrate = this.video_handler.get_bitrate();
+    const receiveBuffer = this.video_handler.get_receive_buffer();
+    const framerate = this.video_handler.get_framerate();
+    const speed = this.video_elm.playbackRate;
+
+    return {
+      totalVideoFrames: this.total,
+      droppedVideoFrames: this.dropped,
+      creationTime: this.creation_time,
+      deltaTotalVideoFrames: this.delta_total,
+      deltaDroppedVideoFrames: this.delta_dropped,
+      deltaTime: this.delta_creation_time,
+      bitrate,
+      receiveBuffer,
+      framerate,
+      speed
+    };
+  }
+
   add_latest_qoe(data) {
     this.latest_qoe.push(data);
 
@@ -159,14 +189,6 @@ export default class VideoData {
    *
    */
   update() {
-    const last_total = this.total;
-    const last_dropped = this.dropped;
-    const last_time = this.creation_time;
-
-    this.total = this.video_elm.webkitDecodedFrameCount;
-    this.dropped = this.video_elm.webkitDroppedFrameCount;
-    this.creation_time = performance.now();
-
     const vw = this.video_handler.get_video_width();
     const vh = this.video_handler.get_video_height();
     if (vw > 0 && vh > 0) {
@@ -183,31 +205,23 @@ export default class VideoData {
     this.domain_name =
       this.video_handler.get_segment_domain() || this.domain_name;
 
-    if (this.total === last_total) return;
+    const total = this.video_elm.webkitDecodedFrameCount;
+    const dropped = this.video_elm.webkitDroppedFrameCount;
+    const now = performance.now();
+    this.delta_total = total - this.total;
+    this.total = total;
+    this.delta_dropped = dropped - this.dropped;
+    this.dropped = dropped;
+    this.delta_creation_time = now - this.creation_time;
+    this.creation_time = now;
 
-    const bitrate = this.video_handler.get_bitrate();
-    const receiveBuffer = this.video_handler.get_receive_buffer();
-    const framerate = this.video_handler.get_framerate();
-    const speed = this.video_elm.playbackRate;
-
-    const quality = {
-      totalVideoFrames: this.total,
-      droppedVideoFrames: this.dropped,
-      creationTime: this.creation_time,
-      deltaTotalVideoFrames: this.total - last_total,
-      deltaDroppedVideoFrames: this.dropped - last_dropped,
-      deltaTime: this.creation_time - last_time,
-      bitrate,
-      receiveBuffer,
-      framerate,
-      speed
-    };
-
-    if (this.total < last_total || this.dropped < last_dropped) {
-      quality.deltaTotalVideoFrames = this.total;
-      quality.deltaDroppedVideoFrames = this.dropped;
+    if (this.delta_total === 0) return;
+    if (this.delta_total < 0 || this.delta_dropped < 0) {
+      this.delta_total = this.total;
+      this.delta_dropped = this.dropped;
     }
 
+    const quality = this.get_quality();
     this.playback_quality.push(quality);
   }
 
