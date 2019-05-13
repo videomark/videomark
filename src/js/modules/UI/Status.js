@@ -11,7 +11,23 @@ const details = video => {
   if (!(video instanceof VideoData)) return "";
   return html`
     <dl>
-      <dt>体感品質</dt>
+      <dt>表示領域</dt>
+      <dd>
+        <code>${JSON.stringify(video.get_viewport())}</code>
+      </dd>
+      <dt>最大/最小解像度</dt>
+      <dd>
+        <code>${JSON.stringify(video.get_resolution())}</code>
+      </dd>
+      <dt>長さ</dt>
+      <dd>${video.get_media_size()} s</dd>
+      <dt>ドメイン名</dt>
+      <dd>${video.get_domain_name()}</dd>
+      <dt>動画品質</dt>
+      <dd>
+        <pre>${JSON.stringify(video.get_quality(), null, "  ")}</pre>
+      </dd>
+      <dt>体感品質 (QoE)</dt>
       <dd>${latestQoE(video)}</dd>
     </dl>
   `;
