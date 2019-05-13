@@ -43,10 +43,17 @@ export default class SessionData {
   }
 
   /**
+   * 計測対象のvideo
+   */
+  get_main_video() {
+    return this.video.find(e => e.is_main_video());
+  }
+
+  /**
    * videoの利用可否
    */
   get_video_availability() {
-    const main_video = this._get_main_video();
+    const main_video = this.get_main_video();
     if (main_video === undefined) return false;
     return main_video.is_available();
   }
@@ -90,7 +97,7 @@ export default class SessionData {
   async start() {
     for (;;) {
       // --- main video --- //
-      const main_video = this._get_main_video();
+      const main_video = this.get_main_video();
       if (!main_video) {
         // eslint-disable-next-line no-await-in-loop
         await new Promise(resolve =>
@@ -106,7 +113,7 @@ export default class SessionData {
 
       // --- play start --- //
       let start_time = -1;
-      for (; start_time === -1 && main_video === this._get_main_video(); ) {
+      for (; start_time === -1 && main_video === this.get_main_video(); ) {
         // eslint-disable-next-line no-await-in-loop
         await SessionData.event_wait(
           main_video.video_elm,
@@ -117,7 +124,7 @@ export default class SessionData {
       }
 
       // eslint-disable-next-line no-continue
-      if (main_video !== this._get_main_video()) continue;
+      if (main_video !== this.get_main_video()) continue;
 
       console.log(`VIDEOMARK: STATE CHANGE play ${new Date(start_time)}`);
 
@@ -158,7 +165,7 @@ export default class SessionData {
         Config.get_check_state_interval()
       );
 
-      if (main_video !== this._get_main_video()) return;
+      if (main_video !== this.get_main_video()) return;
     }
 
     console.log(`VIDEOMARK: STATE CHANGE latest qoe computed ${qoe}`);
@@ -183,7 +190,7 @@ export default class SessionData {
         Config.get_check_state_interval()
       );
 
-      if (main_video !== this._get_main_video()) return;
+      if (main_video !== this.get_main_video()) return;
     }
   }
 
@@ -330,10 +337,6 @@ export default class SessionData {
       video: [video.get()],
       resource_timing: []
     };
-  }
-
-  _get_main_video() {
-    return this.video.find(e => e.is_main_video());
   }
 
   static event_wait(elm, type, ms) {
