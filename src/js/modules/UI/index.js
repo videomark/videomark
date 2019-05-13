@@ -6,7 +6,6 @@ import Status from "./Status";
  */
 export default class UI {
   /**
-   *
    * @param {string} target CSS selector string
    */
   constructor(target) {
@@ -17,15 +16,11 @@ export default class UI {
     this.status = new Status();
   }
 
-  update_status(total, dropped, qoe) {
-    console.log(
-      `VIDEOMARK: latest qoe = ${qoe ||
-        "no data"}, frame drop: ${dropped}/${total}`
-    );
+  update_status(status) {
     if (!this.element) {
       this.insert_element();
     }
-    this.status.update({ qoe });
+    this.status.update(status);
   }
 
   remove_element() {

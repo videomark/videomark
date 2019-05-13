@@ -76,8 +76,10 @@ function video_search() {
     if (!session.get_video_availability()) return;
 
     // --- show status  --- //
-    const [total, dropped, qoe] = session.get_video_status();
-    ui.update_status(total, dropped, qoe);
+    ui.update_status({
+      sessionId: session.get_session_id(),
+      video: session.get_main_video()
+    });
   }, Config.get_collect_interval());
 
   // --- main loop --- //

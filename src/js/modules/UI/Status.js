@@ -1,9 +1,21 @@
 import { html, render } from "lit-html";
+import VideoData from "../VideoData";
 
-const details = state =>
-  html`
-    <pre>${JSON.stringify(state, null, "  ")}</pre>
+const latestQoE = video => {
+  if (!(video instanceof VideoData)) return NaN;
+  const result = video.get_latest_qoe().slice(-1)[0] || {};
+  return result.qoe == null ? NaN : result.qoe;
+};
+
+const details = video => {
+  if (!(video instanceof VideoData)) return "";
+  return html`
+    <dl>
+      <dt>体感品質</dt>
+      <dd>${latestQoE(video)}</dd>
+    </dl>
   `;
+};
 
 export default class Status {
   constructor() {
@@ -22,7 +34,9 @@ export default class Status {
   }
 
   get template() {
-    const { open, qoe } = this.state;
+    const { open, video } = this.state;
+    const qoe = latestQoE(video);
+
     return html`
       <style>
         .root {
@@ -44,9 +58,9 @@ export default class Status {
           }}
         >
           <summary>
-            ${qoe ? `QoE: ${qoe}` : "計測中..."}
+            ${Number.isFinite(qoe) ? `QoE: ${qoe.toFixed(2)}` : "計測中..."}
           </summary>
-          ${open ? details(this.state) : ""}
+          ${open ? details(video) : ""}
         </details>
       </div>
     `;

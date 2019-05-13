@@ -27,22 +27,6 @@ export default class SessionData {
   }
 
   /**
-   * 保持しているvideoの総フレーム数、ドロップフレーム数
-   */
-  get_video_status() {
-    let total = 0;
-    let dropped = 0;
-    let qoe = null;
-    this.video.forEach(e => {
-      total += e.total;
-      dropped += e.dropped;
-      const qoes = e.get_latest_qoe();
-      qoe = qoe === null && qoes.length !== 0 ? qoes[qoes.length - 1].qoe : qoe;
-    });
-    return [total, dropped, qoe];
-  }
-
-  /**
    * 計測対象のvideo
    */
   get_main_video() {
