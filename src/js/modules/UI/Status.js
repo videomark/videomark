@@ -9,26 +9,18 @@ const latestQoE = video => {
 
 const details = video => {
   if (!(video instanceof VideoData)) return "";
+  const { totalVideoFrames, droppedVideoFrames } = video.get_quality();
+  const qoe = latestQoE(video);
+
   return html`
     <dl>
-      <dt>表示領域</dt>
+      <dt>フレームドロップ率</dt>
       <dd>
-        <code>${JSON.stringify(video.get_viewport())}</code>
-      </dd>
-      <dt>最大/最小解像度</dt>
-      <dd>
-        <code>${JSON.stringify(video.get_resolution())}</code>
-      </dd>
-      <dt>長さ</dt>
-      <dd>${video.get_media_size()} s</dd>
-      <dt>ドメイン名</dt>
-      <dd>${video.get_domain_name()}</dd>
-      <dt>動画品質</dt>
-      <dd>
-        <pre>${JSON.stringify(video.get_quality(), null, "  ")}</pre>
+        ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
+        ${droppedVideoFrames} / ${totalVideoFrames} )
       </dd>
       <dt>体感品質 (QoE)</dt>
-      <dd>${latestQoE(video)}</dd>
+      <dd>${Number.isFinite(qoe) ? qoe : "..."}</dd>
     </dl>
   `;
 };
