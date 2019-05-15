@@ -1,16 +1,34 @@
 import { html, render } from "lit-html";
-import VideoData from "../VideoData";
+import Storage from "../Storage";
 
-const latestQoE = video => {
-  if (!(video instanceof VideoData)) return NaN;
-  const result = video.get_latest_qoe().slice(-1)[0] || {};
-  return result.qoe == null ? NaN : result.qoe;
+const state = {};
+const useStorage = ({ sessionId, videoId }) => {
+  const id = `${sessionId}_${videoId}`;
+  if (!(state[id] instanceof Storage)) {
+    state[id] = new Storage({ sessionId, videoId });
+    state[id].init();
+  }
+  return state[id];
 };
 
-const details = video => {
-  if (!(video instanceof VideoData)) return "";
-  const { totalVideoFrames, droppedVideoFrames } = video.get_quality();
-  const qoe = latestQoE(video);
+const latest = (log, key) =>
+  ((log || []).filter(a => key in a).slice(-1)[0] || {})[key];
+
+const latestQoE = ({ sessionId, videoId }) => {
+  const storage = useStorage({ sessionId, videoId });
+  if (storage.cache === undefined) return NaN;
+  const qoe = latest(storage.cache.log, "qoe");
+  return qoe == null ? NaN : qoe;
+};
+
+const details = ({ sessionId, videoId }) => {
+  const storage = useStorage({ sessionId, videoId });
+  if (storage.cache === undefined) return "";
+  const quolity = latest(storage.cache.log, "quolity") || {};
+  const { droppedVideoFrames, totalVideoFrames } = quolity;
+  if ([droppedVideoFrames, totalVideoFrames].some(n => !Number.isFinite(n)))
+    return "";
+  const qoe = latestQoE({ sessionId, videoId });
 
   return html`
     <dl>
@@ -42,8 +60,8 @@ export default class Status {
   }
 
   get template() {
-    const { open, video } = this.state;
-    const qoe = latestQoE(video);
+    const { open, sessionId, videoId } = this.state;
+    const qoe = latestQoE({ sessionId, videoId });
 
     return html`
       <style>
@@ -68,7 +86,7 @@ export default class Status {
           <summary>
             ${Number.isFinite(qoe) ? `QoE: ${qoe.toFixed(2)}` : "計測中..."}
           </summary>
-          ${open ? details(video) : ""}
+          ${open ? details({ sessionId, videoId }) : ""}
         </details>
       </div>
     `;

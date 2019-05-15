@@ -275,7 +275,14 @@ export default class SessionData {
       end_time: -1,
       latest_qoe: video.get_latest_qoe(),
       thumbnail: video.get_thumbnail(),
-      title: video.get_title()
+      title: video.get_title(),
+      log: [
+        ...(storage.cache.log || []).filter(a => !("qoe" in a)),
+        ...video.get_latest_qoe(),
+        { date: new Date(), quolity: video.get_quality() }
+      ]
+        .sort(({ date: ad }, { date: bd }) => ad - bd)
+        .slice(-Config.max_log)
     });
   }
 

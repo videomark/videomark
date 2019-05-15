@@ -124,7 +124,7 @@ ChromeExtension/sodium.js
       session                         : セッションID(UUID)
       userAgent                       : ユーザーエージェント
       appVersion                      : navigator.appVersion
-      location                        : window.location.href 
+      location                        : window.location.href
       sequence                        : 同一セッション内のシーケンス番号(0から連番)
       video[                          : videoの配列
         {
@@ -142,8 +142,8 @@ ChromeExtension/sodium.js
             playbackRate
             mediaSize                 : videoの再生時間(秒)
             domainName                : videoのセグメント配布ドメイン
-            playStartTime             : 視聴開始時刻(Date.now()) 未視聴の場合 -1 
-            playEndTime               : 視聴終了時刻(Date.now()) 終了していない場合 -1 
+            playStartTime             : 視聴開始時刻(Date.now()) 未視聴の場合 -1
+            playEndTime               : 視聴終了時刻(Date.now()) 終了していない場合 -1
             currentPlayPos            : 現在再生位置の秒
             currentPlayTime           : 再生開始からの経過時間
           },
@@ -152,8 +152,8 @@ ChromeExtension/sodium.js
               totalVideoFrames        : 総フレーム数
               droppedVideoFrames      : 損失フレーム数
               creationTime            : 計測時間(DOMHighResTimeStamp)
-              deltaTotalVideoFrames   
-              deltaDroppedVideoFrames 
+              deltaTotalVideoFrames
+              deltaDroppedVideoFrames
               deltaTime
               bitrate                 : ビットレート
               receiveBuffer           : 受信済み動画再生時間 取得不可能の場合 -1
@@ -172,19 +172,19 @@ ChromeExtension/sodium.js
               delta                   : 前回発生したイベント1のdelta時間
               datetime                : イベント1発生時間(Date.now())
               playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間          
+              playTime                : 再生開始からの経過時間
           ],
           event_'イベント2': [
               time                    : イベント2発生時間(DOMHighResTimeStamp)
               datetime                : イベント2発生時間(Date.now())
               playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間          
+              playTime                : 再生開始からの経過時間
           ],
           event_'イベント2'_delta: [
               delta                   : 前回発生したイベント2のdelta時間
               datetime                : イベント2発生時間(Date.now())
               playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間          
+              playTime                : 再生開始からの経過時間
           ]
         },
         ...
@@ -200,19 +200,19 @@ ChromeExtension/sodium.js
 
 QoEサーバーに対応するために以下のデータを追加した。
 
-| filed                                | QoE                                                 | detail                       |
-| ------------------------------------ | --------------------------------------------------- | ---------------------------- |
-| userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                   |
-| appVersion                           | requestNotificationBasicInformation.osInfo          | クライアントバージョン                  |
-| video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | videoの再生時間(秒)                |
+| filed                                | QoE                                                 | detail                                   |
+| ------------------------------------ | --------------------------------------------------- | ---------------------------------------- |
+| userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                     |
+| appVersion                           | requestNotificationBasicInformation.osInfo          | クライアントバージョン                   |
+| video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | videoの再生時間(秒)                      |
 | video.property.domainName            | requestNotificationViewingInformation.domainName    | videoのセグメント配布ドメイン            |
-| video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                       |
-| video.playback_quality.receiveBuffer | requestNotificationQoeInformation.receiveBuffer     | \*取得済み動画サイズ(秒)               |
-| video.playback_quality.framerate     | requestNotificationQoeInformation.framerateHistory  | フレームレート                      |
+| video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                             |
+| video.playback_quality.receiveBuffer | requestNotificationQoeInformation.receiveBuffer     | \*取得済み動画サイズ(秒)                 |
+| video.playback_quality.framerate     | requestNotificationQoeInformation.framerateHistory  | フレームレート                           |
 | video.property.playStartTime         | requestNotificationViewingInformation.eventType Str | 視聴開始時刻(Date.now()) 未視聴の場合 -1 |
-| video.event\_\*.datetime             | requestNotificationViewingInformation.eventType     | イベント1発生時間(Date.now())        |
-| video.event\_\*.playPos              | requestNotificationViewingInformation.eventType     | 現在再生位置の秒                     |
-| video.event\_\*.playTime             | requestNotificationViewingInformation.eventType     | 再生開始からの経過時間                  |
+| video.event\_\*.datetime             | requestNotificationViewingInformation.eventType     | イベント1発生時間(Date.now())            |
+| video.event\_\*.playPos              | requestNotificationViewingInformation.eventType     | 現在再生位置の秒                         |
+| video.event\_\*.playTime             | requestNotificationViewingInformation.eventType     | 再生開始からの経過時間                   |
 
 #### Paravi 固有の対応
 
@@ -222,7 +222,7 @@ Paraviは、Video.js + Shaka Player で実装されている。上記のフィ�
     -   window.navigator.userAgentの値
 -   appVersion
     -   window.navigator.appVersion
--   video.property.mediaSize 
+-   video.property.mediaSize
     -   Class: videojs.Player duration()
 -   video.property.domainName
     -   document.domainの値
@@ -251,7 +251,7 @@ TVerは、Video.jsで実装されている。上記のフィールドの値は�
     -   window.navigator.userAgentの値
 -   appVersion
     -   window.navigator.appVersion
--   video.property.mediaSize 
+-   video.property.mediaSize
     -   Class: videojs.Player duration()
 -   video.property.domainName
     -   Class: videojs.Player selectPlaylist()
@@ -260,7 +260,7 @@ TVerは、Video.jsで実装されている。上記のフィールドの値は�
 -   video.playback_quality.receiveBuffer
     -   videojs.Player bufferedEnd()
 -   video.playback_quality.framerate
-    -   TVerの場合M3U8ファイルにフレームレートが含まれていないため-1固定  
+    -   TVerの場合M3U8ファイルにフレームレートが含まれていないため-1固定
 -   video.property.playStartTime
     -   video tagの play event
 -   video.event\_\*.datetime
@@ -282,7 +282,7 @@ YouTubeのiFrameAPIを使用して上記のフィールドの値を取得して�
     -   window.navigator.userAgentの値
 -   appVersion
     -   window.navigator.appVersion
--   video.property.mediaSize 
+-   video.property.mediaSize
     -   getDuration()
 -   video.property.domainName
     -   getVideoStats() getPlayerResponse()
@@ -322,7 +322,7 @@ Chrome Extension のストレージに以下のデータを記録する。
         session_id              : セッション ID (UUID)
         video_id                : videoを識別するための UUID
         user_agent              : ユーザーエージェント
-        location                : window.location.href 
+        location                : window.location.href
         resolution              : 最大、最小の解像度
         media_size              : videoの再生時間(秒)
         domain_name             : videoのセグメント配布ドメイン
@@ -331,6 +331,7 @@ Chrome Extension のストレージに以下のデータを記録する。
         latest_qoe              : 最新(暫定) QoE 値の配列
         thumbnail               : サムネイル画像の URL
         title                   : 動画のタイトル
+        log                     : 動画品質のログ [{ date: (Date | number), qoe?: (number | null), quality?: { totalVideoFramesなど } }]
     }
 
 ## 送信サンプルデータ

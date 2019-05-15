@@ -106,6 +106,9 @@ Config.sodium_server_url = SODIUM_SERVER_URL;
 // 暫定QoE値保持数
 Config.num_of_latest_qoe = 20;
 
+// ログ保持数
+Config.max_log = 100;
+
 // 記録するイベントの種類のリスト
 Config.event_type_names = [
   "play",

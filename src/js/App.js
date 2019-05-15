@@ -3,6 +3,7 @@ import uuidv4 from "uuid/v4";
 import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
+import VideoData from "./modules/VideoData";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import { version } from "../../package.json";
 
@@ -76,9 +77,11 @@ function video_search() {
     if (!session.get_video_availability()) return;
 
     // --- show status  --- //
+    const video = session.get_main_video();
+    if (!(video instanceof VideoData)) return;
     ui.update_status({
       sessionId: session.get_session_id(),
-      video: session.get_main_video()
+      videoId: video.get_video_id()
     });
   }, Config.get_collect_interval());
 
