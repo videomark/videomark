@@ -188,9 +188,6 @@ export default class SessionData {
       if (data) {
         // --- send to fluent --- //
         this._send_data(main_video);
-
-        // --- save to storage --- //
-        this._store_session(main_video);
       }
       if (request) {
         // --- request qoe --- //
@@ -206,6 +203,8 @@ export default class SessionData {
           })()
         );
       }
+      // --- save to storage --- //
+      this._store_session(main_video);
     }
 
     // --- set timeout --- //
