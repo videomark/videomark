@@ -5,6 +5,7 @@ import msgpack from "msgpack-lite";
 
 import Config from "./Config";
 import VideoData from "./VideoData";
+import Storage from "./Storage";
 
 export default class SessionData {
   constructor(id, version) {
@@ -260,9 +261,11 @@ export default class SessionData {
   }
 
   async _store_session(video) {
-    const value = {
-      session_id: this.session_id,
-      video_id: video.get_video_id(),
+    const storage = await new Storage({
+      sessionId: this.session_id,
+      videoId: video.get_video_id()
+    }).init();
+    await storage.save({
       user_agent: this.userAgent,
       location: window.location.href,
       resolution: video.get_resolution(),
@@ -273,31 +276,7 @@ export default class SessionData {
       latest_qoe: video.get_latest_qoe(),
       thumbnail: video.get_thumbnail(),
       title: video.get_title()
-    };
-    const id = `${value.session_id}_${value.video_id}`;
-
-    if (Config.is_mobile()) {
-      try {
-        console.log(`${id}:${JSON.stringify(value)}`);
-        sodium.storage.local.set({ [id]: value });
-      } catch (err) {
-        console.error(`VIDEOMARK: ${err}`);
-      }
-    } else {
-      try {
-        window.postMessage(
-          {
-            type: "FROM_SODIUM_JS",
-            method: "set_video",
-            id,
-            video: value
-          },
-          "*"
-        );
-      } catch (err) {
-        console.error(`VIDEOMARK: ${err}`);
-      }
-    }
+    });
   }
 
   /**
