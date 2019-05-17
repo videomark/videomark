@@ -328,7 +328,6 @@ Chrome Extension のストレージに以下のデータを記録する。
         domain_name             : videoのセグメント配布ドメイン
         start_time              : 視聴開始時間
         end_time                : -1
-        latest_qoe              : 最新(暫定) QoE 値の配列
         thumbnail               : サムネイル画像の URL
         title                   : 動画のタイトル
         log                     : 動画品質のログ [{ date: (Date | number), qoe?: (number | null), quality?: { totalVideoFramesなど } }]

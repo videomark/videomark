@@ -272,7 +272,6 @@ export default class SessionData {
       domain_name: video.get_domain_name(),
       start_time: video.get_start_time(),
       end_time: -1,
-      latest_qoe: video.get_latest_qoe(),
       thumbnail: video.get_thumbnail(),
       title: video.get_title(),
       log: [
