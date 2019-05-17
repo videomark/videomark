@@ -72,7 +72,7 @@ export const quality = ({ sessionId, videoId }) => {
     <dl class=${classMap({ alert: isLowQuality })}>
       <dt>フレームレート</dt>
       <dd>
-        ${framerate} fps
+        ${framerate === -1 ? "-" : `${framerate} fps`}
       </dd>
       <dt>フレームドロップ率</dt>
       <dd class=${classMap({ alert: isLowQuality })}>
