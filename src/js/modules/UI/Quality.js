@@ -1,4 +1,5 @@
 import { html } from "lit-html";
+import { classMap } from "lit-html/directives/class-map";
 import Storage from "../Storage";
 
 const state = {};
@@ -48,11 +49,22 @@ export const quality = ({ sessionId, videoId }) => {
         font-size: 12px;
         column-gap: 12px;
       }
+      dl.alert:after {
+        grid-column: 1 / -1;
+        content: "⚠ 実際の体感品質とは異なる可能性があります。";
+        font-size: 10px;
+        color: yellow;
+      }
+      dl.alert > dd {
+        color: yellow;
+      }
       dt {
         font-weight: bold;
       }
     </style>
-    <dl>
+    <dl
+      class=${classMap({ alert: droppedVideoFrames / totalVideoFrames > 1e-3 })}
+    >
       <dt>フレームドロップ率</dt>
       <dd>
         ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
