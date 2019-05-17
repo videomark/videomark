@@ -36,6 +36,22 @@ export const quality = ({ sessionId, videoId }) => {
   const qoe = latestQoE({ sessionId, videoId });
 
   return html`
+    <style>
+      dl,
+      dt,
+      dd {
+        margin: 0;
+      }
+      dl {
+        display: grid;
+        grid-template-columns: 1fr 120px;
+        font-size: 12px;
+        column-gap: 12px;
+      }
+      dt {
+        font-weight: bold;
+      }
+    </style>
     <dl>
       <dt>フレームドロップ率</dt>
       <dd>

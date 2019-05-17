@@ -24,15 +24,21 @@ export default class Status {
     return html`
       <style>
         .root {
-          background: rgba(0, 161, 255, 0.5);
-          padding: 5px 10px;
-          border-radius: 12px;
+          background: rgba(28, 28, 28, 0.8);
+          padding: 8px 8px;
+          border-radius: 4px;
           color: white;
-          font-size: 16px;
-          line-height: 1;
+          font-size: 10px;
         }
         :focus {
           outline: 0;
+        }
+        details {
+          line-height: 1.75;
+        }
+        details > summary {
+          margin-right: 0.5em;
+          font-size: 14px;
         }
       </style>
       <div class="root">
