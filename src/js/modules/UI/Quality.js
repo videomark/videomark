@@ -31,9 +31,14 @@ export const latestQuolity = ({ sessionId, videoId }) => {
 
 export const quality = ({ sessionId, videoId }) => {
   const quolity = latestQuolity({ sessionId, videoId });
-  const { droppedVideoFrames, totalVideoFrames } = quolity;
-  if ([droppedVideoFrames, totalVideoFrames].some(n => !Number.isFinite(n)))
+  const { framerate, droppedVideoFrames, totalVideoFrames } = quolity;
+  if (
+    [framerate, droppedVideoFrames, totalVideoFrames].some(
+      n => !Number.isFinite(n)
+    )
+  )
     return "";
+  const isLowQuality = droppedVideoFrames / totalVideoFrames > 1e-3;
   const qoe = latestQoE({ sessionId, videoId });
 
   return html`
@@ -55,23 +60,27 @@ export const quality = ({ sessionId, videoId }) => {
         font-size: 10px;
         color: yellow;
       }
-      dl.alert > dd {
+      dd.alert {
         color: yellow;
       }
       dt {
         font-weight: bold;
       }
     </style>
-    <dl
-      class=${classMap({ alert: droppedVideoFrames / totalVideoFrames > 1e-3 })}
-    >
-      <dt>フレームドロップ率</dt>
+    <dl class=${classMap({ alert: isLowQuality })}>
+      <dt>フレームレート</dt>
       <dd>
+        ${framerate} fps
+      </dd>
+      <dt>フレームドロップ率</dt>
+      <dd class=${classMap({ alert: isLowQuality })}>
         ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
         ${droppedVideoFrames} / ${totalVideoFrames} )
       </dd>
       <dt>体感品質 (QoE)</dt>
-      <dd>${Number.isFinite(qoe) ? qoe : "..."}</dd>
+      <dd class=${classMap({ alert: isLowQuality })}>
+        ${Number.isFinite(qoe) ? qoe : "..."}
+      </dd>
     </dl>
   `;
 };
