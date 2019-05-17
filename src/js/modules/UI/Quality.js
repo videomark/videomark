@@ -22,16 +22,18 @@ export const latestQoE = ({ sessionId, videoId }) => {
   return qoe == null ? NaN : qoe;
 };
 
-export const latestQuolity = ({ sessionId, videoId }) => {
+export const latestQuality = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
   if (storage.cache === undefined) return "";
-  const quolity = latest(storage.cache.log, "quolity");
-  return quolity || {};
+  const quality = latest(storage.cache.log, "quality");
+  return quality || {};
 };
 
 export const quality = ({ sessionId, videoId }) => {
-  const quolity = latestQuolity({ sessionId, videoId });
-  const { framerate, droppedVideoFrames, totalVideoFrames } = quolity;
+  const { framerate, droppedVideoFrames, totalVideoFrames } = latestQuality({
+    sessionId,
+    videoId
+  });
   if (
     [framerate, droppedVideoFrames, totalVideoFrames].some(
       n => !Number.isFinite(n)

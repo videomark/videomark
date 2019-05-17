@@ -278,7 +278,7 @@ export default class SessionData {
       log: [
         ...(storage.cache.log || []).filter(a => !("qoe" in a)),
         ...video.get_latest_qoe(),
-        { date: Date.now(), quolity: video.get_quality() }
+        { date: Date.now(), quality: video.get_quality() }
       ]
         .sort(({ date: ad }, { date: bd }) => ad - bd)
         .slice(-Config.max_log)
