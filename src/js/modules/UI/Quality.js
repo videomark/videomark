@@ -30,12 +30,17 @@ export const latestQuality = ({ sessionId, videoId }) => {
 };
 
 export const quality = ({ sessionId, videoId }) => {
-  const { framerate, droppedVideoFrames, totalVideoFrames } = latestQuality({
+  const {
+    framerate,
+    speed,
+    droppedVideoFrames,
+    totalVideoFrames
+  } = latestQuality({
     sessionId,
     videoId
   });
   if (
-    [framerate, droppedVideoFrames, totalVideoFrames].some(
+    [framerate, speed, droppedVideoFrames, totalVideoFrames].some(
       n => !Number.isFinite(n)
     )
   )
@@ -72,7 +77,9 @@ export const quality = ({ sessionId, videoId }) => {
     <dl class=${classMap({ alert: isLowQuality })}>
       <dt>フレームレート</dt>
       <dd>
-        ${framerate === -1 ? "-" : `${framerate} fps`}
+        ${framerate < 0
+          ? "-"
+          : `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`}
       </dd>
       <dt>フレームドロップ率</dt>
       <dd class=${classMap({ alert: isLowQuality })}>
