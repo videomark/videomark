@@ -114,6 +114,12 @@ class Viewing {
     }
     return this.fetchStatsInfoApi().then(() => this.cache.region);
   }
+
+  get quality() {
+    const log = this.cache.log || [];
+    const { quality } = log.filter(a => "quality" in a).slice(-1)[0] || {};
+    return Promise.resolve(quality);
+  }
 }
 
 export default Viewing;

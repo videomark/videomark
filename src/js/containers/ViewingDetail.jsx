@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import QoEValueGraphList from "../components/QoEValueGraphList";
+import VideoQuality from "../components/VideoQuality";
 import DataErase from "../utils/DataErase";
 import AppDataActions from "../utils/AppDataActions";
 import AppData from "../utils/AppData";
@@ -42,7 +43,8 @@ class ViewingDetail extends Component {
       location: await viewing.location,
       thumbnail: await viewing.thumbnail,
       startTime: await viewing.startTime,
-      qoe: await viewing.qoe
+      qoe: await viewing.qoe,
+      quality: await viewing.quality
     });
     const { regionalAverageQoE } = this.props;
     const region = (await viewing.region) || {};
@@ -67,6 +69,7 @@ class ViewingDetail extends Component {
       thumbnail,
       startTime,
       qoe,
+      quality,
       region,
       regionalAverageQoE,
       hour,
@@ -94,6 +97,7 @@ class ViewingDetail extends Component {
           </div>
         </div>
         <div className={`${style.title} ${style.modalTitle}`}>{title}</div>
+        <VideoQuality {...quality} />
         <div style={{ width: "100%", height: "20px" }} />
         <QoEValueGraphList
           value={qoe}
