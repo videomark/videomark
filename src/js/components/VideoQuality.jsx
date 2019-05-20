@@ -17,10 +17,11 @@ const styles = () => ({
 const VideoQuality = ({
   classes,
   framerate: fps,
+  speed,
   droppedVideoFrames: dropped,
   totalVideoFrames: total
 }) => {
-  if ([fps, dropped / total].some(n => !Number.isFinite(n))) return null;
+  if ([fps, speed, dropped / total].some(n => !Number.isFinite(n))) return null;
   const isLowQuality = dropped / total > 1e-3;
 
   return (
@@ -28,7 +29,7 @@ const VideoQuality = ({
       <Grid item xs component="dl">
         <Typography component="dt">フレームレート</Typography>
         <Typography component="dd">
-          {fps === -1 ? "-" : `${fps} fps`}
+          {fps < 0 ? "-" : `${fps} fps${speed === 1 ? "" : ` × ${speed}`}`}
         </Typography>
       </Grid>
       <Grid item xs>
@@ -56,11 +57,13 @@ const VideoQuality = ({
 VideoQuality.propTypes = {
   classes: PropTypes.instanceOf(Object).isRequired,
   framerate: PropTypes.number,
+  speed: PropTypes.number,
   droppedVideoFrames: PropTypes.number,
   totalVideoFrames: PropTypes.number
 };
 VideoQuality.defaultProps = {
   framerate: undefined,
+  speed: undefined,
   droppedVideoFrames: undefined,
   totalVideoFrames: undefined
 };
