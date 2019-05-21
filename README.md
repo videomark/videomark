@@ -36,4 +36,4 @@ develop モードでアプリケーションの起動をする。
 
 # developモードでの確認方法
 ブラウザのストレージに存在するデータをロードして画面を構築するため開発モードで実行するとデータのロードが行えず、空データの時と同じ挙動をする。
-developモードで確認をする場合 [EmbeddedData.js](https://github.com/videomark/videomark-log-view/blob/master/src/js/utils/ChromeExtensionWrapper/EmbeddedData.js) にストレージのデータを埋め込めば確認が可能。
+developモードで確認をする場合、[Chrome Extension の README に記載の手順](https://github.com/videomark/videomark-extension/) でエクスポートしたストレージデータを [EmbeddedData.js](https://github.com/videomark/videomark-log-view/blob/master/src/js/utils/ChromeExtensionWrapper/EmbeddedData.js) に埋め込めば確認が可能。
