@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import QoEValueGraph from "../QoEValueGraph";
-import Country from "./Country";
-import Subdivision from "./Subdivision";
+import QoEValueGraph from "./QoEValueGraph";
+import Country from "../utils/Country";
+import Subdivision from "../utils/Subdivision";
 
 const RegionalAverageQoEGraph = ({ region, regionalAverage, isDetail }) => {
   const { country, subdivision } = region || {};
