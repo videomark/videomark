@@ -11,7 +11,16 @@ import {
   InputAdornment
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { Send, ArrowBack } from "@material-ui/icons";
+import {
+  Clear,
+  ChevronRight,
+  ChevronLeft,
+  FirstPage,
+  LastPage,
+  Search,
+  Send,
+  ArrowBack
+} from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
@@ -232,34 +241,37 @@ const Stats = withStyles(theme => ({
           {title}
         </Typography>
       ) : (
-        <>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          />
-          <MaterialTable
-            title={title}
-            columns={[
-              ...(index ? [column.index] : []),
-              ...columns,
-              { title: "件数", field: "count", type: "numeric" },
-              { title: "QoE (平均)", field: "average", type: "numeric" }
-            ].map(c => ({
-              ...c,
-              headerStyle: { padding: 0 },
-              cellStyle: { padding: 0 }
-            }))}
-            components={{ Container: Grid }}
-            data={mapper(resBody).map((a, i) => ({
-              index: i + 1,
-              ...a,
-              average: Number(a.average).toFixed(2)
-            }))}
-            options={{
-              sorting: true
-            }}
-          />
-        </>
+        <MaterialTable
+          title={title}
+          columns={[
+            ...(index ? [column.index] : []),
+            ...columns,
+            { title: "件数", field: "count", type: "numeric" },
+            { title: "QoE (平均)", field: "average", type: "numeric" }
+          ].map(c => ({
+            ...c,
+            headerStyle: { padding: 0 },
+            cellStyle: { padding: 0 }
+          }))}
+          components={{ Container: Grid }}
+          data={mapper(resBody).map((a, i) => ({
+            index: i + 1,
+            ...a,
+            average: Number(a.average).toFixed(2)
+          }))}
+          options={{
+            sorting: true
+          }}
+          icons={{
+            Clear,
+            FirstPage,
+            LastPage,
+            NextPage: ChevronRight,
+            PreviousPage: ChevronLeft,
+            ResetSearch: Clear,
+            Search
+          }}
+        />
       )}
       {internal ? (
         <form
