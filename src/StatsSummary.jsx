@@ -320,6 +320,7 @@ Stats.propTypes = {
   title: PropTypes.string.isRequired,
   type: PropTypes.oneOf([
     "hour",
+    "day",
     "country",
     "jp-subdivision",
     "service",
