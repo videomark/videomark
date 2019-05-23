@@ -1,0 +1,9 @@
+.qoe_log_view {
+  margin: 0px auto;
+  width: auto;
+}
+
+.modal_open {
+  z-index: 10;
+  opacity: 1;
+}

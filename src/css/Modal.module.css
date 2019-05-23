@@ -21,6 +21,7 @@
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+  text-align: center;
 }
 
 .modal > .modal_bg {
@@ -54,10 +55,10 @@
 }
 
 @media all and (orientation: landscape) {
-    .modal .modal_close {
-        right: 2rem;
-        top: 2rem;
-    }
+  .modal .modal_close {
+    right: 2rem;
+    top: 2rem;
+  }
 }
 
 @media (max-width: 600px) {
@@ -112,7 +113,7 @@
   }
 }
 
-@media (max-width: 600px){
+@media (max-width: 600px) {
   .modal .modal_inner {
     width: 90%;
   }

@@ -2,7 +2,7 @@ import * as React from "react";
 import Header from "./js/containers/Header";
 import dataErase from "./js/utils/DataErase";
 import Modal from "./js/components/Modal";
-import "./App.css";
+import style from "./App.module.css";
 import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
@@ -46,23 +46,21 @@ class App extends React.Component {
     const { setup, modal } = this.state;
     if (setup) return null;
     return (
-      <div className="App">
-        <div>
-          <div className="qoe-log-view">
-            <Header />
-            <ViewingList />
-            <OfflineNoticeSnackbar />
-          </div>
-          <Modal
-            className={modal.show ? "modal-open" : ""}
-            closeCallback={() => {
-              this.modalDataUpdateCallback(null);
-            }}
-          >
-            {modal.show ? modal.contents : ""}
-          </Modal>
+      <>
+        <div className={style.qoe_log_view}>
+          <Header />
+          <ViewingList />
+          <OfflineNoticeSnackbar />
         </div>
-      </div>
+        <Modal
+          className={modal.show ? style.modal_open : ""}
+          closeCallback={() => {
+            this.modalDataUpdateCallback(null);
+          }}
+        >
+          {modal.show ? modal.contents : ""}
+        </Modal>
+      </>
     );
   }
 }
