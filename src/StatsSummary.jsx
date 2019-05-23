@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   CssBaseline,
@@ -220,7 +220,9 @@ const Stats = withStyles(theme => ({
     });
     dispatch(await res.json());
   };
-  if (!internal && resBody === undefined) request(setResBody);
+  useEffect(() => {
+    if (!internal) request(setResBody);
+  }, []);
 
   return (
     <Paper className={classes.root}>
