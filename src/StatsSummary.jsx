@@ -20,7 +20,7 @@ import videoPlatforms from "./js/utils/videoPlatforms.json";
 
 const Stats = withStyles(theme => ({
   root: {
-    padding: theme.spacing.unit
+    padding: theme.spacing.unit * 2
   },
   code: {
     fontSize: 12
@@ -243,7 +243,11 @@ const Stats = withStyles(theme => ({
               ...columns,
               { title: "件数", field: "count", type: "numeric" },
               { title: "QoE (平均)", field: "average", type: "numeric" }
-            ]}
+            ].map(c => ({
+              ...c,
+              headerStyle: { padding: 0 },
+              cellStyle: { padding: 0 }
+            }))}
             components={{ Container: Grid }}
             data={mapper(resBody).map((a, i) => ({
               index: i + 1,
@@ -332,16 +336,11 @@ Stats.propTypes = {
   ]).isRequired
 };
 
-export default withStyles(theme => ({
-  root: {
-    padding: theme.spacing.unit,
-    width: "100%"
-  }
-}))(({ classes }) => {
+export default () => {
   return (
-    <>
+    <div style={{ padding: 12 }}>
       <CssBaseline />
-      <Grid className={classes.root} container justify="center" spacing={32}>
+      <Grid container justify="center" spacing={16}>
         <Grid item>
           <Typography component="h1" variant="h5" align="center">
             統計API
@@ -351,14 +350,14 @@ export default withStyles(theme => ({
             トップに戻る
           </Button>
         </Grid>
-        <Grid item container spacing={16}>
+        <Grid item container spacing={8}>
           {[
             { type: "hour", title: "時間帯" },
             { type: "day", title: "曜日" },
             { type: "country", title: "国" },
             { type: "jp-subdivision", title: "地域" }
           ].map(stats => (
-            <Grid key={stats.type} item xs sm={6}>
+            <Grid key={stats.type} item xs={12} sm>
               <Stats {...stats} />
             </Grid>
           ))}
@@ -368,13 +367,13 @@ export default withStyles(theme => ({
             動画配信サービス
           </Typography>
         </Grid>
-        <Grid item container spacing={16}>
+        <Grid item container spacing={8}>
           {[
             { type: "service-hour", title: "時間帯" },
             { type: "service-day", title: "曜日" },
             { type: "service", title: "全体" }
           ].map(stats => (
-            <Grid key={stats.type} item xs sm={6}>
+            <Grid key={stats.type} item xs={12} sm>
               <Stats {...stats} />
             </Grid>
           ))}
@@ -384,18 +383,18 @@ export default withStyles(theme => ({
             プロバイダ
           </Typography>
         </Grid>
-        <Grid item container spacing={16}>
+        <Grid item container spacing={8}>
           {[
             { type: "isp-hour", title: "時間帯" },
             { type: "isp-day", title: "曜日" },
             { type: "isp", title: "全体" }
           ].map(stats => (
-            <Grid key={stats.type} item xs sm={6}>
+            <Grid key={stats.type} item xs={12} sm>
               <Stats {...stats} />
             </Grid>
           ))}
         </Grid>
       </Grid>
-    </>
+    </div>
   );
-});
+};
