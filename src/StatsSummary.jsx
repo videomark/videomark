@@ -17,6 +17,7 @@ import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
 import Subdivision from "./js/utils/Subdivision";
 import videoPlatforms from "./js/utils/videoPlatforms.json";
+import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 
 const Stats = withStyles(theme => ({
   root: {
@@ -395,6 +396,7 @@ export default () => {
           ))}
         </Grid>
       </Grid>
+      <OfflineNoticeSnackbar />
     </div>
   );
 };
