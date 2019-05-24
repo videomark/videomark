@@ -17,7 +17,8 @@ import {
   FirstPage,
   LastPage,
   Search,
-  Send
+  Send,
+  Refresh
 } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
@@ -306,37 +307,57 @@ const Stats = withStyles(theme => ({
           />
         </form>
       ) : null}
-      <details>
-        <Typography component="summary" varient="caption">
-          リクエスト詳細
-        </Typography>
-        <>
-          <Typography component="h5" varient="caption">
-            URL
-          </Typography>
-          <code className={classes.code}>{url.toString()}</code>
-        </>
-        {body === undefined ? null : (
-          <>
-            <Typography component="h5" variant="caption">
-              Body
+      <Grid container justify="space-between">
+        <Grid item>
+          <details>
+            <Typography
+              component="summary"
+              varient="caption"
+              style={{ marginTop: "1em" }}
+            >
+              リクエスト詳細
             </Typography>
-            <pre className={classes.code}>
-              {JSON.stringify(body, null, "  ")}
-            </pre>
-          </>
-        )}
+            <>
+              <Typography component="h5" varient="caption">
+                URL
+              </Typography>
+              <code className={classes.code}>{url.toString()}</code>
+            </>
+            {body === undefined ? null : (
+              <>
+                <Typography component="h5" variant="caption">
+                  Body
+                </Typography>
+                <pre className={classes.code}>
+                  {JSON.stringify(body, null, "  ")}
+                </pre>
+              </>
+            )}
+            {resBody === undefined ? null : (
+              <>
+                <Typography component="h5" variant="caption">
+                  Response Body
+                </Typography>
+                <pre className={classes.code}>
+                  {JSON.stringify(resBody, null, "  ")}
+                </pre>
+              </>
+            )}
+          </details>
+        </Grid>
         {resBody === undefined ? null : (
-          <>
-            <Typography component="h5" variant="caption">
-              Response Body
-            </Typography>
-            <pre className={classes.code}>
-              {JSON.stringify(resBody, null, "  ")}
-            </pre>
-          </>
+          <Grid item>
+            <IconButton
+              onClick={async () => {
+                setResBody();
+                await request(setResBody);
+              }}
+            >
+              <Refresh fontSize="small" />
+            </IconButton>
+          </Grid>
         )}
-      </details>
+      </Grid>
     </Paper>
   );
 });
