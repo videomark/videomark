@@ -5,7 +5,6 @@ import {
   Paper,
   Grid,
   Typography,
-  Button,
   IconButton,
   TextField,
   InputAdornment
@@ -18,10 +17,8 @@ import {
   FirstPage,
   LastPage,
   Search,
-  Send,
-  ArrowBack
+  Send
 } from "@material-ui/icons";
-import { Link } from "react-router-dom";
 import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
 import Subdivision from "./js/utils/Subdivision";
@@ -358,10 +355,6 @@ export default () => {
           <Typography component="h1" variant="h5" align="center">
             統計API
           </Typography>
-          <Button component={Link} to="/">
-            <ArrowBack />
-            トップに戻る
-          </Button>
         </Grid>
         <Grid item container spacing={8}>
           {[
