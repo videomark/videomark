@@ -18,7 +18,8 @@ import {
   LastPage,
   Search,
   Send,
-  Refresh
+  Refresh,
+  SaveAlt
 } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
@@ -264,6 +265,7 @@ const Stats = withStyles(theme => ({
           }))}
           options={{
             sorting: true,
+            exportButton: internal,
             pageSize: 10,
             pageSizeOptions: ((opts, rows) => {
               const i = opts.findIndex(n => rows <= n);
@@ -277,7 +279,8 @@ const Stats = withStyles(theme => ({
             NextPage: ChevronRight,
             PreviousPage: ChevronLeft,
             ResetSearch: Clear,
-            Search
+            Search,
+            Export: SaveAlt
           }}
         />
       )}
