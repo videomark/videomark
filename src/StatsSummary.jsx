@@ -199,16 +199,16 @@ const Stats = withStyles(theme => ({
     }
   ];
 
-  const id = a => a;
   const {
     url,
     body,
     internal = false,
     index = false,
     columns = [],
-    mapper = id
+    mapper = a => a
   } = types.find(g => g.id === type);
   const [resBody, setResBody] = useState();
+  const data = resBody === undefined ? [] : mapper(resBody);
   const [apiKey, setApiKey] = useState("");
   const request = async dispatch => {
     const reqUrl = new URL(url);
@@ -251,13 +251,18 @@ const Stats = withStyles(theme => ({
             cellStyle: { padding: 0 }
           }))}
           components={{ Container: Grid }}
-          data={mapper(resBody).map((a, i) => ({
+          data={data.map((a, i) => ({
             index: i + 1,
             ...a,
             average: Number(a.average).toFixed(2)
           }))}
           options={{
-            sorting: true
+            sorting: true,
+            pageSize: 10,
+            pageSizeOptions: ((opts, rows) => {
+              const i = opts.findIndex(n => rows <= n);
+              return opts.slice(0, i >= 0 ? i + 1 : opts.length);
+            })([10, 25, 50, 100], data.length)
           }}
           icons={{
             Clear,
