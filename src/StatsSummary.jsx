@@ -34,10 +34,15 @@ const Stats = withStyles(theme => ({
   }
 }))(({ classes, title, type }) => {
   const baseUrl = new URL("https://sodium.webdino.org:8443/");
+  const days = "日月火水木金土";
   const column = {
     index: { title: "#", field: "index" },
     hour: { title: "時間 (時)", field: "hour" },
-    day: { title: "曜日", field: "day" },
+    day: {
+      title: "曜日",
+      field: "day",
+      customSort: ({ day: a }, { day: b }) => days.indexOf(a) - days.indexOf(b)
+    },
     service: { title: "サービス", field: "service" },
     isp: { title: "ISP", field: "isp" }
   };
@@ -61,7 +66,7 @@ const Stats = withStyles(theme => ({
       mapper: body =>
         body.map(a => ({
           ...a,
-          day: "日月火水木金土"[a.day]
+          day: days[a.day]
         }))
     },
     {
@@ -150,7 +155,7 @@ const Stats = withStyles(theme => ({
             a.data.map(b => ({
               ...b,
               service: videoPlatforms.find(vp => vp.id === a.service).name,
-              day: "日月火水木金土"[b.day]
+              day: days[b.day]
             }))
           )
     },
@@ -193,7 +198,7 @@ const Stats = withStyles(theme => ({
           a.data.map(b => ({
             ...b,
             isp: a.isp,
-            day: "日月火水木金土"[b.day]
+            day: days[b.day]
           }))
         )
     }
