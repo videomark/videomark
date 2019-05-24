@@ -270,7 +270,7 @@ const Stats = withStyles(theme => ({
             pageSizeOptions: ((opts, rows) => {
               const i = opts.findIndex(n => rows <= n);
               return opts.slice(0, i >= 0 ? i + 1 : opts.length);
-            })([10, 25, 50, 100], data.length)
+            })([10, 25, 50, 75, 100], data.length)
           }}
           icons={{
             Clear,
