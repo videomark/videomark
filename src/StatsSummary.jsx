@@ -37,13 +37,15 @@ const Stats = withStyles(theme => ({
 }))(({ classes, title, type }) => {
   const baseUrl = new URL("https://sodium.webdino.org:8443/");
   const days = "日月火水木金土";
+  const daysOrder = ({ day: a }, { day: b }) =>
+    days.indexOf(a) - days.indexOf(b);
   const column = {
     index: { title: "#", field: "index" },
     hour: { title: "時間 (時)", field: "hour" },
     day: {
       title: "曜日",
       field: "day",
-      customSort: ({ day: a }, { day: b }) => days.indexOf(a) - days.indexOf(b)
+      customSort: daysOrder
     },
     service: { title: "サービス", field: "service" },
     isp: { title: "ISP", field: "isp" }
@@ -131,7 +133,7 @@ const Stats = withStyles(theme => ({
       body: {
         group: "hour"
       },
-      columns: [column.service, column.hour],
+      columns: [column.hour, column.service],
       mapper: body =>
         body
           .filter(a => videoPlatforms.some(vp => vp.id === a.service))
@@ -141,6 +143,7 @@ const Stats = withStyles(theme => ({
               service: videoPlatforms.find(vp => vp.id === a.service).name
             }))
           )
+          .sort(({ hour: a }, { hour: b }) => a - b)
     },
     {
       id: "service-day",
@@ -149,7 +152,7 @@ const Stats = withStyles(theme => ({
         group: "day"
       },
       internal: true,
-      columns: [column.service, column.day],
+      columns: [column.day, column.service],
       mapper: body =>
         body
           .filter(a => videoPlatforms.some(vp => vp.id === a.service))
@@ -160,6 +163,7 @@ const Stats = withStyles(theme => ({
               day: days[b.day]
             }))
           )
+          .sort(daysOrder)
     },
     {
       id: "isp",
@@ -182,8 +186,11 @@ const Stats = withStyles(theme => ({
         limit: 100
       },
       internal: true,
-      columns: [column.isp, column.hour],
-      mapper: body => body.flatMap(a => a.data.map(b => ({ ...b, isp: a.isp })))
+      columns: [column.hour, column.isp],
+      mapper: body =>
+        body
+          .flatMap(a => a.data.map(b => ({ ...b, isp: a.isp })))
+          .sort(({ hour: a }, { hour: b }) => a - b)
     },
     {
       id: "isp-day",
@@ -194,15 +201,17 @@ const Stats = withStyles(theme => ({
         limit: 100
       },
       internal: true,
-      columns: [column.isp, column.day],
+      columns: [column.day, column.isp],
       mapper: body =>
-        body.flatMap(a =>
-          a.data.map(b => ({
-            ...b,
-            isp: a.isp,
-            day: days[b.day]
-          }))
-        )
+        body
+          .flatMap(a =>
+            a.data.map(b => ({
+              ...b,
+              isp: a.isp,
+              day: days[b.day]
+            }))
+          )
+          .sort(daysOrder)
     }
   ];
 
