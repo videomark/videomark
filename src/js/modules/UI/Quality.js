@@ -49,7 +49,6 @@ export const quality = ({ sessionId, videoId }) => {
   )
     return "";
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
-  const qoe = latestQoE({ sessionId, videoId });
 
   return html`
     <style>
@@ -90,10 +89,6 @@ export const quality = ({ sessionId, videoId }) => {
       <dd class=${classMap({ alert })}>
         ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
         ${droppedVideoFrames} / ${totalVideoFrames} )
-      </dd>
-      <dt>体感品質 (QoE)</dt>
-      <dd class=${classMap({ alert })}>
-        ${Number.isFinite(qoe) ? qoe : "..."}
       </dd>
     </dl>
   `;
