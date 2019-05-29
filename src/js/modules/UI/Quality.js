@@ -75,12 +75,14 @@ export const quality = ({ sessionId, videoId }) => {
       }
     </style>
     <dl class=${classMap({ alert: isLowQuality })}>
-      <dt>フレームレート</dt>
-      <dd>
-        ${framerate < 0
-          ? "-"
-          : `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`}
-      </dd>
+      ${framerate < 0
+        ? ""
+        : html`
+            <dt>フレームレート</dt>
+            <dd>
+              ${framerate} fps${speed === 1 ? "" : ` × ${speed}`}
+            </dd>
+          `}
       <dt>フレームドロップ率</dt>
       <dd class=${classMap({ alert: isLowQuality })}>
         ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
