@@ -46,10 +46,19 @@ export default class Status {
           color: yellow;
         }
       </style>
-      <div class="root">
+      <div
+        class="root"
+        @click=${e => {
+          this.update({
+            open: e.currentTarget
+              .querySelector("details")
+              .toggleAttribute("open")
+          });
+        }}
+      >
         <details
-          @toggle=${e => {
-            this.update({ open: e.currentTarget.open });
+          @click=${e => {
+            e.preventDefault();
           }}
         >
           <summary>
