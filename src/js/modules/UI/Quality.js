@@ -59,7 +59,7 @@ export const quality = ({ sessionId, videoId }) => {
       }
       dl {
         display: grid;
-        grid-template-columns: 1fr 120px;
+        grid-template-columns: 1fr minmax(120px, 1fr);
         font-size: 12px;
         column-gap: 12px;
       }
