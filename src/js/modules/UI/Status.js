@@ -1,5 +1,6 @@
 import { html, render } from "lit-html";
-import { quality, latestQoE } from "./Quality";
+import { classMap } from "lit-html/directives/class-map";
+import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
 
 export default class Status {
   constructor() {
@@ -19,6 +20,7 @@ export default class Status {
 
   get template() {
     const { open, sessionId, videoId } = this.state;
+    const alert = isLowQuality(latestQuality({ sessionId, videoId }));
     const qoe = latestQoE({ sessionId, videoId });
 
     return html`
@@ -40,6 +42,9 @@ export default class Status {
           margin-right: 0.5em;
           font-size: 14px;
         }
+        details > summary > span.alert {
+          color: yellow;
+        }
       </style>
       <div class="root">
         <details
@@ -48,7 +53,12 @@ export default class Status {
           }}
         >
           <summary>
-            ${Number.isFinite(qoe) ? `QoE: ${qoe.toFixed(2)}` : "計測中..."}
+            ${Number.isFinite(qoe)
+              ? html`
+                  QoE:
+                  <span class=${classMap({ alert })}>${qoe.toFixed(2)}</span>
+                `
+              : "計測中..."}
           </summary>
           ${open ? quality({ sessionId, videoId }) : ""}
         </details>
