@@ -1,5 +1,5 @@
 import { html, render } from "lit-html";
-import { classMap } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
 import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
 
 export default class Status {
@@ -22,13 +22,28 @@ export default class Status {
     const { open, sessionId, videoId } = this.state;
     const alert = isLowQuality(latestQuality({ sessionId, videoId }));
     const qoe = latestQoE({ sessionId, videoId });
+    const qoeStyles = {
+      value: {
+        color: alert ? "inherit" : "white"
+      },
+      stars: {
+        background: `linear-gradient(
+        to right,
+        ${alert ? "lightgray" : "#ffce00"} 0%,
+        ${alert ? "lightgray" : "#ffce00"} ${qoe * 20}%,
+        gray ${qoe * 20}%,
+        gray 100%)`,
+        "-webkit-background-clip": "text",
+        color: "transparent"
+      }
+    };
 
     return html`
       <style>
         .root {
           background: rgba(28, 28, 28, 0.8);
-          padding: 8px 8px;
-          border-radius: 4px;
+          padding: 8px 16px;
+          border-radius: 20px;
           color: white;
           font-size: 10px;
         }
@@ -39,11 +54,9 @@ export default class Status {
           line-height: 1.75;
         }
         details > summary {
-          margin-right: 0.5em;
+          color: lightgray;
           font-size: 14px;
-        }
-        details > summary > span.alert {
-          color: yellow;
+          font-weight: bold;
         }
       </style>
       <div
@@ -64,8 +77,10 @@ export default class Status {
           <summary>
             ${Number.isFinite(qoe)
               ? html`
-                  QoE:
-                  <span class=${classMap({ alert })}>${qoe.toFixed(2)}</span>
+                  <span style=${styleMap(qoeStyles.value)}
+                    >${qoe.toFixed(2)}</span
+                  >
+                  <span style=${styleMap(qoeStyles.stars)}>★★★★★</span>
                 `
               : "計測中..."}
           </summary>

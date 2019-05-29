@@ -30,7 +30,7 @@ export const latestQuality = ({ sessionId, videoId }) => {
 };
 
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
-  droppedVideoFrames / totalVideoFrames > 1e-3;
+  !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
 export const quality = ({ sessionId, videoId }) => {
   const {
@@ -49,6 +49,19 @@ export const quality = ({ sessionId, videoId }) => {
   )
     return "";
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
+  const qoe = latestQoE({ sessionId, videoId });
+  const classes = {
+    framerate: {
+      na: !(framerate >= 0)
+    },
+    dropped: {
+      na: !Number.isFinite(droppedVideoFrames / totalVideoFrames)
+    },
+    qoe: {
+      alert,
+      na: !Number.isFinite(qoe)
+    }
+  };
 
   return html`
     <style>
@@ -67,28 +80,32 @@ export const quality = ({ sessionId, videoId }) => {
         grid-column: 1 / -1;
         content: "⚠ 実際の体感品質とは異なる可能性があります。";
         font-size: 10px;
-        color: yellow;
       }
-      dd.alert {
-        color: yellow;
+      dt.alert,
+      dd.alert,
+      dt.na,
+      dd.na {
+        color: gray;
       }
       dt {
         font-weight: bold;
       }
     </style>
     <dl class=${classMap({ alert })}>
-      ${framerate < 0
-        ? ""
-        : html`
-            <dt>フレームレート</dt>
-            <dd>
-              ${framerate} fps${speed === 1 ? "" : ` × ${speed}`}
-            </dd>
-          `}
-      <dt>フレームドロップ率</dt>
-      <dd class=${classMap({ alert })}>
+      <dt class=${classMap(classes.framerate)}>フレームレート</dt>
+      <dd class=${classMap(classes.framerate)}>
+        ${framerate >= 0
+          ? `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`
+          : "n/a"}
+      </dd>
+      <dt class=${classMap(classes.dropped)}>フレームドロップ率</dt>
+      <dd class=${classMap(classes.dropped)}>
         ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
         ${droppedVideoFrames} / ${totalVideoFrames} )
+      </dd>
+      <dt class=${classMap(classes.qoe)}>体感品質 (QoE)</dt>
+      <dd class=${classMap(classes.qoe)}>
+        ${Number.isFinite(qoe) ? qoe.toFixed(2) : "n/a"}
       </dd>
     </dl>
   `;
