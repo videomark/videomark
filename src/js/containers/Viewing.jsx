@@ -27,7 +27,6 @@ class Viewing extends Component {
     this.viewing = new ViewingModel({ sessionId, videoId });
     this.state = {
       title: "",
-      location: "#",
       thumbnail: "",
       startTime: new Date(),
       qoe: 0,

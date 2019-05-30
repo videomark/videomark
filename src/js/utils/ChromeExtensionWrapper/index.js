@@ -1,4 +1,4 @@
-import { isMobile, isDevelop } from "../Utils";
+import { isMobile, isExtension, isDevelop } from "../Utils";
 import data from "./EmbeddedData";
 
 const RemovedTargetKeys = "RemovedTargetKeys";
@@ -6,7 +6,7 @@ const AgreedTerm = "AgreedTerm";
 
 // モバイルはchromeで立ち上げられるとchromeのオブジェクトが存在するため
 // 未サポートブラウザ判定できないためextensionのみこのコードを有効にする
-if (!isMobile() && window.sodium === undefined) {
+if (isExtension() && window.sodium === undefined) {
   window.sodium = chrome;
 }
 

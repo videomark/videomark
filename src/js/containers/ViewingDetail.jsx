@@ -28,7 +28,6 @@ class ViewingDetail extends Component {
     this.state = {
       id: this.viewing.viewingId,
       title: "",
-      location: "#",
       thumbnail: "",
       startTime: new Date(),
       qoe: 0

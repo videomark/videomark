@@ -1,9 +1,14 @@
 import videoPlatforms from "./videoPlatforms.json";
 
-export const isDevelop = () => process.env.NODE_ENV === "development";
-
-export const urlToVideoPlatform = url =>
-  videoPlatforms.find(({ id }) => new window.URL(url).host.includes(id)) || {};
+export const urlToVideoPlatform = url => {
+  try {
+    const { host } = new URL(url);
+    return videoPlatforms.find(({ id }) => host.includes(id)) || {};
+  } catch (e) {
+    if (e instanceof TypeError) return {};
+    throw e;
+  }
+};
 
 export const viewingIdWithoutDateTimeFromSessionAndVideo = (session, video) => {
   return `${session}_${video}`;
@@ -17,11 +22,8 @@ export const viewingIdToSessionAndVideo = viewingId => {
   };
 };
 
-export const isMobile = () => {
-  if (isDevelop()) {
-    return false;
-  }
-
-  const publicUrl = process.env.PUBLIC_URL;
-  return publicUrl === "";
-};
+export const isDevelop = () => process.env.NODE_ENV === "development";
+export const isMobile = () =>
+  !isDevelop() && chrome !== undefined && !process.env.PUBLIC_URL;
+export const isExtension = () =>
+  !isDevelop() && chrome !== undefined && process.env.PUBLIC_URL.length > 0;
