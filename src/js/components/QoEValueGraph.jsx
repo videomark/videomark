@@ -23,7 +23,7 @@ const QoEValueGraph = ({ label, qoe, modal }) => {
             <div className={style.qoeBarGraphBase} />
           </div>
         </div>
-        <p className={style.qoeValue}>{qoe.toPrecision(2)}</p>
+        <p className={style.qoeValue}>{qoe.toFixed(2)}</p>
       </div>
     </div>
   );
