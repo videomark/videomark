@@ -1,16 +1,6 @@
 import { html } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
-import Storage from "../Storage";
-
-const state = {};
-export const useStorage = ({ sessionId, videoId }) => {
-  const id = `${sessionId}_${videoId}`;
-  if (!(state[id] instanceof Storage)) {
-    state[id] = new Storage({ sessionId, videoId });
-    state[id].init();
-  }
-  return state[id];
-};
+import { useStorage } from "../Storage";
 
 const latest = (log, key) =>
   ((log || []).filter(a => key in a).slice(-1)[0] || {})[key];

@@ -1,9 +1,10 @@
 import Config from "./Config";
 
-export default class Storage {
+export class Storage {
   constructor({ sessionId, videoId }) {
     this.sessionId = sessionId;
     this.videoId = videoId;
+    this.cache = {};
   }
 
   get viewingId() {
@@ -21,21 +22,6 @@ export default class Storage {
     return this.cache;
   }
 
-  async init() {
-    this.cache = {};
-    if (!Config.is_mobile()) {
-      window.addEventListener("message", e => {
-        if (
-          e.source === window &&
-          e.data.type === "FROM_SODIUM_JS" &&
-          e.data.id === this.viewingId
-        )
-          this.cache = e.data.video;
-      });
-    }
-    return this;
-  }
-
   async save(attributes) {
     const tmp = (await this.load()) || {};
     Object.assign(tmp, {
@@ -45,7 +31,6 @@ export default class Storage {
     });
     if (Config.is_mobile()) {
       sodium.storage.local.set({ [this.viewingId]: tmp });
-      this.cache = tmp;
     } else {
       await new Promise(resolve => {
         window.addEventListener("message", resolve, { once: true });
@@ -60,6 +45,16 @@ export default class Storage {
         );
       });
     }
+    this.cache = tmp;
     return tmp;
   }
 }
+
+const state = {};
+export const useStorage = ({ sessionId, videoId }) => {
+  const id = `${sessionId}_${videoId}`;
+  if (!(state[id] instanceof Storage)) {
+    state[id] = new Storage({ sessionId, videoId });
+  }
+  return state[id];
+};

@@ -5,7 +5,7 @@ import msgpack from "msgpack-lite";
 
 import Config from "./Config";
 import VideoData from "./VideoData";
-import Storage from "./Storage";
+import { useStorage } from "./Storage";
 
 export default class SessionData {
   constructor(id, version) {
@@ -260,10 +260,10 @@ export default class SessionData {
   }
 
   async _store_session(video) {
-    const storage = await new Storage({
+    const storage = useStorage({
       sessionId: this.session_id,
       videoId: video.get_video_id()
-    }).init();
+    });
     await storage.save({
       user_agent: this.userAgent,
       location: window.location.href,
