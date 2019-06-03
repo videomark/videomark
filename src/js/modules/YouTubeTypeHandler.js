@@ -92,10 +92,17 @@ class YouTubeTypeHandler {
             // eslint-disable-next-line no-undef
             YouTubeTypeHandler.sodiumAdaptiveFmts = ytplayer.config ? ytplayer.config.args.adaptive_fmts : null;
             player.sodiumHookedFunc = player.loadVideoByPlayerVars;
+            player.sodiumHookedFunc2 = player.updateVideoData;
             // eslint-disable-next-line func-names, prefer-arrow-callback
             player.loadVideoByPlayerVars = function (arg) { // thisを変えられないためアロー演算子は使わない
                 YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
                 return this.sodiumHookedFunc(arg);
+            }
+            // eslint-disable-next-line func-names, prefer-arrow-callback
+            player.updateVideoData = function (arg) { // thisを変えられないためアロー演算子は使わない
+                if (arg.adaptive_fmts && arg.adaptive_fmts.length > 0)
+                    YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
+                return this.sodiumHookedFunc2(arg);
             }
         }
     }
