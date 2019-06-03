@@ -22,7 +22,7 @@ export default class Storage {
   }
 
   async init() {
-    this.cache = await this.load();
+    this.cache = {};
     if (!Config.is_mobile()) {
       window.addEventListener("message", e => {
         if (
@@ -33,19 +33,19 @@ export default class Storage {
           this.cache = e.data.video;
       });
     }
-    this.cache = {
-      session_id: this.sessionId,
-      video_id: this.videoId,
-      ...this.cache
-    };
     return this;
   }
 
   async save(attributes) {
-    const tmp = await this.load();
-    Object.assign(tmp, attributes);
+    const tmp = (await this.load()) || {};
+    Object.assign(tmp, {
+      ...attributes,
+      session_id: this.sessionId,
+      video_id: this.videoId
+    });
     if (Config.is_mobile()) {
       sodium.storage.local.set({ [this.viewingId]: tmp });
+      this.cache = tmp;
     } else {
       await new Promise(resolve => {
         window.addEventListener("message", resolve, { once: true });
@@ -60,7 +60,6 @@ export default class Storage {
         );
       });
     }
-    Object.assign(this.cache, attributes);
-    return attributes;
+    return tmp;
   }
 }
