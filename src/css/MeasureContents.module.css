@@ -164,9 +164,10 @@
 
 .modalThumbnail {
   width: 100%;
-  height: initial;
-  min-height: 136px;
-  max-height: 250px;
+  max-width: 500px;
+  max-height: calc(500px * 9 / 16);
+  object-fit: cover;
+  vertical-align: top;
 }
 
 .modalMain .movieInfo {

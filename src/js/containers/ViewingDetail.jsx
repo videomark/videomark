@@ -80,7 +80,7 @@ class ViewingDetail extends Component {
         <div className={style.header}>
           <a href={location}>
             <img
-              className={`${style.thumbnail} ${style.modalThumbnail}`}
+              className={style.modalThumbnail}
               src={thumbnail}
               alt={title}
               onError={e => {
