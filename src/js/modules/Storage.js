@@ -13,7 +13,9 @@ export default class Storage {
   async load() {
     if (Config.is_mobile()) {
       return new Promise(resolve =>
-        sodium.storage.local.get(this.viewingId, viewing => resolve(viewing))
+        sodium.storage.local.get(this.viewingId, viewing =>
+          resolve(viewing[this.viewingId])
+        )
       );
     }
     return this.cache;
