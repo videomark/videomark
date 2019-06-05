@@ -4,6 +4,14 @@ import { Help } from "../../components/Icons";
 import style from "../../../css/Header.module.css";
 import SiteSelect from "./SiteSelect";
 import MonthSelect from "./MonthSelect";
+import { isMobile, isExtension, isDevelop } from "../../utils/Utils";
+
+const helpUrl = (base => {
+  console.error({ isMobile, isExtension, isDevelop });
+  if (isMobile()) return new URL("android", base);
+  if (isExtension()) return new URL("extension", base);
+  return base;
+})(new URL("https://vm.webdino.org/help/"));
 
 const Header = () => (
   <div className={style.root}>
@@ -14,13 +22,7 @@ const Header = () => (
       <SiteSelect />
     </div>
     <div className={style.helpRoot}>
-      <IconButton
-        color="primary"
-        className={style.helpButton}
-        onClick={() => {
-          window.open("https://vm.webdino.org/about/");
-        }}
-      >
+      <IconButton color="primary" className={style.helpButton} href={helpUrl}>
         <Help />
       </IconButton>
     </div>
