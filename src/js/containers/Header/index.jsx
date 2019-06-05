@@ -4,10 +4,9 @@ import { Help } from "../../components/Icons";
 import style from "../../../css/Header.module.css";
 import SiteSelect from "./SiteSelect";
 import MonthSelect from "./MonthSelect";
-import { isMobile, isExtension, isDevelop } from "../../utils/Utils";
+import { isMobile, isExtension } from "../../utils/Utils";
 
 const helpUrl = (base => {
-  console.error({ isMobile, isExtension, isDevelop });
   if (isMobile()) return new URL("android", base);
   if (isExtension()) return new URL("extension", base);
   return base;
