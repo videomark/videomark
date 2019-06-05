@@ -78,7 +78,7 @@ class ViewingDetail extends Component {
     return (
       <div className={`${style.main} ${style.modalMain}`}>
         <div className={style.header}>
-          <a href={location}>
+          <a href={location} target="_blank" rel="noopener noreferrer">
             <img
               className={style.modalThumbnail}
               src={thumbnail}
