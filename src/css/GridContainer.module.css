@@ -1,66 +1,16 @@
-.gridContainer {
-  text-align: center;
-  max-width: 1024px;
-  margin: auto;
-}
-
 @media (max-width: 600px) {
-  .gridContainer {
-    margin-top: 100px;
+  .container {
+    padding-top: 100px;
   }
 }
 
-.day {
-  text-align: center;
-}
-
-.grid {
-  width: auto !important;
-  margin: 0 !important;
-}
-
-.grid > div {
-  min-width: 236px;
-  width: calc(25% - 20px);
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 10px;
+.item {
   cursor: pointer;
-  -webkit-transition: 0.2s;
+}
+.item:hover {
+  filter: drop-shadow(0 2px 12px #ccc);
   transition: 0.2s;
 }
-
-/* 結果を 3 列以下で表示する場合 */
-@media (max-width: 1023px) {
-  .grid {
-    justify-content: center;
-  }
-
-  /* Hack: Flexbox 最終行だけ左詰 (3列まで対応) */
-  .grid:last-child::before,
-  .grid:last-child::after {
-    content: "";
-    display: flex;
-    min-width: 236px;
-    width: calc(25% - 20px);
-    height: 0px;
-    margin: 0px 10px;
-    order: 1;
-  }
-}
-
-/* 結果を 1 列表示する場合 */
-@media (max-width: 600px) {
-  .grid > div {
-    width: 100%;
-  }
-}
-
-.grid > div:hover {
-  -webkit-box-shadow: 0 2px 12px #ccc;
-  box-shadow: 0 2px 12px #ccc;
-}
-
-.content:focus {
-  outline: 0px;
+.item:focus {
+  outline: 0;
 }

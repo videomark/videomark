@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 import ViewingModel from "../utils/Viewing";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import style from "../../css/MeasureContents.module.css";
@@ -75,20 +79,34 @@ class Viewing extends Component {
       disabled
     } = this.state;
 
-    const graphList = (
-      <>
-        <div style={{ width: "100%", height: "20px" }} />
-        <QoEValueGraphList
-          value={qoe}
-          region={region}
-          regionalAverage={regionalAverageQoE}
-          hour={hour}
-          hourlyAverage={hourlyAverageQoE}
-        />
-      </>
+    const VideoThumbnail = () => (
+      <img
+        className={
+          style.thumbnail + (disabled ? ` ${style.removedThumbnail}` : "")
+        }
+        src={thumbnail}
+        alt={title}
+        onError={e => {
+          e.target.src = NoImage;
+        }}
+      />
     );
 
-    const recoverOrRemoveButton = (
+    const GraphList = () => (
+      <Grid container style={{ height: 76 }} alignItems="center">
+        <Grid item xs style={{ paddingLeft: 4, paddingRight: 4 }}>
+          <QoEValueGraphList
+            value={qoe}
+            region={region}
+            regionalAverage={regionalAverageQoE}
+            hour={hour}
+            hourlyAverage={hourlyAverageQoE}
+          />
+        </Grid>
+      </Grid>
+    );
+
+    const RecoverOrRemoveButton = () => (
       <div className={style.removedStateButtons}>
         <Button
           variant="contained"
@@ -121,38 +139,40 @@ class Viewing extends Component {
         </Button>
       </div>
     );
-    const disabledInfo = (
-      <>
-        <div className={style.removedStateInfoText}>
-          次回起動時に削除します。復元を押すと削除を取り消し、削除ボタンを押すと今すぐ削除します。
-        </div>
-        {recoverOrRemoveButton}
-      </>
+    const DisabledInfo = () => (
+      <Grid
+        container
+        style={{ height: 76 }}
+        direction="column"
+        justify="flex-end"
+      >
+        <Grid item>
+          <Typography
+            component="small"
+            variant="caption"
+            color="error"
+            align="center"
+            gutterBottom
+          >
+            次回起動時に削除します。取り消すには復元、今すぐ削除するには削除を押してください。
+          </Typography>
+          <RecoverOrRemoveButton />
+        </Grid>
+      </Grid>
     );
 
     return (
-      <div className={style.main}>
+      <Card>
         <div className={style.header}>
-          <img
-            className={
-              style.thumbnail + (disabled ? ` ${style.removedThumbnail}` : "")
-            }
-            src={thumbnail}
-            alt={title}
-            onError={e => {
-              e.target.src = NoImage;
-            }}
-          />
+          <CardMedia component={VideoThumbnail} image="#" />
           <div className={style.movieInfo}>
-            <span className={style.serviceName}>
-              {urlToVideoPlatform(location).name}
-            </span>
-            <span className={style.startTime}>{toTimeString(startTime)}</span>
+            <span>{urlToVideoPlatform(location).name}</span>
+            <span>{toTimeString(startTime)}</span>
           </div>
         </div>
         <div className={style.title}>{title}</div>
-        {disabled ? disabledInfo : graphList}
-      </div>
+        {disabled ? <DisabledInfo /> : <GraphList />}
+      </Card>
     );
   }
 }

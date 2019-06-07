@@ -77,10 +77,8 @@ class ViewingList extends Component {
 
     if (viewings.length === 0) {
       return (
-        <div className={style.gridContainer}>
-          <Grid>
-            <NoContents title="まだ計測対象となる動画を視聴していません" />
-          </Grid>
+        <div className={style.container}>
+          <NoContents title="まだ計測対象となる動画を視聴していません" />
         </div>
       );
     }
@@ -98,9 +96,13 @@ class ViewingList extends Component {
         })
       )
       .map(({ id, sessionId, videoId, disabled }) => (
-        <div
+        <Grid
+          item
+          xs={12}
+          sm={4}
+          md={3}
           key={id + (disabled ? "_disabled" : "")}
-          className={`${style.content}`}
+          className={style.item}
           role="button"
           onClick={() => {
             if (disabled) return;
@@ -126,15 +128,13 @@ class ViewingList extends Component {
             hourlyAverageQoE={hourlyAverageQoE}
             disabled={disabled}
           />
-        </div>
+        </Grid>
       ));
 
     if (viewingList.length === 0) {
       return (
-        <div className={style.gridContainer}>
-          <Grid>
-            <NoContents />
-          </Grid>
+        <div className={style.container}>
+          <NoContents />
         </div>
       );
     }
@@ -142,14 +142,13 @@ class ViewingList extends Component {
     const maxPage = Math.ceil(viewingList.length / perPage);
 
     return (
-      <div className={style.gridContainer}>
+      <div style={{ padding: 12, maxWidth: "1024px", margin: "auto" }}>
         <Grid
+          className={style.container}
           container
           spacing={24}
           direction="row"
           alignItems="flex-start"
-          id={style.con}
-          className={style.grid}
         >
           {viewingList.slice(page * perPage, (page + 1) * perPage)}
         </Grid>

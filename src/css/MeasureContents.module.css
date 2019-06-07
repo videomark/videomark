@@ -1,41 +1,9 @@
-.main {
-  box-shadow: inset 0 0 1px 1px rgba(192, 192, 192, 0.5);
-  background-color: white;
-  height: 200px;
-  border-color: #ccc;
-  height: auto;
-
-  min-height: 280px;
-}
-
-.main > div {
-  position: relative;
-}
-
-.main button {
-  width: 100%;
-}
-
 .thumbnail {
   width: 100%;
   object-fit: cover;
   min-height: 100%;
   max-height: calc(236px * 9 / 16);
   vertical-align: top;
-}
-
-.removeButton {
-  z-index: 10;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-}
-
-.removeFab {
-  min-width: 24px !important;
-  min-height: 24px !important;
-  width: 24px !important;
-  height: 24px !important;
 }
 
 .title {
@@ -61,76 +29,6 @@
   height: auto;
 }
 
-.serviceName {
-}
-
-.startTime {
-}
-
-.qoeDate {
-  position: relative;
-  padding: 0 10px;
-}
-
-.userGraph {
-  position: relative;
-  z-index: 1;
-}
-
-.graph {
-  width: 100%;
-  height: 50px;
-  height: auto;
-}
-
-.qoeGraph {
-  justify-content: center;
-}
-
-.expanded {
-  position: relative;
-  padding-bottom: 20px;
-}
-
-.image {
-  display: inline-block;
-}
-
-.card {
-  width: 100%;
-}
-
-.cardHeaderRoot {
-}
-
-.cardHeaderTitle {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  white-space: initial;
-  overflow: hidden;
-  width: 100%;
-  height: 40px;
-  line-height: 20px;
-  word-wrap: break-word;
-  margin-top: 5px;
-  margin-bottom: 0px;
-}
-
-.actions {
-  justify-content: flex-end;
-}
-
-.average {
-  display: inline-block;
-}
-
-.removedStateInfoText {
-  color: red;
-  font-size: 0.625rem;
-  width: 100%;
-  line-height: 20px;
-}
-
 .removedStateButtons {
   display: flex;
   justify-content: space-between;
@@ -139,6 +37,7 @@
 
 .removedStateButton {
   margin: auto !important;
+  width: 100%;
 }
 
 .removedStateButton img {
@@ -150,16 +49,11 @@
   filter: grayscale(1);
 }
 
-/* .hidden {
-  visibility: hidden;
-} */
-
 /* modal state */
 .modalMain {
-}
-
-.modalMain button {
-  width: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .modalThumbnail {

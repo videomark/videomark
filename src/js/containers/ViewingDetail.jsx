@@ -76,7 +76,7 @@ class ViewingDetail extends Component {
     } = this.state;
 
     return (
-      <div className={`${style.main} ${style.modalMain}`}>
+      <div className={style.modalMain}>
         <div className={style.header}>
           <a href={location} target="_blank" rel="noopener noreferrer">
             <img
@@ -89,26 +89,26 @@ class ViewingDetail extends Component {
             />
           </a>
           <div className={style.movieInfo}>
-            <span className={style.serviceName}>
-              {urlToVideoPlatform(location).name}
-            </span>
-            <span className={style.startTime}>{toTimeString(startTime)}</span>
+            <span>{urlToVideoPlatform(location).name}</span>
+            <span>{toTimeString(startTime)}</span>
           </div>
         </div>
         <div className={`${style.title} ${style.modalTitle}`}>{title}</div>
         <VideoQuality {...quality} />
         <div style={{ width: "100%", height: "20px" }} />
-        <QoEValueGraphList
-          value={qoe}
-          region={region}
-          regionalAverage={regionalAverageQoE}
-          hour={hour}
-          hourlyAverage={hourlyAverageQoE}
-          isDetail
-        />
+        <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+          <QoEValueGraphList
+            value={qoe}
+            region={region}
+            regionalAverage={regionalAverageQoE}
+            hour={hour}
+            hourlyAverage={hourlyAverageQoE}
+            isDetail
+          />
+        </div>
         <Button
           color="secondary"
-          className={style.eraseButton}
+          fullWidth
           onClick={() => {
             DataErase.add(id);
             // FIXME: ViewingListをrender()しないと表示が変わらない
