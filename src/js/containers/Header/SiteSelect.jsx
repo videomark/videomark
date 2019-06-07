@@ -7,9 +7,6 @@ import AppDataActions from "../../utils/AppDataActions";
 import videoPlatforms from "../../utils/videoPlatforms.json";
 
 const styles = () => ({
-  typography: {
-    useNextVariants: true
-  },
   root: {
     display: "flex",
     flexWrap: "wrap"

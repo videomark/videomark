@@ -5,9 +5,6 @@ import { Warning } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 
 const styles = () => ({
-  typography: {
-    useNextVariants: true
-  },
   warningIcon: {
     fontSize: 20,
     verticalAlign: "bottom"
@@ -37,7 +34,7 @@ const VideoQuality = ({
         <Typography
           component="dd"
           gutterBottom={isLowQuality}
-          color={isLowQuality ? "error" : "default"}
+          color={isLowQuality ? "error" : "textPrimary"}
         >
           {`${((dropped / total) * 100).toFixed(2)} % (${dropped} / ${total})`}
         </Typography>

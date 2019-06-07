@@ -152,7 +152,9 @@ class Viewing extends Component {
             variant="caption"
             color="error"
             align="center"
+            display="block"
             gutterBottom
+            style={{ lineHeight: 1.2 }}
           >
             次回起動時に削除します。取り消すには復元、今すぐ削除するには削除を押してください。
           </Typography>

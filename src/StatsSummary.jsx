@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   CssBaseline,
+  Container,
   Paper,
   Grid,
   Typography,
@@ -29,7 +30,7 @@ import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 
 const Stats = withStyles(theme => ({
   root: {
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing(2)
   },
   code: {
     fontSize: 12
@@ -266,7 +267,7 @@ const Stats = withStyles(theme => ({
             headerStyle: { padding: 0 },
             cellStyle: { padding: 0 }
           }))}
-          components={{ Container: Grid }}
+          components={{ Container: props => <div {...props} /> }}
           data={data.map((a, i) => ({
             index: i + 1,
             ...a,
@@ -275,6 +276,7 @@ const Stats = withStyles(theme => ({
           options={{
             sorting: true,
             exportButton: internal,
+            rowStyle: { height: 49 },
             pageSize: 10,
             pageSizeOptions: ((opts, rows) => {
               const i = opts.findIndex(n => rows <= n);
@@ -391,22 +393,22 @@ Stats.propTypes = {
 
 export default () => {
   return (
-    <div style={{ padding: 12 }}>
+    <Container>
       <CssBaseline />
-      <Grid container justify="center" spacing={16}>
+      <Grid container justify="center" spacing={2}>
         <Grid item>
           <Typography component="h1" variant="h5" align="center">
             統計API
           </Typography>
         </Grid>
-        <Grid item container spacing={8}>
+        <Grid item container spacing={1}>
           {[
             { type: "hour", title: "時間帯" },
             { type: "day", title: "曜日" },
             { type: "country", title: "国" },
             { type: "jp-subdivision", title: "地域" }
           ].map(stats => (
-            <Grid key={stats.type} item xs={12} sm>
+            <Grid key={stats.type} item xs={12} sm={6}>
               <Stats {...stats} />
             </Grid>
           ))}
@@ -416,7 +418,7 @@ export default () => {
             動画配信サービス
           </Typography>
         </Grid>
-        <Grid item container spacing={8}>
+        <Grid item container spacing={1}>
           {[
             { type: "service-hour", title: "時間帯" },
             { type: "service-day", title: "曜日" },
@@ -432,7 +434,7 @@ export default () => {
             プロバイダ
           </Typography>
         </Grid>
-        <Grid item container spacing={8}>
+        <Grid item container spacing={1}>
           {[
             { type: "isp-hour", title: "時間帯" },
             { type: "isp-day", title: "曜日" },
@@ -445,6 +447,6 @@ export default () => {
         </Grid>
       </Grid>
       <OfflineNoticeSnackbar />
-    </div>
+    </Container>
   );
 };

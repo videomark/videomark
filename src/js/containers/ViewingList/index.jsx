@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Viewing from "../Viewing";
 import ChromeExtensionWrapper from "../../utils/ChromeExtensionWrapper";
@@ -77,9 +78,9 @@ class ViewingList extends Component {
 
     if (viewings.length === 0) {
       return (
-        <div className={style.container}>
+        <Container className={style.container}>
           <NoContents title="まだ計測対象となる動画を視聴していません" />
-        </div>
+        </Container>
       );
     }
 
@@ -133,27 +134,21 @@ class ViewingList extends Component {
 
     if (viewingList.length === 0) {
       return (
-        <div className={style.container}>
+        <Container className={style.container}>
           <NoContents />
-        </div>
+        </Container>
       );
     }
 
     const maxPage = Math.ceil(viewingList.length / perPage);
 
     return (
-      <div style={{ padding: 12, maxWidth: "1024px", margin: "auto" }}>
-        <Grid
-          className={style.container}
-          container
-          spacing={24}
-          direction="row"
-          alignItems="flex-start"
-        >
+      <Container className={style.container}>
+        <Grid container spacing={3} direction="row" alignItems="flex-start">
           {viewingList.slice(page * perPage, (page + 1) * perPage)}
         </Grid>
         {maxPage <= 1 ? null : <Pager page={page} maxPage={maxPage} />}
-      </div>
+      </Container>
     );
   }
 }
