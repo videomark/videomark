@@ -11,7 +11,7 @@
   height: 60px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .root {
     padding: 0;
     height: 100px;
@@ -43,7 +43,7 @@
   height: 20px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .monthRoot {
     width: 100%;
     -ms-flex-item-align: end;

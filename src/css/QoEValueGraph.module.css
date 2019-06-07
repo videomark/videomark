@@ -5,17 +5,24 @@
   align-items: center;
 }
 .qoeValueGraph:not(.modalQoeValueGraph) {
-  font-size: 10px;
-  text-align: center;
+  font-size: 12px;
+}
+@media (min-width: 600px) {
+  .qoeValueGraph:not(.modalQoeValueGraph) {
+    font-size: 10px;
+  }
 }
 .qoeValueGraph:not(.modalQoeValueGraph) .label {
-  flex-basis: 25%;
+  flex-basis: 4.5em;
+  padding-right: 0.5em;
+  text-align: end;
 }
 .qoeValueGraph:not(.modalQoeValueGraph) .qoeBarGraph {
-  flex-basis: 60%;
+  flex-basis: calc(100% - 8em);
 }
 .qoeValueGraph:not(.modalQoeValueGraph) .qoeValue {
-  flex-basis: 15%;
+  flex-basis: 2.5em;
+  padding-left: 0.5em;
 }
 .qoeValueGraph.modalQoeValueGraph {
   margin-bottom: 15px;

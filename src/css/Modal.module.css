@@ -52,19 +52,13 @@
   -ms-flex-align: center;
   align-items: center;
   z-index: 5;
+  right: 0;
+  top: 0;
 }
-
-@media all and (orientation: landscape) {
+@media (min-width: 600px) {
   .modal .modal_close {
-    right: 2rem;
-    top: 2rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .modal .modal_close {
-    top: 5%;
-    right: 5%;
+    right: 40px;
+    top: 40px;
   }
 }
 
@@ -101,21 +95,15 @@
 }
 
 .modal .modal_inner {
-  width: 80%;
+  width: 90vw;
   max-width: 500px;
   position: relative;
   z-index: 1;
+  overflow: auto;
 }
-
-@media all and (orientation: landscape) {
+@media (min-width: 600px) {
   .modal .modal_inner {
-    overflow: auto;
-  }
-}
-
-@media (max-width: 600px) {
-  .modal .modal_inner {
-    width: 90%;
+    width: 80vw;
   }
 }
 

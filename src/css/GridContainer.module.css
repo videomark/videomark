@@ -1,6 +1,9 @@
-@media (max-width: 600px) {
+.container {
+  padding-top: 100px;
+}
+@media (min-width: 600px) {
   .container {
-    padding-top: 100px;
+    padding-top: 0;
   }
 }
 

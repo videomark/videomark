@@ -5,12 +5,11 @@
 }
 
 .help {
-  width: 24px;
+  width: 18px;
   height: auto;
 }
-
-@media (max-width: 600px) {
+@media (min-width: 600px) {
   .help {
-    width: 18px;
+    width: 24px;
   }
 }
