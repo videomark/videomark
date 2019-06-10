@@ -1,55 +1,31 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Typography, MobileStepper, Button } from "@material-ui/core";
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
+import Pagination from "material-ui-flat-pagination";
 import AppDataActions from "../../utils/AppDataActions";
 import AppData from "../../utils/AppData";
 
-const Pager = ({ page, maxPage }) => {
-  const handleBack = () => {
+const Pager = ({ page, perPage, maxPage }) => {
+  const handleClick = (e, offset) => {
     AppData.update(AppDataActions.ViewingList, state =>
-      Object.assign(state, { page: page - 1 })
+      Object.assign(state, { page: offset / perPage })
     );
     window.scrollTo(window.scrollX, 0);
   };
-  const BackButton = (
-    <Button size="small" onClick={handleBack} disabled={page === 0}>
-      <KeyboardArrowLeft />
-      前のページ
-    </Button>
-  );
-  const handleNext = () => {
-    AppData.update(AppDataActions.ViewingList, state =>
-      Object.assign(state, { page: page + 1 })
-    );
-    window.scrollTo(window.scrollX, 0);
-  };
-  const NextButton = (
-    <Button size="small" onClick={handleNext} disabled={page === maxPage - 1}>
-      次のページ
-      <KeyboardArrowRight />
-    </Button>
-  );
 
   return (
-    <>
-      <Typography variant="caption" paragraph>
-        {`${page} / ${maxPage - 1}`}
-      </Typography>
-      <MobileStepper
-        variant="progress"
-        steps={maxPage}
-        position="static"
-        activeStep={page}
-        backButton={BackButton}
-        nextButton={NextButton}
-      />
-    </>
+    <Pagination
+      limit={perPage}
+      offset={page * perPage}
+      total={maxPage * perPage}
+      onClick={handleClick}
+      otherPageColor="default"
+    />
   );
 };
 
 Pager.propTypes = {
   page: PropTypes.number.isRequired,
+  perPage: PropTypes.number.isRequired,
   maxPage: PropTypes.number.isRequired
 };
 

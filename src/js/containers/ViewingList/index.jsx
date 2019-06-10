@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 import Viewing from "../Viewing";
 import ChromeExtensionWrapper from "../../utils/ChromeExtensionWrapper";
 import AppData from "../../utils/AppData";
@@ -147,7 +148,15 @@ class ViewingList extends Component {
         <Grid container spacing={3} direction="row" alignItems="flex-start">
           {viewingList.slice(page * perPage, (page + 1) * perPage)}
         </Grid>
-        {maxPage <= 1 ? null : <Pager page={page} maxPage={maxPage} />}
+        {maxPage <= 1 ? null : (
+          <Box my={2}>
+            <Grid container justify="center">
+              <Grid item>
+                <Pager page={page} perPage={perPage} maxPage={maxPage} />
+              </Grid>
+            </Grid>
+          </Box>
+        )}
       </Container>
     );
   }
