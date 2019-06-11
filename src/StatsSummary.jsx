@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {
   CssBaseline,
   Container,
+  Box,
   Paper,
   Grid,
   Typography,
@@ -323,12 +324,8 @@ const Stats = withStyles(theme => ({
       ) : null}
       <Grid container justify="space-between">
         <Grid item>
-          <details>
-            <Typography
-              component="summary"
-              varient="caption"
-              style={{ marginTop: "1em" }}
-            >
+          <Box component="details" mt={1.5}>
+            <Typography component="summary" varient="caption">
               リクエスト詳細
             </Typography>
             <>
@@ -357,7 +354,7 @@ const Stats = withStyles(theme => ({
                 </pre>
               </>
             )}
-          </details>
+          </Box>
         </Grid>
         {resBody === undefined ? null : (
           <Grid item>
