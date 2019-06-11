@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import QoEValueGraphList from "../components/QoEValueGraphList";
-import VideoQuality from "../components/VideoQuality";
+import { VideoQuality, isLowQuality } from "../components/VideoQuality";
 import DataErase from "../utils/DataErase";
 import AppDataActions from "../utils/AppDataActions";
 import AppData from "../utils/AppData";
@@ -68,6 +68,7 @@ const ViewingDetail = ({
           hour={startTime.getHours()}
           hourlyAverage={hourlyAverage}
           isDetail
+          color={isLowQuality(quality) ? "text.secondary" : "default"}
         />
       </Box>
       <Button

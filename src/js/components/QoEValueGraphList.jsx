@@ -10,7 +10,8 @@ const QoEValueGraphList = ({
   regionalAverage,
   hour,
   hourlyAverage,
-  isDetail
+  isDetail,
+  color
 }) => {
   switch (value) {
     case -1:
@@ -38,6 +39,7 @@ const QoEValueGraphList = ({
         label={isDetail ? "視聴時の体感品質" : "体感品質"}
         qoe={value}
         modal={isDetail}
+        color={color}
       />
       <RegionalAverageQoEGraph
         region={region}
@@ -65,13 +67,15 @@ QoEValueGraphList.propTypes = {
   regionalAverage: PropTypes.number,
   hour: PropTypes.number,
   hourlyAverage: PropTypes.number,
-  isDetail: PropTypes.bool
+  isDetail: PropTypes.bool,
+  color: PropTypes.string
 };
 QoEValueGraphList.defaultProps = {
   region: undefined,
   regionalAverage: undefined,
   hour: undefined,
   hourlyAverage: undefined,
-  isDetail: false
+  isDetail: false,
+  color: "default"
 };
 export default QoEValueGraphList;

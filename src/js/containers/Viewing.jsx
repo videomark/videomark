@@ -6,6 +6,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import ViewingModel from "../utils/Viewing";
+import { isLowQuality } from "../components/VideoQuality";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import style from "../../css/MeasureContents.module.css";
 import { urlToVideoPlatform } from "../utils/Utils";
@@ -97,6 +98,7 @@ const Viewing = ({
     thumbnail,
     startTime,
     qoe,
+    quality,
     region,
     regionalAverage,
     hourlyAverage
@@ -111,6 +113,7 @@ const Viewing = ({
           regionalAverage={regionalAverage}
           hour={startTime.getHours()}
           hourlyAverage={hourlyAverage}
+          color={isLowQuality(quality) ? "text.secondary" : "default"}
         />
       </Grid>
     </Grid>
