@@ -1,18 +1,10 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { Grid, Typography } from "@material-ui/core";
-import { Warning } from "@material-ui/icons";
-import { withStyles } from "@material-ui/core/styles";
-
-const styles = () => ({
-  warningIcon: {
-    fontSize: 20,
-    verticalAlign: "bottom"
-  }
-});
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 
 const VideoQuality = ({
-  classes,
   framerate: fps,
   speed,
   droppedVideoFrames: dropped,
@@ -20,31 +12,39 @@ const VideoQuality = ({
 }) => {
   if ([fps, speed, dropped / total].some(n => !Number.isFinite(n))) return null;
   const isLowQuality = dropped / total > 1e-3;
+  const palette = {
+    framerate: {
+      text: fps < 0 ? "textSecondary" : "inherit"
+    }
+  };
 
   return (
     <Grid container>
       <Grid item xs component="dl">
-        <Typography component="dt">フレームレート</Typography>
-        <Typography component="dd">
-          {fps < 0 ? "-" : `${fps} fps${speed === 1 ? "" : ` × ${speed}`}`}
+        <Typography component="dt" color={palette.framerate.text}>
+          フレームレート
+        </Typography>
+        <Typography component="dd" color={palette.framerate.text}>
+          {fps < 0 ? "n/a" : `${fps} fps${speed === 1 ? "" : ` × ${speed}`}`}
         </Typography>
       </Grid>
       <Grid item xs>
         <Typography component="dt">フレームドロップ率</Typography>
-        <Typography
-          component="dd"
-          gutterBottom={isLowQuality}
-          color={isLowQuality ? "error" : "textPrimary"}
-        >
+        <Typography component="dd" color="textPrimary">
           {`${((dropped / total) * 100).toFixed(2)} % (${dropped} / ${total})`}
         </Typography>
       </Grid>
       {isLowQuality ? (
         <Grid item xs={12}>
-          <Typography variant="caption" component="small" color="error">
-            <Warning className={classes.warningIcon} />
-            フレームドロップが発生したため実際の体感品質とは異なる可能性があります。
-          </Typography>
+          <Box mt={1}>
+            <Typography
+              variant="caption"
+              component="small"
+              color="textSecondary"
+            >
+              フレームドロップが発生したため実際の体感品質とは異なる可能性があります。
+            </Typography>
+          </Box>
         </Grid>
       ) : null}
     </Grid>
@@ -52,7 +52,6 @@ const VideoQuality = ({
 };
 
 VideoQuality.propTypes = {
-  classes: PropTypes.instanceOf(Object).isRequired,
   framerate: PropTypes.number,
   speed: PropTypes.number,
   droppedVideoFrames: PropTypes.number,
@@ -65,4 +64,4 @@ VideoQuality.defaultProps = {
   totalVideoFrames: undefined
 };
 
-export default withStyles(styles)(VideoQuality);
+export default VideoQuality;
