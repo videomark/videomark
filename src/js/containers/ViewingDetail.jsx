@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import VideoQuality from "../components/VideoQuality";
 import DataErase from "../utils/DataErase";
@@ -107,7 +108,7 @@ class ViewingDetail extends Component {
           />
         </div>
         <Button
-          color="secondary"
+          color="default"
           fullWidth
           onClick={() => {
             DataErase.add(id);
@@ -116,7 +117,9 @@ class ViewingDetail extends Component {
             AppData.update(AppDataActions.Modal, null);
           }}
         >
-          この計測結果を削除する
+          <Typography variant="button" color="textSecondary">
+            この計測結果を削除する
+          </Typography>
         </Button>
       </div>
     );
