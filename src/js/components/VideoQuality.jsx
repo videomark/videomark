@@ -21,16 +21,26 @@ const VideoQuality = ({
   return (
     <Grid container>
       <Grid item xs component="dl">
-        <Typography component="dt" color={palette.framerate.text}>
+        <Typography
+          component="dt"
+          variant="body2"
+          color={palette.framerate.text}
+        >
           フレームレート
         </Typography>
-        <Typography component="dd" color={palette.framerate.text}>
+        <Typography
+          component="dd"
+          variant="body2"
+          color={palette.framerate.text}
+        >
           {fps < 0 ? "n/a" : `${fps} fps${speed === 1 ? "" : ` × ${speed}`}`}
         </Typography>
       </Grid>
       <Grid item xs>
-        <Typography component="dt">フレームドロップ率</Typography>
-        <Typography component="dd" color="textPrimary">
+        <Typography component="dt" variant="body2">
+          フレームドロップ率
+        </Typography>
+        <Typography component="dd" variant="body2" color="textPrimary">
           {`${((dropped / total) * 100).toFixed(2)} % (${dropped} / ${total})`}
         </Typography>
       </Grid>
