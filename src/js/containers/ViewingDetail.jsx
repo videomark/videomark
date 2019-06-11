@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import VideoQuality from "../components/VideoQuality";
@@ -96,8 +97,7 @@ class ViewingDetail extends Component {
         </div>
         <div className={`${style.title} ${style.modalTitle}`}>{title}</div>
         <VideoQuality {...quality} />
-        <div style={{ width: "100%", height: "20px" }} />
-        <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+        <Box mt={2} px={1}>
           <QoEValueGraphList
             value={qoe}
             region={region}
@@ -106,7 +106,7 @@ class ViewingDetail extends Component {
             hourlyAverage={hourlyAverageQoE}
             isDetail
           />
-        </div>
+        </Box>
         <Button
           color="default"
           fullWidth
