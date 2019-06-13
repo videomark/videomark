@@ -35,18 +35,6 @@ export const quality = ({ sessionId, videoId }) => {
     videoId
   });
   const { width: videoWidth, height: videoHeight } = resolution || {};
-  if (
-    [
-      bitrate,
-      videoWidth,
-      videoHeight,
-      framerate,
-      speed,
-      droppedVideoFrames,
-      totalVideoFrames
-    ].some(n => !Number.isFinite(n))
-  )
-    return "";
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const qoe = latestQoE({ sessionId, videoId });
   const classes = {
