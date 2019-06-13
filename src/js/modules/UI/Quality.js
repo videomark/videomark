@@ -25,6 +25,7 @@ export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
 export const quality = ({ sessionId, videoId }) => {
   const {
     bitrate,
+    resolution,
     framerate,
     speed,
     droppedVideoFrames,
@@ -33,10 +34,17 @@ export const quality = ({ sessionId, videoId }) => {
     sessionId,
     videoId
   });
+  const { width: videoWidth, height: videoHeight } = resolution || {};
   if (
-    [bitrate, framerate, speed, droppedVideoFrames, totalVideoFrames].some(
-      n => !Number.isFinite(n)
-    )
+    [
+      bitrate,
+      videoWidth,
+      videoHeight,
+      framerate,
+      speed,
+      droppedVideoFrames,
+      totalVideoFrames
+    ].some(n => !Number.isFinite(n))
   )
     return "";
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
@@ -44,6 +52,9 @@ export const quality = ({ sessionId, videoId }) => {
   const classes = {
     bitrate: {
       na: !(bitrate >= 0)
+    },
+    resolution: {
+      na: ![videoWidth, videoHeight].every(l => l >= 0)
     },
     framerate: {
       na: !(framerate >= 0)
@@ -89,6 +100,12 @@ export const quality = ({ sessionId, videoId }) => {
       <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
       <dd class=${classMap(classes.bitrate)}>
         ${bitrate >= 0 ? `${bitrate.toLocaleString()} bps` : "n/a"}
+      </dd>
+      <dt class=${classMap(classes.resolution)}>解像度</dt>
+      <dd class=${classMap(classes.resolution)}>
+        ${[videoWidth, videoHeight].every(l => l >= 0)
+          ? `${videoWidth} × ${videoHeight}`
+          : "n/a"}
       </dd>
       <dt class=${classMap(classes.framerate)}>フレームレート</dt>
       <dd class=${classMap(classes.framerate)}>
