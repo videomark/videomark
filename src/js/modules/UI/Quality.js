@@ -87,7 +87,7 @@ export const quality = ({ sessionId, videoId }) => {
     <dl class=${classMap({ alert })}>
       <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
       <dd class=${classMap(classes.bitrate)}>
-        ${bitrate >= 0 ? `${bitrate.toLocaleString()} bps` : "n/a"}
+        ${bitrate >= 0 ? `${(bitrate / 1e3).toLocaleString()} kbps` : "n/a"}
       </dd>
       <dt class=${classMap(classes.resolution)}>解像度</dt>
       <dd class=${classMap(classes.resolution)}>
