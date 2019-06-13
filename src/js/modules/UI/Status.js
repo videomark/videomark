@@ -20,6 +20,9 @@ export default class Status {
 
   get template() {
     const { open, sessionId, videoId } = this.state;
+    const { style } = this.root.host;
+    if (open) style.setProperty("opacity", 1);
+    else style.removeProperty("opacity");
     const alert = isLowQuality(latestQuality({ sessionId, videoId }));
     const qoe = latestQoE({ sessionId, videoId });
     const qoeStyles = {
