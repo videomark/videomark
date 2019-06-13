@@ -24,6 +24,7 @@ export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
 
 export const quality = ({ sessionId, videoId }) => {
   const {
+    bitrate,
     framerate,
     speed,
     droppedVideoFrames,
@@ -33,7 +34,7 @@ export const quality = ({ sessionId, videoId }) => {
     videoId
   });
   if (
-    [framerate, speed, droppedVideoFrames, totalVideoFrames].some(
+    [bitrate, framerate, speed, droppedVideoFrames, totalVideoFrames].some(
       n => !Number.isFinite(n)
     )
   )
@@ -41,6 +42,9 @@ export const quality = ({ sessionId, videoId }) => {
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const qoe = latestQoE({ sessionId, videoId });
   const classes = {
+    bitrate: {
+      na: !(bitrate >= 0)
+    },
     framerate: {
       na: !(framerate >= 0)
     },
@@ -82,6 +86,10 @@ export const quality = ({ sessionId, videoId }) => {
       }
     </style>
     <dl class=${classMap({ alert })}>
+      <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
+      <dd class=${classMap(classes.bitrate)}>
+        ${bitrate >= 0 ? `${bitrate.toLocaleString()} bps` : "n/a"}
+      </dd>
       <dt class=${classMap(classes.framerate)}>フレームレート</dt>
       <dd class=${classMap(classes.framerate)}>
         ${framerate >= 0
