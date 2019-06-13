@@ -31,6 +31,8 @@ export default class VideoData {
     this.events = [];
     this.last_events = {};
     this.resolution = {
+      width: -1,
+      height: -1,
       max: {
         width: -1,
         height: -1
@@ -192,6 +194,8 @@ export default class VideoData {
     const vw = this.video_handler.get_video_width();
     const vh = this.video_handler.get_video_height();
     if (vw > 0 && vh > 0) {
+      this.resolution.width = vw;
+      this.resolution.height = vh;
       if (this.resolution.max.width === -1 || this.resolution.max.width < vw)
         this.resolution.max.width = vw;
       if (this.resolution.max.height === -1 || this.resolution.max.height < vh)

@@ -267,7 +267,6 @@ export default class SessionData {
     await storage.save({
       user_agent: this.userAgent,
       location: window.location.href,
-      resolution: video.get_resolution(),
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
       start_time: video.get_start_time(),
@@ -277,7 +276,14 @@ export default class SessionData {
       log: [
         ...(storage.cache.log || []).filter(a => !("qoe" in a)),
         ...video.get_latest_qoe(),
-        { date: Date.now(), quality: video.get_quality() }
+        {
+          date: Date.now(),
+          quality: {
+            ...video.get_quality(),
+            viewport: video.get_viewport(),
+            resolution: video.get_resolution()
+          }
+        }
       ]
         .sort(({ date: ad }, { date: bd }) => ad - bd)
         .slice(-Config.max_log)
