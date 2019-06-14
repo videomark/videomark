@@ -19,6 +19,13 @@ export const latestQuality = ({ sessionId, videoId }) => {
   return quality || {};
 };
 
+export const startTime = ({ sessionId, videoId }) => {
+  const storage = useStorage({ sessionId, videoId });
+  if (storage.cache === undefined) return NaN;
+  const time = storage.cache.start_time;
+  return time >= 0 ? time : NaN;
+};
+
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
@@ -29,12 +36,15 @@ export const quality = ({ sessionId, videoId }) => {
     framerate,
     speed,
     droppedVideoFrames,
-    totalVideoFrames
+    totalVideoFrames,
+    timing
   } = latestQuality({
     sessionId,
     videoId
   });
   const { width: videoWidth, height: videoHeight } = resolution || {};
+  const { waiting, pause } = timing || {};
+  const playing = Date.now() - startTime({ sessionId, videoId }) - pause;
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const qoe = latestQoE({ sessionId, videoId });
   const classes = {
@@ -49,6 +59,9 @@ export const quality = ({ sessionId, videoId }) => {
     },
     dropped: {
       na: !Number.isFinite(droppedVideoFrames / totalVideoFrames)
+    },
+    waiting: {
+      na: !Number.isFinite(waiting / playing)
     },
     qoe: {
       alert,
@@ -105,6 +118,11 @@ export const quality = ({ sessionId, videoId }) => {
       <dd class=${classMap(classes.dropped)}>
         ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
         ${droppedVideoFrames} / ${totalVideoFrames} )
+      </dd>
+      <dt class=${classMap(classes.waiting)}>待機時間</dt>
+      <dd class=${classMap(classes.waiting)}>
+        ${(waiting / 1e3).toFixed(2)} s (
+        ${((waiting / playing) * 100).toFixed(2)} % )
       </dd>
       <dt class=${classMap(classes.qoe)}>体感品質 (QoE)</dt>
       <dd class=${classMap(classes.qoe)}>
