@@ -47,11 +47,7 @@ const ViewingDetail = ({
     <div className={style.modalMain}>
       <div className={style.header}>
         <a href={location} target="_blank" rel="noopener noreferrer">
-          <VideoThumbnail
-            className={style.modalThumbnail}
-            title={title}
-            thumbnail={thumbnail}
-          />
+          <VideoThumbnail title={title} thumbnail={thumbnail} />
         </a>
         <div className={style.movieInfo}>
           <span>{urlToVideoPlatform(location).name}</span>
