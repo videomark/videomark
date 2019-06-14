@@ -18,9 +18,9 @@ import AppData from "../utils/AppData";
 import AppDataActions from "../utils/AppDataActions";
 import NoImage from "../../images/noimage.svg";
 
-export const VideoThumbnail = ({ title, thumbnail, disabled }) => (
+export const VideoThumbnail = ({ className, title, thumbnail }) => (
   <img
-    className={style.thumbnail + (disabled ? ` ${style.removedThumbnail}` : "")}
+    className={className}
     src={thumbnail}
     alt={title}
     onError={e => {
@@ -29,12 +29,9 @@ export const VideoThumbnail = ({ title, thumbnail, disabled }) => (
   />
 );
 VideoThumbnail.propTypes = {
+  className: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  thumbnail: PropTypes.string.isRequired,
-  disabled: PropTypes.bool
-};
-VideoThumbnail.defaultProps = {
-  disabled: false
+  thumbnail: PropTypes.string.isRequired
 };
 
 export const toTimeString = date => {
@@ -181,9 +178,11 @@ const Viewing = ({
         <CardMedia
           component={() => (
             <VideoThumbnail
+              className={
+                style.thumbnail + (disabled ? ` ${style.removedThumbnail}` : "")
+              }
               title={title}
               thumbnail={thumbnail}
-              disabled={disabled}
             />
           )}
           image="#"
