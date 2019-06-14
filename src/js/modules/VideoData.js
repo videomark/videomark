@@ -301,27 +301,32 @@ export default class VideoData {
    * @param {Event} event
    */
   _listener(event) {
+    const now = Date.now();
     let playPos = -1;
     let playTime = -1;
-
-    if (event.type === "play" && this.play_start_time === -1) {
-      this.play_start_time = Date.now();
-      playPos = 0;
-      playTime = 0;
-      /* eslint-disable no-console */
-      console.log(
-        `VIDEOMARK: set play start time Event[${this.play_start_time}]`
-      );
-    } else if (this.play_start_time !== -1) {
+    if (this.play_start_time !== -1) {
       playPos = this.video_handler.get_current_time(event.target);
-      playTime = (Date.now() - this.play_start_time) / 1000;
+      playTime = (now - this.play_start_time) / 1000;
     }
-
-    if (event.type === "seeking") {
-      playPos = this.current_play_pos;
-      //  playTime = this.current_play_pos_date;
-    } else if (event.type === "ended") {
-      this.play_end_time = Date.now();
+    switch (event.type) {
+      case "play":
+        if (this.play_start_time === -1) {
+          this.play_start_time = now;
+          playPos = 0;
+          playTime = 0;
+          /* eslint-disable no-console */
+          console.log(
+            `VIDEOMARK: set play start time Event[${this.play_start_time}]`
+          );
+        }
+        break;
+      case "seeking":
+        playPos = this.current_play_pos;
+        break;
+      case "ended":
+        this.play_end_time = now;
+        break;
+      default:
     }
 
     const e = new EventData(
