@@ -1,6 +1,8 @@
 .thumbnail {
   width: 100%;
   object-fit: cover;
+  min-height: 100%;
+  max-height: calc(236px * 9 / 16);
   vertical-align: top;
 }
 
@@ -52,6 +54,14 @@
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.modalThumbnail {
+  width: 100%;
+  max-width: 500px;
+  max-height: calc(500px * 9 / 16);
+  object-fit: cover;
+  vertical-align: top;
 }
 
 .modalMain .movieInfo {
