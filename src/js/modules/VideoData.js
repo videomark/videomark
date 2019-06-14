@@ -45,7 +45,10 @@ export default class VideoData {
     this.latest_qoe = [];
     this.domain_name = null;
     this.listeners = [];
-
+    this.timing = {
+      waiting: () => 0,
+      pause: () => 0
+    };
     // --- set event listener --- //
     Config.get_event_type_names().forEach(s => {
       this.last_events[s] = 0;
@@ -135,6 +138,12 @@ export default class VideoData {
       framerate,
       speed
     };
+  }
+
+  get_timing() {
+    const now = Date.now();
+    const { waiting, pause } = this.timing;
+    return { waiting: waiting(now), pause: pause(now) };
   }
 
   add_latest_qoe(data) {
@@ -302,6 +311,8 @@ export default class VideoData {
    */
   _listener(event) {
     const now = Date.now();
+    const waiting = this.timing.waiting(now);
+    const pause = this.timing.pause(now);
     let playPos = -1;
     let playTime = -1;
     if (this.play_start_time !== -1) {
@@ -309,7 +320,17 @@ export default class VideoData {
       playTime = (now - this.play_start_time) / 1000;
     }
     switch (event.type) {
+      case "waiting":
+        this.timing.waiting = at => waiting + at - now;
+        break;
+      case "canplay":
+        this.timing.waiting = () => waiting;
+        break;
+      case "pause":
+        this.timing.pause = at => pause + at - now;
+        break;
       case "play":
+        this.timing.pause = () => pause;
         if (this.play_start_time === -1) {
           this.play_start_time = now;
           playPos = 0;

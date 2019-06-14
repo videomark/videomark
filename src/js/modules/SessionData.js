@@ -281,7 +281,8 @@ export default class SessionData {
           quality: {
             ...video.get_quality(),
             viewport: video.get_viewport(),
-            resolution: video.get_resolution()
+            resolution: video.get_resolution(),
+            timing: video.get_timing()
           }
         }
       ]
