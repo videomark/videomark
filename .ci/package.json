@@ -1,0 +1,19 @@
+{
+  "name": "videomark-extension-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "jest": "^24.8.0",
+    "jest-puppeteer": "^4.2.0",
+    "puppeteer": "^1.17.0"
+  },
+  "jest": {
+    "preset": "jest-puppeteer",
+    "globalSetup": "./setup.js",
+    "globalTeardown": "./teardown.js"
+  }
+}

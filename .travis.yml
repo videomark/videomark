@@ -1,0 +1,8 @@
+dist: xenial
+services:
+  - xvfb
+language: node_js
+install:
+  - npm --prefix .ci install
+script:
+  - npm --prefix .ci test
