@@ -5,54 +5,103 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
-  droppedVideoFrames / totalVideoFrames > 1e-3;
+  !(droppedVideoFrames / totalVideoFrames <= 1e-3);
+
+const DItem = ({ dt, dd, na }) => {
+  const color = na ? "textSecondary" : "inherit";
+  return (
+    <Grid item xs={4}>
+      <Typography align="center" component="dt" variant="body2" color={color}>
+        {dt}
+      </Typography>
+      <Typography align="center" component="dd" variant="body2" color={color}>
+        {dd}
+      </Typography>
+    </Grid>
+  );
+};
+DItem.propTypes = {
+  dt: PropTypes.string.isRequired,
+  dd: PropTypes.string.isRequired,
+  na: PropTypes.string.isRequired
+};
 
 export const VideoQuality = ({
-  framerate: fps,
+  startTime,
+  bitrate,
+  resolution,
+  framerate,
   speed,
   droppedVideoFrames,
-  totalVideoFrames
+  totalVideoFrames,
+  timing
 }) => {
-  const palette = {
+  const { width: videoWidth, height: videoHeight } = resolution || {};
+  const { waiting, pause } = timing || {};
+  const playing = Date.now() - startTime - pause;
+  const classes = {
+    bitrate: {
+      na: !(bitrate >= 0)
+    },
+    resolution: {
+      na: ![videoWidth, videoHeight].every(l => l >= 0)
+    },
     framerate: {
-      text: fps > 0 ? "inherit" : "textSecondary"
+      na: !(framerate >= 0)
+    },
+    dropped: {
+      na: !Number.isFinite(droppedVideoFrames / totalVideoFrames)
+    },
+    waiting: {
+      na: !Number.isFinite(waiting / playing)
     }
   };
 
   return (
     <Grid container>
-      <Grid item xs component="dl">
-        <Typography
-          align="center"
-          component="dt"
-          variant="body2"
-          color={palette.framerate.text}
-        >
-          フレームレート
-        </Typography>
-        <Typography
-          align="center"
-          component="dd"
-          variant="body2"
-          color={palette.framerate.text}
-        >
-          {fps > 0 ? `${fps} fps${speed === 1 ? "" : ` × ${speed}`}` : "n/a"}
-        </Typography>
-      </Grid>
-      <Grid item xs>
-        <Typography align="center" component="dt" variant="body2">
-          フレームドロップ率
-        </Typography>
-        <Typography
-          align="center"
-          component="dd"
-          variant="body2"
-          color="textPrimary"
-        >
-          {`${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(
+      <Grid item xs={12} component="dl" container spacing={1}>
+        <DItem
+          dt="ビットレート"
+          dd={
+            classes.bitrate.na
+              ? "n/a"
+              : `${(bitrate / 1e3).toLocaleString()} kbps`
+          }
+          {...classes.bitrate}
+        />
+        <DItem
+          dt="解像度"
+          dd={classes.resolution.na ? "n/a" : `${videoWidth} × ${videoHeight}`}
+          {...classes.resolution}
+        />
+        <DItem
+          dt="フレームレート"
+          dd={
+            classes.framerate.na
+              ? "n/a"
+              : `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`
+          }
+          {...classes.framerate}
+        />
+        <DItem
+          dt="フレームドロップ率"
+          dd={`${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(
             2
           )} % (${droppedVideoFrames} / ${totalVideoFrames})`}
-        </Typography>
+          {...classes.dropped}
+        />
+        <DItem
+          dt="待機時間"
+          dd={
+            classes.waiting.na
+              ? "n/a"
+              : `${(waiting / 1e3).toFixed(2)} s ( ${(
+                  (waiting / playing) *
+                  100
+                ).toFixed(2)} % )`
+          }
+          {...classes.waiting}
+        />
       </Grid>
       {isLowQuality({
         droppedVideoFrames,
@@ -76,18 +125,25 @@ export const VideoQuality = ({
     </Grid>
   );
 };
-
 VideoQuality.propTypes = {
+  startTime: PropTypes.instanceOf(Date),
+  bitrate: PropTypes.number,
+  resolution: PropTypes.instanceOf(Object),
   framerate: PropTypes.number,
   speed: PropTypes.number,
   droppedVideoFrames: PropTypes.number,
-  totalVideoFrames: PropTypes.number
+  totalVideoFrames: PropTypes.number,
+  timing: PropTypes.instanceOf(Object)
 };
 VideoQuality.defaultProps = {
+  startTime: undefined,
+  bitrate: undefined,
+  resolution: undefined,
   framerate: undefined,
   speed: undefined,
   droppedVideoFrames: undefined,
-  totalVideoFrames: undefined
+  totalVideoFrames: undefined,
+  timing: undefined
 };
 
 export default VideoQuality;

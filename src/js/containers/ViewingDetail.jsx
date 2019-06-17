@@ -59,7 +59,7 @@ const ViewingDetail = ({
         </div>
       </div>
       <div className={`${style.title} ${style.modalTitle}`}>{title}</div>
-      <VideoQuality {...quality} />
+      <VideoQuality {...quality} startTime={startTime} />
       <Box mt={2} px={1}>
         <QoEValueGraphList
           value={qoe}
