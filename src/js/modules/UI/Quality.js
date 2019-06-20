@@ -2,21 +2,24 @@ import { html } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
 import { useStorage } from "../Storage";
 
-const latest = (log, key) =>
-  ((log || []).filter(a => key in a).slice(-1)[0] || {})[key];
+const latest = (log, key) => {
+  const { date, [key]: value } =
+    (log || []).filter(a => key in a).slice(-1)[0] || {};
+  return { date, value };
+};
 
 export const latestQoE = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
   if (storage.cache === undefined) return NaN;
-  const qoe = latest(storage.cache.log, "qoe");
-  return qoe == null ? NaN : qoe;
+  const { value } = latest(storage.cache.log, "qoe");
+  return value == null ? NaN : value;
 };
 
 export const latestQuality = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
   if (storage.cache === undefined) return "";
-  const quality = latest(storage.cache.log, "quality");
-  return quality || {};
+  const { date, value } = latest(storage.cache.log, "quality");
+  return value == null ? {} : { date, ...value };
 };
 
 export const startTime = ({ sessionId, videoId }) => {
@@ -31,6 +34,7 @@ export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
 
 export const quality = ({ sessionId, videoId }) => {
   const {
+    date,
     bitrate,
     resolution,
     framerate,
@@ -44,7 +48,7 @@ export const quality = ({ sessionId, videoId }) => {
   });
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
-  const playing = Date.now() - startTime({ sessionId, videoId }) - pause;
+  const playing = date - startTime({ sessionId, videoId }) - pause;
   const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const qoe = latestQoE({ sessionId, videoId });
   const classes = {
