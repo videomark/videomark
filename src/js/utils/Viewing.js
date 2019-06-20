@@ -117,8 +117,9 @@ class Viewing {
 
   get quality() {
     const log = this.cache.log || [];
-    const { quality } = log.filter(a => "quality" in a).slice(-1)[0] || {};
-    return Promise.resolve(quality);
+    const { date, quality } =
+      log.filter(a => "quality" in a).slice(-1)[0] || {};
+    return Promise.resolve({ date: new Date(date), ...quality });
   }
 }
 

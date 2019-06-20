@@ -28,6 +28,7 @@ DItem.propTypes = {
 
 export const VideoQuality = ({
   startTime,
+  date,
   bitrate,
   resolution,
   framerate,
@@ -38,7 +39,7 @@ export const VideoQuality = ({
 }) => {
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
-  const playing = Date.now() - startTime - pause;
+  const playing = date - startTime - pause;
   const classes = {
     bitrate: {
       na: !(bitrate >= 0)
@@ -127,6 +128,7 @@ export const VideoQuality = ({
 };
 VideoQuality.propTypes = {
   startTime: PropTypes.instanceOf(Date),
+  date: PropTypes.instanceOf(Date),
   bitrate: PropTypes.number,
   resolution: PropTypes.instanceOf(Object),
   framerate: PropTypes.number,
@@ -137,6 +139,7 @@ VideoQuality.propTypes = {
 };
 VideoQuality.defaultProps = {
   startTime: undefined,
+  date: undefined,
   bitrate: undefined,
   resolution: undefined,
   framerate: undefined,
