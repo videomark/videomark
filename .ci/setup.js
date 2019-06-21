@@ -24,6 +24,7 @@ const downloadExtension = async () => {
 
 module.exports = async () => {
   const extensionPath = await downloadExtension();
+  process.env.LANG = "C";
   const browser = await puppeteer.launch({
     args: [
       `--disable-extensions-except=${extensionPath}`,
