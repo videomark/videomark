@@ -26,4 +26,4 @@ test("YouTube動画に埋め込み", async () => {
   })('button[aria-label="再生"]');
   await new Promise(resolve => setTimeout(resolve, 1000));
   expect(await page.$("#__videomark_ui")).not.toBe(null);
-});
+}, 10e3);
