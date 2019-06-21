@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/videomark/videomark-extension.svg?branch=master)](https://travis-ci.org/videomark/videomark-extension)
+
 # ビルド手順
 
 この拡張機能固有のコードはビルドが必要なコードはありませんが、[sodium.js](<https://github.com/videomark/sodium.js>) および [videomark-log-view](<https://github.com/videomark/videomark-log-view>) のビルド済みファイルと一緒にした状態で利用するため、それぞれのビルドが必要です (手順はそれぞれのリポジトリ参照)。
