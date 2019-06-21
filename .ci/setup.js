@@ -1,25 +1,17 @@
 const puppeteer = require("puppeteer");
-const path = require("path");
-const os = require("os");
-const fs = require("fs");
-const { get } = require("https");
-const { execSync } = require("child_process");
 
 const downloadExtension = async () => {
-  const url =
-    "https://sodium-extension.netlify.com/production/webvideomark.zip";
-  const extensionPath = path.join(os.tmpdir(), "videomark-extension");
-  fs.mkdirSync(extensionPath);
-  const dist = fs.createWriteStream(path.join(extensionPath, "dist.zip"));
-  await new Promise(resolve =>
-    get(url, res => {
-      res.pipe(dist);
-      res.on("end", resolve);
-    })
+  const url = "https://sodium-extension.netlify.com/";
+  const path = require("path").join(
+    require("os").tmpdir(),
+    "videomark-extension"
   );
-  dist.close();
-  execSync("unzip dist.zip && rm dist.zip", { cwd: extensionPath });
-  return extensionPath;
+  require("fs").mkdirSync(path);
+  require("child_process").execSync(
+    'curl -sL "${VIDEOMARK_EXTENSION_URL}" -o dist.zip && unzip dist.zip && rm dist.zip',
+    { cwd: path, env: { VIDEOMARK_EXTENSION_URL: url } }
+  );
+  return path;
 };
 
 module.exports = async () => {
