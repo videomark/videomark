@@ -19,11 +19,11 @@ test(`利用規約とプライバシーポリシーに同意後、logView (${
 });
 test("YouTube動画に埋め込み", async () => {
   const demoVideo = "https://www.youtube.com/watch?v=mY6sChi65oU";
+  const player = "#ytd-player";
+  const videomark = "#__videomark_ui";
   await page.goto(demoVideo);
-  await (async selector => {
-    await page.waitFor(selector);
-    await page.click(selector);
-  })('button[aria-label="再生"]');
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  expect(await page.$("#__videomark_ui")).not.toBe(null);
+  await page.waitFor(player);
+  await page.bringToFront();
+  await page.click(player);
+  await page.waitFor(videomark, { timeout: 1e3 });
 });
