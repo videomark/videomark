@@ -25,5 +25,5 @@ test("YouTube動画に埋め込み", async () => {
   await page.waitFor(player);
   await page.bringToFront();
   await page.click(player);
-  await page.waitFor(videomark, { timeout: 1e3 });
+  await page.waitFor(videomark, { timeout: 2e3 });
 });
