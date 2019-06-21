@@ -2,6 +2,8 @@ dist: xenial
 services:
   - xvfb
 language: node_js
+node_js:
+  - "stable"
 install:
   - npm --prefix .ci install
 script:
