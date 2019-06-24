@@ -30,4 +30,4 @@ test("YouTube動画に埋め込み", async () => {
   const videomark = "#__videomark_ui";
   await page.goto(demoVideo);
   await page.waitFor(videomark);
-});
+}, 10e3);
