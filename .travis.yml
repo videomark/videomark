@@ -8,6 +8,15 @@ install:
   - npm --prefix .ci install
 script:
   - npm --prefix .ci test
+after_script:
+  - |
+    for f in .ci/screenshots/*; do
+      curl \
+        -F file="@$f" \
+        -F token="${SLACK_TOKEN}" \
+        -F channels="${SLACK_CHANNELS" \
+        https://slack.com/api/files.upload
+    done
 notifications:
   slack:
     secure: ug4A3pOpj9WJciXLl7FKXm7LiG0LXxHKe2lvXJe/hDfCvVamTNtRQJ5dQrEAK0nNx0MJv/3eb9z7FvWIzW2Bbqk9mXzIQV8f+V7QdOCFGoFRzqW5wVk0JMclqrBu+1QKXWGobHEqKSoG5taeI0sQYX0N6Ix+XXt3bLAmavgrVzlze3tr6WWR37SgphxPZGDIdHe2v0BOWyfoyZAdrUHErMSmr2405N2M1r8E8q+GUjj7mr7KIcWuLlZHdDvn45jZ9cGF9aPsqGAeOJP2wCgbUoT21N6VXnSB/icK6RHH3ZNvngv1kgAb1l6c9pwhKnUK/8YKujQeR5d6bjSdJU6YMojkkz0h6w45DqDl/GEwzJHwCm9BvErf7huTMqI8AtyxyTXCeVT9ADV8Ax0uncouurvVnuzREDce5tgSb7zcWqCK9LzjawoRk+UaCEeCsgUWmuDcdt49J8knS+gcLYISELvunJRex7ddktAc1XXkTMKps9TOEntxylLM9qFel7X2f4QubWWnAVeA6CqMX0h7NZaoigKPqAoyvShD1+o2Z0EtqLFCOEdQnI84V0pNXvjsoMfajPqWfZi4AONSykCX+MJ+Sg12F4VP19aeFQIUsduqvXKmjkIBMsbzpWFIlEkgkBwTPMkr949dnQXD8YlhwZrxv1b0/0Wh8ezCx90tDzA=
