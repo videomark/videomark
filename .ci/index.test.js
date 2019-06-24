@@ -2,16 +2,24 @@ const {
   pages: { terms, logView }
 } = require("./");
 
-let extensionPage;
 beforeAll(async () => {
-  const page = await terms.page(browser);
-  await page.bringToFront();
+  page = await terms.page(browser);
+  await Promise.all(
+    (await browser.pages()).filter(p => p !== page).map(p => p.close())
+  );
   await Promise.all(
     ["#terms", "#privacy"].map(selector => page.click(selector))
   );
-  await page.click("#submit");
-  extensionPage = page;
+  await Promise.all([page.waitForNavigation(), page.click("#submit")]);
 });
+
+const path = require("path");
+afterEach(async () => {
+  await page.screenshot({
+    path: path.join("screenshots", `${Date.now()}.png`)
+  });
+});
+
 test(`利用規約とプライバシーポリシーに同意後、logView (${
   logView.pathname
 })が表示`, async () => {
