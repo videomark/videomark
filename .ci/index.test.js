@@ -31,3 +31,21 @@ test("YouTube動画に埋め込み", async () => {
   await page.goto(demoVideo);
   await page.waitFor(videomark);
 }, 10e3);
+test("YouTube動画に埋め込み後、しばらく経つとQoE値が得られる", async () => {
+  const demoVideo = "https://www.youtube.com/watch?v=mY6sChi65oU";
+  const videomark = "#__videomark_ui";
+  await page.goto(demoVideo);
+  await page.waitFor(videomark);
+  const summary = await page.evaluateHandle(
+    selector =>
+      document
+        .querySelector(selector)
+        .shadowRoot.querySelector(".root > details > summary"),
+    videomark
+  );
+  const summaryText = () => page.evaluate(el => el.textContent.trim(), summary);
+  expect(await summaryText()).toBe("計測中...");
+  await summary.click();
+  await page.waitFor(el => el.textContent.trim() !== "計測中...", {}, summary);
+  expect(await summaryText()).toMatch(/^\d{1}\.\d{2}\s/);
+}, 30e3);
