@@ -14,7 +14,7 @@ after_script:
       curl \
         -F file="@$f" \
         -F token="${SLACK_TOKEN}" \
-        -F channels="${SLACK_CHANNELS" \
+        -F channels="${SLACK_CHANNELS}" \
         https://slack.com/api/files.upload
     done
 notifications:
