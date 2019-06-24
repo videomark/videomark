@@ -30,7 +30,7 @@ test("YouTube動画に埋め込み", async () => {
   const videomark = "#__videomark_ui";
   await page.goto(demoVideo);
   await page.waitFor(videomark);
-}, 10e3);
+}, 30e3);
 test("YouTube動画に埋め込み後、しばらく経つとQoE値が得られる", async () => {
   const demoVideo = "https://www.youtube.com/watch?v=mY6sChi65oU";
   const videomark = "#__videomark_ui";
