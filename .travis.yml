@@ -1,4 +1,8 @@
 dist: xenial
+addons:
+  apt:
+    packages:
+      - fonts-noto-cjk
 services:
   - xvfb
 language: node_js
