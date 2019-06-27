@@ -2,16 +2,19 @@
   {
     "id": "paravi",
     "name": "Paravi",
-    "url": "https://www.paravi.jp/"
+    "url": "https://www.paravi.jp/",
+    "brandcolor": "#004f99"
   },
   {
     "id": "tver",
     "name": "TVer",
-    "url": "https://tver.jp/"
+    "url": "https://tver.jp/",
+    "brandcolor": "#40b8dc"
   },
   {
     "id": "youtube",
     "name": "YouTube",
-    "url": "https://www.youtube.com/"
+    "url": "https://www.youtube.com/",
+    "brandcolor": "#ff0000"
   }
 ]
