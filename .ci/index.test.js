@@ -10,7 +10,10 @@ beforeAll(async () => {
   await Promise.all(
     ["#terms", "#privacy"].map(selector => page.click(selector))
   );
-  await Promise.all([page.waitForNavigation(), page.click("#submit")]);
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: "domcontentloaded" }),
+    page.click("#submit")
+  ]);
 });
 
 const path = require("path");
