@@ -15,7 +15,7 @@ import AppDataActions from "./js/utils/AppDataActions";
 import ViewingList from "./js/containers/ViewingList";
 import Stats from "./js/containers/Stats";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
-import NoContents from "./js/components/NoContents";
+import Welcome from "./js/components/Welcome";
 import NotFound from "./js/components/NotFound";
 
 const theme = createMuiTheme({
@@ -72,13 +72,7 @@ class App extends React.Component {
               <Switch>
                 <Route exact path="/" component={Stats} />
                 <Route exact path="/history" component={ViewingList} />
-                <Route
-                  exact
-                  path="/welcome"
-                  render={() => (
-                    <NoContents title="まだ計測対象となる動画を視聴していません" />
-                  )}
-                />
+                <Route exact path="/welcome" component={Welcome} />
                 <Route component={NotFound} />
               </Switch>
             </Container>
