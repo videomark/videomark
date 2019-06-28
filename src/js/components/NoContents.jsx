@@ -1,39 +1,14 @@
 import React from "react";
-import PropTypes from "prop-types";
-import style from "../../css/NoContents.module.css";
-import videoPlatforms from "../utils/videoPlatforms.json";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 
-const NoContents = ({ title }) => {
+const NoContents = () => {
   return (
-    <div className={style.noContents}>
-      <h1>{title}</h1>
-      <p>
-        Web VideoMark
-        では動画の再生時にビットレートや解像度などを記録し、体感品質値 (QoE:
-        Quality of Experience) を推定します。
-      </p>
-      <p>
-        まずは計測対象となる動画配信サービスで動画をご覧ください。
-        動画の視聴中は動画のコントローラーが表示されている間 QoE
-        の暫定値を動画の左上に表示します。動画の視聴終了後はこの計測結果一覧画面で
-        QoE 値を確認できます。
-      </p>
-      <p>現在 QoE の計測が可能な動画配信サービスはこちらです:</p>
-      <ul>
-        {videoPlatforms.map(({ id, name, url }) => (
-          <li key={id}>
-            <a href={url}>{name}</a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Box paddingTop={2} paddingBottom={2} width={1}>
+      <Typography component="h2" variant="h6" align="center">
+        該当する計測結果がありません
+      </Typography>
+    </Box>
   );
 };
-NoContents.propTypes = {
-  title: PropTypes.string
-};
-NoContents.defaultProps = {
-  title: "該当する計測結果がありません"
-};
-
 export default NoContents;
