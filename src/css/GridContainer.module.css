@@ -1,12 +1,3 @@
-.container {
-  padding-top: 112px;
-}
-@media (min-width: 600px) {
-  .container {
-    padding-top: 12px;
-  }
-}
-
 .item {
   cursor: pointer;
 }

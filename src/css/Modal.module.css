@@ -31,13 +31,11 @@
   left: 0;
   top: 0;
   position: absolute;
-  z-index: 0;
+  z-index: 1300;
 }
 
 .modal .modal_close {
   position: absolute;
-  right: 4rem;
-  top: 4rem;
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -50,14 +48,14 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  z-index: 5;
+  z-index: 1305;
   right: 0;
-  top: 0;
+  top: 48px;
 }
 @media (min-width: 600px) {
   .modal .modal_close {
     right: 40px;
-    top: 40px;
+    top: 88px;
   }
 }
 
@@ -71,7 +69,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 1301;
   -webkit-transform: scale(0);
   transform: scale(0);
   -webkit-transition: 0.2s;
@@ -89,7 +87,7 @@
   width: 20px;
   height: auto;
   position: relative;
-  z-index: 2;
+  z-index: 1302;
   opacity: 0.5;
 }
 
@@ -97,7 +95,7 @@
   width: 90vw;
   max-width: 500px;
   position: relative;
-  z-index: 1;
+  z-index: 1301;
   overflow: auto;
 }
 @media (min-width: 600px) {
@@ -107,6 +105,6 @@
 }
 
 .is-modal-open .modal {
-  z-index: 10;
+  z-index: 1310;
   opacity: 1;
 }

@@ -6,13 +6,19 @@ import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
 import videoPlatforms from "../../utils/videoPlatforms.json";
 
-const styles = () => ({
+const styles = theme => ({
   root: {
     display: "flex",
     flexWrap: "wrap"
   },
   formControl: {
-    minWidth: 240
+    minWidth: 120,
+    "& label": {
+      fontSize: theme.typography.caption.fontSize
+    }
+  },
+  select: {
+    fontSize: theme.typography.caption.fontSize
   }
 });
 
@@ -36,7 +42,6 @@ class SiteSelect extends Component {
         page: 0
       })
     );
-    window.scrollTo(window.scrollX, 0);
   }
 
   render() {
@@ -48,6 +53,7 @@ class SiteSelect extends Component {
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="site">動画配信サービス</InputLabel>
           <Select
+            className={classes.select}
             value={site}
             onChange={event => {
               this.setSite(event.target.value);

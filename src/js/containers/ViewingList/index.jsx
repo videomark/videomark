@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Container from "@material-ui/core/Container";
+import { Redirect } from "react-router";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Viewing from "../Viewing";
@@ -15,12 +15,13 @@ import DataErase from "../../utils/DataErase";
 import NoContents from "../../components/NoContents";
 import videoPlatforms from "../../utils/videoPlatforms.json";
 import Pager from "./Pager";
+import MonthSelect from "./MonthSelect";
+import SiteSelect from "./SiteSelect";
 
 class ViewingList extends Component {
   constructor() {
     super();
     this.state = {
-      viewings: [],
       sites: videoPlatforms.map(({ id }) => id),
       date: new Date(),
       page: 0,
@@ -76,14 +77,8 @@ class ViewingList extends Component {
       page,
       perPage
     } = this.state;
-
-    if (viewings.length === 0) {
-      return (
-        <Container className={style.container}>
-          <NoContents title="まだ計測対象となる動画を視聴していません" />
-        </Container>
-      );
-    }
+    if (viewings === undefined) return "...";
+    if (viewings.length === 0) return <Redirect to="/welcome" />;
 
     const viewingList = viewings
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
@@ -134,17 +129,13 @@ class ViewingList extends Component {
       ));
 
     if (viewingList.length === 0) {
-      return (
-        <Container className={style.container}>
-          <NoContents />
-        </Container>
-      );
+      return <NoContents />;
     }
 
     const maxPage = Math.ceil(viewingList.length / perPage);
 
     return (
-      <Container className={style.container}>
+      <>
         <Grid container spacing={3} direction="row" alignItems="flex-start">
           {viewingList.slice(page * perPage, (page + 1) * perPage)}
         </Grid>
@@ -157,8 +148,22 @@ class ViewingList extends Component {
             </Grid>
           </Box>
         )}
-      </Container>
+      </>
     );
   }
 }
-export default ViewingList;
+export default () => (
+  <>
+    <Box py={1}>
+      <Grid container justify="space-between" alignItems="flex-end">
+        <Grid item>
+          <MonthSelect />
+        </Grid>
+        <Grid item>
+          <SiteSelect />
+        </Grid>
+      </Grid>
+    </Box>
+    <ViewingList />
+  </>
+);

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
+import { Redirect } from "react-router";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
@@ -19,11 +18,10 @@ import {
 } from "recharts";
 import { Calendar } from "@nivo/calendar";
 import { Bar } from "@nivo/bar";
-import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
-import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
-import ViewingModel from "./js/utils/Viewing";
-import { urlToVideoPlatform } from "./js/utils/Utils";
-import videoPlatforms from "./js/utils/videoPlatforms.json";
+import ChromeExtensionWrapper from "../utils/ChromeExtensionWrapper";
+import ViewingModel from "../utils/Viewing";
+import { urlToVideoPlatform } from "../utils/Utils";
+import videoPlatforms from "../utils/videoPlatforms.json";
 
 const loadViewings = async dispatch => {
   const viewings = (await new Promise(resolve => {
@@ -46,6 +44,8 @@ const loadViewings = async dispatch => {
     )
     .sort(({ startTime: a }, { startTime: b }) => b - a)
     .map(({ sessionId, videoId }) => new ViewingModel({ sessionId, videoId }));
+  if (viewings.length === 0) return dispatch({ length: 0 });
+
   const column = {
     id: await Promise.all(viewings.map(viewing => viewing.init()))
   };
@@ -98,7 +98,8 @@ const loadViewings = async dispatch => {
         }
       ])
   );
-  dispatch({
+  return dispatch({
+    length: viewings.length,
     stats,
     playingTime: df
       .dropMissingValues(["playing"])
@@ -138,6 +139,9 @@ const DataProvider = props => {
   useEffect(() => {
     if (data === undefined) loadViewings(setData);
   }, [setData]);
+  if (data && data.length === 0) {
+    return <Redirect to="/welcome" />;
+  }
   return (
     <DataContext.Provider {...props} value={data === undefined ? {} : data} />
   );
@@ -360,15 +364,9 @@ const QoEFrequencyBarChart = () => {
 
 export default () => (
   <DataProvider>
-    <Container>
-      <CssBaseline />
+    <Box paddingTop={2}>
       <style>{`svg { display: block;}`}</style>
-      <Grid container justify="center" spacing={2}>
-        <Grid item xs={12}>
-          <Typography component="h1" variant="h6" align="center">
-            計測結果
-          </Typography>
-        </Grid>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Grid item>
             <Typography component="h2" variant="h6">
@@ -399,7 +397,6 @@ export default () => (
           </Grid>
         </Grid>
       </Grid>
-      <OfflineNoticeSnackbar />
-    </Container>
+    </Box>
   </DataProvider>
 );

@@ -13,15 +13,15 @@
   }
 }
 .qoeValueGraph:not(.modalQoeValueGraph) .label {
-  flex-basis: 4.5em;
+  flex-basis: 5.5em;
   padding-right: 0.5em;
   text-align: end;
 }
 .qoeValueGraph:not(.modalQoeValueGraph) .qoeBarGraph {
-  flex-basis: calc(100% - 8em);
+  flex-basis: calc(100% - 10em);
 }
 .qoeValueGraph:not(.modalQoeValueGraph) .qoeValue {
-  flex-basis: 2.5em;
+  flex-basis: 3.5em;
   padding-left: 0.5em;
 }
 .qoeValueGraph.modalQoeValueGraph {

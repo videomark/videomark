@@ -1,4 +1,10 @@
 import * as React from "react";
+import { Switch, Route } from "react-router-dom";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
 import Header from "./js/containers/Header";
 import dataErase from "./js/utils/DataErase";
 import Modal from "./js/components/Modal";
@@ -7,7 +13,17 @@ import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
 import ViewingList from "./js/containers/ViewingList";
+import Stats from "./js/containers/Stats";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
+import NoContents from "./js/components/NoContents";
+import NotFound from "./js/components/NotFound";
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: "#1c2d69" },
+    secondary: { main: "#d1101b" }
+  }
+});
 
 class App extends React.Component {
   constructor() {
@@ -44,12 +60,29 @@ class App extends React.Component {
 
   render() {
     const { setup, modal } = this.state;
+
     if (setup) return null;
     return (
-      <>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
         <div className={style.qoe_log_view}>
           <Header />
-          <ViewingList />
+          <Box paddingTop={6}>
+            <Container>
+              <Switch>
+                <Route exact path="/" component={Stats} />
+                <Route exact path="/history" component={ViewingList} />
+                <Route
+                  exact
+                  path="/welcome"
+                  render={() => (
+                    <NoContents title="まだ計測対象となる動画を視聴していません" />
+                  )}
+                />
+                <Route component={NotFound} />
+              </Switch>
+            </Container>
+          </Box>
           <OfflineNoticeSnackbar />
         </div>
         <Modal
@@ -60,7 +93,7 @@ class App extends React.Component {
         >
           {modal.show ? modal.contents : ""}
         </Modal>
-      </>
+      </ThemeProvider>
     );
   }
 }

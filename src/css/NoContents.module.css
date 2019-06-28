@@ -1,9 +1,5 @@
 .noContents {
-  width: calc(80% - 2rem);
-  max-width: 800px;
   font-size: 1.2rem;
-  margin: auto;
-  text-align: left;
 }
 
 .noContents h1 {
