@@ -116,86 +116,98 @@ ChromeExtension/sodium.js
 
 ## 送信データ構造
 
-    {
-      version                         : 送信を行ったsodium.jsのバージョン
-      date                            : 送信日時(Date.now())
-      startTime                       : データ収集開始時間(DOMHighResTimeStamp, 初回は0)
-      endTime                         : データ収集終了時間(DOMHighResTimeStamp)
-      session                         : セッションID(UUID)
-      userAgent                       : ユーザーエージェント
-      appVersion                      : navigator.appVersion
-      location                        : window.location.href
-      sequence                        : 同一セッション内のシーケンス番号(0から連番)
-      video[                          : videoの配列
-        {
-          property: {                 // videoのプロパティ
-            uuid                      : videoを識別するためのUUID
-            id                        : <video>タグのid属性
-            viewCount                 : 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1
-            class                     : <video>タグのclass属性の配列
-            src
-            width
-            height
-            videoWidth
-            videoHeight
-            defaultPlaybackRate
-            playbackRate
-            mediaSize                 : videoの再生時間(秒)
-            domainName                : videoのセグメント配布ドメイン
-            playStartTime             : 視聴開始時刻(Date.now()) 未視聴の場合 -1
-            playEndTime               : 視聴終了時刻(Date.now()) 終了していない場合 -1
-            currentPlayPos            : 現在再生位置の秒
-            currentPlayTime           : 再生開始からの経過時間
-          },
-          playback_quality[           // 品質情報の配列
-            {
-              totalVideoFrames        : 総フレーム数
-              droppedVideoFrames      : 損失フレーム数
-              creationTime            : 計測時間(DOMHighResTimeStamp)
-              deltaTotalVideoFrames
-              deltaDroppedVideoFrames
-              deltaTime
-              bitrate                 : ビットレート
-              receiveBuffer           : 受信済み動画再生時間 取得不可能の場合 -1
-              framerate               : フレームレート
-              speed                   : 再生速度
-            },
-            ...
-          ],
-          event_'イベント1': [
-              time                    : イベント1発生時間(DOMHighResTimeStamp)
-              datetime                : イベント1発生時間(Date.now())
-              playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間
-          ],
-          event_'イベント1'_delta: [
-              delta                   : 前回発生したイベント1のdelta時間
-              datetime                : イベント1発生時間(Date.now())
-              playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間
-          ],
-          event_'イベント2': [
-              time                    : イベント2発生時間(DOMHighResTimeStamp)
-              datetime                : イベント2発生時間(Date.now())
-              playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間
-          ],
-          event_'イベント2'_delta: [
-              delta                   : 前回発生したイベント2のdelta時間
-              datetime                : イベント2発生時間(Date.now())
-              playPos                 : 現在再生位置の秒
-              playTime                : 再生開始からの経過時間
-          ]
-        },
-        ...
-      ],
-      resource_timing[]               : Resource Timing API(PerformaceResourceTiming)
-      REMOTE_ADDR                     : fluentdが挿入した(末尾オクテット削除済み)外部IPアドレス
-    }
+### 共通部分
 
-    発生時刻や計測時刻は DOMHighResTimeStamp とする
-    window.performance.now() で現在の DOMHighResTimeStamp を取得する
+1送信毎のデータ
 
+| 項目              | 値                                    |
+| --------------- | ------------------------------------ |
+| version         | sodium.jsのバージョン(1.1.0)               |
+| date            | 送信日時(Date.now())                     |
+| startTime       | データ収集開始時間(DOMHighResTimeStamp, 初回は0) |
+| endTime         | データ収集終了時間(DOMHighResTimeStamp)       |
+| session         | セッションID(UUID)                        |
+| location        | window.location.href                 |
+| userAgent       | ユーザーエージェント                           |
+| appVersion      | navigator.appVersion                 |
+| sequence        | 同一セッション内のシーケンス番号(0から連番)              |
+| resource_timing | 未使用                                  |
+
+### video
+
+video単位のデータ
+
+#### property
+
+videoの属性情報
+
+| 項目                  | 値                                                 |
+| ------------------- | ------------------------------------------------- |
+| uuid                | videoを識別するためのUUID                                 |
+| id                  | videoタグのid属性                                      |
+| class               | videoタグのclass属性                                   |
+| viewCount           | 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1 |
+| src                 | videoタグのsrc属性                                     |
+| domainName          | videoのセグメント配布ドメイン                                 |
+| width               | videoタグの表示幅                                       |
+| height              | videoタグの表示高さ                                      |
+| videoWidth          | videoの幅                                           |
+| videoHeight         | videoの高さ                                          |
+| mediaSize           | videoの再生時間                                        |
+| defaultPlaybackRate | デフォルト再生速度                                         |
+| playbackRate        | 再生速度                                              |
+| playStartTime       | 視聴開始時刻(Date.now()) 未視聴の場合 -1                      |
+| playEndTime         | 視聴終了時刻(Date.now()) 終了していない場合 -1                   |
+| currentPlayPos      | 現在再生位置の秒                                          |
+| currentPlayTime     | 再生開始からの経過時間                                       |
+
+#### playback_quality
+
+再生品質情報
+
+定期的に収集したvideoの再生品質の情報video毎に複数の品質情報を送信する
+
+| 項目                      | 値                         |
+| ----------------------- | ------------------------- |
+| totalVideoFrames        | 総フレーム数                    |
+| droppedVideoFrames      | 損失フレーム数                   |
+| creationTime            | 計測時間(DOMHighResTimeStamp) |
+| bitrate                 | ビットレート                    |
+| receiveBuffer           | 受信済み動画再生時間 取得不可能の場合 -1    |
+| framerate               | フレームレート                   |
+| speed                   | 再生速度                      |
+| deltaTotalVideoFrames   | 総フレーム数のデルタ値               |
+| deltaDroppedVideoFrames | 損失フレーム数のデルタ値              |
+| deltaTime               | 計測時間のデルタ値                 |
+
+#### Event
+
+再生時のEvent情報
+
+| 項目       | 値                              |
+| -------- | ------------------------------ |
+| time     | 発生時間(DOMHighResTimeStamp)      |
+| dateTime | 発生時間(Date.now())               |
+| delta    | 発生時間(DOMHighResTimeStamp)のデルタ値 |
+| dateTime | 発生時間(Date.now())のデルタ値          |
+| playPos  | 現在再生位置の秒                       |
+| playTime | 再生開始からの経過時間                    |
+
+##### Eventの種類
+
+Eventは、以下の種類ものと前回発生時との差分のdelta値を含む
+
+| 種類       | 発生タイミング |
+| -------- | ------- |
+| play     | 再生開始    |
+| pause    | 停止      |
+| seeking  | シーク開始   |
+| seeked   | シーク終了   |
+| ended    | 再生終了    |
+| stalled  | 再生失敗    |
+| progress | ロード     |
+| waiting  | ロード待ち   |
+| canplay  | 再生開始可能  |
 ### QoEサーバー対応
 
 QoEサーバーに対応するために以下のデータを追加した。
