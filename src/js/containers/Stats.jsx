@@ -162,13 +162,11 @@ const PlayingTimeStats = () => {
 };
 const PlayingTimeCalendar = () => {
   const { playingTime } = useContext(DataContext);
-  const data = (playingTime || [{ day: format(new Date(), "yyyy-dd-MM") }]).map(
-    ({ day, value }) => ({
-      day,
-      value: Number.isFinite(value) ? value / 1e3 / 60 : NaN
-    })
-  );
-  const lastDate = data.slice(-1)[0].day;
+  const data = (playingTime || []).map(({ day, value }) => ({
+    day,
+    value: Number.isFinite(value) ? value / 1e3 / 60 : NaN
+  }));
+  const today = format(new Date(), "yyyy-MM-dd");
   return (
     <Box m={0} component="figure">
       <Typography
@@ -182,8 +180,8 @@ const PlayingTimeCalendar = () => {
         <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
           <Calendar
             data={data}
-            from={lastDate}
-            to={lastDate}
+            from={today}
+            to={today}
             monthLegend={(y, m) => format(new Date(y, m), "MMM", { locale })}
             tooltip={({ date, value: min }) => {
               const msec = min * 60 * 1e3;
