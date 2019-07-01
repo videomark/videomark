@@ -65,11 +65,10 @@ export default class Status {
       <div
         class="root"
         @click=${e => {
-          this.update({
-            open: e.currentTarget
-              .querySelector("details")
-              .toggleAttribute("open")
-          });
+          const details = e.currentTarget.querySelector("details");
+          if (open) details.removeAttribute("open");
+          else details.setAttribute("open", "true");
+          this.update({ open: !open });
         }}
       >
         <details
