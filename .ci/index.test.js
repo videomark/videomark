@@ -23,10 +23,10 @@ afterEach(async () => {
   });
 });
 
-test(`利用規約とプライバシーポリシーに同意後、logView (${
-  logView.pathname
-})が表示`, () => {
+test("利用規約とプライバシーポリシーに同意後、Welcome画面が表示", async () => {
+  await page.waitForNavigation({ waitUntil: "domcontentloaded" });
   expect(new URL(page.url()).pathname).toBe(logView.pathname);
+  expect(new URL(page.url()).hash).toBe("#/welcome");
 });
 test("YouTube動画に埋め込み", async () => {
   const demoVideo = "https://www.youtube.com/watch?v=mY6sChi65oU";
