@@ -1,5 +1,4 @@
 import React, { createContext, useReducer, useEffect } from "react";
-import { Redirect } from "react-router";
 import DataFrame from "dataframe-js";
 import { format } from "date-fns";
 import ChromeExtensionWrapper from "../utils/ChromeExtensionWrapper";
@@ -134,9 +133,6 @@ export const DataProvider = props => {
       viewingsStream.pipeTo(dispatcher(addData));
     }
   }, [addData]);
-  if (!data.initialState && data.length === 0) {
-    return <Redirect to="/welcome" />;
-  }
   return (
     <DataContext.Provider {...props} value={data === undefined ? {} : data} />
   );

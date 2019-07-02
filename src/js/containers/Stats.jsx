@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Redirect } from "react-router";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
@@ -232,22 +233,28 @@ const PlayingTimeCalendar = () => {
 //   );
 // };
 
-export default () => (
-  <Box paddingTop={2}>
-    <style>{`svg { display: block;}`}</style>
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Grid item>
-          <Typography component="h2" variant="h6">
-            視聴時間
-          </Typography>
-          <PlayingTimeStats />
-        </Grid>
+export default () => {
+  const { initialState, length } = useContext(DataContext);
+  if (!initialState && length === 0) {
+    return <Redirect to="/welcome" />;
+  }
+
+  return (
+    <Box paddingTop={2}>
+      <style>{`svg { display: block;}`}</style>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
-          <PlayingTimeCalendar />
+          <Grid item>
+            <Typography component="h2" variant="h6">
+              視聴時間
+            </Typography>
+            <PlayingTimeStats />
+          </Grid>
+          <Grid item xs={12}>
+            <PlayingTimeCalendar />
+          </Grid>
         </Grid>
-      </Grid>
-      {/* <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Grid item>
             <Typography component="h2" variant="h6">
               体感品質 (QoE)
@@ -265,6 +272,7 @@ export default () => (
             </Grid>
           </Grid>
         </Grid> */}
-    </Grid>
-  </Box>
-);
+      </Grid>
+    </Box>
+  );
+};
