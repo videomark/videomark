@@ -187,8 +187,8 @@ const PlayingTimeCalendar = () => {
               {
                 anchor: "bottom-right",
                 direction: "row",
-                itemCount: 4,
-                itemWidth: 24,
+                itemCount: 3,
+                itemWidth: 64,
                 itemHeight: 32
               }
             ]}
