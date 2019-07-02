@@ -14,6 +14,7 @@ import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
 import ViewingList from "./js/containers/ViewingList";
 import Stats from "./js/containers/Stats";
+import StatsDataProvider from "./js/containers/StatsDataProvider";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 import Welcome from "./js/components/Welcome";
 import NotFound from "./js/components/NotFound";
@@ -63,31 +64,33 @@ class App extends React.Component {
 
     if (setup) return null;
     return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div className={style.qoe_log_view}>
-          <Header />
-          <Box paddingTop={6}>
-            <Container>
-              <Switch>
-                <Route exact path="/" component={Stats} />
-                <Route exact path="/history" component={ViewingList} />
-                <Route exact path="/welcome" component={Welcome} />
-                <Route component={NotFound} />
-              </Switch>
-            </Container>
-          </Box>
-          <OfflineNoticeSnackbar />
-        </div>
-        <Modal
-          className={modal.show ? style.modal_open : ""}
-          closeCallback={() => {
-            this.modalDataUpdateCallback(null);
-          }}
-        >
-          {modal.show ? modal.contents : ""}
-        </Modal>
-      </ThemeProvider>
+      <StatsDataProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <div className={style.qoe_log_view}>
+            <Header />
+            <Box paddingTop={6}>
+              <Container>
+                <Switch>
+                  <Route exact path="/" component={Stats} />
+                  <Route exact path="/history" component={ViewingList} />
+                  <Route exact path="/welcome" component={Welcome} />
+                  <Route component={NotFound} />
+                </Switch>
+              </Container>
+            </Box>
+            <OfflineNoticeSnackbar />
+          </div>
+          <Modal
+            className={modal.show ? style.modal_open : ""}
+            closeCallback={() => {
+              this.modalDataUpdateCallback(null);
+            }}
+          >
+            {modal.show ? modal.contents : ""}
+          </Modal>
+        </ThemeProvider>
+      </StatsDataProvider>
     );
   }
 }
