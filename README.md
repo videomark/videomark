@@ -180,6 +180,27 @@ videoの属性情報
 | deltaDroppedVideoFrames | 損失フレーム数のデルタ値              |
 | deltaTime               | 計測時間のデルタ値                 |
 
+#### throughput_info
+
+| 項目           | 値                   |
+| ------------ | ------------------- |
+| downloadTime | チャンクダウンロードにかかった時間   |
+| throughput   | ダウンロード時のスループット(bps) |
+| downloadSize | チャンクのサイズ            |
+| bps          | ビットレート              |
+
+#### play_list_info
+
+| 項目               | 値             |
+| ---------------- | ------------- |
+| representationId | ストリームID       |
+| bps              | ビットレート        |
+| videoWidth       | videoの幅       |
+| videoHeight      | videoの高さ      |
+| fps              | フレームレート       |
+| chunkDuration    | チャンクの再生時間     |
+| serverIp         | チャック配布元(FQDN) |
+
 #### Event
 
 再生時のEvent情報
@@ -208,23 +229,24 @@ Eventは、以下の種類ものと前回発生時との差分のdelta値を含�
 | progress | ロード     |
 | waiting  | ロード待ち   |
 | canplay  | 再生開始可能  |
+
 ### QoEサーバー対応
 
 QoEサーバーに対応するために以下のデータを追加した。
 
-| filed                                | QoE                                                 | detail                                   |
-| ------------------------------------ | --------------------------------------------------- | ---------------------------------------- |
-| userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                     |
-| appVersion                           | requestNotificationBasicInformation.osInfo          | クライアントバージョン                   |
-| video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | videoの再生時間(秒)                      |
+| filed                                | QoE                                                 | detail                       |
+| ------------------------------------ | --------------------------------------------------- | ---------------------------- |
+| userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                   |
+| appVersion                           | requestNotificationBasicInformation.osInfo          | クライアントバージョン                  |
+| video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | videoの再生時間(秒)                |
 | video.property.domainName            | requestNotificationViewingInformation.domainName    | videoのセグメント配布ドメイン            |
-| video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                             |
-| video.playback_quality.receiveBuffer | requestNotificationQoeInformation.receiveBuffer     | \*取得済み動画サイズ(秒)                 |
-| video.playback_quality.framerate     | requestNotificationQoeInformation.framerateHistory  | フレームレート                           |
+| video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                       |
+| video.playback_quality.receiveBuffer | requestNotificationQoeInformation.receiveBuffer     | \*取得済み動画サイズ(秒)               |
+| video.playback_quality.framerate     | requestNotificationQoeInformation.framerateHistory  | フレームレート                      |
 | video.property.playStartTime         | requestNotificationViewingInformation.eventType Str | 視聴開始時刻(Date.now()) 未視聴の場合 -1 |
-| video.event\_\*.datetime             | requestNotificationViewingInformation.eventType     | イベント1発生時間(Date.now())            |
-| video.event\_\*.playPos              | requestNotificationViewingInformation.eventType     | 現在再生位置の秒                         |
-| video.event\_\*.playTime             | requestNotificationViewingInformation.eventType     | 再生開始からの経過時間                   |
+| video.event\_\*.datetime             | requestNotificationViewingInformation.eventType     | イベント1発生時間(Date.now())        |
+| video.event\_\*.playPos              | requestNotificationViewingInformation.eventType     | 現在再生位置の秒                     |
+| video.event\_\*.playTime             | requestNotificationViewingInformation.eventType     | 再生開始からの経過時間                  |
 
 #### Paravi 固有の対応
 
