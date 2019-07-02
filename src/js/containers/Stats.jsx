@@ -44,7 +44,6 @@ const viewingsStream = new ReadableStream({
       .sort(({ startTime: a }, { startTime: b }) => a - b);
   },
   async pull(controller) {
-    if (this.ids.length === 0) return;
     const buffer = this.ids.splice(-10).map(id => new ViewingModel(id));
     await Promise.all(buffer.map(viewing => viewing.init()));
     const column = {};
