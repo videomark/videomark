@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect } from "react";
 import { Redirect } from "react-router";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -23,91 +23,135 @@ import ViewingModel from "../utils/Viewing";
 import { urlToVideoPlatform } from "../utils/Utils";
 import videoPlatforms from "../utils/videoPlatforms.json";
 
-const loadViewings = async dispatch => {
-  const viewings = (await new Promise(resolve => {
-    ChromeExtensionWrapper.loadVideoIds(resolve);
-  })).map(
-    ({ data: { session_id: sessionId, video_id: videoId } }) =>
-      new ViewingModel({ sessionId, videoId })
-  );
-  if (viewings.length === 0) return dispatch({ length: 0 });
-
-  const column = {
-    id: await Promise.all(viewings.map(viewing => viewing.init()))
-  };
-  [
-    column.startTime,
-    column.location,
-    // column.qoe,
-    column.quality
-  ] = await Promise.all([
-    Promise.all(viewings.map(viewing => viewing.startTime)),
-    Promise.all(viewings.map(viewing => viewing.location)),
-    // Promise.all(viewings.map(viewing => viewing.qoe)),
-    Promise.all(viewings.map(viewing => viewing.quality))
-  ]);
-  // column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN))
-  const serviceNames = new Map(
-    videoPlatforms.map(({ id, name }) => [id, name])
-  );
-  column.service = column.location.map(
-    location => urlToVideoPlatform(location).id
-  );
-  column.serviceName = column.service.map(service => serviceNames.get(service));
-  column.date = column.startTime.map(startTime =>
-    format(startTime, "yyyy-MM-dd")
-  );
-  const df = new DataFrame(column).withColumn("playing", row => {
-    const { date: endTime, timing } = row.get("quality");
-    const { pause } = timing || {};
-    return endTime - row.get("startTime") - pause;
-  });
-  return dispatch({
-    length: viewings.length,
-    stats: {
-      playing: (d => ({ sum: d.stat.sum("playing"), count: d.count() }))(
-        df.select("playing").dropMissingValues(["playing"])
+const viewingsStream = new ReadableStream({
+  async start() {
+    this.ids = (await new Promise(resolve => {
+      ChromeExtensionWrapper.loadVideoIds(resolve);
+    }))
+      .map(
+        ({
+          data: {
+            session_id: sessionId,
+            video_id: videoId,
+            start_time: startTime
+          }
+        }) => ({
+          sessionId,
+          videoId,
+          startTime
+        })
       )
-    },
-    playingTime: df
-      .dropMissingValues(["playing"])
-      .groupBy("date")
-      .aggregate(group => group.stat.sum("playing"))
-      .toArray()
-      .map(([date, playingTime]) => ({ day: date, value: playingTime }))
-    // qoeTimeline: df
-    //   .select("service", "startTime", "qoe")
-    //   .dropMissingValues(["service", "startTime", "qoe"])
-    //   .toArray()
-    //   .map(([service, startTime, qoe]) => ({
-    //     service,
-    //     time: startTime.getTime(),
-    //     value: qoe
-    //   })),
-    // qoeFrequency: df
-    //   .select("serviceName", "qoe")
-    //   .dropMissingValues(["serviceName", "qoe"])
-    //   .map(row => row.set("qoe", Math.ceil(row.get("qoe"))))
-    //   .groupBy("qoe")
-    //   .aggregate(group =>
-    //     Object.fromEntries(
-    //       group
-    //         .groupBy("serviceName")
-    //         .aggregate(serviceGroup => serviceGroup.count())
-    //         .toArray()
-    //     )
-    //   )
-    //   .toArray()
-    //   .map(([qoe, serviceStats]) => ({ qoe, ...serviceStats }))
-  });
+      .sort(({ startTime: a }, { startTime: b }) => a - b);
+  },
+  async pull(controller) {
+    if (this.ids.length === 0) return;
+    const buffer = this.ids.splice(-10).map(id => new ViewingModel(id));
+    await Promise.all(buffer.map(viewing => viewing.init()));
+    const column = {};
+    [
+      column.startTime,
+      column.location,
+      // column.qoe,
+      column.quality
+    ] = await Promise.all([
+      Promise.all(buffer.map(viewing => viewing.startTime)),
+      Promise.all(buffer.map(viewing => viewing.location)),
+      // Promise.all(buffer.map(viewing => viewing.qoe)),
+      Promise.all(buffer.map(viewing => viewing.quality))
+    ]);
+    // column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN))
+    const serviceNames = new Map(
+      videoPlatforms.map(({ id, name }) => [id, name])
+    );
+    column.service = column.location.map(
+      location => urlToVideoPlatform(location).id
+    );
+    column.serviceName = column.service.map(service =>
+      serviceNames.get(service)
+    );
+    column.date = column.startTime.map(startTime =>
+      format(startTime, "yyyy-MM-dd")
+    );
+    const df = new DataFrame(column).withColumn("playing", row => {
+      const { date: endTime, timing } = row.get("quality");
+      const { pause } = timing || {};
+      const playing = endTime - row.get("startTime") - pause;
+      return Number.isFinite(playing) ? playing : 0;
+    });
+    controller.enqueue({
+      length: buffer.length,
+      playingTime: df
+        .groupBy("date")
+        .aggregate(group => group.stat.sum("playing"))
+        .toArray()
+        .map(([date, playingTime]) => ({ day: date, value: playingTime }))
+      // qoeTimeline: df
+      //   .select("service", "startTime", "qoe")
+      //   .dropMissingValues(["service", "startTime", "qoe"])
+      //   .toArray()
+      //   .map(([service, startTime, qoe]) => ({
+      //     service,
+      //     time: startTime.getTime(),
+      //     value: qoe
+      //   })),
+      // qoeFrequency: df
+      //   .select("serviceName", "qoe")
+      //   .dropMissingValues(["serviceName", "qoe"])
+      //   .map(row => row.set("qoe", Math.ceil(row.get("qoe"))))
+      //   .groupBy("qoe")
+      //   .aggregate(group =>
+      //     Object.fromEntries(
+      //       group
+      //         .groupBy("serviceName")
+      //         .aggregate(serviceGroup => serviceGroup.count())
+      //         .toArray()
+      //     )
+      //   )
+      //   .toArray()
+      //   .map(([qoe, serviceStats]) => ({ qoe, ...serviceStats }))
+    });
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+});
+const initialData = {
+  initialState: true,
+  length: 0,
+  playingTime: []
 };
+const reducer = (data, chunk) => ({
+  initialState: false,
+  length: chunk.length + data.length,
+  playingTime: ((current, past) => {
+    if (
+      current.length > 0 &&
+      past.length > 0 &&
+      current[0].day === past.slice(-1)[0].day
+    )
+      return [
+        ...past.slice(0, -1),
+        {
+          ...current[0],
+          value: current[0].value + past.slice(-1)[0].value
+        },
+        ...current.slice(1)
+      ];
+    return [...past, ...current];
+  })(data.playingTime, chunk.playingTime)
+});
+const dispatcher = f =>
+  new WritableStream({
+    write: chunk => f(chunk)
+  });
+
 const DataContext = createContext();
 const DataProvider = props => {
-  const [data, setData] = useState();
+  const [data, addData] = useReducer(reducer, initialData);
   useEffect(() => {
-    if (data === undefined) loadViewings(setData);
-  }, [setData]);
-  if (data && data.length === 0) {
+    if (data.initialState) {
+      viewingsStream.pipeTo(dispatcher(addData));
+    }
+  }, [addData]);
+  if (!data.initialState && data.length === 0) {
     return <Redirect to="/welcome" />;
   }
   return (
@@ -115,13 +159,13 @@ const DataProvider = props => {
   );
 };
 const PlayingTimeStats = () => {
-  const { stats } = useContext(DataContext);
-  const { count, sum } = (stats || {}).playing || {};
-  const text = [count, sum].every(Number.isFinite)
-    ? `${count}件 ${formatDistance(0, sum, {
+  const { initialState, length, playingTime } = useContext(DataContext);
+  const sum = playingTime.map(({ value }) => value).reduce((a, c) => a + c, 0);
+  const text = initialState
+    ? "..."
+    : `${length}件 ${formatDistance(0, sum, {
         locale
-      })}`
-    : "...";
+      })}`;
   return (
     <Typography component="small" variant="caption">
       {text}
@@ -132,7 +176,7 @@ const PlayingTimeCalendar = () => {
   const { playingTime } = useContext(DataContext);
   const data = (playingTime || []).map(({ day, value }) => ({
     day,
-    value: Number.isFinite(value) ? value / 1e3 / 60 : NaN
+    value: value / 1e3 / 60
   }));
   const today = format(new Date(), "yyyy-MM-dd");
   return (
