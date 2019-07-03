@@ -7,17 +7,18 @@ import Typography from "@material-ui/core/Typography";
 import { format, formatDistance, formatDistanceStrict } from "date-fns";
 import locale from "date-fns/locale/ja";
 import {
-  ResponsiveContainer
-  // ScatterChart,
-  // Scatter,
-  // XAxis,
-  // YAxis,
-  // Tooltip,
-  // CartesianGrid
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid
 } from "recharts";
 import { Calendar } from "@nivo/calendar";
-// import { Bar } from "@nivo/bar";
+import { Bar } from "@nivo/bar";
 import { DataContext } from "./StatsDataProvider";
+import videoPlatforms from "../utils/videoPlatforms.json";
 
 const PlayingTimeStats = () => {
   const { initialState, length, playingTime } = useContext(DataContext);
@@ -103,135 +104,148 @@ const PlayingTimeCalendar = () => {
     </Box>
   );
 };
-// const QoEStats = () => {
-//   const { stats } = useContext(DataContext);
-//   const { mean } = (stats || {}).qoe || {};
-//   const text = Number.isFinite(mean) ? `平均 ${mean.toFixed(2)}` : "...";
-//   return (
-//     <Typography component="small" variant="caption">
-//       {text}
-//     </Typography>
-//   );
-// };
-// const QoETimelineChart = () => {
-//   const { qoeTimeline } = useContext(DataContext);
-//   return (
-//     <Box m={0} component="figure">
-//       <Typography
-//         component="figcaption"
-//         variant="caption"
-//         color="textSecondary"
-//       >
-//         計測日時
-//       </Typography>
-//       <Card>
-//         <ResponsiveContainer width="100%" aspect={2}>
-//           <ScatterChart margin={{ top: 16, left: -16, right: 32 }}>
-//             <CartesianGrid />
-//             <XAxis
-//               name="計測日時"
-//               dataKey="time"
-//               type="number"
-//               scale="time"
-//               domain={["dataMin", "dataMax"]}
-//               tickLine={false}
-//               tickFormatter={time =>
-//                 Number.isFinite(time)
-//                   ? new Intl.DateTimeFormat().format(new Date(time))
-//                   : ""
-//               }
-//             />
-//             <YAxis
-//               name="QoE"
-//               dataKey="value"
-//               label={{ value: "QoE", angle: -90 }}
-//               width={56}
-//               domain={[0, 5]}
-//               ticks={[...Array(5).keys(), 5]}
-//               tick={{ fill: "#000000", angle: -90 }}
-//               tickLine={false}
-//             />
-//             {videoPlatforms.map(({ id, brandcolor }) => {
-//               const data = Array.isArray(qoeTimeline)
-//                 ? qoeTimeline.filter(({ service }) => service === id)
-//                 : [];
-//               return (
-//                 <Scatter
-//                   key={id}
-//                   data={data}
-//                   fill={brandcolor}
-//                   fillOpacity={0.25}
-//                 />
-//               );
-//             })}
-//             <Tooltip
-//               formatter={(value, name) => {
-//                 switch (name) {
-//                   case "計測日時":
-//                     return new Date(value).toLocaleString(navigator.language, {
-//                       timeZoneName: "short"
-//                     });
-//                   default:
-//                     return value.toFixed(2);
-//                 }
-//               }}
-//             />
-//           </ScatterChart>
-//         </ResponsiveContainer>
-//       </Card>
-//     </Box>
-//   );
-// };
-// const QoEFrequencyBarChart = () => {
-//   const { qoeFrequency } = useContext(DataContext);
-//   const data = Array.isArray(qoeFrequency)
-//     ? [...Array(5).keys()].map(i => ({
-//         ...(qoeFrequency.find(({ qoe }) => qoe === i + 1) || {}),
-//         qoe: `QoE ${i}〜${i + 1}`
-//       }))
-//     : [];
-//   return (
-//     <Box m={0} component="figure">
-//       <Typography
-//         component="figcaption"
-//         variant="caption"
-//         color="textSecondary"
-//       >
-//         計測数
-//       </Typography>
-//       <Card>
-//         <ResponsiveContainer width="100%" aspect={2}>
-//           <Bar
-//             data={data}
-//             indexBy="qoe"
-//             minValue={0}
-//             margin={{ top: 16, bottom: 32, left: 24, right: 24 }}
-//             keys={videoPlatforms.map(({ name }) => name)}
-//             colors={videoPlatforms.map(({ brandcolor }) => brandcolor)}
-//             labelTextColor="#ffffff"
-//             layout="horizontal"
-//             enableGridX
-//             axisBottom={{ tickSize: 0 }}
-//             enableGridY={false}
-//             axisLeft={null}
-//             legends={[
-//               {
-//                 dataFrom: "keys",
-//                 anchor: "bottom-right",
-//                 direction: "column",
-//                 itemWidth: 80,
-//                 itemHeight: 24
-//               }
-//             ]}
-//             tooltip={({ id, indexValue, value }) =>
-//               `${indexValue}: ${value}件 (${id})`
-//             }
-//           />
-//         </ResponsiveContainer>
-//       </Card>
-//     </Box>
-//   );
-// };
+const QoEStats = () => {
+  const {
+    qoeStats: { sum, count }
+  } = useContext(DataContext);
+  const average = sum / count;
+  const text = Number.isFinite(average) ? `平均 ${average.toFixed(2)}` : "...";
+  return (
+    <Typography component="small" variant="caption">
+      {text}
+    </Typography>
+  );
+};
+const QoETimelineChart = () => {
+  const { qoeTimeline } = useContext(DataContext);
+  return (
+    <Box m={0} component="figure">
+      <Typography
+        component="figcaption"
+        variant="caption"
+        color="textSecondary"
+      >
+        計測日時
+      </Typography>
+      <Card>
+        <ResponsiveContainer width="100%" aspect={2}>
+          <ScatterChart margin={{ top: 16, left: -16, right: 32 }}>
+            <CartesianGrid />
+            <XAxis
+              name="計測日時"
+              dataKey="time"
+              type="number"
+              scale="time"
+              domain={["dataMin", "dataMax"]}
+              tickLine={false}
+              tickFormatter={time =>
+                Number.isFinite(time)
+                  ? new Intl.DateTimeFormat().format(new Date(time))
+                  : ""
+              }
+            />
+            <YAxis
+              name="QoE"
+              dataKey="value"
+              label={{ value: "QoE", angle: -90 }}
+              width={56}
+              domain={[0, 5]}
+              ticks={[...Array(5).keys(), 5]}
+              tick={{ fill: "#000000", angle: -90 }}
+              tickLine={false}
+            />
+            {videoPlatforms.map(({ id, brandcolor }) => {
+              const data = Array.isArray(qoeTimeline)
+                ? qoeTimeline
+                    .slice(-120)
+                    .filter(({ service }) => service === id)
+                : [];
+              return (
+                <Scatter
+                  key={id}
+                  data={data}
+                  fill={brandcolor}
+                  fillOpacity={0.25}
+                />
+              );
+            })}
+            <Tooltip
+              formatter={(value, name) => {
+                switch (name) {
+                  case "計測日時":
+                    return new Date(value).toLocaleString(navigator.language, {
+                      timeZoneName: "short"
+                    });
+                  default:
+                    return value.toFixed(2);
+                }
+              }}
+            />
+          </ScatterChart>
+        </ResponsiveContainer>
+      </Card>
+    </Box>
+  );
+};
+const QoEFrequencyBarChart = () => {
+  const { qoeFrequency } = useContext(DataContext);
+  const serviceNames = new Map(
+    videoPlatforms.map(({ id, name }) => [id, name])
+  );
+  const brandcolors = new Map(
+    videoPlatforms.map(({ id, brandcolor }) => [id, brandcolor])
+  );
+  const data = [...qoeFrequency].map(([qoe, stats]) => ({
+    qoe: `QoE ${qoe - 1}〜${qoe}`,
+    ...Object.fromEntries(
+      [...stats].flatMap(([service, value]) => [
+        [serviceNames.get(service), value],
+        [`${serviceNames.get(service)}.brandcolor`, brandcolors.get(service)]
+      ])
+    )
+  }));
+  return (
+    <Box m={0} component="figure">
+      <Typography
+        component="figcaption"
+        variant="caption"
+        color="textSecondary"
+      >
+        計測数
+      </Typography>
+      <Card>
+        <ResponsiveContainer width="100%" aspect={2}>
+          <Bar
+            data={data}
+            indexBy="qoe"
+            minValue={0}
+            margin={{ top: 16, bottom: 32, left: 24, right: 24 }}
+            keys={videoPlatforms.map(({ name }) => name)}
+            colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
+            labelTextColor="#ffffff"
+            layout="horizontal"
+            enableGridX
+            axisBottom={{ tickSize: 0 }}
+            enableGridY={false}
+            axisLeft={null}
+            legends={[
+              {
+                dataFrom: "keys",
+                anchor: "bottom-right",
+                direction: "column",
+                itemWidth: 80,
+                itemHeight: 24
+              }
+            ]}
+            tooltip={({ id, indexValue, value }) =>
+              `${indexValue}: ${value}件 (${id})`
+            }
+          />
+        </ResponsiveContainer>
+      </Card>
+    </Box>
+  );
+};
 
 export default () => {
   const { initialState, length } = useContext(DataContext);
@@ -254,7 +268,7 @@ export default () => {
             <PlayingTimeCalendar />
           </Grid>
         </Grid>
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <Grid item>
             <Typography component="h2" variant="h6">
               体感品質 (QoE)
@@ -271,7 +285,7 @@ export default () => {
               </Grid>
             </Grid>
           </Grid>
-        </Grid> */}
+        </Grid>
       </Grid>
     </Box>
   );
