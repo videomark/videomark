@@ -9,7 +9,7 @@ import dino from "../../../images/dino.png";
 
 export default () => (
   <>
-    <Box position="absolute" top={48} right={16}>
+    <Box position="fixed" top={48} right={16}>
       <AboutHelp />
     </Box>
     <Box paddingTop={8}>
