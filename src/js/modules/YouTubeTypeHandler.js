@@ -3,8 +3,7 @@ class YouTubeTypeHandler {
     static is_youtube_type() {
         try {
             const player = document.querySelector('#movie_player');
-            if (!player)
-                return false;
+            if (!player) return false;
 
             if (!(player.getVideoStats instanceof Function) ||
                 !(player.getCurrentTime instanceof Function) ||
@@ -12,18 +11,15 @@ class YouTubeTypeHandler {
                 !(player.getVideoLoadedFraction instanceof Function) ||
                 !(player.getAdState instanceof Function) ||
                 !(player.getPlaybackQuality instanceof Function))
-
                 return false;
 
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
                 const q = player.getPlaybackQuality();
-                if (!q || q === 'unknown')
-                    return false;
+                if (!q || q === 'unknown') return false;
                 return true;
             }
 
-            if (!(player.getPlayerResponse instanceof Function))
-                return false;
+            if (!(player.getPlayerResponse instanceof Function)) return false;
 
             const stats = player.getVideoStats();
             const response = player.getPlayerResponse();
@@ -44,8 +40,7 @@ class YouTubeTypeHandler {
 
     // eslint-disable-next-line camelcase
     static can_get_streaming_info() {
-        if (YouTubeTypeHandler.is_mobile())
-            return false;
+        if (YouTubeTypeHandler.is_mobile()) return false;
         //  YouTube for TV
         //  music.youtube.com
         return true;
@@ -80,8 +75,7 @@ class YouTubeTypeHandler {
     static async hook_loadVideoByPlayerVars() {
         // eslint-disable-next-line no-restricted-globals
         const { host } = new URL(location.href)
-        if (!(host === "www.youtube.com" || host === "m.youtube.com"))
-            return;
+        if (!(host === "www.youtube.com" || host === "m.youtube.com")) return;
 
         let elm;
         for (; ;) {
@@ -132,7 +126,9 @@ class YouTubeTypeHandler {
 
     // eslint-disable-next-line camelcase
     static get_play_list_info() {
-        return YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts)
+        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+        if (!formats) return [];
+        return formats
             .filter(e => /^video/.test(e.type))
             .map(e => ({
                 representationId: e.itag,
@@ -363,8 +359,8 @@ class YouTubeTypeHandler {
     get_streaming_info() {
         const stats = this.player.getVideoStats();
         const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
-        const video = formats.find(e => e.itag === stats.fmt, 10);
-        const audio = formats.find(e => e.itag === stats.afmt, 10);
+        const video = formats.find(e => e.itag === stats.fmt);
+        const audio = formats.find(e => e.itag === stats.afmt);
         return { video, audio };
     }
 
@@ -373,7 +369,7 @@ class YouTubeTypeHandler {
         return this.player.contains(video)
     }
 
-    // eslint-disable-next-line camelcase,no-unused-vars
+    // eslint-disable-next-line camelcase, no-unused-vars
     is_cm(video) {
         return this.cm;
     }
