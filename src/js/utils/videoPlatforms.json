@@ -1,5 +1,11 @@
 [
   {
+    "id": "youtube",
+    "name": "YouTube",
+    "url": "https://www.youtube.com/",
+    "brandcolor": "#ff0000"
+  },
+  {
     "id": "paravi",
     "name": "Paravi",
     "url": "https://www.paravi.jp/",
@@ -10,11 +16,5 @@
     "name": "TVer",
     "url": "https://tver.jp/",
     "brandcolor": "#40b8dc"
-  },
-  {
-    "id": "youtube",
-    "name": "YouTube",
-    "url": "https://www.youtube.com/",
-    "brandcolor": "#ff0000"
   }
 ]
