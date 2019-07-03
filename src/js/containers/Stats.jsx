@@ -198,9 +198,12 @@ const QoEFrequencyBarChart = () => {
   const data = [...qoeFrequency].map(([qoe, stats]) => ({
     qoe: `QoE ${qoe - 1}〜${qoe}`,
     ...Object.fromEntries(
-      [...stats].flatMap(([service, value]) => [
-        [serviceNames.get(service), value],
-        [`${serviceNames.get(service)}.brandcolor`, brandcolors.get(service)]
+      [...stats].map(([service, value]) => [serviceNames.get(service), value])
+    ),
+    ...Object.fromEntries(
+      [...stats].map(([service]) => [
+        `${serviceNames.get(service)}.brandcolor`,
+        brandcolors.get(service)
       ])
     )
   }));
