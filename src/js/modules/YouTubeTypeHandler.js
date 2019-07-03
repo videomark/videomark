@@ -123,6 +123,21 @@ class YouTubeTypeHandler {
         return ret;
     }
 
+    static get_play_list_info() {
+        return YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts)
+            .filter(e => /^video/.test(e.type))
+            .map(e => ({
+                representationId: e.itag,
+                bps: Number.parseInt(e.bitrate, 10),
+                videoWidth: Number.parseInt(e.size.split('x')[0], 10),
+                videoHeight: Number.parseInt(e.size.split('x')[1], 10),
+                fps: Number.parseInt(e.fps, 10),
+                chunkDuration: 5000,
+                serverIp: new URL(e.url).host
+            }))
+            .sort((a, b) => b.bps - a.bps);
+    }
+
     constructor(elm) {
         this.elm = elm;
         this.player = document.querySelector('#movie_player');
