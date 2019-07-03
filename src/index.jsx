@@ -9,7 +9,7 @@ import * as serviceWorker from "./serviceWorker";
 import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 
 // FIXME: for chrome version < 73
-Object.fromEntries = fromEntries;
+if (!Object.fromEntries) fromEntries.shim();
 
 if (!ChromeExtensionWrapper.canUseVideoMarkApi()) {
   window.location.pathname = "unsupported.html";
