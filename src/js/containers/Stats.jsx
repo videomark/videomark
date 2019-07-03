@@ -25,7 +25,7 @@ const PlayingTimeStats = () => {
   const sum = playingTime.map(({ value }) => value).reduce((a, c) => a + c, 0);
   const text = initialState
     ? "..."
-    : `${length}件 ${formatDistance(0, sum, {
+    : `${length.toLocaleString()}件 ${formatDistance(0, sum, {
         locale
       })}`;
   return (
@@ -109,7 +109,7 @@ const QoEStats = () => {
     qoeStats: { sum, count }
   } = useContext(DataContext);
   const average = sum / count;
-  const text = Number.isFinite(average) ? `平均 ${average.toFixed(2)}` : "...";
+  const text = Number.isFinite(average) ? `平均${average.toFixed(2)}` : "...";
   return (
     <Typography component="small" variant="caption">
       {text}
