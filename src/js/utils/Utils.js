@@ -23,7 +23,7 @@ export const viewingIdToSessionAndVideo = viewingId => {
 };
 
 export const isMobile = () =>
-  window.sodium !== undefined && window.chrome.storage !== undefined;
+  window.sodium !== undefined && window.chrome.storage === undefined;
 export const isExtension = () =>
   window.sodium === undefined && window.chrome.storage !== undefined;
 export const isWeb = () =>
