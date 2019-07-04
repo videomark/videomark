@@ -1,14 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
 import { ReactComponent as AboutHelp } from "./about-help.svg";
+import { isWeb } from "../../utils/Utils";
 import videoPlatforms from "../../utils/videoPlatforms.json";
 import dino from "../../../images/dino.png";
 
+const ExperimentalSnackbar = () => {
+  const [open, setOpen] = useState(true);
+  const onClose = () => setOpen(false);
+  return (
+    <Snackbar open={open} onClose={onClose} variant="info">
+      <SnackbarContent message="この画面は試験的機能です。" />
+    </Snackbar>
+  );
+};
+
 export default () => (
   <>
+    {isWeb() ? <ExperimentalSnackbar /> : null}
     <Box position="fixed" top={48} right={16}>
       <AboutHelp />
     </Box>
