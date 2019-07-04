@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Snackbar from "@material-ui/core/Snackbar";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
+import Button from "@material-ui/core/Button";
+import Input from "@material-ui/icons/Input";
 import { ReactComponent as AboutHelp } from "./about-help.svg";
 import { isWeb } from "../../utils/Utils";
 import videoPlatforms from "../../utils/videoPlatforms.json";
@@ -19,6 +22,12 @@ const ExperimentalSnackbar = () => {
     </Snackbar>
   );
 };
+const ImportButton = () => (
+  <Button component={RouterLink} to="/import" color="primary">
+    <Input />
+    <Box paddingLeft={1}>計測結果をインポート...</Box>
+  </Button>
+);
 
 export default () => (
   <>
@@ -36,6 +45,7 @@ export default () => (
             <Typography variant="subtitle1">
               ネットワークは実サービス利用時の品質で評価する時代へ
             </Typography>
+            {isWeb() ? <ImportButton /> : null}
           </Box>
           <Typography component="h2" variant="h6">
             計測可能な動画配信サービス
