@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Snackbar, SnackbarContent, IconButton } from "@material-ui/core";
-import { Refresh } from "@material-ui/icons";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
+import IconButton from "@material-ui/core/IconButton";
+import Refresh from "@material-ui/icons/Refresh";
 
 class OfflineNoticeSnackbar extends Component {
   constructor(props) {

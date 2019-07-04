@@ -1,28 +1,24 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import {
-  CssBaseline,
-  Container,
-  Box,
-  Paper,
-  Grid,
-  Typography,
-  IconButton,
-  TextField,
-  InputAdornment
-} from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import { withStyles } from "@material-ui/core/styles";
-import {
-  Clear,
-  ChevronRight,
-  ChevronLeft,
-  FirstPage,
-  LastPage,
-  Search,
-  Send,
-  Refresh,
-  SaveAlt
-} from "@material-ui/icons";
+import Clear from "@material-ui/icons/Clear";
+import ChevronRight from "@material-ui/icons/ChevronRight";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import FirstPage from "@material-ui/icons/FirstPage";
+import LastPage from "@material-ui/icons/LastPage";
+import Search from "@material-ui/icons/Search";
+import Send from "@material-ui/icons/Send";
+import Refresh from "@material-ui/icons/Refresh";
+import SaveAlt from "@material-ui/icons/SaveAlt";
 import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
 import Subdivision from "./js/utils/Subdivision";

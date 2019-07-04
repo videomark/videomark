@@ -7,7 +7,6 @@ import App from "./App";
 import StatsSummary from "./StatsSummary";
 import Import from "./Import";
 import Export from "./Export";
-import * as serviceWorker from "./serviceWorker";
 import { isDevelop, isWeb } from "./js/utils/Utils";
 
 // FIXME: for chrome version < 73
@@ -26,5 +25,4 @@ else {
     </Router>,
     document.getElementById("root")
   );
-  serviceWorker.unregister();
 }

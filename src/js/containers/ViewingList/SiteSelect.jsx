@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import AppData from "../../utils/AppData";
