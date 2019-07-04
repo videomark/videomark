@@ -34,9 +34,10 @@ const fetchQoE = async viewings => {
       );
 };
 
-const viewingsStream = new ReadableStream({
-  async start() {
-    this.ids = (await new Promise(resolve => {
+const viewingsStream = () => {
+  let ids;
+  const start = async () => {
+    ids = (await new Promise(resolve => {
       ChromeExtensionWrapper.loadVideoIds(resolve);
     }))
       .map(
@@ -53,9 +54,9 @@ const viewingsStream = new ReadableStream({
         })
       )
       .sort(({ startTime: a }, { startTime: b }) => a - b);
-  },
-  async pull(controller) {
-    const buffer = this.ids.splice(-120).map(id => new ViewingModel(id));
+  };
+  const pull = async controller => {
+    const buffer = ids.splice(-120).map(id => new ViewingModel(id));
     await Promise.all(buffer.map(viewing => viewing.init()));
 
     const column = {};
@@ -124,8 +125,10 @@ const viewingsStream = new ReadableStream({
         }, new Map())
     });
     await new Promise(resolve => setTimeout(resolve, 500));
-  }
-});
+  };
+  return new ReadableStream({ start, pull });
+};
+
 const initialData = {
   initialState: true,
   length: 0,
@@ -192,7 +195,7 @@ export const DataProvider = props => {
   const [data, addData] = useReducer(reducer, initialData);
   useEffect(() => {
     if (data.initialState) {
-      viewingsStream.pipeTo(dispatcher(addData));
+      viewingsStream().pipeTo(dispatcher(addData));
     }
   }, [addData]);
   return (
