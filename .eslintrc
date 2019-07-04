@@ -18,8 +18,5 @@
         "allow": ["error"]
       }
     ]
-  },
-  "globals": {
-    "chrome": true
   }
 }

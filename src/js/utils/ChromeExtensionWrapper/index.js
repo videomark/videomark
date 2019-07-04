@@ -1,23 +1,36 @@
-import { isMobile, isExtension, isDevelop } from "../Utils";
+import { isMobile, isExtension, isWeb } from "../Utils";
 import data from "./EmbeddedData";
 
 const RemovedTargetKeys = "RemovedTargetKeys";
 const AgreedTerm = "AgreedTerm";
 
-// モバイルはchromeで立ち上げられるとchromeのオブジェクトが存在するため
-// 未サポートブラウザ判定できないためextensionのみこのコードを有効にする
-if (isExtension() && window.sodium === undefined) {
-  window.sodium = chrome;
-}
+export const storage = () => {
+  if (isMobile()) {
+    return window.sodium.storage.local;
+  }
+  if (isExtension()) {
+    return window.chrome.storage.local;
+  }
+  const set = obj => {
+    Object.assign(data, obj);
+  };
+  const get = (keyOrFunction, callback) => {
+    if (keyOrFunction instanceof Function) return keyOrFunction(data);
+    return callback({ [keyOrFunction]: data[keyOrFunction] });
+  };
+  const remove = key => {
+    delete data[key];
+  };
+  return {
+    set,
+    get,
+    remove
+  };
+};
 
-// 環境判定をしてchrome extension apiの実行とダミーデータの返却を実現する
 export default class ChromeExtensionWrapper {
   static save(key, value) {
-    if (isDevelop()) {
-      data[key] = value;
-      return;
-    }
-    window.sodium.storage.local.set({ [key]: value });
+    storage().set({ [key]: value });
   }
 
   static saveRemoveTarget(value) {
@@ -25,11 +38,7 @@ export default class ChromeExtensionWrapper {
   }
 
   static load(key, callback) {
-    if (isDevelop()) {
-      callback(data[key]);
-      return;
-    }
-    window.sodium.storage.local.get(key, items => callback(items[key]));
+    storage().get(key, ({ [key]: value }) => callback(value));
   }
 
   static loadRemovedTarget(callback) {
@@ -52,27 +61,17 @@ export default class ChromeExtensionWrapper {
       return result;
     };
 
-    if (isDevelop()) {
-      callback(parse(data));
-      return;
-    }
-
-    window.sodium.storage.local.get(value => {
+    storage().get(value => {
       callback(parse(value));
     });
   }
 
   static remove(key) {
-    if (isDevelop()) {
-      delete data[key];
-      return;
-    }
-
-    window.sodium.storage.local.remove(key);
+    storage().remove(key);
   }
 
   static loadAgreedTerm(callback) {
-    if (isDevelop() || isMobile()) {
+    if (isMobile() || isWeb()) {
       callback(true);
       return;
     }
@@ -80,9 +79,5 @@ export default class ChromeExtensionWrapper {
     this.load(AgreedTerm, value => {
       callback(value || false);
     });
-  }
-
-  static canUseVideoMarkApi() {
-    return window.sodium !== undefined || !isMobile();
   }
 }

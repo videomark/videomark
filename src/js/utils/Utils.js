@@ -22,8 +22,9 @@ export const viewingIdToSessionAndVideo = viewingId => {
   };
 };
 
-export const isDevelop = () => process.env.NODE_ENV === "development";
 export const isMobile = () =>
-  !isDevelop() && chrome !== undefined && !process.env.PUBLIC_URL;
+  window.sodium !== undefined && window.chrome.storage !== undefined;
 export const isExtension = () =>
-  !isDevelop() && chrome !== undefined && process.env.PUBLIC_URL.length > 0;
+  window.sodium === undefined && window.chrome.storage !== undefined;
+export const isWeb = () =>
+  window.sodium === undefined && window.chrome.storage === undefined;
