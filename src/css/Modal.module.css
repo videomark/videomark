@@ -1,13 +1,19 @@
+.modal:not(.open) {
+  z-index: -1;
+  opacity: 0;
+  transition: 0.4s;
+}
+.modal.open {
+  z-index: 1300;
+  opacity: 1;
+  transition: 0.4s;
+}
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
-  opacity: 0;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -102,9 +108,4 @@
   .modal .modal_inner {
     width: 80vw;
   }
-}
-
-.is-modal-open .modal {
-  z-index: 1310;
-  opacity: 1;
 }

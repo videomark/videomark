@@ -1,13 +1,14 @@
 import * as React from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 import style from "../../css/Modal.module.css";
 import { CrossIcon } from "./Icons";
 
 class Modal extends React.Component {
   render() {
-    const { children, closeCallback, className } = this.props;
+    const { open, children, closeCallback } = this.props;
     return (
-      <div className={`${style.modal} ${className}`}>
+      <div className={classNames(style.modal, { [style.open]: open })}>
         <div
           className={style.modal_bg}
           onClick={() => closeCallback && closeCallback()}
@@ -31,9 +32,9 @@ class Modal extends React.Component {
 }
 
 Modal.propTypes = {
+  open: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
-  closeCallback: PropTypes.func,
-  className: PropTypes.string.isRequired
+  closeCallback: PropTypes.func
 };
 
 Modal.defaultProps = {

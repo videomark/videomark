@@ -82,7 +82,7 @@ class App extends React.Component {
             <OfflineNoticeSnackbar />
           </div>
           <Modal
-            className={modal.show ? style.modal_open : ""}
+            open={modal.show}
             closeCallback={() => {
               this.modalDataUpdateCallback(null);
             }}
