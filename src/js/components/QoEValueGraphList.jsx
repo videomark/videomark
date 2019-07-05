@@ -59,7 +59,7 @@ const QoEValueGraphList = ({
   );
 };
 QoEValueGraphList.propTypes = {
-  value: PropTypes.number.isRequired,
+  value: PropTypes.number,
   region: PropTypes.shape({
     country: PropTypes.string,
     subdivision: PropTypes.string
@@ -71,6 +71,7 @@ QoEValueGraphList.propTypes = {
   color: PropTypes.string
 };
 QoEValueGraphList.defaultProps = {
+  value: undefined,
   region: undefined,
   regionalAverage: undefined,
   hour: undefined,

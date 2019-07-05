@@ -23,7 +23,7 @@ const DItem = ({ dt, dd, na }) => {
 DItem.propTypes = {
   dt: PropTypes.string.isRequired,
   dd: PropTypes.string.isRequired,
-  na: PropTypes.string.isRequired
+  na: PropTypes.bool.isRequired
 };
 
 export const VideoQuality = ({
