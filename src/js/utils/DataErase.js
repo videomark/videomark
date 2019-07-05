@@ -9,25 +9,18 @@ class DataErase {
     this.removedIds = [];
   }
 
-  async initialize() {
-    const targets = await new Promise(resolve =>
-      ChromeExtensionWrapper.loadRemovedTarget(resolve)
-    );
-    if (targets.length > 0) await this.remove(targets);
-
-    const viewings = await new Promise(resolve =>
-      ChromeExtensionWrapper.loadVideoIds(resolve)
-    );
-    const ascViewings = viewings.sort(
-      (a, b) => a.data.start_time - b.data.start_time
-    );
-    if (MaxSaveCount < ascViewings.length) {
-      await this.remove(
-        ascViewings
-          .slice(0, ascViewings.length - MaxSaveCount)
-          .map(({ id }) => id)
-      );
+  async initialize(viewings) {
+    const targets = [
+      ...(await new Promise(resolve =>
+        ChromeExtensionWrapper.loadRemovedTarget(resolve)
+      )),
+      ...[...viewings.keys()].slice(0, viewings.size - MaxSaveCount)
+    ];
+    if (targets.length > 0) {
+      await this.remove(targets);
+      targets.forEach(target => viewings.delete(target));
     }
+    return viewings;
   }
 
   add(id) {

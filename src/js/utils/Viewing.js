@@ -3,9 +3,10 @@ import Api from "./Api";
 import { viewingIdWithoutDateTimeFromSessionAndVideo } from "./Utils";
 
 class Viewing {
-  constructor({ sessionId, videoId }) {
-    this.sessionId = sessionId;
-    this.videoId = videoId;
+  constructor({ sessionId, videoId, ...initialState }) {
+    this.sessionId = sessionId || initialState.session_id;
+    this.videoId = videoId || initialState.video_id;
+    this.cache = initialState;
   }
 
   get viewingId() {

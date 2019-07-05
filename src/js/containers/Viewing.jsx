@@ -138,7 +138,7 @@ const Viewing = ({
           await DataErase.remove(id);
           AppData.update(AppDataActions.ViewingList, state =>
             Object.assign(state, {
-              viewings: state.viewings.filter(v => v.id !== id)
+              indexes: state.indexes.filter(v => v.id !== id)
             })
           );
         }}

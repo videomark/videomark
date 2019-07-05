@@ -1,27 +1,27 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React, { createContext, useReducer, useEffect, useContext } from "react";
 import DataFrame from "dataframe-js";
 import { format } from "date-fns";
-import ChromeExtensionWrapper from "../utils/ChromeExtensionWrapper";
+import { ViewingsContext } from "./ViewingsProvider";
 import ViewingModel from "../utils/Viewing";
 import { urlToVideoPlatform } from "../utils/Utils";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import Api from "../utils/Api";
 
-const fetchQoE = async viewings => {
-  if (viewings.length === 0) return [];
+const fetchQoE = async viewingModels => {
+  if (viewingModels.length === 0) return [];
   if (!window.navigator.onLine)
-    return Promise.all(viewings.map(viewing => viewing.qoe));
+    return Promise.all(viewingModels.map(viewing => viewing.qoe));
   const response = await Api.fixed(
-    viewings.map(viewing => ({
+    viewingModels.map(viewing => ({
       session_id: viewing.sessionId,
       video_id: viewing.videoId
     }))
   );
   const json = response.ok ? await response.json() : undefined;
   return json === undefined
-    ? Array(viewings.length)
+    ? Array(viewingModels.length)
     : Promise.all(
-        viewings.map(async viewing => {
+        viewingModels.map(async viewing => {
           const { qoe } =
             json.find(({ viewing_id: id }) =>
               id.startsWith(viewing.viewingId)
@@ -34,30 +34,13 @@ const fetchQoE = async viewings => {
       );
 };
 
-const viewingsStream = () => {
-  let ids;
-  const start = async () => {
-    ids = (await new Promise(resolve => {
-      ChromeExtensionWrapper.loadVideoIds(resolve);
-    }))
-      .map(
-        ({
-          data: {
-            session_id: sessionId,
-            video_id: videoId,
-            start_time: startTime
-          }
-        }) => ({
-          sessionId,
-          videoId,
-          startTime
-        })
-      )
-      .sort(({ startTime: a }, { startTime: b }) => a - b);
-  };
+const statsDataStream = viewings => {
+  const ids = [...viewings.keys()];
   const pull = async controller => {
-    const buffer = ids.splice(-120).map(id => new ViewingModel(id));
-    await Promise.all(buffer.map(viewing => viewing.init()));
+    const buffer = ids
+      .splice(-120)
+      .map(id => new ViewingModel(viewings.get(id)));
+    await Promise.all(buffer.map(viewingModel => viewingModel.init()));
 
     const column = {};
     [
@@ -66,9 +49,9 @@ const viewingsStream = () => {
       column.quality,
       column.qoe
     ] = await Promise.all([
-      Promise.all(buffer.map(viewing => viewing.startTime)),
-      Promise.all(buffer.map(viewing => viewing.location)),
-      Promise.all(buffer.map(viewing => viewing.quality)),
+      Promise.all(buffer.map(viewingModel => viewingModel.startTime)),
+      Promise.all(buffer.map(viewingModel => viewingModel.location)),
+      Promise.all(buffer.map(viewingModel => viewingModel.quality)),
       fetchQoE(buffer)
     ]);
     column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN));
@@ -126,7 +109,7 @@ const viewingsStream = () => {
     });
     await new Promise(resolve => setTimeout(resolve, 500));
   };
-  return new ReadableStream({ start, pull });
+  return new ReadableStream({ pull });
 };
 
 const initialData = {
@@ -190,16 +173,19 @@ const dispatcher = f =>
     write: chunk => f(chunk)
   });
 
-export const DataContext = createContext();
-export const DataProvider = props => {
+export const StatsDataContext = createContext();
+export const StatsDataProvider = props => {
+  const viewings = useContext(ViewingsContext);
   const [data, addData] = useReducer(reducer, initialData);
   useEffect(() => {
-    if (data.initialState) {
-      viewingsStream().pipeTo(dispatcher(addData));
+    if (viewings !== undefined && data.initialState) {
+      statsDataStream(viewings).pipeTo(dispatcher(addData));
     }
-  }, [addData]);
+  }, [viewings, addData]);
   return (
-    <DataContext.Provider {...props} value={data === undefined ? {} : data} />
+    <StatsDataContext.Provider
+      {...props}
+      value={data === undefined ? {} : data}
+    />
   );
 };
-export default DataProvider;

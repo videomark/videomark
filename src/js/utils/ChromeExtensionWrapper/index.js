@@ -1,9 +1,6 @@
 import { isMobile, isExtension, isWeb } from "../Utils";
 import data from "./EmbeddedData";
 
-const RemovedTargetKeys = "RemovedTargetKeys";
-const AgreedTerm = "AgreedTerm";
-
 export const storage = () => {
   if (isMobile()) {
     return window.sodium.storage.local;
@@ -15,7 +12,8 @@ export const storage = () => {
     Object.assign(data, obj);
   };
   const get = (keyOrFunction, callback) => {
-    if (keyOrFunction instanceof Function) return keyOrFunction(data);
+    if (keyOrFunction instanceof Function)
+      return keyOrFunction(Object.assign({}, data));
     return callback({ [keyOrFunction]: data[keyOrFunction] });
   };
   const remove = key => {
@@ -28,13 +26,23 @@ export const storage = () => {
   };
 };
 
+export const allViewings = async () => {
+  const obj = await new Promise(resolve => storage().get(resolve));
+  ["RemovedTargetKeys", "AgreedTerm"].forEach(index => delete obj[index]);
+  const ids = Object.entries(obj)
+    .map(([id, { start_time: time }]) => [id, time])
+    .sort(([, a], [, b]) => a - b)
+    .map(([id]) => id);
+  return new Map(ids.map(id => [id, obj[id]]));
+};
+
 export default class ChromeExtensionWrapper {
   static save(key, value) {
     storage().set({ [key]: value });
   }
 
   static saveRemoveTarget(value) {
-    this.save(RemovedTargetKeys, value);
+    this.save("RemovedTargetKeys", value);
   }
 
   static load(key, callback) {
@@ -42,28 +50,9 @@ export default class ChromeExtensionWrapper {
   }
 
   static loadRemovedTarget(callback) {
-    this.load(RemovedTargetKeys, value =>
+    this.load("RemovedTargetKeys", value =>
       callback(Array.isArray(value) ? value : [])
     );
-  }
-
-  static loadVideoIds(callback) {
-    const parse = value => {
-      const result = [];
-      Object.keys(value)
-        .filter(key => {
-          return key !== RemovedTargetKeys && key !== AgreedTerm;
-        })
-        .forEach(key => {
-          result.push({ id: key, data: value[key] });
-        });
-
-      return result;
-    };
-
-    storage().get(value => {
-      callback(parse(value));
-    });
   }
 
   static remove(key) {
@@ -76,7 +65,7 @@ export default class ChromeExtensionWrapper {
       return;
     }
 
-    this.load(AgreedTerm, value => {
+    this.load("AgreedTerm", value => {
       callback(value || false);
     });
   }

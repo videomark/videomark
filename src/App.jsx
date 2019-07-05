@@ -5,17 +5,17 @@ import { ThemeProvider } from "@material-ui/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import Header from "./js/containers/Header";
-import dataErase from "./js/utils/DataErase";
-import Modal from "./js/components/Modal";
 import style from "./App.module.css";
 import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
-import ViewingList from "./js/containers/ViewingList";
-import Stats from "./js/containers/Stats";
-import StatsDataProvider from "./js/containers/StatsDataProvider";
+import { ViewingsProvider } from "./js/containers/ViewingsProvider";
+import { StatsDataProvider } from "./js/containers/StatsDataProvider";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
+import Modal from "./js/components/Modal";
+import Header from "./js/containers/Header";
+import Stats from "./js/containers/Stats";
+import History from "./js/containers/History";
 import Welcome from "./js/components/Welcome";
 import NotFound from "./js/components/NotFound";
 
@@ -43,9 +43,6 @@ class App extends React.Component {
       window.location.href = url.href;
       return;
     }
-    await dataErase.initialize();
-    // FIXME: ViewingListをrender()しないと表示が反映されない
-    AppData.update(AppDataActions.ViewingList, state => state);
     AppData.add(AppDataActions.Modal, this, "modalDataUpdateCallback");
     this.setState({ setup: false });
   }
@@ -64,33 +61,35 @@ class App extends React.Component {
 
     if (setup) return null;
     return (
-      <StatsDataProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <div className={style.qoe_log_view}>
-            <Header />
-            <Box paddingTop={6}>
-              <Container>
-                <Switch>
-                  <Route exact path="/" component={Stats} />
-                  <Route exact path="/history" component={ViewingList} />
-                  <Route exact path="/welcome" component={Welcome} />
-                  <Route component={NotFound} />
-                </Switch>
-              </Container>
-            </Box>
-            <OfflineNoticeSnackbar />
-          </div>
-          <Modal
-            open={modal.show}
-            closeCallback={() => {
-              this.modalDataUpdateCallback(null);
-            }}
-          >
-            {modal.show ? modal.contents : ""}
-          </Modal>
-        </ThemeProvider>
-      </StatsDataProvider>
+      <ViewingsProvider>
+        <StatsDataProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <div className={style.qoe_log_view}>
+              <Header />
+              <Box paddingTop={6}>
+                <Container>
+                  <Switch>
+                    <Route exact path="/" component={Stats} />
+                    <Route exact path="/history" component={History} />
+                    <Route exact path="/welcome" component={Welcome} />
+                    <Route component={NotFound} />
+                  </Switch>
+                </Container>
+              </Box>
+              <OfflineNoticeSnackbar />
+            </div>
+            <Modal
+              open={modal.show}
+              closeCallback={() => {
+                this.modalDataUpdateCallback(null);
+              }}
+            >
+              {modal.show ? modal.contents : ""}
+            </Modal>
+          </ThemeProvider>
+        </StatsDataProvider>
+      </ViewingsProvider>
     );
   }
 }

@@ -17,11 +17,12 @@ import {
 } from "recharts";
 import { Calendar } from "@nivo/calendar";
 import { Bar } from "@nivo/bar";
-import { DataContext } from "./StatsDataProvider";
+import { ViewingsContext } from "./ViewingsProvider";
+import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
 
 const PlayingTimeStats = () => {
-  const { initialState, length, playingTime } = useContext(DataContext);
+  const { initialState, length, playingTime } = useContext(StatsDataContext);
   const sum = playingTime.map(({ value }) => value).reduce((a, c) => a + c, 0);
   const text = initialState
     ? "..."
@@ -35,7 +36,7 @@ const PlayingTimeStats = () => {
   );
 };
 const PlayingTimeCalendar = () => {
-  const { playingTime } = useContext(DataContext);
+  const { playingTime } = useContext(StatsDataContext);
   const data = (playingTime || []).map(({ day, value }) => ({
     day,
     value: value / 1e3 / 60
@@ -107,7 +108,7 @@ const PlayingTimeCalendar = () => {
 const QoEStats = () => {
   const {
     qoeStats: { sum, count }
-  } = useContext(DataContext);
+  } = useContext(StatsDataContext);
   const average = sum / count;
   const text = Number.isFinite(average) ? `平均${average.toFixed(2)}` : "...";
   return (
@@ -117,7 +118,7 @@ const QoEStats = () => {
   );
 };
 const QoETimelineChart = () => {
-  const { qoeTimeline } = useContext(DataContext);
+  const { qoeTimeline } = useContext(StatsDataContext);
   return (
     <Box m={0} component="figure">
       <Typography
@@ -188,7 +189,7 @@ const QoETimelineChart = () => {
   );
 };
 const QoEFrequencyBarChart = () => {
-  const { qoeFrequency } = useContext(DataContext);
+  const { qoeFrequency } = useContext(StatsDataContext);
   const serviceNames = new Map(
     videoPlatforms.map(({ id, name }) => [id, name])
   );
@@ -251,8 +252,8 @@ const QoEFrequencyBarChart = () => {
 };
 
 export default () => {
-  const { initialState, length } = useContext(DataContext);
-  if (!initialState && length === 0) {
+  const viewings = useContext(ViewingsContext);
+  if (viewings !== undefined && viewings.size === 0) {
     return <Redirect to="/welcome" />;
   }
 

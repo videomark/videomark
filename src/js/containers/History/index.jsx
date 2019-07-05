@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
+import PropTypes from "prop-types";
 import { Redirect } from "react-router";
+import isSameMonth from "date-fns/isSameMonth";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Viewing from "../Viewing";
-import ChromeExtensionWrapper from "../../utils/ChromeExtensionWrapper";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
 import { urlToVideoPlatform } from "../../utils/Utils";
@@ -17,11 +18,34 @@ import videoPlatforms from "../../utils/videoPlatforms.json";
 import Pager from "./Pager";
 import MonthSelect from "./MonthSelect";
 import SiteSelect from "./SiteSelect";
+import { ViewingsContext } from "../ViewingsProvider";
 
-class ViewingList extends Component {
-  constructor() {
-    super();
+class History extends Component {
+  static propTypes = {
+    viewings: PropTypes.instanceOf(Map)
+  };
+
+  static defaultProps = {
+    viewings: undefined
+  };
+
+  constructor(props) {
+    super(props);
+    const { viewings } = this.props;
     this.state = {
+      indexes:
+        viewings &&
+        [...viewings.entries()].map(
+          ([
+            id,
+            {
+              session_id: sessionId,
+              video_id: videoId,
+              location,
+              start_time: startTime
+            }
+          ]) => ({ id, sessionId, videoId, location, startTime })
+        ),
       sites: videoPlatforms.map(({ id }) => id),
       date: new Date(),
       page: 0,
@@ -30,23 +54,11 @@ class ViewingList extends Component {
   }
 
   async componentDidMount() {
-    const viewings = await new Promise(resolve => {
-      ChromeExtensionWrapper.loadVideoIds(resolve);
-    });
-    this.setState({
-      viewings: viewings
-        .map(({ id, data }) => ({
-          id,
-          sessionId: data.session_id,
-          videoId: data.video_id,
-          location: data.location,
-          startTime: new Date(data.start_time)
-        }))
-        .sort((a, b) => b.startTime - a.startTime)
-    });
-    const regions = viewings
-      .map(({ data }) => {
-        const { country, subdivision } = data.region || {};
+    const { viewings } = this.props;
+    if (viewings === undefined) return;
+    const regions = [...viewings.values()]
+      .map(({ region }) => {
+        const { country, subdivision } = region || {};
         return { country, subdivision };
       })
       .filter(
@@ -69,7 +81,7 @@ class ViewingList extends Component {
 
   render() {
     const {
-      viewings,
+      indexes,
       sites,
       date,
       regionalAverageQoE,
@@ -77,21 +89,16 @@ class ViewingList extends Component {
       page,
       perPage
     } = this.state;
-    if (viewings === undefined) return "...";
-    if (viewings.length === 0) return <Redirect to="/welcome" />;
+    if (indexes === undefined) return "...";
+    if (indexes.length === 0) return <Redirect to="/welcome" />;
 
-    const viewingList = viewings
+    const viewingList = indexes
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
-      .filter(
-        ({ startTime }) =>
-          startTime.getFullYear() === date.getFullYear() &&
-          startTime.getMonth() === date.getMonth()
-      )
-      .map(viewing =>
-        Object.assign(viewing, {
-          disabled: DataErase.contains(viewing.id)
-        })
-      )
+      .filter(({ startTime }) => isSameMonth(date, startTime))
+      .map(viewing => ({
+        ...viewing,
+        disabled: DataErase.contains(viewing.id)
+      }))
       .map(({ id, sessionId, videoId, disabled }) => (
         <Grid
           item
@@ -152,18 +159,21 @@ class ViewingList extends Component {
     );
   }
 }
-export default () => (
-  <>
-    <Box py={1}>
-      <Grid container justify="space-between" alignItems="flex-end">
-        <Grid item>
-          <MonthSelect />
+export default () => {
+  const viewings = useContext(ViewingsContext);
+  return (
+    <>
+      <Box py={1}>
+        <Grid container justify="space-between" alignItems="flex-end">
+          <Grid item>
+            <MonthSelect />
+          </Grid>
+          <Grid item>
+            <SiteSelect />
+          </Grid>
         </Grid>
-        <Grid item>
-          <SiteSelect />
-        </Grid>
-      </Grid>
-    </Box>
-    <ViewingList />
-  </>
-);
+      </Box>
+      <History viewings={viewings} />
+    </>
+  );
+};
