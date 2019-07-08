@@ -5,7 +5,9 @@ import style from "../../css/QoEValueGraph.module.css";
 
 const QoEValueGraph = ({ label, qoe, modal, color }) => {
   if (qoe === undefined) return null;
-  const valueBarStyle = { width: `${(qoe / 5.0) * 100}%` };
+  const valueBarStyle = {
+    width: `${Number.isFinite(qoe) ? (qoe / 5.0) * 100 : 0}%`
+  };
   const palette = {
     qoeValueBar: {
       bgcolor: color === "default" ? "#75c6ac" : color
@@ -34,7 +36,9 @@ const QoEValueGraph = ({ label, qoe, modal, color }) => {
             <div className={style.qoeBarGraphBase} />
           </div>
         </div>
-        <p className={style.qoeValue}>{qoe.toFixed(2)}</p>
+        <p className={style.qoeValue}>
+          {Number.isFinite(qoe) ? qoe.toFixed(2) : null}
+        </p>
       </div>
     </div>
   );

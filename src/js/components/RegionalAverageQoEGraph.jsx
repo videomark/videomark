@@ -17,7 +17,7 @@ const RegionalAverageQoEGraph = ({ region, regionalAverage, isDetail }) => {
     return (
       <QoEValueGraph
         label={isDetail ? detail : label}
-        qoe={0}
+        qoe={NaN}
         modal={isDetail}
       />
     );
