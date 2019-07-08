@@ -32,7 +32,7 @@ const ImportButton = () => (
 export default () => (
   <>
     {isWeb() ? <ExperimentalSnackbar /> : null}
-    <Box position="fixed" top={48} right={16}>
+    <Box position="fixed" top={48} right={24}>
       <AboutHelp />
     </Box>
     <Box paddingTop={8}>
