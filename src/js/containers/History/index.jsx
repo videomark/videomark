@@ -1,4 +1,4 @@
-import React, { Component, useContext } from "react";
+import React, { Component, createElement, useContext } from "react";
 import PropTypes from "prop-types";
 import { Redirect } from "react-router";
 import isSameMonth from "date-fns/isSameMonth";
@@ -22,11 +22,7 @@ import { ViewingsContext } from "../ViewingsProvider";
 
 class History extends Component {
   static propTypes = {
-    viewings: PropTypes.instanceOf(Map)
-  };
-
-  static defaultProps = {
-    viewings: undefined
+    viewings: PropTypes.instanceOf(Map).isRequired
   };
 
   constructor(props) {
@@ -42,9 +38,10 @@ class History extends Component {
               session_id: sessionId,
               video_id: videoId,
               location,
-              start_time: startTime
+              start_time: startTime,
+              region
             }
-          ]) => ({ id, sessionId, videoId, location, startTime })
+          ]) => ({ id, sessionId, videoId, location, startTime, region })
         ),
       sites: videoPlatforms.map(({ id }) => id),
       date: new Date(),
@@ -54,9 +51,8 @@ class History extends Component {
   }
 
   async componentDidMount() {
-    const { viewings } = this.props;
-    if (viewings === undefined) return;
-    const regions = [...viewings.values()]
+    const { indexes } = this.state;
+    const regions = indexes
       .map(({ region }) => {
         const { country, subdivision } = region || {};
         return { country, subdivision };
@@ -89,9 +85,6 @@ class History extends Component {
       page,
       perPage
     } = this.state;
-    if (indexes === undefined) return "...";
-    if (indexes.length === 0) return <Redirect to="/welcome" />;
-
     const viewingList = indexes
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
       .filter(({ startTime }) => isSameMonth(date, startTime))
@@ -159,6 +152,11 @@ class History extends Component {
     );
   }
 }
+const withViewings = viewings => component => {
+  if (viewings === undefined) return "...";
+  if (viewings.size === 0) return <Redirect to="/welcome" />;
+  return createElement(component, { viewings });
+};
 export default () => {
   const viewings = useContext(ViewingsContext);
   return (
@@ -173,7 +171,7 @@ export default () => {
           </Grid>
         </Grid>
       </Box>
-      <History viewings={viewings} />
+      {withViewings(viewings)(History)}
     </>
   );
 };
