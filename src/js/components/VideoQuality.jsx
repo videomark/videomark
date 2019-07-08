@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import formatDistanceStrict from "date-fns/formatDistanceStrict";
+import locale from "date-fns/locale/ja";
 
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
@@ -10,7 +12,7 @@ export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
 const DItem = ({ dt, dd, na }) => {
   const color = na ? "textSecondary" : "inherit";
   return (
-    <Grid item xs={4}>
+    <Grid item xs={6} sm={4}>
       <Typography align="center" component="dt" variant="body2" color={color}>
         {dt}
       </Typography>
@@ -55,6 +57,9 @@ export const VideoQuality = ({
     },
     waiting: {
       na: !Number.isFinite(waiting / playing)
+    },
+    playing: {
+      na: !Number.isFinite(playing)
     }
   };
 
@@ -96,12 +101,24 @@ export const VideoQuality = ({
           dd={
             classes.waiting.na
               ? "n/a"
-              : `${(waiting / 1e3).toFixed(2)} s ( ${(
+              : `${(waiting / 1e3).toFixed(2)}秒 ( ${(
                   (waiting / playing) *
                   100
                 ).toFixed(2)} % )`
           }
           {...classes.waiting}
+        />
+        <DItem
+          dt="再生時間"
+          dd={
+            classes.playing.na
+              ? "n/a"
+              : `${formatDistanceStrict(0, playing, {
+                  unit: "second",
+                  locale
+                })}`
+          }
+          {...classes.playing}
         />
       </Grid>
       {isLowQuality({
