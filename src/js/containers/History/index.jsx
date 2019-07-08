@@ -88,6 +88,7 @@ class History extends Component {
     const viewingList = indexes
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
       .filter(({ startTime }) => isSameMonth(date, startTime))
+      .reverse()
       .map(viewing => ({
         ...viewing,
         disabled: DataErase.contains(viewing.id)
