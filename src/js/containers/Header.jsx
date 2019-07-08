@@ -7,7 +7,7 @@ import Box from "@material-ui/core/Box";
 import Tabs from "@material-ui/core/Tabs";
 import MuiTab from "@material-ui/core/Tab";
 import IconButton from "@material-ui/core/IconButton";
-import { Help } from "../components/Icons";
+import Help from "@material-ui/icons/Help";
 import { isMobile, isExtension } from "../utils/Utils";
 
 const helpUrl = (base => {
@@ -40,7 +40,7 @@ export default withRouter(({ history }) => {
     <AppBar color="default">
       <Grid container alignItems="center" justify="space-between">
         <Grid item>
-          <Box paddingLeft={5} />
+          <Box paddingLeft={6} />
         </Grid>
         <Grid item>
           <Tabs
@@ -56,7 +56,7 @@ export default withRouter(({ history }) => {
         </Grid>
         <Grid item>
           <IconButton color="primary" href={helpUrl}>
-            <Help />
+            <Help color="action" />
           </IconButton>
         </Grid>
       </Grid>
