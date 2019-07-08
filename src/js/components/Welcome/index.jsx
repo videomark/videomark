@@ -76,7 +76,7 @@ export default () => (
         </Grid>
         <Grid item xs={12} sm={6}>
           <Box paddingTop={4} textAlign="center">
-            <img src={dino} alt="dinoくん" width="300" />
+            <img src={dino} alt="dinoくん" />
           </Box>
         </Grid>
       </Grid>
