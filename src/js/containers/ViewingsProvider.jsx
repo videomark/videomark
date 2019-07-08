@@ -6,7 +6,12 @@ export const ViewingsContext = createContext();
 export const ViewingsProvider = props => {
   const [viewings, setViewings] = useState();
   useEffect(() => {
-    allViewings()
+    new Promise(resolve => {
+      if (document.readyState === "loading")
+        document.addEventListener("DOMContentLoaded", resolve, { once: true });
+      else resolve();
+    })
+      .then(() => allViewings())
       .then(data => dataErase.initialize(data))
       .then(setViewings);
   }, [setViewings]);
