@@ -195,7 +195,7 @@ const QoEFrequencyBarChart = () => {
     videoPlatforms.map(({ id, brandcolor }) => [id, brandcolor])
   );
   const data = [...qoeFrequency].map(([qoe, stats]) => ({
-    qoe: `QoE ${qoe - 1}〜${qoe}`,
+    qoe: `${qoe}`,
     ...Object.fromEntries(
       [...stats].map(([service, value]) => [serviceNames.get(service), value])
     ),
@@ -229,7 +229,6 @@ const QoEFrequencyBarChart = () => {
             enableGridX
             axisBottom={{ tickSize: 0 }}
             enableGridY={false}
-            axisLeft={null}
             legends={[
               {
                 dataFrom: "keys",
@@ -239,8 +238,8 @@ const QoEFrequencyBarChart = () => {
                 itemHeight: 24
               }
             ]}
-            tooltip={({ id, indexValue, value }) =>
-              `${indexValue}: ${value}件 (${id})`
+            tooltip={({ id, indexValue: qoe, value }) =>
+              `QoE ${Number(qoe) - 1}〜${qoe}: ${value}件 (${id})`
             }
           />
         </ResponsiveContainer>
