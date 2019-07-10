@@ -15,7 +15,7 @@ import {
   Tooltip,
   CartesianGrid
 } from "recharts";
-import { Calendar } from "@nivo/calendar";
+import { CalendarCanvas } from "@nivo/calendar";
 import { Bar } from "@nivo/bar";
 import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
@@ -53,7 +53,7 @@ const PlayingTimeCalendar = () => {
       </Typography>
       <Card>
         <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
-          <Calendar
+          <CalendarCanvas
             data={data}
             from={today}
             to={today}
@@ -88,8 +88,6 @@ const PlayingTimeCalendar = () => {
             ]}
             emptyColor="#eeeeee"
             dayBorderColor="#ffffff"
-            monthBorderColor="#ffffff"
-            monthBorderWidth={4}
             legends={[
               {
                 anchor: "bottom-right",
