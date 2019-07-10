@@ -67,6 +67,99 @@ class YouTubeTypeHandler {
         }
     }
 
+    // eslint-disable-next-line camelcase
+    static async hook_youtube() {
+        // eslint-disable-next-line no-restricted-globals
+        const { host } = new URL(location.href)
+        if (!(host === "www.youtube.com" || host === "m.youtube.com")) return;
+
+        // --- XHR --- //
+        YouTubeTypeHandler.hook_youtube_xhr();
+
+        // --- PLayer --- //
+        YouTubeTypeHandler.hook_youtube_player();
+    }
+
+    // eslint-disable-next-line camelcase
+    static async hook_youtube_xhr() {
+        const origOpen = XMLHttpRequest.prototype.open
+        const origSend = XMLHttpRequest.prototype.send
+        // eslint-disable-next-line func-names, prefer-arrow-callback
+        XMLHttpRequest.prototype.open = function (...args) {
+            ([, this.sodiumURL] = args);
+            this.addEventListener(`load`, (event) => {
+                this.sodiumEnd = performance.now();
+                let url;
+                try { url = new URL(this.sodiumURL); } catch (e) { return };
+                if (
+                    // --- 動画ページ --- //
+                    (url.host === 'www.youtube.com' &&
+                        url.pathname.endsWith('watch') &&
+                        url.searchParams.get('v')) ||
+                    // --- get_video_info --- //
+                    (url.host === 'www.youtube.com' &&
+                        url.pathname.endsWith('get_video_info')) ||
+                    // --- chunk --- //
+                    (url.host.endsWith('googlevideo.com') &&
+                        url.pathname.endsWith('videoplayback'))
+                ) {
+                    YouTubeTypeHandler.add_throughput_history({
+                        downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
+                        throughput: Math.floor(event.loaded * 8 * 1000 / (this.sodiumEnd - this.sodiumStart)),
+                        downloadSize: Number.parseFloat(event.loaded),
+                        itag: url.searchParams.get('itag')
+                    });
+                    this.sodiumThroughput = Math.floor(event.loaded * 8 * 1000 / (this.sodiumEnd - this.sodiumStart));
+                    console.log(`load [URL: ${this.sodiumURL}, contents: ${event.loaded}, end:${this.sodiumEnd}, duration: ${
+                        this.sodiumEnd - this.sodiumStart}, throughput: ${this.sodiumThroughput}, itag: ${JSON.stringify(url.searchParams.get('itag'))}]`);
+                }
+            });
+            return origOpen.apply(this, args);
+        }
+        // eslint-disable-next-line func-names, prefer-arrow-callback
+        XMLHttpRequest.prototype.send = function (...args) {
+            this.sodiumStart = performance.now();
+            // eslint-disable-next-line no-empty
+            // try { this.sodiumItag = document.querySelector('#movie_player').getVideoStats().fmt } catch (e) { };
+            return origSend.apply(this, args);
+        }
+    }
+
+    // eslint-disable-next-line camelcase
+    static async hook_youtube_player() {
+        let elm;
+        for (; ;) {
+            elm = document.querySelector('#ytd-player');
+            if (elm) break;
+            // eslint-disable-next-line no-await-in-loop
+            await new Promise(resolve => setTimeout(() => resolve(), 100));
+        }
+        const player = await elm.getPlayerPromise();
+        if (!player.sodiumLoadVideoByPlayerVars && !player.sodiumUpdateVideoData) {
+            // eslint-disable-next-line no-undef
+            YouTubeTypeHandler.sodiumAdaptiveFmts = ytplayer.config ? ytplayer.config.args.adaptive_fmts : null;
+            player.sodiumLoadVideoByPlayerVars = player.loadVideoByPlayerVars;
+            player.sodiumUpdateVideoData = player.updateVideoData;
+            // eslint-disable-next-line func-names, prefer-arrow-callback
+            player.loadVideoByPlayerVars = function (arg) { // thisを変えられないためアロー演算子は使わない
+                YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
+                return this.sodiumLoadVideoByPlayerVars(arg);
+            }
+            // eslint-disable-next-line func-names, prefer-arrow-callback
+            player.updateVideoData = function (arg) {
+                if (arg.adaptive_fmts && arg.adaptive_fmts.length > 0)
+                    YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
+                return this.sodiumUpdateVideoData(arg);
+            }
+        }
+    }
+
+    // eslint-disable-next-line camelcase
+    static add_throughput_history(throughput) {
+        YouTubeTypeHandler.throughputHistories.push(throughput);
+        YouTubeTypeHandler.throughputHistories.slice(-100);
+    }
+
     /**
      * ytd-palyerにsodium用のフィールド追加
      * 初期化が終わっていない段階で値にアクセスした場合エラー値を返す
@@ -140,6 +233,37 @@ class YouTubeTypeHandler {
                 serverIp: new URL(e.url).host
             }))
             .sort((a, b) => b.bps - a.bps);
+    }
+
+    // eslint-disable-next-line camelcase
+    static get_throughput_info() {
+        const itagCache = {};
+        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+        const histories = YouTubeTypeHandler.throughputHistories
+            .slice()
+            .filter(h => {
+                const format = formats.find(f => f.itag === h.itag);
+                if (!format) return false;
+                return /^video/.test(format.type);
+            })
+            .map(h => {
+                let bitrate = itagCache[h.itag];
+                if (!bitrate) {
+                    ({ bitrate } = formats
+                        .find(f => f.itag === h.itag));
+                    bitrate = Number.parseInt(bitrate, 10);
+                    itagCache[h.itag] = bitrate;
+                }
+                return {
+                    downloadTime: h.downloadTime,
+                    throughput: h.throughput,
+                    downloadSize: h.downloadSize,
+                    bitrate,
+                }
+            })
+            .filter(h => h.bitrate);
+        YouTubeTypeHandler.throughputHistories = [];
+        return histories;
     }
 
     constructor(elm) {
@@ -385,5 +509,6 @@ class YouTubeTypeHandler {
 }
 
 YouTubeTypeHandler.sodiumAdaptiveFmts = null;
+YouTubeTypeHandler.throughputHistories = [];
 
 export default YouTubeTypeHandler;

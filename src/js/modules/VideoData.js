@@ -187,7 +187,7 @@ export default class VideoData {
       // eslint-disable-next-line no-console
       console.log(
         `VIDEOMARK: switch video source removeing [${
-          this.id_by_video_holder
+        this.id_by_video_holder
         }] -> [${now}]`
       );
       return false;
@@ -269,7 +269,9 @@ export default class VideoData {
       playback_quality: this.playback_quality.splice(
         0,
         this.playback_quality.length
-      )
+      ),
+      play_list_info: this.video_handler.get_play_list_info(),
+      throughput_info: this.video_handler.get_throughput_info()
     };
     Config.get_event_type_names().forEach(s => {
       val[`event_${s}`] = [];
@@ -366,7 +368,7 @@ export default class VideoData {
       /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D):${event.type}, VALUE:[${e.toJSON()}], ID:${
-          this.uuid
+        this.uuid
         }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
       );
       return;
@@ -375,7 +377,7 @@ export default class VideoData {
     /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A):${event.type}, VALUE:[${e.toJSON()}], ID:${
-        this.uuid
+      this.uuid
       }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
     );
 
@@ -395,7 +397,7 @@ export default class VideoData {
       /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: set play start time time_update Event[${
-          this.play_start_time
+        this.play_start_time
         }]`
       );
     }
@@ -433,7 +435,7 @@ export default class VideoData {
       /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
-          this.uuid
+        this.uuid
         }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
       );
       return;
@@ -442,7 +444,7 @@ export default class VideoData {
     /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
-        this.uuid
+      this.uuid
       }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
     );
 

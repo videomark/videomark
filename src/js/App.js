@@ -58,7 +58,7 @@ function video_search() {
   );
 
   // --- YouTube Hook --- //
-  YouTubeTypeHandler.hook_loadVideoByPlayerVars();
+  YouTubeTypeHandler.hook_youtube();
 
   // --- video list --- //
   video_search();

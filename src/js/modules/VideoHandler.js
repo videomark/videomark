@@ -1,6 +1,6 @@
 import ParaviTypeHandler from './ParaviTypeHandler';
 import TVerTypeHandler from './TVerTypeHandler';
-import YouTubeHandler from './YouTubeTypeHandler';
+import YouTubeTypeHandler from './YouTubeTypeHandler';
 
 export default class VideoHandler {
     constructor(elm) {
@@ -12,8 +12,8 @@ export default class VideoHandler {
             this.handler = TVerTypeHandler;
             // eslint-disable-next-line no-console
             console.log('TVer Type Handler');
-        } else if (YouTubeHandler.is_youtube_type()) {
-            this.handler = new YouTubeHandler(elm);
+        } else if (YouTubeTypeHandler.is_youtube_type()) {
+            this.handler = new YouTubeTypeHandler(elm);
             // eslint-disable-next-line no-console
             console.log('YouTube Type Handler');
         } else {
@@ -116,6 +116,24 @@ export default class VideoHandler {
             view_count = this.handler.get_view_count();
 
         return view_count;
+    }
+
+    get_play_list_info() {
+        let list = [];
+
+        if (this.handler instanceof YouTubeTypeHandler)
+            list = YouTubeTypeHandler.get_play_list_info();
+
+        return list;
+    }
+
+    get_throughput_info() {
+        let list = [];
+
+        if (this.handler instanceof YouTubeTypeHandler)
+            list = YouTubeTypeHandler.get_throughput_info();
+
+        return list;
     }
 
     is_main_video(video) {
