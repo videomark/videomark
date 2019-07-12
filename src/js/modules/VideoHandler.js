@@ -37,6 +37,15 @@ export default class VideoHandler {
         return this.handler.get_bitrate();
     }
 
+    get_video_bitrate() {
+        let videoBitrate = -1;
+
+        if (this.handler.get_video_bitrate instanceof Function)
+            videoBitrate = this.handler.get_video_bitrate()
+
+        return videoBitrate;
+    }
+
     get_receive_buffer() {
         return this.handler.get_receive_buffer();
     }

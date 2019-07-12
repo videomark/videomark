@@ -122,6 +122,7 @@ export default class VideoData {
 
   get_quality() {
     const bitrate = this.video_handler.get_bitrate();
+    const videoBitrate = this.video_handler.get_video_bitrate();
     const receiveBuffer = this.video_handler.get_receive_buffer();
     const framerate = this.video_handler.get_framerate();
     const speed = this.video_elm.playbackRate;
@@ -134,6 +135,7 @@ export default class VideoData {
       deltaDroppedVideoFrames: this.delta_dropped,
       deltaTime: this.delta_creation_time,
       bitrate,
+      videoBitrate,
       receiveBuffer,
       framerate,
       speed

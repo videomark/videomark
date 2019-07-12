@@ -172,7 +172,8 @@ videoの属性情報
 | totalVideoFrames        | 総フレーム数                    |
 | droppedVideoFrames      | 損失フレーム数                   |
 | creationTime            | 計測時間(DOMHighResTimeStamp) |
-| bitrate                 | ビットレート                    |
+| bitrate                 | 音声、ビデオの合計ビットレート           |
+| videoBitrate            | ビデオのビットレート                |
 | receiveBuffer           | 受信済み動画再生時間 取得不可能の場合 -1    |
 | framerate               | フレームレート                   |
 | speed                   | 再生速度                      |

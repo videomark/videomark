@@ -343,6 +343,21 @@ class YouTubeTypeHandler {
     }
 
     // eslint-disable-next-line camelcase
+    get_video_bitrate() {
+        try {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
+                return -1;
+            }
+
+            const { video } = this.get_streaming_info();
+
+            return Number.parseInt(video.bitrate, 10);
+        } catch (e) {
+            return -1;
+        }
+    }
+
+    // eslint-disable-next-line camelcase
     get_receive_buffer() {
         try {
             const received = Number.parseFloat(this.player.getVideoLoadedFraction());
