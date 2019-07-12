@@ -2,7 +2,7 @@ import Api from "./Api";
 
 class HourlyAverageQoE {
   constructor() {
-    this.cache = [];
+    this.cache = {};
   }
 
   async fetchHourlyQoEAPI() {
@@ -20,7 +20,7 @@ class HourlyAverageQoE {
   }
 
   async init() {
-    await this.fetchHourlyQoEAPI();
+    await this.at(0);
     return this.cache;
   }
 

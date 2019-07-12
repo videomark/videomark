@@ -26,12 +26,6 @@ class RegionalAverageQoE {
   }
 
   async init() {
-    if (this.cache === undefined) {
-      this.cache = {};
-      await Promise.all(
-        this.regions.map(this.fetchSubbdivisionQoEAPI.bind(this))
-      );
-    }
     return this.cache;
   }
 
