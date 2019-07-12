@@ -1,4 +1,10 @@
-import React, { Component, createElement, useContext } from "react";
+import React, {
+  Component,
+  createElement,
+  useReducer,
+  useEffect,
+  useContext
+} from "react";
 import PropTypes from "prop-types";
 import { Redirect } from "react-router";
 import isSameMonth from "date-fns/isSameMonth";
@@ -10,39 +16,28 @@ import AppDataActions from "../../utils/AppDataActions";
 import { urlToVideoPlatform } from "../../utils/Utils";
 import RegionalAverageQoE from "../../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../../utils/HourlyAverageQoE";
+import DataErase from "../../utils/DataErase";
+import videoPlatforms from "../../utils/videoPlatforms.json";
 import style from "../../../css/GridContainer.module.css";
 import ViewingDetail from "../ViewingDetail";
-import DataErase from "../../utils/DataErase";
 import NoContents from "../../components/NoContents";
-import videoPlatforms from "../../utils/videoPlatforms.json";
 import Pager from "./Pager";
 import MonthSelect from "./MonthSelect";
 import SiteSelect from "./SiteSelect";
-import { ViewingsContext } from "../ViewingsProvider";
+import { ViewingsContext, viewingModelsStream } from "../ViewingsProvider";
+
+const regionalAverageQoE = new RegionalAverageQoE();
+const hourlyAverageQoE = new HourlyAverageQoE();
 
 class History extends Component {
   static propTypes = {
-    viewings: PropTypes.instanceOf(Map).isRequired
+    indexes: PropTypes.arrayOf(PropTypes.instanceOf(Object)).isRequired
   };
 
   constructor(props) {
     super(props);
-    const { viewings } = this.props;
     this.state = {
-      indexes:
-        viewings &&
-        [...viewings.entries()].map(
-          ([
-            id,
-            {
-              session_id: sessionId,
-              video_id: videoId,
-              location,
-              start_time: startTime,
-              region
-            }
-          ]) => ({ id, sessionId, videoId, location, startTime, region })
-        ),
+      removed: [],
       sites: videoPlatforms.map(({ id }) => id),
       date: new Date(),
       page: 0,
@@ -51,41 +46,16 @@ class History extends Component {
   }
 
   async componentDidMount() {
-    const { indexes } = this.state;
-    const regions = indexes
-      .map(({ region }) => {
-        const { country, subdivision } = region || {};
-        return { country, subdivision };
-      })
-      .filter(
-        (region, i, self) =>
-          i ===
-          self.findIndex(
-            r =>
-              r.country === region.country &&
-              r.subdivision === region.subdivision
-          )
-      );
-    const regionalAverageQoE = new RegionalAverageQoE(regions);
-    await regionalAverageQoE.init();
-    this.setState({ regionalAverageQoE });
-    const hourlyAverageQoE = new HourlyAverageQoE();
-    await hourlyAverageQoE.init();
-    this.setState({ hourlyAverageQoE });
+    await Promise.all([regionalAverageQoE.init(), hourlyAverageQoE.init()]);
     AppData.add(AppDataActions.ViewingList, this, "setState");
   }
 
   render() {
-    const {
-      indexes,
-      sites,
-      date,
-      regionalAverageQoE,
-      hourlyAverageQoE,
-      page,
-      perPage
-    } = this.state;
+    const { indexes } = this.props;
+    const { removed, sites, date, page, perPage } = this.state;
+
     const viewingList = indexes
+      .filter(({ id }) => !removed.includes(id))
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
       .filter(({ startTime }) => isSameMonth(date, startTime))
       .reverse()
@@ -153,13 +123,58 @@ class History extends Component {
     );
   }
 }
-const withViewings = viewings => component => {
-  if (viewings === undefined) return "...";
-  if (viewings.size === 0) return <Redirect to="/welcome" />;
-  return createElement(component, { viewings });
+const initialState = {
+  loading: true,
+  indexes: []
+};
+const reducer = ({ indexes }, chunk) => ({
+  loading: false,
+  indexes: [...chunk, ...indexes]
+});
+const dispatcher = dispatch =>
+  new WritableStream({
+    write: async viewingModels => {
+      const indexes = viewingModels.map(viewingModel => {
+        const id = viewingModel.viewingId;
+        const {
+          session_id: sessionId,
+          video_id: videoId,
+          location,
+          start_time: startTime,
+          region
+        } = viewingModel.cache;
+        return { id, sessionId, videoId, location, startTime, region };
+      });
+
+      const regions = indexes
+        .map(({ region }) => region || {})
+        .filter(
+          (region, i, self) =>
+            i ===
+            self.findIndex(
+              r =>
+                r.country === region.country &&
+                r.subdivision === region.subdivision
+            )
+        );
+      await Promise.all(regions.map(region => regionalAverageQoE.at(region)));
+      dispatch(indexes);
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  });
+const withViewingIndexes = ({ loading, indexes }) => component => {
+  if (loading) return "...";
+  if (indexes.length === 0) return <Redirect to="/welcome" />;
+  return createElement(component, { indexes });
 };
 export default () => {
   const viewings = useContext(ViewingsContext);
+  const [indexes, addIndexes] = useReducer(reducer, initialState);
+  useEffect(() => {
+    if (viewings !== undefined) {
+      viewingModelsStream(viewings).pipeTo(dispatcher(addIndexes));
+    }
+  }, [viewings, addIndexes]);
   return (
     <>
       <Box py={1}>
@@ -172,7 +187,7 @@ export default () => {
           </Grid>
         </Grid>
       </Box>
-      {withViewings(viewings)(History)}
+      {withViewingIndexes(indexes)(History)}
     </>
   );
 };

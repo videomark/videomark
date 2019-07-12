@@ -23,7 +23,11 @@ class Viewing {
   }
 
   async init() {
-    this.cache = await this.load();
+    if (
+      this.cache.session_id === undefined &&
+      this.cache.video_id === undefined
+    )
+      this.cache = await this.load();
     return this.viewingId;
   }
 

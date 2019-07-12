@@ -1,6 +1,8 @@
 import { isMobile, isExtension, isWeb } from "../Utils";
 import data from "./EmbeddedData";
 
+export const VERSION = new Date("2019-07-11T00:00:00Z").getTime();
+
 export const storage = () => {
   if (isMobile()) {
     return window.sodium.storage.local;
@@ -8,8 +10,9 @@ export const storage = () => {
   if (isExtension()) {
     return window.chrome.storage.local;
   }
-  const set = obj => {
+  const set = (obj, callback) => {
     Object.assign(data, obj);
+    if (callback instanceof Function) callback();
   };
   const get = (keyOrFunction, callback) => {
     if (keyOrFunction instanceof Function)
@@ -27,13 +30,45 @@ export const storage = () => {
 };
 
 export const allViewings = async () => {
+  const { version } = await new Promise(resolve =>
+    storage().get("version", resolve)
+  );
+  if (VERSION <= version) {
+    const { index } = await new Promise(resolve =>
+      storage().get("index", resolve)
+    );
+    return new Map(
+      index.map(id => [
+        id,
+        () =>
+          new Promise(resolve =>
+            storage().get(id, ({ [id]: value }) => resolve(value))
+          )
+      ])
+    );
+  }
   const obj = await new Promise(resolve => storage().get(resolve));
-  ["RemovedTargetKeys", "AgreedTerm"].forEach(index => delete obj[index]);
-  const ids = Object.entries(obj)
+  ["version", "index", "RemovedTargetKeys", "AgreedTerm"].forEach(
+    index => delete obj[index]
+  );
+  const entries = Object.entries(obj)
     .map(([id, { start_time: time }]) => [id, time])
     .sort(([, a], [, b]) => a - b)
-    .map(([id]) => id);
-  return new Map(ids.map(id => [id, obj[id]]));
+    .map(([id]) => [id, obj[id]]);
+  return new Map(entries);
+};
+
+export const migration = async () => {
+  const viewings = await allViewings();
+  await new Promise(resolve =>
+    storage().set(
+      {
+        index: [...viewings.keys()],
+        version: VERSION
+      },
+      resolve
+    )
+  );
 };
 
 export default class ChromeExtensionWrapper {

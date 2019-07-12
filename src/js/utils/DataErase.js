@@ -1,4 +1,4 @@
-import ChromeExtensionWrapper from "./ChromeExtensionWrapper";
+import ChromeExtensionWrapper, { storage } from "./ChromeExtensionWrapper";
 import Api from "./Api";
 
 // 保持する最大数
@@ -39,27 +39,33 @@ class DataErase {
 
   async remove(param) {
     const targetIds = Array.isArray(param) ? param : [param];
-    await Api.erasure(targetIds)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(response);
-        }
-
-        return response.json();
-      })
-      .then(body => {
-        if (body.result.ok !== 1) {
-          throw new Error(body);
-        }
-        this.removedIds = this.removedIds.filter(id => !targetIds.includes(id));
-        ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
-        targetIds.forEach(id => {
-          ChromeExtensionWrapper.remove(id);
-        });
-      })
-      .catch(error => {
-        console.error(`VIDEOMARK: ${error}`);
+    try {
+      const response = await Api.erasure(targetIds);
+      if (!response.ok) {
+        throw new Error(response);
+      }
+      const body = await response.json();
+      if (body.result.ok !== 1) {
+        throw new Error(body);
+      }
+      this.removedIds = this.removedIds.filter(id => !targetIds.includes(id));
+      ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
+      const { index } = await new Promise(resolve =>
+        storage().get("index", resolve)
+      );
+      if (Array.isArray(index))
+        await new Promise(resolve =>
+          storage().set(
+            { index: index.filter(id => !targetIds.includes(id)) },
+            resolve
+          )
+        );
+      targetIds.forEach(id => {
+        ChromeExtensionWrapper.remove(id);
       });
+    } catch (error) {
+      console.error(`VIDEOMARK: ${error}`);
+    }
   }
 }
 

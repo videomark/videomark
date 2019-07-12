@@ -7,6 +7,7 @@ import App from "./App";
 import StatsSummary from "./StatsSummary";
 import Import from "./Import";
 import Export from "./Export";
+import Migration from "./Migration";
 import { isDevelop, isWeb } from "./js/utils/Utils";
 
 // FIXME: for chrome version < 73
@@ -20,6 +21,7 @@ else {
         <Route exact path="/stats" component={StatsSummary} />
         <Route exact path="/import" component={Import} />
         <Route exact path="/export" component={Export} />
+        <Route exact path="/migration" component={Migration} />
         <Route path="/" component={App} />
       </Switch>
     </Router>,

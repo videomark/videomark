@@ -1,8 +1,7 @@
 import React, { createContext, useReducer, useEffect, useContext } from "react";
 import DataFrame from "dataframe-js";
 import { format } from "date-fns";
-import { ViewingsContext } from "./ViewingsProvider";
-import ViewingModel from "../utils/Viewing";
+import { ViewingsContext, viewingModelsStream } from "./ViewingsProvider";
 import { urlToVideoPlatform } from "../utils/Utils";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import Api from "../utils/Api";
@@ -32,84 +31,6 @@ const fetchQoE = async viewingModels => {
           return qoe;
         })
       );
-};
-
-const statsDataStream = viewings => {
-  const ids = [...viewings.keys()];
-  const pull = async controller => {
-    const buffer = ids
-      .splice(-120)
-      .map(id => new ViewingModel(viewings.get(id)));
-    await Promise.all(buffer.map(viewingModel => viewingModel.init()));
-
-    const column = {};
-    [
-      column.startTime,
-      column.location,
-      column.quality,
-      column.qoe
-    ] = await Promise.all([
-      Promise.all(buffer.map(viewingModel => viewingModel.startTime)),
-      Promise.all(buffer.map(viewingModel => viewingModel.location)),
-      Promise.all(buffer.map(viewingModel => viewingModel.quality)),
-      fetchQoE(buffer)
-    ]);
-    column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN));
-    column.service = column.location.map(
-      location => urlToVideoPlatform(location).id
-    );
-    column.date = column.startTime.map(startTime =>
-      format(startTime, "yyyy-MM-dd")
-    );
-    const df = new DataFrame(column).withColumn("playing", row => {
-      const { date: endTime, timing } = row.get("quality");
-      const { pause } = timing || {};
-      const playing = endTime - row.get("startTime") - pause;
-      return Number.isFinite(playing) ? playing : 0;
-    });
-    const qoeTimeline = df
-      .select("service", "startTime", "qoe")
-      .dropMissingValues(["service", "startTime", "qoe"])
-      .toArray()
-      .map(([service, startTime, qoe]) => ({
-        service,
-        time: startTime.getTime(),
-        value: qoe
-      }));
-    controller.enqueue({
-      length: buffer.length,
-      playingTime: df
-        .groupBy("date")
-        .aggregate(group => group.stat.sum("playing"))
-        .toArray()
-        .map(([date, playingTime]) => ({ day: date, value: playingTime })),
-      qoeStats: {
-        sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
-        count: qoeTimeline.length
-      },
-      qoeTimeline,
-      qoeFrequency: df
-        .select("service", "qoe")
-        .dropMissingValues(["service", "qoe"])
-        .withColumn("qoe", row => Math.ceil(row.get("qoe")))
-        .groupBy("qoe")
-        .aggregate(
-          group =>
-            new Map(
-              group
-                .groupBy("service")
-                .aggregate(serviceGroup => serviceGroup.count())
-                .toArray()
-            )
-        )
-        .toArray()
-        .reduce((map, [qoe, serviceStats]) => {
-          return map.set(qoe, serviceStats);
-        }, new Map())
-    });
-    await new Promise(resolve => setTimeout(resolve, 500));
-  };
-  return new ReadableStream({ pull });
 };
 
 const initialData = {
@@ -168,9 +89,76 @@ const reducer = (data, chunk) => ({
       );
     }, new Map()))(data, chunk)
 });
-const dispatcher = f =>
+const dispatcher = dispatch =>
   new WritableStream({
-    write: chunk => f(chunk)
+    write: async viewingModels => {
+      const column = {};
+      [
+        column.startTime,
+        column.location,
+        column.quality,
+        column.qoe
+      ] = await Promise.all([
+        Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
+        Promise.all(viewingModels.map(viewingModel => viewingModel.location)),
+        Promise.all(viewingModels.map(viewingModel => viewingModel.quality)),
+        fetchQoE(viewingModels)
+      ]);
+      column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN));
+      column.service = column.location.map(
+        location => urlToVideoPlatform(location).id
+      );
+      column.date = column.startTime.map(startTime =>
+        format(startTime, "yyyy-MM-dd")
+      );
+      const df = new DataFrame(column).withColumn("playing", row => {
+        const { date: endTime, timing } = row.get("quality");
+        const { pause } = timing || {};
+        const playing = endTime - row.get("startTime") - pause;
+        return Number.isFinite(playing) ? playing : 0;
+      });
+      const qoeTimeline = df
+        .select("service", "startTime", "qoe")
+        .dropMissingValues(["service", "startTime", "qoe"])
+        .toArray()
+        .map(([service, startTime, qoe]) => ({
+          service,
+          time: startTime.getTime(),
+          value: qoe
+        }));
+      dispatch({
+        length: viewingModels.length,
+        playingTime: df
+          .groupBy("date")
+          .aggregate(group => group.stat.sum("playing"))
+          .toArray()
+          .map(([date, playingTime]) => ({ day: date, value: playingTime })),
+        qoeStats: {
+          sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
+          count: qoeTimeline.length
+        },
+        qoeTimeline,
+        qoeFrequency: df
+          .select("service", "qoe")
+          .dropMissingValues(["service", "qoe"])
+          .withColumn("qoe", row => Math.ceil(row.get("qoe")))
+          .groupBy("qoe")
+          .aggregate(
+            group =>
+              new Map(
+                group
+                  .groupBy("service")
+                  .aggregate(serviceGroup => serviceGroup.count())
+                  .toArray()
+              )
+          )
+          .toArray()
+          .reduce((map, [qoe, serviceStats]) => {
+            return map.set(qoe, serviceStats);
+          }, new Map())
+      });
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
   });
 
 export const StatsDataContext = createContext();
@@ -179,7 +167,7 @@ export const StatsDataProvider = props => {
   const [data, addData] = useReducer(reducer, initialData);
   useEffect(() => {
     if (viewings !== undefined && data.initialState) {
-      statsDataStream(viewings).pipeTo(dispatcher(addData));
+      viewingModelsStream(viewings).pipeTo(dispatcher(addData));
     }
   }, [viewings, addData]);
   return (
