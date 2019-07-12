@@ -4,49 +4,32 @@ export class Storage {
   constructor({ sessionId, videoId }) {
     this.sessionId = sessionId;
     this.videoId = videoId;
-    this.cache = {};
+    this.cache = {
+      session_id: this.sessionId,
+      video_id: this.videoId
+    };
   }
 
   get viewingId() {
     return `${this.sessionId}_${this.videoId}`;
   }
 
-  async load() {
+  async save(attributes) {
+    Object.assign(this.cache, attributes);
     if (Config.is_mobile()) {
-      return new Promise(resolve =>
-        sodium.storage.local.get(this.viewingId, viewing =>
-          resolve(viewing[this.viewingId])
-        )
+      window.sodium.storage.local.set({ [this.viewingId]: this.cache });
+    } else {
+      window.postMessage(
+        {
+          type: "FROM_SODIUM_JS",
+          method: "set_video",
+          id: this.viewingId,
+          video: this.cache
+        },
+        "*"
       );
     }
     return this.cache;
-  }
-
-  async save(attributes) {
-    const tmp = (await this.load()) || {};
-    Object.assign(tmp, {
-      ...attributes,
-      session_id: this.sessionId,
-      video_id: this.videoId
-    });
-    if (Config.is_mobile()) {
-      sodium.storage.local.set({ [this.viewingId]: tmp });
-    } else {
-      await new Promise(resolve => {
-        window.addEventListener("message", resolve, { once: true });
-        window.postMessage(
-          {
-            type: "FROM_SODIUM_JS",
-            method: "set_video",
-            id: this.viewingId,
-            video: tmp
-          },
-          "*"
-        );
-      });
-    }
-    this.cache = tmp;
-    return tmp;
   }
 }
 
