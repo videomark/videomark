@@ -105,7 +105,7 @@ class YouTubeTypeHandler {
                 ) {
                     YouTubeTypeHandler.add_throughput_history({
                         downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
-                        throughput: Math.floor(event.loaded * 8 * 1000 / (this.sodiumEnd - this.sodiumStart)),
+                        throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
                         downloadSize: Number.parseFloat(event.loaded),
                         itag: url.searchParams.get('itag')
                     });
