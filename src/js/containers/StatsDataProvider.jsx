@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useEffect, useContext } from "react";
 import DataFrame from "dataframe-js";
 import { format } from "date-fns";
+import { reduce } from "p-iteration";
 import { ViewingsContext, viewingModelsStream } from "./ViewingsProvider";
 import { urlToVideoPlatform } from "../utils/Utils";
 import videoPlatforms from "../utils/videoPlatforms.json";
@@ -89,25 +90,39 @@ const reducer = (data, chunk) => ({
       );
     }, new Map()))(data, chunk)
 });
+
+const delay = async (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
+const delayCaller = async (obj, calls) =>
+  reduce(
+    calls,
+    async (accumulator, [method, args]) => {
+      await delay();
+      return accumulator[method](...args);
+    },
+    obj
+  );
+
 const dispatcher = dispatch =>
   new WritableStream({
     write: async viewingModels => {
       const column = {};
       [
         column.startTime,
-        column.location,
+        column.service,
         column.quality,
         column.qoe
       ] = await Promise.all([
         Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
-        Promise.all(viewingModels.map(viewingModel => viewingModel.location)),
+        Promise.all(
+          viewingModels.map(
+            async viewingModel =>
+              urlToVideoPlatform(await viewingModel.location).id
+          )
+        ),
         Promise.all(viewingModels.map(viewingModel => viewingModel.quality)),
         fetchQoE(viewingModels)
       ]);
       column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN));
-      column.service = column.location.map(
-        location => urlToVideoPlatform(location).id
-      );
       column.date = column.startTime.map(startTime =>
         format(startTime, "yyyy-MM-dd")
       );
@@ -117,33 +132,35 @@ const dispatcher = dispatch =>
         const playing = endTime - row.get("startTime") - pause;
         return Number.isFinite(playing) ? playing : 0;
       });
-      const qoeTimeline = df
-        .select("service", "startTime", "qoe")
-        .dropMissingValues(["service", "startTime", "qoe"])
-        .toArray()
-        .map(([service, startTime, qoe]) => ({
-          service,
-          time: startTime.getTime(),
-          value: qoe
-        }));
-      dispatch({
-        length: viewingModels.length,
-        playingTime: df
-          .groupBy("date")
-          .aggregate(group => group.stat.sum("playing"))
-          .toArray()
-          .map(([date, playingTime]) => ({ day: date, value: playingTime })),
-        qoeStats: {
-          sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
-          count: qoeTimeline.length
-        },
-        qoeTimeline,
-        qoeFrequency: df
-          .select("service", "qoe")
-          .dropMissingValues(["service", "qoe"])
-          .withColumn("qoe", row => Math.ceil(row.get("qoe")))
-          .groupBy("qoe")
-          .aggregate(
+      const playingTime = await delayCaller(df, [
+        ["groupBy", ["date"]],
+        ["aggregate", [group => group.stat.sum("playing")]],
+        ["toArray", []],
+        ["map", [([date, playing]) => ({ day: date, value: playing })]]
+      ]);
+      const qoeTimeline = await delayCaller(df, [
+        ["select", ["service", "startTime", "qoe"]],
+        ["dropMissingValues", [["service", "startTime", "qoe"]]],
+        ["toArray", []],
+        [
+          "map",
+          [
+            ([service, startTime, qoe]) => ({
+              service,
+              time: startTime.getTime(),
+              value: qoe
+            })
+          ]
+        ]
+      ]);
+      const qoeFrequency = await delayCaller(df, [
+        ["select", ["service", "qoe"]],
+        ["dropMissingValues", [["service", "qoe"]]],
+        ["withColumn", ["qoe", row => Math.ceil(row.get("qoe"))]],
+        ["groupBy", ["qoe"]],
+        [
+          "aggregate",
+          [
             group =>
               new Map(
                 group
@@ -151,13 +168,24 @@ const dispatcher = dispatch =>
                   .aggregate(serviceGroup => serviceGroup.count())
                   .toArray()
               )
-          )
-          .toArray()
-          .reduce((map, [qoe, serviceStats]) => {
-            return map.set(qoe, serviceStats);
-          }, new Map())
+          ]
+        ],
+        ["toArray", []],
+        [
+          "reduce",
+          [(map, [qoe, serviceStats]) => map.set(qoe, serviceStats), new Map()]
+        ]
+      ]);
+      dispatch({
+        length: viewingModels.length,
+        playingTime,
+        qoeStats: {
+          sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
+          count: qoeTimeline.length
+        },
+        qoeTimeline,
+        qoeFrequency
       });
-      await new Promise(resolve => setTimeout(resolve, 500));
     }
   });
 
