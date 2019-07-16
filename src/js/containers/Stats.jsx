@@ -1,9 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Redirect } from "react-router";
+import { withRouter, Link as RouterLink } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
+import Link from "@material-ui/core/Link";
 import { format, formatDistance, formatDistanceStrict } from "date-fns";
 import locale from "date-fns/locale/ja";
 import {
@@ -247,6 +251,27 @@ const QoEFrequencyBarChart = () => {
     </Box>
   );
 };
+const DeferLoadSnackbar = withRouter(({ location }) => {
+  const [open, setOpen] = useState(true);
+  const { defer } = useContext(StatsDataContext);
+  if (defer === undefined) return null;
+  if (new URLSearchParams(location.search).has("all")) {
+    defer.resolve();
+    return null;
+  }
+  const onClose = () => setOpen(false);
+  const message = "計測件数が多いため、最近の結果のみ表示しています。";
+  const action = (
+    <Link component={RouterLink} to={{ search: "all" }} color="inherit">
+      全ての計測結果を解析する...
+    </Link>
+  );
+  return (
+    <Snackbar open={open} onClose={onClose} variant="info">
+      <SnackbarContent message={message} action={action} />
+    </Snackbar>
+  );
+});
 
 export default () => {
   const viewings = useContext(ViewingsContext);
@@ -257,6 +282,7 @@ export default () => {
   return (
     <Box paddingTop={2}>
       <style>{`svg { display: block;}`}</style>
+      <DeferLoadSnackbar />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Grid item>

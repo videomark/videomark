@@ -1,8 +1,18 @@
-import React, { createContext, useReducer, useEffect, useContext } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState
+} from "react";
 import DataFrame from "dataframe-js";
 import { format } from "date-fns";
 import { reduce } from "p-iteration";
-import { ViewingsContext, viewingModelsStream } from "./ViewingsProvider";
+import {
+  STREAM_BUFFER_SIZE,
+  ViewingsContext,
+  viewingModelsStream
+} from "./ViewingsProvider";
 import { urlToVideoPlatform } from "../utils/Utils";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import Api from "../utils/Api";
@@ -102,8 +112,16 @@ const delayCaller = async (obj, calls) =>
     obj
   );
 
-const dispatcher = dispatch =>
-  new WritableStream({
+const dispatcher = dispatch => {
+  const defer = (() => {
+    const ret = {};
+    ret.promise = new Promise((resolve, reject) => {
+      ret.resolve = resolve;
+      ret.reject = reject;
+    });
+    return ret;
+  })();
+  const stream = new WritableStream({
     write: async viewingModels => {
       const column = {};
       [
@@ -186,22 +204,31 @@ const dispatcher = dispatch =>
         qoeTimeline,
         qoeFrequency
       });
+      await defer.promise;
     }
   });
+  return [stream, defer];
+};
 
 export const StatsDataContext = createContext();
 export const StatsDataProvider = props => {
   const viewings = useContext(ViewingsContext);
   const [data, addData] = useReducer(reducer, initialData);
+  const [defer, setDefer] = useState();
   useEffect(() => {
     if (viewings !== undefined && data.initialState) {
-      viewingModelsStream(viewings).pipeTo(dispatcher(addData));
+      const [stream, streamDefer] = dispatcher(addData);
+      if (STREAM_BUFFER_SIZE < viewings.size) setDefer(streamDefer);
+      else streamDefer.resolve();
+      viewingModelsStream(viewings)
+        .pipeTo(stream)
+        .then(() => setDefer());
     }
   }, [viewings, addData]);
   return (
     <StatsDataContext.Provider
       {...props}
-      value={data === undefined ? {} : data}
+      value={data === undefined ? {} : { defer, ...data }}
     />
   );
 };
