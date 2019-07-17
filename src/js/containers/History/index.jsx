@@ -159,7 +159,7 @@ const dispatcher = dispatch =>
 
 export default () => {
   const viewings = useContext(ViewingsContext);
-  const [indexes, addIndexes] = useReducer(reducer, initialState);
+  const [state, addIndexes] = useReducer(reducer, initialState);
   useEffect(() => {
     if (viewings !== undefined) {
       viewingModelsStream(viewings).pipeTo(dispatcher(addIndexes));
@@ -179,7 +179,7 @@ export default () => {
           </Grid>
         </Grid>
       </Box>
-      {indexes.loading ? "..." : <History indexes={indexes} />}
+      {state.loading ? "..." : <History indexes={state.indexes} />}
     </>
   );
 };
