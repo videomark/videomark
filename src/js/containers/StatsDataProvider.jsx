@@ -141,16 +141,12 @@ const dispatcher = dispatch => {
   })();
   const stream = new WritableStream({
     write: async viewingModels => {
-      const storedIndex = getStoredIndex();
-      const buffer = viewingModels.filter(
-        viewingModel => !storedIndex.has(viewingModel.viewingId)
-      );
       const column = {};
       [column.startTime, column.endTime, column.service] = await Promise.all([
-        Promise.all(buffer.map(viewingModel => viewingModel.startTime)),
-        Promise.all(buffer.map(viewingModel => viewingModel.endTime)),
+        Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
+        Promise.all(viewingModels.map(viewingModel => viewingModel.endTime)),
         Promise.all(
-          buffer.map(
+          viewingModels.map(
             async viewingModel =>
               urlToVideoPlatform(await viewingModel.location).id
           )
@@ -159,12 +155,12 @@ const dispatcher = dispatch => {
       const now = Date.now();
       const beforeTenMinutes = time => now - time > 600e3;
       const storeIndex = column.endTime.every(beforeTenMinutes)
-        ? buffer.map(viewingModel => viewingModel.viewingId)
+        ? viewingModels.map(viewingModel => viewingModel.viewingId)
         : [];
 
       [column.quality, column.qoe] = await Promise.all([
-        Promise.all(buffer.map(viewingModel => viewingModel.quality)),
-        fetchQoE(buffer)
+        Promise.all(viewingModels.map(viewingModel => viewingModel.quality)),
+        fetchQoE(viewingModels)
       ]);
       column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN));
       column.date = column.startTime.map(startTime =>
@@ -223,7 +219,7 @@ const dispatcher = dispatch => {
       ]);
 
       const chunk = {
-        length: buffer.length,
+        length: viewingModels.length,
         storeIndex,
         playingTime,
         qoeStats: {
@@ -248,19 +244,21 @@ export const StatsDataProvider = props => {
   useEffect(() => {
     if (viewings === undefined) return;
     if (!data.initialState) return;
-
+    const tmp = new Map(viewings);
+    const storedIndex = getStoredIndex();
     addData(getStoredValue());
-    if (viewings.size <= getStoredIndex().size) return;
+
+    storedIndex.forEach(index => tmp.delete(index));
+    if (tmp.size === 0) return;
 
     const [stream, defer] = dispatcher(chunk => {
       addData(chunk);
       if (chunk.storeIndex.length > 0) store(chunk.storeIndex, chunk);
     });
-
-    if (viewings.size <= STREAM_BUFFER_SIZE) defer.resolve();
+    if (tmp.size <= STREAM_BUFFER_SIZE) defer.resolve();
     else setStreamDefer(defer);
 
-    viewingModelsStream(viewings)
+    viewingModelsStream(tmp)
       .pipeTo(stream)
       .then(() => setStreamDefer());
   }, [viewings, addData]);
