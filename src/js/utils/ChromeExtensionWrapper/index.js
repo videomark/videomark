@@ -19,8 +19,9 @@ export const storage = () => {
       return keyOrFunction(Object.assign({}, data));
     return callback({ [keyOrFunction]: data[keyOrFunction] });
   };
-  const remove = key => {
+  const remove = (key, callback) => {
     delete data[key];
+    callback();
   };
   return {
     set,
