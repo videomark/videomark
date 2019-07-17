@@ -1,3 +1,4 @@
+import fromEntries from "object.fromentries";
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router";
 import { withRouter, Link as RouterLink } from "react-router-dom";
@@ -24,6 +25,9 @@ import { Bar } from "@nivo/bar";
 import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
+
+// FIXME: for chrome version < 73
+if (!Object.fromEntries) fromEntries.shim();
 
 const PlayingTimeStats = () => {
   const { initialState, length, playingTime } = useContext(StatsDataContext);

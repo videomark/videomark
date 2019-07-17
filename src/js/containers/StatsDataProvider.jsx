@@ -1,3 +1,4 @@
+import fromEntries from "object.fromentries";
 import React, {
   createContext,
   useContext,
@@ -16,6 +17,9 @@ import {
 import { urlToVideoPlatform } from "../utils/Utils";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import Api from "../utils/Api";
+
+// FIXME: for chrome version < 73
+if (!Object.fromEntries) fromEntries.shim();
 
 const fetchQoE = async viewingModels => {
   if (viewingModels.length === 0) return [];
