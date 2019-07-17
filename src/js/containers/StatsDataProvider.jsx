@@ -114,6 +114,10 @@ const store = (index, chunk) => {
     JSON.stringify([...index, ...storedIndex])
   );
 };
+export const clearStore = () => {
+  localStorage.removeItem("statsData");
+  localStorage.removeItem("statsDataIndex");
+};
 
 const delay = async (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
 const delayCaller = async (obj, calls) =>

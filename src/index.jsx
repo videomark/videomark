@@ -7,6 +7,7 @@ import StatsSummary from "./StatsSummary";
 import Import from "./Import";
 import Export from "./Export";
 import Migration from "./Migration";
+import Clear from "./Clear";
 import { isDevelop, isWeb } from "./js/utils/Utils";
 
 if (!isDevelop() && isWeb()) window.location.pathname = "unsupported.html";
@@ -18,6 +19,7 @@ else {
         <Route exact path="/import" component={Import} />
         <Route exact path="/export" component={Export} />
         <Route exact path="/migration" component={Migration} />
+        <Route exact path="/clear" component={Clear} />
         <Route path="/" component={App} />
       </Switch>
     </Router>,
