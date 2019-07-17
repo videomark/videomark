@@ -32,13 +32,10 @@ export const MigrationDialog = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [open, setOpen] = useState(true);
   const main = async () => {
-    await new Promise(resolve => {
-      if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", resolve, { once: true });
-      else resolve();
-    });
     setErrorMessage(null);
     try {
+      // FIXME: storageにアクセスし始めるとReactのライフサイクルがブロックされるので適当に待つ
+      await new Promise(resolve => setTimeout(resolve, 500));
       if (!(await isCurrentVersion())) await migration();
     } catch (error) {
       setErrorMessage(`移行に失敗しました。 (${error})`);
