@@ -1,10 +1,4 @@
-import React, {
-  Component,
-  createElement,
-  useReducer,
-  useEffect,
-  useContext
-} from "react";
+import React, { Component, useReducer, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { Redirect } from "react-router";
 import isSameMonth from "date-fns/isSameMonth";
@@ -162,11 +156,7 @@ const dispatcher = dispatch =>
       await new Promise(resolve => setTimeout(resolve, 500));
     }
   });
-const withViewingIndexes = ({ loading, indexes }) => component => {
-  if (loading) return "...";
-  if (indexes.length === 0) return <Redirect to="/welcome" />;
-  return createElement(component, { indexes });
-};
+
 export default () => {
   const viewings = useContext(ViewingsContext);
   const [indexes, addIndexes] = useReducer(reducer, initialState);
@@ -175,6 +165,8 @@ export default () => {
       viewingModelsStream(viewings).pipeTo(dispatcher(addIndexes));
     }
   }, [viewings, addIndexes]);
+  if (viewings !== undefined && viewings.size === 0)
+    return <Redirect to="/welcome" />;
   return (
     <>
       <Box py={1}>
@@ -187,7 +179,7 @@ export default () => {
           </Grid>
         </Grid>
       </Box>
-      {withViewingIndexes(indexes)(History)}
+      {indexes.loading ? "..." : <History indexes={indexes} />}
     </>
   );
 };
