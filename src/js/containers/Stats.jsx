@@ -198,13 +198,16 @@ const QoEFrequencyBarChart = () => {
   const brandcolors = new Map(
     videoPlatforms.map(({ id, brandcolor }) => [id, brandcolor])
   );
-  const data = [...qoeFrequency].map(([qoe, stats]) => ({
+  const data = Object.entries(qoeFrequency).map(([qoe, stats]) => ({
     qoe: `${qoe}`,
     ...Object.fromEntries(
-      [...stats].map(([service, value]) => [serviceNames.get(service), value])
+      Object.entries(stats).map(([service, value]) => [
+        serviceNames.get(service),
+        value
+      ])
     ),
     ...Object.fromEntries(
-      [...stats].map(([service]) => [
+      Object.entries(stats).map(([service]) => [
         `${serviceNames.get(service)}.brandcolor`,
         brandcolors.get(service)
       ])
@@ -253,10 +256,10 @@ const QoEFrequencyBarChart = () => {
 };
 const DeferLoadSnackbar = withRouter(({ location }) => {
   const [open, setOpen] = useState(true);
-  const { defer } = useContext(StatsDataContext);
-  if (defer === undefined) return null;
+  const { streamDefer } = useContext(StatsDataContext);
+  if (streamDefer === undefined) return null;
   if (new URLSearchParams(location.search).has("all")) {
-    defer.resolve();
+    streamDefer.resolve();
     return null;
   }
   const onClose = () => setOpen(false);

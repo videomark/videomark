@@ -53,53 +53,63 @@ const initialData = {
     count: 0
   },
   qoeTimeline: [],
-  qoeFrequency: new Map(
+  qoeFrequency: Object.fromEntries(
     [...Array(5).keys()].map(i => [
       i + 1,
-      new Map(videoPlatforms.map(({ id }) => [id, 0]))
+      Object.fromEntries(videoPlatforms.map(({ id }) => [id, 0]))
     ])
   )
 };
 const reducer = (data, chunk) => ({
   initialState: false,
   length: chunk.length + data.length,
-  playingTime: (({ playingTime: current }, { playingTime: past }) => {
-    if (
-      current.length > 0 &&
-      past.length > 0 &&
-      current[0].day === past.slice(-1)[0].day
-    )
+  playingTime: [...chunk.playingTime, ...data.playingTime]
+    .sort(({ day: a }, { day: b }) => (a < b ? -1 : +1))
+    .reduce((accumulator, { day, value }) => {
+      if (accumulator.length === 0) return [{ day, value }];
+      const last = accumulator.slice(-1)[0];
       return [
-        ...past.slice(0, -1),
-        {
-          ...current[0],
-          value: current[0].value + past.slice(-1)[0].value
-        },
-        ...current.slice(1)
+        ...accumulator.slice(0, -1),
+        ...(last.day === day
+          ? [{ day, value: last.value + value }]
+          : [last, { day, value }])
       ];
-    return [...past, ...current];
-  })(data, chunk),
-  qoeStats: (({ qoeStats: current }, { qoeStats: past }) => ({
-    sum: past.sum + current.sum,
-    count: past.count + current.count
-  }))(data, chunk),
-  qoeTimeline: (({ qoeTimeline: current }, { qoeTimeline: past }) => [
-    ...past,
-    ...current
-  ])(data, chunk),
-  qoeFrequency: (({ qoeFrequency: current }, { qoeFrequency: past }) =>
-    [...current].reduce((qoeMap, [qoe, stats]) => {
-      const pastStats = past.get(qoe) || new Map();
-      return qoeMap.set(
-        qoe,
-        [...stats].reduce(
-          (serviceMap, [service, value]) =>
-            serviceMap.set(service, value + (pastStats.get(service) || 0)),
-          new Map()
+    }, []),
+  qoeStats: {
+    sum: chunk.qoeStats.sum + data.qoeStats.sum,
+    count: chunk.qoeStats.count + data.qoeStats.count
+  },
+  qoeTimeline: [...chunk.qoeTimeline, ...data.qoeTimeline],
+  qoeFrequency: Object.entries(data.qoeFrequency).reduce(
+    (obj, [qoe, stats]) => {
+      const pastStats = chunk.qoeFrequency[qoe] || {};
+      return {
+        ...obj,
+        [qoe]: Object.entries(stats).reduce(
+          (serviceStats, [service, value]) => ({
+            ...serviceStats,
+            [service]: value + (pastStats[service] || 0)
+          }),
+          {}
         )
-      );
-    }, new Map()))(data, chunk)
+      };
+    },
+    {}
+  )
 });
+const getStoredValue = () =>
+  JSON.parse(localStorage.getItem("statsData")) || initialData;
+const getStoredIndex = () =>
+  new Set(JSON.parse(localStorage.getItem("statsDataIndex")) || []);
+const store = (index, chunk) => {
+  const stored = getStoredValue();
+  const storedIndex = getStoredIndex();
+  localStorage.setItem("statsData", JSON.stringify(reducer(stored, chunk)));
+  localStorage.setItem(
+    "statsDataIndex",
+    JSON.stringify([...index, ...storedIndex])
+  );
+};
 
 const delay = async (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
 const delayCaller = async (obj, calls) =>
@@ -123,29 +133,38 @@ const dispatcher = dispatch => {
   })();
   const stream = new WritableStream({
     write: async viewingModels => {
+      const storedIndex = getStoredIndex();
+      const buffer = viewingModels.filter(
+        viewingModel => !storedIndex.has(viewingModel.viewingId)
+      );
       const column = {};
-      [
-        column.startTime,
-        column.service,
-        column.quality,
-        column.qoe
-      ] = await Promise.all([
-        Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
+      [column.startTime, column.endTime, column.service] = await Promise.all([
+        Promise.all(buffer.map(viewingModel => viewingModel.startTime)),
+        Promise.all(buffer.map(viewingModel => viewingModel.endTime)),
         Promise.all(
-          viewingModels.map(
+          buffer.map(
             async viewingModel =>
               urlToVideoPlatform(await viewingModel.location).id
           )
-        ),
-        Promise.all(viewingModels.map(viewingModel => viewingModel.quality)),
-        fetchQoE(viewingModels)
+        )
+      ]);
+      const now = Date.now();
+      const beforeTenMinutes = time => now - time > 600e3;
+      const storeIndex = column.endTime.every(beforeTenMinutes)
+        ? buffer.map(viewingModel => viewingModel.viewingId)
+        : [];
+
+      [column.quality, column.qoe] = await Promise.all([
+        Promise.all(buffer.map(viewingModel => viewingModel.quality)),
+        fetchQoE(buffer)
       ]);
       column.qoe = column.qoe.map(value => (value >= 0 ? value : NaN));
       column.date = column.startTime.map(startTime =>
         format(startTime, "yyyy-MM-dd")
       );
       const df = new DataFrame(column).withColumn("playing", row => {
-        const { date: endTime, timing } = row.get("quality");
+        const endTime = row.get("endTime");
+        const { timing } = row.get("quality");
         const { pause } = timing || {};
         const playing = endTime - row.get("startTime") - pause;
         return Number.isFinite(playing) ? playing : 0;
@@ -180,7 +199,7 @@ const dispatcher = dispatch => {
           "aggregate",
           [
             group =>
-              new Map(
+              Object.fromEntries(
                 group
                   .groupBy("service")
                   .aggregate(serviceGroup => serviceGroup.count())
@@ -191,11 +210,13 @@ const dispatcher = dispatch => {
         ["toArray", []],
         [
           "reduce",
-          [(map, [qoe, serviceStats]) => map.set(qoe, serviceStats), new Map()]
+          [(obj, [qoe, serviceStats]) => ({ ...obj, [qoe]: serviceStats }), {}]
         ]
       ]);
-      dispatch({
-        length: viewingModels.length,
+
+      const chunk = {
+        length: buffer.length,
+        storeIndex,
         playingTime,
         qoeStats: {
           sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
@@ -203,7 +224,8 @@ const dispatcher = dispatch => {
         },
         qoeTimeline,
         qoeFrequency
-      });
+      };
+      dispatch(chunk);
       await defer.promise;
     }
   });
@@ -214,21 +236,30 @@ export const StatsDataContext = createContext();
 export const StatsDataProvider = props => {
   const viewings = useContext(ViewingsContext);
   const [data, addData] = useReducer(reducer, initialData);
-  const [defer, setDefer] = useState();
+  const [streamDefer, setStreamDefer] = useState();
   useEffect(() => {
-    if (viewings !== undefined && data.initialState) {
-      const [stream, streamDefer] = dispatcher(addData);
-      if (STREAM_BUFFER_SIZE < viewings.size) setDefer(streamDefer);
-      else streamDefer.resolve();
-      viewingModelsStream(viewings)
-        .pipeTo(stream)
-        .then(() => setDefer());
-    }
+    if (viewings === undefined) return;
+    if (!data.initialState) return;
+
+    addData(getStoredValue());
+    if (viewings.size <= getStoredIndex().size) return;
+
+    const [stream, defer] = dispatcher(chunk => {
+      addData(chunk);
+      if (chunk.storeIndex.length > 0) store(chunk.storeIndex, chunk);
+    });
+
+    if (viewings.size <= STREAM_BUFFER_SIZE) defer.resolve();
+    else setStreamDefer(defer);
+
+    viewingModelsStream(viewings)
+      .pipeTo(stream)
+      .then(() => setStreamDefer());
   }, [viewings, addData]);
   return (
     <StatsDataContext.Provider
       {...props}
-      value={data === undefined ? {} : { defer, ...data }}
+      value={data === undefined ? {} : { streamDefer, ...data }}
     />
   );
 };

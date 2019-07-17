@@ -55,6 +55,14 @@ class Viewing {
     return Promise.resolve(new Date(this.cache.start_time));
   }
 
+  get endTime() {
+    if (this.cache.start_time < this.cache.end_time)
+      return Promise.resolve(new Date(this.cache.end_time));
+    const log = this.cache.log || [];
+    const { date } = log.slice(-1)[0] || {};
+    return Promise.resolve(new Date(date));
+  }
+
   async fetchFixedQoeApi() {
     if (!window.navigator.onLine) return undefined;
 
