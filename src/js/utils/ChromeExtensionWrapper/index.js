@@ -30,11 +30,15 @@ export const storage = () => {
   };
 };
 
-export const allViewings = async () => {
+export const isCurrentVersion = async () => {
   const { version } = await new Promise(resolve =>
     storage().get("version", resolve)
   );
-  if (VERSION <= version) {
+  return VERSION <= version;
+};
+
+export const allViewings = async () => {
+  if (await isCurrentVersion()) {
     const { index } = await new Promise(resolve =>
       storage().get("index", resolve)
     );
