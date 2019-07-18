@@ -57,7 +57,7 @@ const PlayingTimeCalendar = () => {
         variant="caption"
         color="textSecondary"
       >
-        計測日時と再生時間 (分)
+        計測日時
       </Typography>
       <Card>
         <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
@@ -81,7 +81,7 @@ const PlayingTimeCalendar = () => {
                 strictDuration === duration ? "" : `(${strictDuration})`
               ].join(" ");
             }}
-            margin={{ bottom: 8, left: 32, right: 32 }}
+            margin={{ bottom: 16, left: 32, right: 32 }}
             colors={[
               "#ebf6f3",
               "#d7eee7",
@@ -107,6 +107,11 @@ const PlayingTimeCalendar = () => {
             ]}
           />
         </ResponsiveContainer>
+        <Box position="relative">
+          <Box position="absolute" right={120} bottom={8} fontSize={10}>
+            再生時間 (分)
+          </Box>
+        </Box>
       </Card>
     </Box>
   );
@@ -232,7 +237,7 @@ const QoEFrequencyBarChart = () => {
             data={data}
             indexBy="qoe"
             minValue={0}
-            margin={{ top: 16, bottom: 32, left: 24, right: 24 }}
+            margin={{ top: 16, bottom: 32, left: 36, right: 24 }}
             keys={videoPlatforms.map(({ name }) => name)}
             colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
             labelTextColor="#ffffff"
@@ -241,6 +246,14 @@ const QoEFrequencyBarChart = () => {
             enableGridX
             axisBottom={{ tickSize: 0 }}
             enableGridY={false}
+            axisLeft={{
+              legend: "QoE",
+              legendPosition: "middle",
+              legendOffset: -24,
+              tickSize: 0,
+              tickRotation: -90,
+              tickPadding: 8
+            }}
             legends={[
               {
                 dataFrom: "keys",
