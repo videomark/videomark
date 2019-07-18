@@ -29,21 +29,29 @@ const ErrorSnackbar = props => {
   );
 };
 export const MigrationDialog = () => {
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [open, setOpen] = useState(true);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
   const main = async () => {
-    setErrorMessage(null);
+    setError(null);
     try {
-      // FIXME: storageにアクセスし始めるとReactのライフサイクルがブロックされるので適当に待つ
-      await new Promise(resolve => setTimeout(resolve, 500));
-      if (!(await isCurrentVersion())) await migration();
-    } catch (error) {
-      setErrorMessage(`移行に失敗しました。 (${error})`);
+      if (await isCurrentVersion()) return;
+      setOpen(true);
+      await new Promise(resolve => {
+        if (document.readyState === "loading")
+          document.addEventListener("DOMContentLoaded", resolve, {
+            once: true
+          });
+        else resolve();
+      });
+      await migration();
+    } catch (e) {
+      setError(e);
     }
+    setOpen(false);
   };
   useEffect(() => {
-    if (open) main().then(() => setOpen(false));
-  }, [setOpen]);
+    main();
+  }, [setError, setOpen]);
   if (!open) return null;
   return (
     <>
@@ -55,7 +63,7 @@ export const MigrationDialog = () => {
           </Grid>
         </Grid>
       </Dialog>
-      {errorMessage && <ErrorSnackbar message={errorMessage} />}
+      {error && <ErrorSnackbar message={`移行に失敗しました。 (${error})`} />}
     </>
   );
 };
