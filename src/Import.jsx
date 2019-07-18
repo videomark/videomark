@@ -59,9 +59,6 @@ export default () => {
           {errorMessage && (
             <Typography color="secondary">{errorMessage}</Typography>
           )}
-          <Button component={Link} to="/migration">
-            データの移行
-          </Button>
         </Grid>
       </Grid>
     </Container>
