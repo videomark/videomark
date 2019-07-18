@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
 import Link from "@material-ui/core/Link";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { format, formatDistance, formatDistanceStrict } from "date-fns";
 import locale from "date-fns/locale/ja";
 import {
@@ -57,7 +58,7 @@ const PlayingTimeCalendar = () => {
         variant="caption"
         color="textSecondary"
       >
-        計測日時
+        計測日
       </Typography>
       <Card>
         <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
@@ -140,7 +141,7 @@ const QoETimelineChart = () => {
         計測日時
       </Typography>
       <Card>
-        <ResponsiveContainer width="100%" aspect={2}>
+        <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
           <ScatterChart margin={{ top: 16, left: -16, right: 32 }}>
             <CartesianGrid />
             <XAxis
@@ -199,7 +200,7 @@ const QoETimelineChart = () => {
     </Box>
   );
 };
-const QoEFrequencyBarChart = () => {
+const QoEFrequencyBarChart = withWidth()(({ width }) => {
   const { qoeFrequency } = useContext(StatsDataContext);
   const serviceNames = new Map(
     videoPlatforms.map(({ id, name }) => [id, name])
@@ -208,7 +209,7 @@ const QoEFrequencyBarChart = () => {
     videoPlatforms.map(({ id, brandcolor }) => [id, brandcolor])
   );
   const data = Object.entries(qoeFrequency).map(([qoe, stats]) => ({
-    qoe: `${qoe}`,
+    qoe: (qoe / 10).toFixed(1),
     ...Object.fromEntries(
       Object.entries(stats).map(([service, value]) => [
         serviceNames.get(service),
@@ -237,41 +238,52 @@ const QoEFrequencyBarChart = () => {
             data={data}
             indexBy="qoe"
             minValue={0}
-            margin={{ top: 16, bottom: 32, left: 36, right: 24 }}
+            margin={{
+              top: 16,
+              bottom: 32 + (isWidthUp("lg", width) ? 16 : 0),
+              left: 36,
+              right: 24
+            }}
             keys={videoPlatforms.map(({ name }) => name)}
             colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
             labelTextColor="#ffffff"
-            labelSkipWidth={16}
-            layout="horizontal"
-            enableGridX
-            axisBottom={{ tickSize: 0 }}
-            enableGridY={false}
+            labelSkipWidth={10}
+            labelSkipHeight={16}
+            axisBottom={isWidthUp("lg", width) ? { tickSize: 0 } : null}
             axisLeft={{
-              legend: "QoE",
-              legendPosition: "middle",
-              legendOffset: -24,
-              tickSize: 0,
-              tickRotation: -90,
-              tickPadding: 8
+              tickSize: 0
             }}
             legends={[
               {
                 dataFrom: "keys",
-                anchor: "bottom-right",
+                anchor: "top-left",
+                translateX: 16,
                 direction: "column",
                 itemWidth: 80,
                 itemHeight: 24
               }
             ]}
             tooltip={({ id, indexValue: qoe, value }) =>
-              `QoE ${Number(qoe) - 1}〜${qoe}: ${value}件 (${id})`
+              `QoE ${(Number(qoe) - 0.1).toFixed(
+                1
+              )}〜${qoe}: ${value}件 (${id})`
             }
           />
         </ResponsiveContainer>
+        <Box position="relative">
+          <Box position="absolute" left="50%" bottom={8} fontSize={10}>
+            QoE
+          </Box>
+          {isWidthUp("lg", width) ? null : (
+            <Box position="absolute" right={16} bottom={8} fontSize={10}>
+              5.0
+            </Box>
+          )}
+        </Box>
       </Card>
     </Box>
   );
-};
+});
 const DeferLoadSnackbar = withRouter(({ location }) => {
   const [open, setOpen] = useState(true);
   const { streamDefer } = useContext(StatsDataContext);
@@ -325,11 +337,11 @@ export default () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1}>
-              <Grid item xs={12} sm={6}>
-                <QoETimelineChart />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <QoEFrequencyBarChart />
+              </Grid>
+              <Grid item xs={12}>
+                <QoETimelineChart />
               </Grid>
             </Grid>
           </Grid>

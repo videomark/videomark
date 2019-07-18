@@ -58,7 +58,7 @@ const initialData = {
   },
   qoeTimeline: [],
   qoeFrequency: Object.fromEntries(
-    [...Array(5).keys()].map(i => [
+    [...Array(50).keys()].map(i => [
       i + 1,
       Object.fromEntries(videoPlatforms.map(({ id }) => [id, 0]))
     ])
@@ -196,7 +196,7 @@ const dispatcher = dispatch => {
       const qoeFrequency = await delayCaller(df, [
         ["select", ["service", "qoe"]],
         ["dropMissingValues", [["service", "qoe"]]],
-        ["withColumn", ["qoe", row => Math.ceil(row.get("qoe"))]],
+        ["withColumn", ["qoe", row => Math.ceil(row.get("qoe") * 10)]],
         ["groupBy", ["qoe"]],
         [
           "aggregate",
