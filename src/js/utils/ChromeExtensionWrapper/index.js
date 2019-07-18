@@ -65,6 +65,16 @@ export const allViewings = async () => {
 
 export const migration = async () => {
   const viewings = await allViewings();
+  await Promise.all(
+    [...viewings].map(async ([id, obj]) => {
+      if (obj instanceof Function) return;
+      if (obj.log === undefined) {
+        const { latest_qoe: log, ...tmp } = obj;
+        Object.assign(obj, { log });
+        await new Promise(resolve => storage().set({ [id]: tmp }, resolve));
+      }
+    })
+  );
   await new Promise(resolve =>
     storage().set(
       {
