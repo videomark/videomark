@@ -188,7 +188,7 @@ export default class VideoData {
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
       // eslint-disable-next-line no-console
       console.log(
-        `VIDEOMARK: switch video source removeing [${
+        `VIDEOMARK: switch video source removing [${
         this.id_by_video_holder
         }] -> [${now}]`
       );
