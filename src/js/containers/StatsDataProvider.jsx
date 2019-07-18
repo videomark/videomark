@@ -167,10 +167,9 @@ const dispatcher = dispatch => {
         format(startTime, "yyyy-MM-dd")
       );
       const df = new DataFrame(column).withColumn("playing", row => {
-        const endTime = row.get("endTime");
         const { timing } = row.get("quality");
-        const { pause } = timing || {};
-        const playing = endTime - row.get("startTime") - pause;
+        const { pause } = timing || { pause: 0 };
+        const playing = row.get("endTime") - row.get("startTime") - pause;
         return Number.isFinite(playing) ? playing : 0;
       });
       const playingTime = await delayCaller(df, [
