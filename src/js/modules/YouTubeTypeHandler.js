@@ -89,6 +89,7 @@ class YouTubeTypeHandler {
             ([, this.sodiumURL] = args);
             this.addEventListener(`load`, (event) => {
                 this.sodiumEnd = performance.now();
+                this.sodiumEndDate = Date.now();
                 let url;
                 try { url = new URL(this.sodiumURL); } catch (e) { return };
                 if (
@@ -103,15 +104,26 @@ class YouTubeTypeHandler {
                     (url.host.endsWith('googlevideo.com') &&
                         url.pathname.endsWith('videoplayback'))
                 ) {
-                    YouTubeTypeHandler.add_throughput_history({
-                        downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
-                        throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
-                        downloadSize: Number.parseFloat(event.loaded),
-                        itag: url.searchParams.get('itag')
-                    });
-                    this.sodiumThroughput = Math.floor(event.loaded * 8 * 1000 / (this.sodiumEnd - this.sodiumStart));
-                    console.log(`load [URL: ${this.sodiumURL}, contents: ${event.loaded}, end:${this.sodiumEnd}, duration: ${
-                        this.sodiumEnd - this.sodiumStart}, throughput: ${this.sodiumThroughput}, itag: ${JSON.stringify(url.searchParams.get('itag'))}]`);
+                    setTimeout(() => {
+                        this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
+                        YouTubeTypeHandler.add_throughput_history({
+                            downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
+                            throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
+                            downloadSize: Number.parseFloat(event.loaded),
+                            start: this.sodiumStartDate,
+                            startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                            end: this.sodiumEndDate,
+                            endUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                            itag: url.searchParams.get('itag')
+                        });
+                        console.log(`load [URL: ${this.sodiumURL
+                            }, contents: ${event.loaded
+                            }, duration(ms): ${this.sodiumEnd - this.sodiumStart
+                            }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
+                            }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
+                            }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
+                            }, itag: ${JSON.stringify(url.searchParams.get('itag'))}]`);
+                    }, 1000);
                 }
             });
             return origOpen.apply(this, args);
@@ -119,6 +131,8 @@ class YouTubeTypeHandler {
         // eslint-disable-next-line func-names, prefer-arrow-callback
         XMLHttpRequest.prototype.send = function (...args) {
             this.sodiumStart = performance.now();
+            this.sodiumStartDate = Date.now();
+            this.sodiumStartUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
             // eslint-disable-next-line no-empty
             // try { this.sodiumItag = document.querySelector('#movie_player').getVideoStats().fmt } catch (e) { };
             return origSend.apply(this, args);
@@ -158,6 +172,20 @@ class YouTubeTypeHandler {
     static add_throughput_history(throughput) {
         YouTubeTypeHandler.throughputHistories.push(throughput);
         YouTubeTypeHandler.throughputHistories.slice(-100);
+    }
+
+    // eslint-disable-next-line camelcase
+    static get_unplayed_buffer_size() {
+        let unplayedBufferSize;
+        try {
+            const player = document.querySelector('#movie_player');
+            const received = Number.parseFloat(player.getVideoLoadedFraction()) * 1000;
+            const duration = Number.parseFloat(player.getDuration());
+            unplayedBufferSize = duration * received;
+        } catch (e) {
+            unplayedBufferSize = 0;
+        }
+        return Math.floor(unplayedBufferSize);
     }
 
     /**
@@ -258,7 +286,13 @@ class YouTubeTypeHandler {
                     downloadTime: h.downloadTime,
                     throughput: h.throughput,
                     downloadSize: h.downloadSize,
+                    unplayedBufferSize: h.unplayedBufferSize,
+                    start: h.start,
+                    startUnplayedBufferSize: h.startUnplayedBufferSize,
+                    end: h.end,
+                    endUnplayedBufferSize: h.endUnplayedBufferSize,
                     bitrate,
+                    representationId: h.itag
                 }
             })
             .filter(h => h.bitrate);
