@@ -183,12 +183,16 @@ videoの属性情報
 
 #### throughput_info
 
-| 項目           | 値                   |
-| ------------ | ------------------- |
-| downloadTime | チャンクダウンロードにかかった時間   |
-| throughput   | ダウンロード時のスループット(bps) |
-| downloadSize | チャンクのサイズ            |
-| bps          | ビットレート              |
+| 項目                      | 値                   |
+| ----------------------- | ------------------- |
+| downloadTime            | チャンクダウンロードにかかった時間   |
+| throughput              | ダウンロード時のスループット(bps) |
+| downloadSize            | チャンクのサイズ            |
+| start                   | ダウンロード開始時刻          |
+| end                     | ダウンロード終了時刻          |
+| startUnplayedBufferSize | ダウンロード開始時未再生バッファ    |
+| endUnplayedBufferSize   | ダウンロード終了時未再生バッファ    |
+| bps                     | ビットレート              |
 
 #### play_list_info
 
