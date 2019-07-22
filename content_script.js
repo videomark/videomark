@@ -1,3 +1,19 @@
+const state = {};
+const useId = async viewingId => {
+  if (typeof state[viewingId] === "string" || Number.isFinite(state[viewingId]))
+    return state[viewingId];
+
+  const { index } = await new Promise(resolve =>
+    chrome.storage.local.get("index", resolve)
+  );
+  if (Array.isArray(index)) {
+    state[viewingId] = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
+  } else {
+    state[viewingId] = viewingId;
+  }
+  return state[viewingId];
+};
+
 const inject_script = opt => {
   // --- inject script, to opt.target --- ///
   const target = document.getElementsByTagName(opt.target)[0];
@@ -22,13 +38,13 @@ const message_listener = event => {
     case "init":
       if (!event.data.id) return;
       (async () => {
-        const { index } = await new Promise(resolve =>
-          chrome.storage.local.get("index", resolve)
-        );
-        if (!Array.isArray(index)) return;
+        const id = await useId(event.data.id);
+        if (typeof id === "string") return;
         await new Promise(resolve =>
           chrome.storage.local.set(
-            { index: [...index, event.data.id] },
+            {
+              index: [...index, id]
+            },
             resolve
           )
         );
@@ -36,8 +52,9 @@ const message_listener = event => {
       break;
     case "set_video":
       if (!event.data.id || !event.data.video) return;
+      const id = await useId(event.data.id)
       chrome.storage.local.set({
-        [event.data.id]: event.data.video
+        [id]: event.data.video
       });
       break;
   }
