@@ -9,6 +9,7 @@ export class Storage {
       video_id: this.videoId
     };
     this.initialized = false;
+    this.id = null;
   }
 
   get viewingId() {
@@ -20,19 +21,22 @@ export class Storage {
       const { index } = await new Promise(resolve =>
         window.sodium.storage.local.get("index", resolve)
       );
-      if (!Array.isArray(index)) return;
+      if (Array.isArray(index)) {
+        this.id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
+      } else {
+        this.id = this.viewingId;
+        return;
+      }
       await new Promise(resolve =>
-        window.sodium.storage.local.set(
-          { index: [...index, this.viewingId] },
-          resolve
-        )
+        window.sodium.storage.local.set({ index: [...index, this.id] }, resolve)
       );
     } else {
+      this.id = this.viewingId;
       window.postMessage(
         {
           type: "FROM_SODIUM_JS",
           method: "init",
-          id: this.viewingId
+          id: this.id
         },
         "*"
       );
@@ -46,13 +50,15 @@ export class Storage {
     }
     Object.assign(this.cache, attributes);
     if (Config.is_mobile()) {
-      window.sodium.storage.local.set({ [this.viewingId]: this.cache });
+      window.sodium.storage.local.set({
+        [this.id]: this.cache
+      });
     } else {
       window.postMessage(
         {
           type: "FROM_SODIUM_JS",
           method: "set_video",
-          id: this.viewingId,
+          id: this.id,
           video: this.cache
         },
         "*"
