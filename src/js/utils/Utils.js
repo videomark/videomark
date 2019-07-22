@@ -10,18 +10,6 @@ export const urlToVideoPlatform = url => {
   }
 };
 
-export const viewingIdWithoutDateTimeFromSessionAndVideo = (session, video) => {
-  return `${session}_${video}`;
-};
-
-export const viewingIdToSessionAndVideo = viewingId => {
-  const splitData = viewingId.split("_");
-  return {
-    session: splitData[0],
-    video: splitData[1]
-  };
-};
-
 export const isDevelop = () => process.env.NODE_ENV === "development";
 export const isMobile = () =>
   window.sodium !== undefined && window.chrome.storage === undefined;

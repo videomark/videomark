@@ -6,7 +6,11 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import ArrowBack from "@material-ui/icons/ArrowBack";
-import { storage, migration } from "./js/utils/ChromeExtensionWrapper";
+import {
+  storage,
+  migration,
+  rollback
+} from "./js/utils/ChromeExtensionWrapper";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -31,8 +35,8 @@ export default () => {
       };
       reader.readAsText(file);
     }).catch(error => setErrorMessage(`インポートに失敗しました。 (${error})`));
+    await rollback();
     await new Promise(resolve => storage().set(result, resolve));
-    await new Promise(resolve => storage().remove("version", resolve));
     await migration();
     lock(false);
   };

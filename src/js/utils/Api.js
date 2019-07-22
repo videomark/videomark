@@ -1,5 +1,3 @@
-import { viewingIdToSessionAndVideo } from "./Utils";
-
 class Api {
   static async fetch(url, params) {
     const response = fetch(url, {
@@ -52,10 +50,7 @@ class Api {
   }
 
   static erasure(ids) {
-    const param = ids.map(id => {
-      return viewingIdToSessionAndVideo(id);
-    });
-    return Api.fetch("https://sodium.webdino.org:8443/ctrl/erasure", param);
+    return Api.fetch("https://sodium.webdino.org:8443/ctrl/erasure", ids);
   }
 }
 

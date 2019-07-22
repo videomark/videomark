@@ -15,8 +15,7 @@ import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import { VideoThumbnail, toTimeString, fetch } from "./Viewing";
 
 const ViewingDetail = ({
-  sessionId,
-  videoId,
+  viewingId: id,
   regionalAverageQoE: regionalStats,
   hourlyAverageQoE: hourlyStats
 }) => {
@@ -24,14 +23,11 @@ const ViewingDetail = ({
   useEffect(() => {
     if (viewing) return;
     (async () => {
-      setViewing(
-        await fetch({ sessionId, videoId, regionalStats, hourlyStats })
-      );
+      setViewing(await fetch({ id, regionalStats, hourlyStats }));
     })();
   }, [setViewing]);
   if (!viewing) return null;
   const {
-    id,
     title,
     location,
     thumbnail,
@@ -89,8 +85,8 @@ const ViewingDetail = ({
   );
 };
 ViewingDetail.propTypes = {
-  sessionId: PropTypes.string.isRequired,
-  videoId: PropTypes.string.isRequired,
+  viewingId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
   regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
   hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired
 };

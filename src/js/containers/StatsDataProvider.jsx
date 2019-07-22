@@ -155,7 +155,7 @@ const dispatcher = dispatch => {
       const now = Date.now();
       const beforeTenMinutes = time => now - time > 600e3;
       const storeIndex = column.endTime.every(beforeTenMinutes)
-        ? viewingModels.map(viewingModel => viewingModel.viewingId)
+        ? viewingModels.map(viewingModel => viewingModel.id)
         : [];
 
       [column.quality, column.qoe] = await Promise.all([

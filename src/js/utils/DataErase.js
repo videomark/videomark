@@ -1,5 +1,6 @@
 import ChromeExtensionWrapper, { storage } from "./ChromeExtensionWrapper";
 import Api from "./Api";
+import ViewingModel from "./Viewing";
 
 // 保持する最大数
 const MaxSaveCount = 1e4;
@@ -40,7 +41,18 @@ class DataErase {
   async remove(param) {
     const targetIds = Array.isArray(param) ? param : [param];
     try {
-      const response = await Api.erasure(targetIds);
+      const response = await Api.erasure(
+        await Promise.all(
+          targetIds.map(async id => {
+            const viewingModel = new ViewingModel({ id });
+            await viewingModel.init();
+            return {
+              session: viewingModel.sessionId,
+              video: viewingModel.videoId
+            };
+          })
+        )
+      );
       if (!response.ok) {
         throw new Error(response);
       }

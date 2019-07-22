@@ -41,14 +41,9 @@ export const toTimeString = date => {
   )} ${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
 };
 
-export const fetch = async ({
-  sessionId,
-  videoId,
-  regionalStats,
-  hourlyStats
-}) => {
-  const viewing = new ViewingModel({ sessionId, videoId });
-  const id = await viewing.init();
+export const fetch = async ({ id, regionalStats, hourlyStats }) => {
+  const viewing = new ViewingModel({ id });
+  await viewing.init();
   const title = await viewing.title;
   const location = await viewing.location;
   const thumbnail = await viewing.thumbnail;
@@ -59,7 +54,6 @@ export const fetch = async ({
   const regionalAverage = await regionalStats.at(region);
   const hourlyAverage = await hourlyStats.at(startTime.getHours());
   return {
-    id,
     title,
     location,
     thumbnail,
@@ -73,8 +67,7 @@ export const fetch = async ({
 };
 
 const Viewing = ({
-  sessionId,
-  videoId,
+  viewingId: id,
   regionalAverageQoE: regionalStats,
   hourlyAverageQoE: hourlyStats,
   disabled
@@ -82,14 +75,11 @@ const Viewing = ({
   const [viewing, setViewing] = useState();
   useEffect(() => {
     (async () => {
-      setViewing(
-        await fetch({ sessionId, videoId, regionalStats, hourlyStats })
-      );
+      setViewing(await fetch({ id, regionalStats, hourlyStats }));
     })();
   }, [setViewing]);
   if (!viewing) return null;
   const {
-    id,
     title,
     location,
     thumbnail,
@@ -198,15 +188,13 @@ const Viewing = ({
   );
 };
 Viewing.propTypes = {
-  sessionId: PropTypes.string.isRequired,
-  videoId: PropTypes.string.isRequired,
-  regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE),
-  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE),
+  viewingId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
+  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
   disabled: PropTypes.bool
 };
 Viewing.defaultProps = {
-  regionalAverageQoE: new RegionalAverageQoE(),
-  hourlyAverageQoE: new HourlyAverageQoE(),
   disabled: false
 };
 export default React.memo(Viewing);

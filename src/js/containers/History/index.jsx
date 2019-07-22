@@ -57,35 +57,30 @@ class History extends Component {
         ...viewing,
         disabled: DataErase.contains(viewing.id)
       }))
-      .map(({ id, sessionId, videoId, disabled }) => (
+      .map(({ id, disabled }) => (
         <Grid
           item
           xs={12}
           sm={4}
           md={3}
-          key={id + (disabled ? "_disabled" : "")}
-          className={style.item}
+          key={id}
+          className={[style.item, ...(disabled ? ["disabled"] : [])].join(" ")}
           role="button"
           onClick={() => {
             if (disabled) return;
             AppData.update(
               AppDataActions.Modal,
               <ViewingDetail
-                key={id}
-                sessionId={sessionId}
-                videoId={videoId}
+                viewingId={id}
                 regionalAverageQoE={regionalAverageQoE}
                 hourlyAverageQoE={hourlyAverageQoE}
               />
             );
           }}
-          onKeyPress={this.handleKeyPress}
           tabIndex="0"
         >
           <Viewing
-            key={id + (disabled ? "_disabled" : "")}
-            sessionId={sessionId}
-            videoId={videoId}
+            viewingId={id}
             regionalAverageQoE={regionalAverageQoE}
             hourlyAverageQoE={hourlyAverageQoE}
             disabled={disabled}
@@ -129,7 +124,6 @@ const dispatcher = dispatch =>
   new WritableStream({
     write: async viewingModels => {
       const indexes = viewingModels.map(viewingModel => {
-        const id = viewingModel.viewingId;
         const {
           session_id: sessionId,
           video_id: videoId,
@@ -137,7 +131,14 @@ const dispatcher = dispatch =>
           start_time: startTime,
           region
         } = viewingModel.cache;
-        return { id, sessionId, videoId, location, startTime, region };
+        return {
+          id: viewingModel.id,
+          sessionId,
+          videoId,
+          location,
+          startTime,
+          region
+        };
       });
 
       const regions = indexes

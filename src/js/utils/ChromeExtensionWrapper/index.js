@@ -1,7 +1,7 @@
 import { isMobile, isExtension, isWeb } from "../Utils";
 import data from "./EmbeddedData";
 
-export const VERSION = new Date("2019-07-11T00:00:00Z").getTime();
+export const VERSION = new Date("2019-07-18T00:00:00Z").getTime();
 
 export const storage = () => {
   if (isMobile()) {
@@ -19,7 +19,7 @@ export const storage = () => {
       return keyOrFunction(Object.assign({}, data));
     return callback({ [keyOrFunction]: data[keyOrFunction] });
   };
-  const remove = (key, callback) => {
+  const remove = (key, callback = () => {}) => {
     delete data[key];
     callback();
   };
@@ -64,25 +64,57 @@ export const allViewings = async () => {
 };
 
 export const migration = async () => {
+  if (await isCurrentVersion()) return;
+  const { RemovedTargetKeys: remove } = await new Promise(resolve =>
+    storage().get("RemovedTargetKeys", resolve)
+  );
+  if (Array.isArray(remove)) {
+    await Promise.all([
+      new Promise(resolve => storage().remove("RemovedTargetKeys", resolve)),
+      ...remove.map(
+        async id => new Promise(resolve => storage().remove(id, resolve))
+      )
+    ]);
+  }
   const viewings = await allViewings();
-  await Promise.all(
-    [...viewings].map(async ([id, obj]) => {
-      if (obj instanceof Function) return;
+  const index = await Promise.all(
+    [...viewings].map(async ([id, obj], i) => {
+      if (obj instanceof Function) return i;
       if (obj.log === undefined) {
         const { latest_qoe: log, ...tmp } = obj;
-        Object.assign(obj, { log });
-        await new Promise(resolve => storage().set({ [id]: tmp }, resolve));
+        Object.assign(tmp, { log });
+        await new Promise(resolve => storage().set({ [i]: tmp }, resolve));
+      } else {
+        await new Promise(resolve => storage().set({ [i]: obj }, resolve));
       }
+      await new Promise(resolve => storage().remove(id, resolve));
+      return i;
     })
   );
   await new Promise(resolve =>
     storage().set(
       {
-        index: [...viewings.keys()],
+        index,
         version: VERSION
       },
       resolve
     )
+  );
+};
+
+export const rollback = async () => {
+  if (!(await isCurrentVersion())) return;
+  await new Promise(resolve => storage().remove("version", resolve));
+  await new Promise(resolve => storage().remove("index", resolve));
+  const viewings = await allViewings();
+  await Promise.all(
+    [...viewings].map(async ([, obj]) => {
+      if (obj instanceof Function) return;
+      const { session_id: sessionId, video_id: videoId } = obj;
+      await new Promise(resolve =>
+        storage().set({ [`${sessionId}_${videoId}`]: obj }, resolve)
+      );
+    })
   );
 };
 

@@ -1,40 +1,41 @@
 import ChromeExtensionWrapper from "./ChromeExtensionWrapper";
 import Api from "./Api";
-import { viewingIdWithoutDateTimeFromSessionAndVideo } from "./Utils";
 
 class Viewing {
-  constructor({ sessionId, videoId, ...initialState }) {
-    this.sessionId = sessionId || initialState.session_id;
-    this.videoId = videoId || initialState.video_id;
+  constructor({ id, ...initialState }) {
+    if (id === undefined) throw new Error("invalid id");
+    this.id = id;
     this.cache = initialState;
   }
 
+  get sessionId() {
+    return this.cache.session_id;
+  }
+
+  get videoId() {
+    return this.cache.video_id;
+  }
+
   get viewingId() {
-    return viewingIdWithoutDateTimeFromSessionAndVideo(
-      this.sessionId,
-      this.videoId
-    );
+    return `${this.sessionId}_${this.videoId}`;
   }
 
   async load() {
     return new Promise(resolve =>
-      ChromeExtensionWrapper.load(this.viewingId, viewing => resolve(viewing))
+      ChromeExtensionWrapper.load(this.id, viewing => resolve(viewing))
     );
   }
 
   async init() {
-    if (
-      this.cache.session_id === undefined &&
-      this.cache.video_id === undefined
-    )
+    if (this.sessionId === undefined && this.videoId === undefined)
       this.cache = await this.load();
-    return this.viewingId;
+    return this.id;
   }
 
   async save(attributes) {
     const tmp = await this.load();
     Object.assign(tmp, attributes);
-    ChromeExtensionWrapper.save(this.viewingId, tmp);
+    ChromeExtensionWrapper.save(this.id, tmp);
     Object.assign(this.cache, attributes);
     return attributes;
   }
