@@ -25,7 +25,7 @@ const inject_script = opt => {
   return target.appendChild(script);
 };
 
-const message_listener = event => {
+const message_listener = async event => {
   if (
     event.source !== window ||
     !event.data.type ||
@@ -35,28 +35,28 @@ const message_listener = event => {
     return;
 
   switch (event.data.method) {
-    case "init":
+    case "init": {
       if (!event.data.id) return;
-      (async () => {
-        const id = await useId(event.data.id);
-        if (typeof id === "string") return;
-        await new Promise(resolve =>
-          chrome.storage.local.set(
-            {
-              index: [...index, id]
-            },
-            resolve
-          )
-        );
-      })();
+      const id = await useId(event.data.id);
+      if (typeof id === "string") return;
+      await new Promise(resolve =>
+        chrome.storage.local.set(
+          {
+            index: [...index, id]
+          },
+          resolve
+        )
+      );
       break;
-    case "set_video":
+    }
+    case "set_video": {
       if (!event.data.id || !event.data.video) return;
-      const id = await useId(event.data.id)
+      const id = await useId(event.data.id);
       chrome.storage.local.set({
         [id]: event.data.video
       });
       break;
+    }
   }
 };
 
