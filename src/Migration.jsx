@@ -1,33 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { withRouter, Link } from "react-router-dom";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
+import { withRouter } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import ArrowBack from "@material-ui/icons/ArrowBack";
-import Snackbar from "@material-ui/core/Snackbar";
-import SnackbarContent from "@material-ui/core/SnackbarContent";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles } from "@material-ui/core/styles";
+import SimplePage from "./js/components/SimplePage";
+import ErrorSnackbar from "./js/components/ErrorSnackbar";
 import { isCurrentVersion, migration } from "./js/utils/ChromeExtensionWrapper";
 
-const useStyles = makeStyles(theme => ({
-  root: { backgroundColor: theme.palette.error.dark }
-}));
-const ErrorSnackbar = props => {
-  const [open, setOpen] = useState(true);
-  const onClose = () => setOpen(false);
-  const classes = useStyles();
-  return (
-    <Snackbar open={open} onClose={onClose}>
-      <SnackbarContent className={classes.root} {...props} />
-    </Snackbar>
-  );
-};
 export const MigrationDialog = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
@@ -73,25 +55,11 @@ export default withRouter(() => {
   const onClick = () => setOpen(true);
 
   return (
-    <Container>
-      <CssBaseline />
-      <Grid container justify="center" spacing={2}>
-        <Grid item xs={12}>
-          <Typography component="h1" variant="h5" align="center">
-            データの移行
-          </Typography>
-          <Button component={Link} to="/">
-            <ArrowBack />
-            トップに戻る
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button disabled={open} onClick={onClick}>
-            最新のデータ形式に移行...
-          </Button>
-        </Grid>
-      </Grid>
+    <SimplePage title="データの移行">
+      <Button disabled={open} onClick={onClick}>
+        最新のデータ形式に移行...
+      </Button>
       {open && <MigrationDialog />}
-    </Container>
+    </SimplePage>
   );
 });
