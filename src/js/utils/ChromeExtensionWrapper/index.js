@@ -47,7 +47,7 @@ export const allViewings = async () => {
         id,
         () =>
           new Promise(resolve =>
-            storage().get(id, ({ [id]: value }) => resolve(value))
+            storage().get(id.toString(), ({ [id]: value }) => resolve(value))
           )
       ])
     );
@@ -128,7 +128,7 @@ export default class ChromeExtensionWrapper {
   }
 
   static load(key, callback) {
-    storage().get(key, ({ [key]: value }) => callback(value));
+    storage().get(key.toString(), ({ [key]: value }) => callback(value));
   }
 
   static loadRemovedTarget(callback) {
