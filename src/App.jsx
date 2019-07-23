@@ -6,6 +6,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import style from "./App.module.css";
+import { MigrationDialog } from "./Migration";
 import ChromeExtensionWrapper from "./js/utils/ChromeExtensionWrapper";
 import AppData from "./js/utils/AppData";
 import AppDataActions from "./js/utils/AppDataActions";
@@ -65,6 +66,7 @@ class App extends React.Component {
         <StatsDataProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <MigrationDialog />
             <div className={style.qoe_log_view}>
               <Header />
               <Box paddingTop={6}>
