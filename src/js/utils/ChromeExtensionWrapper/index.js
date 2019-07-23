@@ -63,8 +63,18 @@ export const allViewings = async () => {
   return new Map(entries);
 };
 
+let migrationLock;
 export const migration = async () => {
-  if (await isCurrentVersion()) return;
+  if (migrationLock instanceof Promise) return migrationLock;
+  let unlock;
+  migrationLock = new Promise(resolve => {
+    unlock = resolve;
+  }).then(() => {
+    migrationLock = undefined;
+  });
+
+  if (await isCurrentVersion()) return unlock();
+
   const { RemovedTargetKeys: remove } = await new Promise(resolve =>
     storage().get("RemovedTargetKeys", resolve)
   );
@@ -101,6 +111,7 @@ export const migration = async () => {
       resolve
     )
   );
+  return unlock();
 };
 
 export const rollback = async () => {
