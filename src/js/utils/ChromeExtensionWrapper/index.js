@@ -72,7 +72,8 @@ export const migration = async () => {
     await Promise.all([
       new Promise(resolve => storage().remove("RemovedTargetKeys", resolve)),
       ...remove.map(
-        async id => new Promise(resolve => storage().remove(id, resolve))
+        async id =>
+          new Promise(resolve => storage().remove(id.toString(), resolve))
       )
     ]);
   }
@@ -138,7 +139,7 @@ export default class ChromeExtensionWrapper {
   }
 
   static remove(key) {
-    storage().remove(key);
+    storage().remove(key.toString());
   }
 
   static loadAgreedTerm(callback) {
