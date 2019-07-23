@@ -69,8 +69,8 @@ export const MigrationDialog = () => {
 };
 
 export default withRouter(() => {
-  const [open, setOpne] = useState(null);
-  const onClick = () => setOpne(true);
+  const [open, setOpen] = useState(null);
+  const onClick = () => setOpen(true);
 
   return (
     <Container>
