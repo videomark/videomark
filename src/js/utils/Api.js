@@ -6,7 +6,7 @@ class Api {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(params)
-    });
+    }).catch(() => Response.error());
 
     return response;
   }
