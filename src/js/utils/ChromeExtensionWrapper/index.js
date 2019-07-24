@@ -1,3 +1,4 @@
+import { forEach } from "p-iteration";
 import { isMobile, isExtension, isWeb } from "../Utils";
 import data from "./EmbeddedData";
 
@@ -88,24 +89,22 @@ export const migration = async () => {
     ]);
   }
   const viewings = await allViewings();
-  const index = await Promise.all(
-    [...viewings].map(async ([id, obj], i) => {
-      if (obj instanceof Function) return i;
-      if (obj.log === undefined) {
-        const { latest_qoe: log, ...tmp } = obj;
-        Object.assign(tmp, { log });
-        await new Promise(resolve => storage().set({ [i]: tmp }, resolve));
-      } else {
-        await new Promise(resolve => storage().set({ [i]: obj }, resolve));
-      }
-      await new Promise(resolve => storage().remove(id, resolve));
-      return i;
-    })
-  );
+  forEach([...viewings], async ([id, obj], i) => {
+    if (obj instanceof Function) return;
+    if (obj.log === undefined) {
+      const { latest_qoe: log, ...tmp } = obj;
+      Object.assign(tmp, { log });
+      await new Promise(resolve => storage().set({ [i]: tmp }, resolve));
+    } else {
+      await new Promise(resolve => storage().set({ [i]: obj }, resolve));
+    }
+    await new Promise(resolve => storage().remove(id, resolve));
+  });
+
   await new Promise(resolve =>
     storage().set(
       {
-        index,
+        index: [...Array(viewings.size).keys()],
         version: VERSION
       },
       resolve
