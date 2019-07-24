@@ -141,7 +141,9 @@ const dispatcher = dispatch => {
   })();
   const stream = new WritableStream({
     write: async viewingModels => {
-      const column = {};
+      const column = {
+        index: viewingModels.map(viewingModel => viewingModel.id)
+      };
       [column.startTime, column.endTime, column.service] = await Promise.all([
         Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
         Promise.all(viewingModels.map(viewingModel => viewingModel.endTime)),
@@ -155,7 +157,7 @@ const dispatcher = dispatch => {
       const now = Date.now();
       const beforeTenMinutes = time => now - time > 600e3;
       const storeIndex = column.endTime.every(beforeTenMinutes)
-        ? viewingModels.map(viewingModel => viewingModel.id)
+        ? column.index
         : [];
 
       [column.quality, column.qoe] = await Promise.all([
@@ -179,13 +181,14 @@ const dispatcher = dispatch => {
         ["map", [([date, playing]) => ({ day: date, value: playing })]]
       ]);
       const qoeTimeline = await delayCaller(df, [
-        ["select", ["service", "startTime", "qoe"]],
-        ["dropMissingValues", [["service", "startTime", "qoe"]]],
+        ["select", ["index", "service", "startTime", "qoe"]],
+        ["dropMissingValues", [["index", "service", "startTime", "qoe"]]],
         ["toArray", []],
         [
           "map",
           [
-            ([service, startTime, qoe]) => ({
+            ([id, service, startTime, qoe]) => ({
+              id,
               service,
               time: startTime.getTime(),
               value: qoe
