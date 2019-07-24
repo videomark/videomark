@@ -162,8 +162,8 @@ const QoETimelineChart = () => {
               dataKey="value"
               label={{ value: "QoE", angle: -90 }}
               width={56}
-              domain={[0, 5]}
-              ticks={[...Array(5).keys(), 5]}
+              domain={[1, 5]}
+              ticks={[...Array(5).keys()].map(i => i + 1)}
               tick={{ fill: "#000000", angle: -90 }}
               tickLine={false}
             />

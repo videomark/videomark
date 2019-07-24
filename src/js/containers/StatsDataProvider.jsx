@@ -58,8 +58,8 @@ const initialData = {
   },
   qoeTimeline: [],
   qoeFrequency: Object.fromEntries(
-    [...Array(50).keys()].map(i => [
-      i + 1,
+    [...Array(41).keys()].map(i => [
+      10 + i,
       Object.fromEntries(videoPlatforms.map(({ id }) => [id, 0]))
     ])
   )
