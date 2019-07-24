@@ -262,9 +262,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
               }
             ]}
             tooltip={({ id, indexValue: qoe, value }) =>
-              `QoE ${(Number(qoe) - 0.1).toFixed(
-                1
-              )}〜${qoe}: ${value}件 (${id})`
+              `QoE ${qoe}: ${value}件 (${id})`
             }
           />
         </ResponsiveContainer>

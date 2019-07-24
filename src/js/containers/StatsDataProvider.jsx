@@ -196,7 +196,7 @@ const dispatcher = dispatch => {
       const qoeFrequency = await delayCaller(df, [
         ["select", ["service", "qoe"]],
         ["dropMissingValues", [["service", "qoe"]]],
-        ["withColumn", ["qoe", row => Math.ceil(row.get("qoe") * 10)]],
+        ["withColumn", ["qoe", row => Math.floor(row.get("qoe") * 10)]],
         ["groupBy", ["qoe"]],
         [
           "aggregate",
