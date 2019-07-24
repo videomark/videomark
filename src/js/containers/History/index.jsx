@@ -123,23 +123,25 @@ const reducer = ({ indexes }, chunk) => ({
 const dispatcher = dispatch =>
   new WritableStream({
     write: async viewingModels => {
-      const indexes = viewingModels.map(viewingModel => {
-        const {
-          session_id: sessionId,
-          video_id: videoId,
-          location,
-          start_time: startTime,
-          region
-        } = viewingModel.cache;
-        return {
-          id: viewingModel.id,
-          sessionId,
-          videoId,
-          location,
-          startTime,
-          region
-        };
-      });
+      const indexes = viewingModels
+        .filter(({ cache }) => cache !== undefined)
+        .map(({ id, cache }) => {
+          const {
+            session_id: sessionId,
+            video_id: videoId,
+            location,
+            start_time: startTime,
+            region
+          } = cache;
+          return {
+            id,
+            sessionId,
+            videoId,
+            location,
+            startTime,
+            region
+          };
+        });
 
       const regions = indexes
         .map(({ region }) => region || {})
