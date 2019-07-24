@@ -23,7 +23,7 @@ import {
 } from "recharts";
 import { CalendarCanvas } from "@nivo/calendar";
 import { Bar } from "@nivo/bar";
-import { ViewingsContext } from "./ViewingsProvider";
+import { ViewingsContext, STREAM_BUFFER_SIZE } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
 
@@ -149,13 +149,9 @@ const QoETimelineChart = () => {
               dataKey="time"
               type="number"
               scale="time"
-              domain={["dataMin", "dataMax"]}
+              domain={[dataMin => dataMin - 600e3, dataMax => dataMax + 600e3]}
               tickLine={false}
-              tickFormatter={time =>
-                Number.isFinite(time)
-                  ? new Intl.DateTimeFormat().format(new Date(time))
-                  : ""
-              }
+              tickFormatter={time => format(new Date(time), "M/d", { locale })}
             />
             <YAxis
               name="QoE"
@@ -170,7 +166,7 @@ const QoETimelineChart = () => {
             {videoPlatforms.map(({ id, brandcolor }) => {
               const data = Array.isArray(qoeTimeline)
                 ? qoeTimeline
-                    .slice(-120)
+                    .slice(-STREAM_BUFFER_SIZE)
                     .filter(({ service }) => service === id)
                 : [];
               return (
