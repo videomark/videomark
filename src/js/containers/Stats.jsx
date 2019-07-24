@@ -246,9 +246,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             }}
             keys={videoPlatforms.map(({ name }) => name)}
             colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
-            labelTextColor="#ffffff"
-            labelSkipWidth={10}
-            labelSkipHeight={16}
+            enableLabel={false}
             axisBottom={isWidthUp("lg", width) ? { tickSize: 0 } : null}
             axisLeft={{
               tickSize: 0
