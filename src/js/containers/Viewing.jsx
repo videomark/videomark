@@ -5,11 +5,11 @@ import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import ViewingModel from "../utils/Viewing";
 import { isLowQuality } from "../components/VideoQuality";
 import QoEValueGraphList from "../components/QoEValueGraphList";
 import style from "../../css/MeasureContents.module.css";
 import { urlToVideoPlatform } from "../utils/Utils";
+import ViewingModel from "../utils/Viewing";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import { CrossIcon, Refresh } from "../components/Icons";
@@ -41,16 +41,15 @@ export const toTimeString = date => {
   )} ${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
 };
 
-export const fetch = async ({ id, regionalStats, hourlyStats }) => {
-  const viewing = new ViewingModel({ id });
-  await viewing.init();
-  const title = await viewing.title;
-  const location = await viewing.location;
-  const thumbnail = await viewing.thumbnail;
-  const startTime = await viewing.startTime;
-  const qoe = await viewing.qoe;
-  const quality = await viewing.quality;
-  const region = (await viewing.region) || {};
+export const fetch = async ({ model, regionalStats, hourlyStats }) => {
+  await model.init();
+  const title = await model.title;
+  const location = await model.location;
+  const thumbnail = await model.thumbnail;
+  const startTime = await model.startTime;
+  const qoe = await model.qoe;
+  const quality = await model.quality;
+  const region = (await model.region) || {};
   const regionalAverage = await regionalStats.at(region);
   const hourlyAverage = await hourlyStats.at(startTime.getHours());
   return {
@@ -67,7 +66,7 @@ export const fetch = async ({ id, regionalStats, hourlyStats }) => {
 };
 
 const Viewing = ({
-  viewingId: id,
+  model,
   regionalAverageQoE: regionalStats,
   hourlyAverageQoE: hourlyStats,
   disabled
@@ -75,7 +74,7 @@ const Viewing = ({
   const [viewing, setViewing] = useState();
   useEffect(() => {
     (async () => {
-      setViewing(await fetch({ id, regionalStats, hourlyStats }));
+      setViewing(await fetch({ model, regionalStats, hourlyStats }));
     })();
   }, [setViewing]);
   if (!viewing) return null;
@@ -112,7 +111,7 @@ const Viewing = ({
         color="primary"
         className={style.removedStateButton}
         onClick={() => {
-          DataErase.recover(id);
+          DataErase.recover(model.id);
           // FIXME: ViewingListをrender()しないと表示が変わらない
           AppData.update(AppDataActions.ViewingList, state => state);
         }}
@@ -125,10 +124,10 @@ const Viewing = ({
         color="secondary"
         className={style.removedStateButton}
         onClick={async () => {
-          await DataErase.remove(id);
+          await DataErase.remove(model.id);
           AppData.update(AppDataActions.ViewingList, state =>
             Object.assign(state, {
-              removed: [...state.removed, id]
+              removed: [...state.removed, model.id]
             })
           );
         }}
@@ -188,8 +187,7 @@ const Viewing = ({
   );
 };
 Viewing.propTypes = {
-  viewingId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    .isRequired,
+  model: PropTypes.instanceOf(ViewingModel).isRequired,
   regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
   hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
   disabled: PropTypes.bool

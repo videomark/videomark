@@ -10,12 +10,13 @@ import AppDataActions from "../utils/AppDataActions";
 import AppData from "../utils/AppData";
 import { urlToVideoPlatform } from "../utils/Utils";
 import style from "../../css/MeasureContents.module.css";
+import ViewingModel from "../utils/Viewing";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../utils/HourlyAverageQoE";
 import { VideoThumbnail, toTimeString, fetch } from "./Viewing";
 
 const ViewingDetail = ({
-  viewingId: id,
+  model,
   regionalAverageQoE: regionalStats,
   hourlyAverageQoE: hourlyStats
 }) => {
@@ -23,7 +24,7 @@ const ViewingDetail = ({
   useEffect(() => {
     if (viewing) return;
     (async () => {
-      setViewing(await fetch({ id, regionalStats, hourlyStats }));
+      setViewing(await fetch({ model, regionalStats, hourlyStats }));
     })();
   }, [setViewing]);
   if (!viewing) return null;
@@ -71,7 +72,7 @@ const ViewingDetail = ({
         color="default"
         fullWidth
         onClick={() => {
-          DataErase.add(id);
+          DataErase.add(model.id);
           // FIXME: ViewingListをrender()しないと表示が変わらない
           AppData.update(AppDataActions.ViewingList, state => state);
           AppData.update(AppDataActions.Modal, null);
@@ -85,8 +86,7 @@ const ViewingDetail = ({
   );
 };
 ViewingDetail.propTypes = {
-  viewingId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    .isRequired,
+  model: PropTypes.instanceOf(ViewingModel).isRequired,
   regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
   hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired
 };

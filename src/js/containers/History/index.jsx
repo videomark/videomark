@@ -25,7 +25,8 @@ const hourlyAverageQoE = new HourlyAverageQoE();
 
 class History extends Component {
   static propTypes = {
-    indexes: PropTypes.arrayOf(PropTypes.instanceOf(Object)).isRequired
+    indexes: PropTypes.arrayOf(PropTypes.instanceOf(Object)).isRequired,
+    viewingModels: PropTypes.instanceOf(Map).isRequired
   };
 
   constructor(props) {
@@ -45,7 +46,7 @@ class History extends Component {
   }
 
   render() {
-    const { indexes } = this.props;
+    const { indexes, viewingModels } = this.props;
     const { removed, sites, date, page, perPage } = this.state;
 
     const viewingList = indexes
@@ -71,7 +72,7 @@ class History extends Component {
             AppData.update(
               AppDataActions.Modal,
               <ViewingDetail
-                viewingId={id}
+                model={viewingModels.get(id)}
                 regionalAverageQoE={regionalAverageQoE}
                 hourlyAverageQoE={hourlyAverageQoE}
               />
@@ -80,7 +81,7 @@ class History extends Component {
           tabIndex="0"
         >
           <Viewing
-            viewingId={id}
+            model={viewingModels.get(id)}
             regionalAverageQoE={regionalAverageQoE}
             hourlyAverageQoE={hourlyAverageQoE}
             disabled={disabled}
@@ -114,34 +115,43 @@ class History extends Component {
 }
 const initialState = {
   loading: true,
-  indexes: []
+  indexes: [],
+  viewingModels: new Map()
 };
-const reducer = ({ indexes }, chunk) => ({
-  loading: false,
-  indexes: [...chunk, ...indexes]
-});
+const reducer = ({ indexes, viewingModels }, chunk) => {
+  chunk.viewingModels.forEach(viewingModel =>
+    viewingModels.set(viewingModel.id, viewingModel)
+  );
+
+  return {
+    loading: false,
+    indexes: [...chunk.indexes, ...indexes],
+    viewingModels
+  };
+};
 const dispatcher = dispatch =>
   new WritableStream({
     write: async viewingModels => {
-      const indexes = viewingModels
-        .filter(({ cache }) => cache !== undefined)
-        .map(({ id, cache }) => {
-          const {
-            session_id: sessionId,
-            video_id: videoId,
-            location,
-            start_time: startTime,
-            region
-          } = cache;
-          return {
-            id,
-            sessionId,
-            videoId,
-            location,
-            startTime,
-            region
-          };
-        });
+      const active = viewingModels.filter(({ cache }) => cache !== undefined);
+      const indexes = active.map(({ id, cache }) => {
+        const {
+          session_id: sessionId,
+          video_id: videoId,
+          location,
+          start_time: startTime,
+          region
+        } = cache;
+        return {
+          id,
+          sessionId,
+          videoId,
+          location,
+          startTime,
+          region
+        };
+      });
+
+      dispatch({ indexes, viewingModels: active });
 
       const regions = indexes
         .map(({ region }) => region || {})
@@ -155,8 +165,7 @@ const dispatcher = dispatch =>
             )
         );
       await Promise.all(regions.map(region => regionalAverageQoE.at(region)));
-      dispatch(indexes);
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 15e3));
     }
   });
 
@@ -182,7 +191,11 @@ export default () => {
           </Grid>
         </Grid>
       </Box>
-      {state.loading ? "..." : <History indexes={state.indexes} />}
+      {state.loading ? (
+        "..."
+      ) : (
+        <History indexes={state.indexes} viewingModels={state.viewingModels} />
+      )}
     </>
   );
 };
