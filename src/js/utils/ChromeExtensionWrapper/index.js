@@ -118,15 +118,13 @@ export const rollback = async () => {
   await new Promise(resolve => storage().remove("version", resolve));
   await new Promise(resolve => storage().remove("index", resolve));
   const viewings = await allViewings();
-  await Promise.all(
-    [...viewings].map(async ([, obj]) => {
-      if (obj instanceof Function) return;
-      const { session_id: sessionId, video_id: videoId } = obj;
-      await new Promise(resolve =>
-        storage().set({ [`${sessionId}_${videoId}`]: obj }, resolve)
-      );
-    })
-  );
+  forEach([...viewings], async ([id, obj]) => {
+    const { session_id: sessionId, video_id: videoId } = obj;
+    await new Promise(resolve =>
+      storage().set({ [`${sessionId}_${videoId}`]: obj }, resolve)
+    );
+    await new Promise(resolve => storage().remove(id, resolve));
+  });
 };
 
 export default class ChromeExtensionWrapper {
