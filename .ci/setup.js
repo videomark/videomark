@@ -22,10 +22,6 @@ module.exports = async () => {
       `--disable-extensions-except=${extensionPath}`,
       `--load-extension=${extensionPath}`
     ],
-    defaultViewport: {
-      width: 1280,
-      height: 800
-    },
     headless: false
   });
   process.env.PUPPETEER_WS_ENDPOINT =
