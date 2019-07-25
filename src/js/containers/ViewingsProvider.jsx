@@ -2,16 +2,13 @@ import React, { createContext, useState, useEffect } from "react";
 import { allViewings, migration } from "../utils/ChromeExtensionWrapper";
 import dataErase from "../utils/DataErase";
 import ViewingModel from "../utils/Viewing";
+import waitForDOMContentLoaded from "../utils/waitForDOMContentLoaded";
 
 export const ViewingsContext = createContext();
 export const ViewingsProvider = props => {
   const [viewings, setViewings] = useState();
   const main = async () => {
-    await new Promise(resolve => {
-      if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", resolve, { once: true });
-      else resolve();
-    });
+    await waitForDOMContentLoaded();
     await migration();
     const data = await allViewings();
     setViewings(await dataErase.initialize(data));

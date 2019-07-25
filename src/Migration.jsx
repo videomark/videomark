@@ -9,6 +9,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import SimplePage from "./js/components/SimplePage";
 import ErrorSnackbar from "./js/components/ErrorSnackbar";
 import { isCurrentVersion, migration } from "./js/utils/ChromeExtensionWrapper";
+import waitForDOMContentLoaded from "./js/utils/waitForDOMContentLoaded";
 
 export const MigrationDialog = () => {
   const [error, setError] = useState(null);
@@ -18,13 +19,7 @@ export const MigrationDialog = () => {
     try {
       if (await isCurrentVersion()) return;
       setOpen(true);
-      await new Promise(resolve => {
-        if (document.readyState === "loading")
-          document.addEventListener("DOMContentLoaded", resolve, {
-            once: true
-          });
-        else resolve();
-      });
+      await waitForDOMContentLoaded();
       await migration();
     } catch (e) {
       setError(e);
