@@ -36,7 +36,7 @@ export const MigrationDialog = () => {
         <DialogTitle id="dialog-title">最新のデータ形式に移行中...</DialogTitle>
         <Grid container justify="center" component={DialogContent}>
           <Grid item>
-            <CircularProgress />
+            <CircularProgress disableShrink />
           </Grid>
         </Grid>
       </Dialog>
