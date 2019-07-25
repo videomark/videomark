@@ -20,7 +20,7 @@ export const ViewingsProvider = props => {
 };
 export default ViewingsProvider;
 
-export const STREAM_BUFFER_SIZE = 120;
+export const STREAM_BUFFER_SIZE = 60;
 export const viewingModelsStream = viewings => {
   const ids = [...viewings.keys()];
   const pull = async controller => {
