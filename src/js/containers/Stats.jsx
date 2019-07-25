@@ -236,14 +236,14 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             minValue={0}
             margin={{
               top: 16,
-              bottom: 32 + (isWidthUp("lg", width) ? 16 : 0),
+              bottom: 32 + (isWidthUp("md", width) ? 16 : 0),
               left: 36,
               right: 24
             }}
             keys={videoPlatforms.map(({ name }) => name)}
             colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
             enableLabel={false}
-            axisBottom={isWidthUp("lg", width) ? { tickSize: 0 } : null}
+            axisBottom={isWidthUp("md", width) ? { tickSize: 0 } : null}
             axisLeft={{
               tickSize: 0
             }}
@@ -266,7 +266,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
           <Box position="absolute" left="50%" bottom={8} fontSize={10}>
             QoE
           </Box>
-          {isWidthUp("lg", width) ? null : (
+          {isWidthUp("md", width) ? null : (
             <Box position="absolute" right={16} bottom={8} fontSize={10}>
               5.0
             </Box>
