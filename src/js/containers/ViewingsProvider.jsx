@@ -2,13 +2,14 @@ import React, { createContext, useState, useEffect } from "react";
 import { allViewings, migration } from "../utils/ChromeExtensionWrapper";
 import dataErase from "../utils/DataErase";
 import ViewingModel from "../utils/Viewing";
-import waitForDOMContentLoaded from "../utils/waitForDOMContentLoaded";
+import waitForContentRendering from "../utils/waitForContentRendering";
 
 export const ViewingsContext = createContext();
 export const ViewingsProvider = props => {
   const [viewings, setViewings] = useState();
   const main = async () => {
-    await waitForDOMContentLoaded();
+    // FIXME: storage へのアクセスは他のプロセスをブロックするので開始前に一定時間待つ
+    await waitForContentRendering();
     await migration();
     const data = await allViewings();
     setViewings(await dataErase.initialize(data));

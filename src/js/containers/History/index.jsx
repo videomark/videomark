@@ -12,7 +12,7 @@ import RegionalAverageQoE from "../../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../../utils/HourlyAverageQoE";
 import DataErase from "../../utils/DataErase";
 import videoPlatforms from "../../utils/videoPlatforms.json";
-import waitForDOMContentLoaded from "../../utils/waitForDOMContentLoaded";
+import waitForContentRendering from "../../utils/waitForContentRendering";
 import style from "../../../css/GridContainer.module.css";
 import ViewingDetail from "../ViewingDetail";
 import NoContents from "../../components/NoContents";
@@ -175,7 +175,8 @@ export default () => {
   const [state, addIndexes] = useReducer(reducer, initialState);
   useEffect(() => {
     if (viewings !== undefined) {
-      waitForDOMContentLoaded().then(() =>
+      // FIXME: storage へのアクセスは他のプロセスをブロックするので開始前に一定時間待つ
+      waitForContentRendering().then(() =>
         viewingModelsStream(viewings).pipeTo(dispatcher(addIndexes))
       );
     }

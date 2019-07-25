@@ -9,7 +9,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import SimplePage from "./js/components/SimplePage";
 import ErrorSnackbar from "./js/components/ErrorSnackbar";
 import { isCurrentVersion, migration } from "./js/utils/ChromeExtensionWrapper";
-import waitForDOMContentLoaded from "./js/utils/waitForDOMContentLoaded";
+import waitForContentRendering from "./js/utils/waitForContentRendering";
 
 export const MigrationDialog = () => {
   const [error, setError] = useState(null);
@@ -19,7 +19,8 @@ export const MigrationDialog = () => {
     try {
       if (await isCurrentVersion()) return;
       setOpen(true);
-      await waitForDOMContentLoaded();
+      // FIXME: storage へのアクセスは他のプロセスをブロックするので開始前に一定時間待つ
+      await waitForContentRendering();
       await migration();
     } catch (e) {
       setError(e);

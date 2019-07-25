@@ -76,9 +76,6 @@ export const migration = async () => {
 
   if (await isCurrentVersion()) return unlock();
 
-  // FIXME: storage へのアクセスは他のプロセスをブロックするので開始前に一定時間待つ
-  await new Promise(resolve => setTimeout(resolve, 100));
-
   const { RemovedTargetKeys: remove } = await new Promise(resolve =>
     storage().get("RemovedTargetKeys", resolve)
   );
