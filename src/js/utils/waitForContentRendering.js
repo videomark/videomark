@@ -4,5 +4,5 @@ export default async () => {
       document.addEventListener("DOMContentLoaded", resolve, { once: true });
     else resolve();
   });
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 300));
 };
