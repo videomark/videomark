@@ -104,26 +104,31 @@ class YouTubeTypeHandler {
                     (url.host.endsWith('googlevideo.com') &&
                         url.pathname.endsWith('videoplayback'))
                 ) {
-                    setTimeout(() => {
-                        this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
-                        YouTubeTypeHandler.add_throughput_history({
-                            downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
-                            throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
-                            downloadSize: Number.parseFloat(event.loaded),
-                            start: this.sodiumStartDate,
-                            startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
-                            end: this.sodiumEndDate,
-                            endUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
-                            itag: url.searchParams.get('itag')
-                        });
-                        console.log(`load [URL: ${this.sodiumURL
-                            }, contents: ${event.loaded
-                            }, duration(ms): ${this.sodiumEnd - this.sodiumStart
-                            }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
-                            }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
-                            }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
-                            }, itag: ${JSON.stringify(url.searchParams.get('itag'))}]`);
-                    }, 1000);
+                    const id = url.searchParams.get('id');
+                    if (!YouTubeTypeHandler.trackingId && id) YouTubeTypeHandler.trackingId = id;
+                    if (YouTubeTypeHandler.trackingId === id) {
+                        setTimeout(() => {  //  playerオブジェクトがない可能性があるため 1000ms スリープする
+                            this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
+                            YouTubeTypeHandler.add_throughput_history({
+                                downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
+                                throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
+                                downloadSize: Number.parseFloat(event.loaded),
+                                start: this.sodiumStartDate,
+                                startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                                end: this.sodiumEndDate,
+                                endUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                                itag: url.searchParams.get('itag')
+                            });
+                            console.log(`load [URL: ${this.sodiumURL
+                                }, contents: ${event.loaded
+                                }, duration(ms): ${this.sodiumEnd - this.sodiumStart
+                                }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
+                                }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
+                                }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
+                                }, itag: ${JSON.stringify(url.searchParams.get('itag'))
+                                }, id: ${url.searchParams.get('id')}]`);
+                        }, 1000);
+                    }
                 }
             });
             return origOpen.apply(this, args);
@@ -301,6 +306,10 @@ class YouTubeTypeHandler {
     }
 
     constructor(elm) {
+
+        YouTubeTypeHandler.throughputHistories = [];
+        YouTubeTypeHandler.trackingId = null;
+
         this.elm = elm;
         this.player = document.querySelector('#movie_player');
 
@@ -559,5 +568,6 @@ class YouTubeTypeHandler {
 
 YouTubeTypeHandler.sodiumAdaptiveFmts = null;
 YouTubeTypeHandler.throughputHistories = [];
+YouTubeTypeHandler.trackingId = null;
 
 export default YouTubeTypeHandler;
