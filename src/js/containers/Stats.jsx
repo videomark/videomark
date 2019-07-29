@@ -10,7 +10,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
 import Link from "@material-ui/core/Link";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
-import { format, formatDistance, formatDistanceStrict } from "date-fns";
+import format from "date-fns/format";
 import locale from "date-fns/locale/ja";
 import {
   ResponsiveContainer,
@@ -31,6 +31,12 @@ import LoadingProgress from "../components/LoadingProgress";
 // FIXME: for chrome version < 73
 if (!Object.fromEntries) fromEntries.shim();
 
+const timeFormatFromMinutes = min =>
+  `${
+    min > 60 ? `${Math.floor(min / 60).toLocaleString()}時間` : ""
+  }${Math.floor(min % 60)}分`;
+const timeFormat = msec => timeFormatFromMinutes(Math.floor(msec / 1e3 / 60));
+
 const PlayingTimeStats = () => {
   const { initialState, length, playingTime } = useContext(StatsDataContext);
   const sum = playingTime.map(({ value }) => value).reduce((a, c) => a + c, 0);
@@ -40,9 +46,7 @@ const PlayingTimeStats = () => {
       <LoadingProgress />
     </>
   ) : (
-    `${length.toLocaleString()}件 ${formatDistance(0, sum, {
-      locale
-    })}`
+    `${length.toLocaleString()}件 ${timeFormat(sum)}`
   );
   return (
     <Typography component="small" variant="caption">
@@ -74,19 +78,9 @@ const PlayingTimeCalendar = () => {
             to={today}
             monthLegend={(y, m) => format(new Date(y, m), "MMM", { locale })}
             tooltip={({ date, value: min }) => {
-              const msec = min * 60 * 1e3;
-              const duration = formatDistance(0, msec, {
-                locale
-              });
-              const strictDuration = formatDistanceStrict(0, msec, {
-                unit: "minute",
-                locale
-              });
-              return [
-                `${new Intl.DateTimeFormat(navigator.language).format(date)}:`,
-                duration,
-                strictDuration === duration ? "" : `(${strictDuration})`
-              ].join(" ");
+              return `${new Intl.DateTimeFormat(navigator.language).format(
+                date
+              )}: ${timeFormatFromMinutes(min)}`;
             }}
             margin={{ bottom: 16, left: 32, right: 32 }}
             colors={[
@@ -160,7 +154,9 @@ const QoETimelineChart = () => {
               scale="time"
               domain={[dataMin => dataMin - 600e3, dataMax => dataMax + 600e3]}
               tickLine={false}
-              tickFormatter={time => format(new Date(time), "M/d", { locale })}
+              tickFormatter={time =>
+                format(new Date(time), "MMMd日", { locale })
+              }
             />
             <YAxis
               name="QoE"
@@ -246,7 +242,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             margin={{
               top: 16,
               bottom: 32 + (isWidthUp("md", width) ? 16 : 0),
-              left: 36,
+              left: 40,
               right: 24
             }}
             keys={videoPlatforms.map(({ name }) => name)}
@@ -254,7 +250,8 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             enableLabel={false}
             axisBottom={isWidthUp("md", width) ? { tickSize: 0 } : null}
             axisLeft={{
-              tickSize: 0
+              tickSize: 0,
+              format: value => value.toLocaleString()
             }}
             legends={[
               {
@@ -269,7 +266,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             tooltip={({ id, indexValue: qoe, value }) =>
               `QoE ${qoe}${
                 qoe < 5 ? `以上${(Number(qoe) + 0.1).toFixed(1)}未満` : ""
-              }: ${value}件 (${id})`
+              }: ${value.toLocaleString()}件 (${id})`
             }
           />
         </ResponsiveContainer>
