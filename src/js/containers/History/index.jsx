@@ -16,6 +16,7 @@ import waitForContentRendering from "../../utils/waitForContentRendering";
 import style from "../../../css/GridContainer.module.css";
 import ViewingDetail from "../ViewingDetail";
 import NoContents from "../../components/NoContents";
+import LoadingProgress from "../../components/LoadingProgress";
 import Pager from "./Pager";
 import MonthSelect from "./MonthSelect";
 import SiteSelect from "./SiteSelect";
@@ -196,7 +197,7 @@ export default () => {
         </Grid>
       </Box>
       {state.loading ? (
-        "..."
+        <LoadingProgress />
       ) : (
         <History indexes={state.indexes} viewingModels={state.viewingModels} />
       )}

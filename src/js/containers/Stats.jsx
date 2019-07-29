@@ -26,6 +26,7 @@ import { Bar } from "@nivo/bar";
 import { ViewingsContext, STREAM_BUFFER_SIZE } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
+import LoadingProgress from "../components/LoadingProgress";
 
 // FIXME: for chrome version < 73
 if (!Object.fromEntries) fromEntries.shim();
@@ -33,11 +34,16 @@ if (!Object.fromEntries) fromEntries.shim();
 const PlayingTimeStats = () => {
   const { initialState, length, playingTime } = useContext(StatsDataContext);
   const sum = playingTime.map(({ value }) => value).reduce((a, c) => a + c, 0);
-  const text = initialState
-    ? "..."
-    : `${length.toLocaleString()}件 ${formatDistance(0, sum, {
-        locale
-      })}`;
+  const text = initialState ? (
+    <>
+      ...
+      <LoadingProgress />
+    </>
+  ) : (
+    `${length.toLocaleString()}件 ${formatDistance(0, sum, {
+      locale
+    })}`
+  );
   return (
     <Typography component="small" variant="caption">
       {text}
@@ -119,14 +125,17 @@ const PlayingTimeCalendar = () => {
 };
 const QoEStats = () => {
   const {
-    qoeStats: { sum, count }
+    qoeStats: { initialState, sum, count }
   } = useContext(StatsDataContext);
   const average = sum / count;
-  const text = Number.isFinite(average) ? `平均${average.toFixed(2)}` : "...";
-  return (
+  const caption = text => (
     <Typography component="small" variant="caption">
       {text}
     </Typography>
+  );
+  if (initialState) return caption("...");
+  return caption(
+    Number.isFinite(average) ? `平均${average.toFixed(2)}` : "n/a"
   );
 };
 const QoETimelineChart = () => {
