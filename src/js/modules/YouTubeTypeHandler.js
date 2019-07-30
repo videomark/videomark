@@ -287,7 +287,7 @@ class YouTubeTypeHandler {
                             .find(f => f.itag === h.itag));
                         bitrate = Number.parseInt(bitrate, 10);
                         itagCache[h.itag] = bitrate;
-                    } catch (e) {
+                    } catch (e) { 
                         // adaptive formatに対象がない
                     }
                 }
