@@ -107,7 +107,7 @@ class YouTubeTypeHandler {
                     const id = url.searchParams.get('id');
                     if (!YouTubeTypeHandler.trackingId && id) YouTubeTypeHandler.trackingId = id;
                     if (YouTubeTypeHandler.trackingId === id) {
-                        setTimeout(() => {  //  playerオブジェクトがない可能性があるため 1000ms スリープする
+                        setTimeout(() => {  //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
                             this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
                             YouTubeTypeHandler.add_throughput_history({
                                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
@@ -119,7 +119,7 @@ class YouTubeTypeHandler {
                                 endUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
                                 itag: url.searchParams.get('itag')
                             });
-                            console.log(`load [URL: ${this.sodiumURL
+                            console.log(`VIDEOMARK: load [URL: ${this.sodiumURL
                                 }, contents: ${event.loaded
                                 }, duration(ms): ${this.sodiumEnd - this.sodiumStart
                                 }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
@@ -282,10 +282,14 @@ class YouTubeTypeHandler {
             .map(h => {
                 let bitrate = itagCache[h.itag];
                 if (!bitrate) {
-                    ({ bitrate } = formats
-                        .find(f => f.itag === h.itag));
-                    bitrate = Number.parseInt(bitrate, 10);
-                    itagCache[h.itag] = bitrate;
+                    try {
+                        ({ bitrate } = formats
+                            .find(f => f.itag === h.itag));
+                        bitrate = Number.parseInt(bitrate, 10);
+                        itagCache[h.itag] = bitrate;
+                    } catch (e) {
+                        // adaptive formatに対象がない
+                    }
                 }
                 return {
                     downloadTime: h.downloadTime,
