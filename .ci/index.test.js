@@ -1,6 +1,9 @@
 const {
   pages: { terms, logView }
 } = require("./");
+const sampleVideos = require("./sample-videos.json");
+const sample = () =>
+  sampleVideos[Math.floor(Math.random() * sampleVideos.length)];
 
 beforeAll(async () => {
   page = await terms.page(browser);
@@ -28,16 +31,17 @@ test("利用規約とプライバシーポリシーに同意後、Welcome画面�
   expect(new URL(page.url()).pathname).toBe(logView.pathname);
   expect(new URL(page.url()).hash).toBe("#/welcome");
 });
+
+// FIXME: 広告を回避できずエラーになるのでリトライ
+jest.retryTimes(3);
 test("YouTube動画に埋め込み", async () => {
-  const demoVideo = "https://www.youtube.com/watch?v=mY6sChi65oU";
   const videomark = "#__videomark_ui";
-  await page.goto(demoVideo);
+  await page.goto(sample());
   await page.waitFor(videomark);
 }, 30e3);
 test("YouTube動画に埋め込み後、しばらく経つとQoE値が得られる", async () => {
-  const demoVideo = "https://www.youtube.com/watch?v=mY6sChi65oU";
   const videomark = "#__videomark_ui";
-  await page.goto(demoVideo);
+  await page.goto(sample());
   await page.waitFor(videomark);
   const summary = await page.evaluateHandle(
     selector =>
