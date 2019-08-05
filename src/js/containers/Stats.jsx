@@ -21,8 +21,8 @@ import {
   Tooltip,
   CartesianGrid
 } from "recharts";
-import { CalendarCanvas } from "@nivo/calendar";
-import { Bar } from "@nivo/bar";
+import { ResponsiveCalendarCanvas } from "@nivo/calendar";
+import { ResponsiveBar } from "@nivo/bar";
 import { ViewingsContext, STREAM_BUFFER_SIZE } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
@@ -71,8 +71,8 @@ const PlayingTimeCalendar = () => {
         計測日
       </Typography>
       <Card>
-        <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
-          <CalendarCanvas
+        <Box width="100%" height={240}>
+          <ResponsiveCalendarCanvas
             data={data}
             from={today}
             to={today}
@@ -107,7 +107,7 @@ const PlayingTimeCalendar = () => {
               }
             ]}
           />
-        </ResponsiveContainer>
+        </Box>
         <Box position="relative">
           <Box position="absolute" right={120} bottom={8} fontSize={10}>
             再生時間 (分)
@@ -144,7 +144,7 @@ const QoETimelineChart = () => {
         計測日時
       </Typography>
       <Card>
-        <ResponsiveContainer width="100%" aspect={3} maxHeight={240}>
+        <ResponsiveContainer width="100%" height={240}>
           <ScatterChart margin={{ top: 16, left: -16, right: 32 }}>
             <CartesianGrid />
             <XAxis
@@ -234,8 +234,8 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
         計測数
       </Typography>
       <Card>
-        <ResponsiveContainer width="100%" aspect={2}>
-          <Bar
+        <Box width="100%" height={240}>
+          <ResponsiveBar
             data={data}
             indexBy="qoe"
             minValue={0}
@@ -269,7 +269,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
               }: ${value.toLocaleString()}件 (${id})`
             }
           />
-        </ResponsiveContainer>
+        </Box>
         <Box position="relative">
           <Box position="absolute" left="50%" bottom={8} fontSize={10}>
             QoE
