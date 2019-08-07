@@ -116,6 +116,8 @@ module.exports = {
   // In production, we only want to load the app code.
   entry: [paths.appIndexJs],
   output: {
+    // for SRI
+    crossOriginLoading: "use-credentials",
     // The build folder.
     path: paths.appBuild,
     // Generated JS file names (with nested folders).

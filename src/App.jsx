@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { lazy } from "react";
 import { Switch, Route } from "react-router-dom";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
@@ -15,10 +15,11 @@ import { StatsDataProvider } from "./js/containers/StatsDataProvider";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 import Modal from "./js/components/Modal";
 import Header from "./js/containers/Header";
-import Stats from "./js/containers/Stats";
-import History from "./js/containers/History";
-import Welcome from "./js/components/Welcome";
-import NotFound from "./js/components/NotFound";
+
+const Stats = lazy(() => import("./js/containers/Stats"));
+const History = lazy(() => import("./js/containers/History"));
+const Welcome = lazy(() => import("./js/components/Welcome"));
+const NotFound = lazy(() => import("./js/components/NotFound"));
 
 const theme = createMuiTheme({
   palette: {
