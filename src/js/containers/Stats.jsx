@@ -4,7 +4,7 @@ import { Redirect } from "react-router";
 import { withRouter, Link as RouterLink } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import Card from "@material-ui/core/Card";
+import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
@@ -62,7 +62,7 @@ const PlayingTimeCalendar = () => {
       >
         計測日
       </Typography>
-      <Card>
+      <Paper>
         <Box width="100%" height={240}>
           <ResponsiveCalendarCanvas
             data={data}
@@ -105,7 +105,7 @@ const PlayingTimeCalendar = () => {
             再生時間 (分)
           </Box>
         </Box>
-      </Card>
+      </Paper>
     </Box>
   );
 };
@@ -142,7 +142,7 @@ const QoETimelineChart = () => {
       >
         計測日時
       </Typography>
-      <Card>
+      <Paper>
         <Box width="100%" height={240}>
           <ResponsiveScatterPlotCanvas
             data={videoPlatforms.map(({ id }) => {
@@ -196,7 +196,7 @@ const QoETimelineChart = () => {
             )}
           />
         </Box>
-      </Card>
+      </Paper>
     </Box>
   );
 };
@@ -232,7 +232,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
       >
         計測数
       </Typography>
-      <Card>
+      <Paper>
         <Box width="100%" height={240}>
           <ResponsiveBar
             data={data}
@@ -279,7 +279,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             </Box>
           )}
         </Box>
-      </Card>
+      </Paper>
     </Box>
   );
 });
