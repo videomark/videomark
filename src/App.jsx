@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, Suspense } from "react";
 import { Switch, Route } from "react-router-dom";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
@@ -72,12 +72,14 @@ class App extends React.Component {
               <Header />
               <Box paddingTop={6}>
                 <Container>
-                  <Switch>
-                    <Route exact path="/" component={Stats} />
-                    <Route exact path="/history" component={History} />
-                    <Route exact path="/welcome" component={Welcome} />
-                    <Route component={NotFound} />
-                  </Switch>
+                  <Suspense fallback={null}>
+                    <Switch>
+                      <Route exact path="/" component={Stats} />
+                      <Route exact path="/history" component={History} />
+                      <Route exact path="/welcome" component={Welcome} />
+                      <Route component={NotFound} />
+                    </Switch>
+                  </Suspense>
                 </Container>
               </Box>
               <OfflineNoticeSnackbar />

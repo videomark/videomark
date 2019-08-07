@@ -15,8 +15,8 @@ const Clear = lazy(() => import("./Clear"));
 if (!isDevelop() && isWeb()) window.location.pathname = "unsupported.html";
 else {
   ReactDOM.render(
-    <Suspense fallback={null}>
-      <Router>
+    <Router>
+      <Suspense fallback={null}>
         <Switch>
           <Route exact path="/stats" component={StatsSummary} />
           <Route exact path="/import" component={Import} />
@@ -26,8 +26,8 @@ else {
           <Route exact path="/clear" component={Clear} />
           <Route path="/" component={App} />
         </Switch>
-      </Router>
-    </Suspense>,
+      </Suspense>
+    </Router>,
     document.getElementById("root")
   );
 }
