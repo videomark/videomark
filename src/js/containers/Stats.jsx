@@ -12,18 +12,10 @@ import Link from "@material-ui/core/Link";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import format from "date-fns/format";
 import locale from "date-fns/locale/ja";
-import {
-  ResponsiveContainer,
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid
-} from "recharts";
 import { ResponsiveCalendarCanvas } from "@nivo/calendar";
 import { ResponsiveBar } from "@nivo/bar";
-import { ViewingsContext, STREAM_BUFFER_SIZE } from "./ViewingsProvider";
+import { ResponsiveScatterPlotCanvas } from "@nivo/scatterplot";
+import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import LoadingProgress from "../components/LoadingProgress";
@@ -134,6 +126,13 @@ const QoEStats = () => {
 };
 const QoETimelineChart = () => {
   const { qoeTimeline } = useContext(StatsDataContext);
+  const serviceNames = new Map(
+    videoPlatforms.map(({ id, name }) => [id, name])
+  );
+  const brandcolors = new Map(
+    videoPlatforms.map(({ id, brandcolor }) => [id, brandcolor])
+  );
+  const limit = 200;
   return (
     <Box m={0} component="figure">
       <Typography
@@ -144,59 +143,59 @@ const QoETimelineChart = () => {
         計測日時
       </Typography>
       <Card>
-        <ResponsiveContainer width="100%" height={240}>
-          <ScatterChart margin={{ top: 16, left: -16, right: 32 }}>
-            <CartesianGrid />
-            <XAxis
-              name="計測日時"
-              dataKey="time"
-              type="number"
-              scale="time"
-              domain={[dataMin => dataMin - 600e3, dataMax => dataMax + 600e3]}
-              tickLine={false}
-              tickFormatter={time =>
-                format(new Date(time), "MMMd日", { locale })
-              }
-            />
-            <YAxis
-              name="QoE"
-              dataKey="value"
-              label={{ value: "QoE", angle: -90 }}
-              width={56}
-              domain={[1, 5]}
-              ticks={[...Array(5).keys()].map(i => i + 1)}
-              tick={{ fill: "#000000", angle: -90 }}
-              tickLine={false}
-            />
-            {videoPlatforms.map(({ id, brandcolor }) => {
+        <Box width="100%" height={240}>
+          <ResponsiveScatterPlotCanvas
+            data={videoPlatforms.map(({ id }) => {
               const data = Array.isArray(qoeTimeline)
                 ? qoeTimeline
-                    .slice(-STREAM_BUFFER_SIZE)
+                    .slice(-limit)
                     .filter(({ service }) => service === id)
+                    .map(({ time, value }) => {
+                      return {
+                        x: new Date(time),
+                        y: value
+                      };
+                    })
                 : [];
-              return (
-                <Scatter
-                  key={id}
-                  data={data}
-                  fill={brandcolor}
-                  fillOpacity={0.25}
-                />
-              );
+              return { id, data };
             })}
-            <Tooltip
-              formatter={(value, name) => {
-                switch (name) {
-                  case "計測日時":
-                    return new Date(value).toLocaleString(navigator.language, {
-                      timeZoneName: "short"
-                    });
-                  default:
-                    return value.toFixed(2);
-                }
-              }}
-            />
-          </ScatterChart>
-        </ResponsiveContainer>
+            xScale={{
+              type: "time",
+              min: "auto"
+            }}
+            yScale={{
+              type: "linear",
+              min: 1,
+              max: 5
+            }}
+            margin={{ top: 16, bottom: 32, left: 40, right: 40 }}
+            colors={({ serieId }) => `${brandcolors.get(serieId)}40`}
+            axisBottom={{
+              tickSize: 0,
+              format: date => format(date, "M/d")
+            }}
+            axisLeft={{
+              tickSize: 0,
+              format: value => value.toFixed(1),
+              legend: "QoE",
+              legendPosition: "middle",
+              legendOffset: -32
+            }}
+            tooltip={({
+              node: {
+                data: { serieId, x, y }
+              }
+            }) => (
+              <Box bgcolor="background.default">
+                {`計測日時: ${x.toLocaleString(navigator.language, {
+                  timeZoneName: "short"
+                })}`}
+                <br />
+                {`QoE ${y.toFixed(2)} (${serviceNames.get(serieId)})`}
+              </Box>
+            )}
+          />
+        </Box>
       </Card>
     </Box>
   );
