@@ -262,7 +262,7 @@ class YouTubeTypeHandler {
                 videoWidth: Number.parseInt(e.size.split('x')[0], 10),
                 videoHeight: Number.parseInt(e.size.split('x')[1], 10),
                 fps: Number.parseInt(e.fps, 10),
-                chunkDuration: 5000,
+                chunkDuration: YouTubeTypeHandler.segmentDuration,
                 serverIp: new URL(e.url).host
             }))
             .sort((a, b) => b.bps - a.bps);
@@ -287,7 +287,7 @@ class YouTubeTypeHandler {
                             .find(f => f.itag === h.itag));
                         bitrate = Number.parseInt(bitrate, 10);
                         itagCache[h.itag] = bitrate;
-                    } catch (e) { 
+                    } catch (e) {
                         // adaptive formatに対象がない
                     }
                 }
@@ -295,7 +295,6 @@ class YouTubeTypeHandler {
                     downloadTime: h.downloadTime,
                     throughput: h.throughput,
                     downloadSize: h.downloadSize,
-                    unplayedBufferSize: h.unplayedBufferSize,
                     start: h.start,
                     startUnplayedBufferSize: h.startUnplayedBufferSize,
                     end: h.end,
@@ -305,8 +304,34 @@ class YouTubeTypeHandler {
                 }
             })
             .filter(h => h.bitrate);
+        const throughput = [];
+        histories.forEach(e => {
+            // plInfo duration に合わせた形に throughput を変更する
+            const downloadDuration = e.downloadSize / (e.bitrate / 8);
+            if (downloadDuration > (YouTubeTypeHandler.segmentDuration / 1000)) {
+                const numOfSegments = Math.round(downloadDuration / (YouTubeTypeHandler.segmentDuration / 1000));
+                for (let i = 0; i < numOfSegments; i += 1) {
+                    const size = Math.floor(e.downloadSize / numOfSegments);
+                    const time = Math.floor(e.downloadTime / numOfSegments);
+                    const th = Math.floor(size * 8 / time * 1000);
+                    throughput.push({
+                        downloadTime: time,
+                        throughput: th,
+                        downloadSize: size,
+                        start: e.start,
+                        startUnplayedBufferSize: e.startUnplayedBufferSize,
+                        end: e.end,
+                        endUnplayedBufferSize: e.endUnplayedBufferSize,
+                        bitrate: e.bitrate,
+                        representationId: e.representationId
+                    });
+                }
+            } else {
+                throughput.push(e);
+            }
+        });
         YouTubeTypeHandler.throughputHistories = [];
-        return histories;
+        return throughput;
     }
 
     constructor(elm) {
@@ -570,6 +595,7 @@ class YouTubeTypeHandler {
     }
 }
 
+YouTubeTypeHandler.segmentDuration = 5000;
 YouTubeTypeHandler.sodiumAdaptiveFmts = null;
 YouTubeTypeHandler.throughputHistories = [];
 YouTubeTypeHandler.trackingId = null;
