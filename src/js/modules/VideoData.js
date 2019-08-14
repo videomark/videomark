@@ -148,6 +148,11 @@ export default class VideoData {
     return { waiting: waiting(now), pause: pause(now) };
   }
 
+  set_quality(bitrate) {
+    console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
+    this.video_handler.set_quality(bitrate);
+  }
+
   add_latest_qoe(data) {
     this.latest_qoe.push(data);
 

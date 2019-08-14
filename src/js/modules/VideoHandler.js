@@ -157,6 +157,11 @@ export default class VideoHandler {
         return false;
     }
 
+    set_quality(bitrate) {
+        if (this.handler.set_quality instanceof Function)
+            return this.handler.set_quality(bitrate);
+    }
+
     add_cm_listener(listener) {
         if (this.handler.add_cm_listener instanceof Function)
             this.handler.add_cm_listener(listener);
