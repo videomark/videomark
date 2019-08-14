@@ -430,6 +430,21 @@ class YouTubeTypeHandler {
     }
 
     // eslint-disable-next-line camelcase
+    get_audio_bitrate() {
+        try {
+            if (!YouTubeTypeHandler.can_get_streaming_info()) {
+                return -1;
+            }
+
+            const { audio } = this.get_streaming_info();
+
+            return Number.parseInt(audio.bitrate, 10);
+        } catch (e) {
+            return -1;
+        }
+    }
+
+    // eslint-disable-next-line camelcase
     get_receive_buffer() {
         try {
             const received = Number.parseFloat(this.player.getVideoLoadedFraction());
@@ -583,6 +598,23 @@ class YouTubeTypeHandler {
     // eslint-disable-next-line camelcase, no-unused-vars
     is_cm(video) {
         return this.cm;
+    }
+
+    // eslint-disable-next-line camelcase
+    set_quality(bitrate) {
+        if (!YouTubeTypeHandler.can_get_streaming_info()) {
+            return;
+        }
+        try {
+            // eslint-disable-next-line camelcase
+            const { quality_label } = YouTubeTypeHandler
+                .convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts)
+                .filter(e => /^video/.test(e.type))
+                .find(e => Number.parseInt(e.bitrate, 10) === bitrate);
+            this.player.setPlaybackQualityRange(quality_label, quality_label);
+        } catch (e) {
+            // 
+        }
     }
 
     // eslint-disable-next-line camelcase
