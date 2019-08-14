@@ -80,7 +80,7 @@ export default class SessionData {
   }
 
   async start() {
-    for (;;) {
+    for (; ;) {
       // --- main video --- //
       const main_video = this.get_main_video();
       if (!main_video) {
@@ -98,7 +98,7 @@ export default class SessionData {
 
       // --- play start --- //
       let start_time = -1;
-      for (; start_time === -1 && main_video === this.get_main_video(); ) {
+      for (; start_time === -1 && main_video === this.get_main_video();) {
         // eslint-disable-next-line no-await-in-loop
         await SessionData.event_wait(
           main_video.video_elm,
@@ -192,16 +192,21 @@ export default class SessionData {
       if (request) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
-        tasks.push(
+        tasks.push(...[
           (async () => {
-            qoe = await this._request_qoe(main_video);
+            const qoe = await this._request_qoe(main_video);
             if (qoe)
               main_video.add_latest_qoe({
                 date: Date.now(),
                 qoe
               });
+          })(),
+          // quality
+          (async () => {
+            const recommend_bitrate = await this._request_recommend_bitrate(main_video);
+            if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
           })()
-        );
+        ]);
       }
       // --- save to storage --- //
       this._store_session(main_video);
@@ -249,11 +254,36 @@ export default class SessionData {
         })
       });
       if (!ret.ok) {
-        throw new Error("SodiumServer response was not ok.");
+        throw new Error("SodiumServer(qoe) response was not ok.");
       }
       const json = await ret.json();
       const qoe = Number.parseFloat(json.qoe);
       return Number.isNaN(qoe) ? null : qoe;
+    } catch (err) {
+      console.error(`VIDEOMARK: ${err}`);
+    }
+  }
+
+  async _request_recommend_bitrate(video) {
+    try {
+      const ret = await fetch(`${Config.get_sodium_server_url()}/recommend_bitrate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ids: {
+            session_id: this.session_id,
+            video_id: video.get_video_id()
+          }
+        })
+      });
+      if (!ret.ok) {
+        throw new Error("SodiumServer(tqapi) response was not ok.");
+      }
+      const json = await ret.json();
+      const recommendBitrate = Number.parseFloat(json.recommendBitrate);
+      return Number.isNaN(recommendBitrate) ? null : recommendBitrate;
     } catch (err) {
       console.error(`VIDEOMARK: ${err}`);
     }
