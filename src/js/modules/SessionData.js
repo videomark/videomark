@@ -194,7 +194,7 @@ export default class SessionData {
         // eslint-disable-next-line no-loop-func
         tasks.push(...[
           (async () => {
-            const qoe = await this._request_qoe(main_video);
+            qoe = await this._request_qoe(main_video);
             if (qoe)
               main_video.add_latest_qoe({
                 date: Date.now(),
