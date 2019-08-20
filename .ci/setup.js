@@ -18,6 +18,7 @@ module.exports = async () => {
   const extensionPath = await downloadExtension();
   process.env.LANG = "C";
   const browser = await puppeteer.launch({
+    executablePath: "/usr/bin/chromium-browser",
     args: [
       `--disable-extensions-except=${extensionPath}`,
       `--load-extension=${extensionPath}`
