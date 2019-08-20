@@ -54,9 +54,14 @@ export const allViewings = async () => {
     );
   }
   const obj = await new Promise(resolve => storage().get(resolve));
-  ["version", "index", "RemovedTargetKeys", "AgreedTerm"].forEach(
-    index => delete obj[index]
-  );
+  [
+    "version",
+    "index",
+    "session",
+    "settings",
+    "RemovedTargetKeys",
+    "AgreedTerm"
+  ].forEach(index => delete obj[index]);
   const entries = Object.entries(obj)
     .map(([id, { start_time: time }]) => [id, time])
     .sort(([, a], [, b]) => a - b)
