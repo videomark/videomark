@@ -184,9 +184,10 @@ class YouTubeTypeHandler {
         let unplayedBufferSize;
         try {
             const player = document.querySelector('#movie_player');
-            const received = Number.parseFloat(player.getVideoLoadedFraction()) * 1000;
+            const received = Number.parseFloat(player.getVideoLoadedFraction());
             const duration = Number.parseFloat(player.getDuration());
-            unplayedBufferSize = duration * received;
+            if (Number.isNaN(received) || Number.isNaN(duration)) throw new Error(`NaN`);
+            unplayedBufferSize = duration * received * 1000;
         } catch (e) {
             unplayedBufferSize = 0;
         }
