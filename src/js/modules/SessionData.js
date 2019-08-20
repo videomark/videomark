@@ -6,10 +6,10 @@ import msgpack from "msgpack-lite";
 import Config from "./Config";
 import VideoData from "./VideoData";
 import { useStorage } from "./Storage";
+import { version } from "../../../package.json";
 
 export default class SessionData {
-  constructor(id, version) {
-    this.session_id = id;
+  constructor() {
     this.version = version;
     this.startTime = 0;
     this.endTime = 0;
@@ -21,6 +21,14 @@ export default class SessionData {
     this.sequence = 0;
     this.video = [];
     this.latest_qoe_update_count = 0;
+  }
+
+  async init() {
+    this.session_id = uuidv4();
+    // eslint-disable-next-line no-console
+    console.log(
+      `VIDEOMARK: New Session start Session ID[${this.session_id}]`
+    );
   }
 
   get_session_id() {
