@@ -25,7 +25,7 @@ function video_search() {
   }
 }
 
-(() => {
+(async () => {
   // --- support --- //
   if (/*  !performance || */ !document || !window) {
     // eslint-disable-next-line no-console
@@ -58,7 +58,7 @@ function video_search() {
   );
 
   // --- YouTube Hook --- //
-  YouTubeTypeHandler.hook_loadVideoByPlayerVars();
+  await YouTubeTypeHandler.hook_loadVideoByPlayerVars();
 
   // --- video list --- //
   video_search();
