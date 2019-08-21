@@ -89,6 +89,24 @@ export default class Config {
   static get_max_count_for_qoe() {
     return this.max_count_for_qoe;
   }
+
+  static async get_default_session() {
+    if (window.sodium === undefined) return this.session;
+
+    const { session } = await new Promise(resolve =>
+      window.sodium.storage.local.get("session", resolve)
+    );
+    return session;
+  }
+
+  static async get_settings() {
+    if (window.sodium === undefined) return this.settings;
+
+    const { settings } = await new Promise(resolve =>
+      window.sodium.storage.local.get("settings", resolve)
+    );
+    return settings;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
@@ -211,3 +229,22 @@ Config.prev_count_for_qoe = 3; // 7000ms から 1000ms 毎に問い合わせ
 // 最新QoE値が取得できた場合、最大カウントまで到達したが値が取得できなかった場合、いずれかの場合であっても
 // 以降は latest_qoe_update * trans_interval * check_state_interval ms毎の問い合わせになる
 Config.max_count_for_qoe = 20; // 27000ms
+
+// content_scriptsによって書き込まれるオブジェクトのデシリアライズ
+if (window.sodium === undefined && document.currentScript != null) {
+  const session = new URLSearchParams(document.currentScript.dataset.session);
+  Config.session = {
+    id: session.get("id"),
+    expires: Number(session.get("expires"))
+  }
+
+  Config.settings = [
+    ...new URLSearchParams(document.currentScript.dataset.settings)
+  ].reduce(
+    (obj, [key, value]) =>
+      Object.assign(obj, {
+        [key]: Number(value)
+      }),
+    {}
+  );
+}

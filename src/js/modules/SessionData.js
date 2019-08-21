@@ -24,11 +24,36 @@ export default class SessionData {
   }
 
   async init() {
-    this.session_id = uuidv4();
+    const settings = await Config.get_settings();
+    let session = await Config.get_default_session();
+    if (
+      session === undefined ||
+      settings === undefined ||
+      !(Date.now() < session.expires)
+    ) {
+      const expiresIn =
+        settings === undefined ? NaN : Number(settings.expires_in);
+      session = {
+        id: uuidv4(),
+        expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
+      };
+      if (Config.is_mobile()) {
+        window.sodium.storage.local.set({ session });
+      } else {
+        window.postMessage(
+          {
+            type: "FROM_SODIUM_JS",
+            method: "set_session",
+            ...session
+          },
+          "*"
+        );
+      }
+    }
+
+    this.session_id = session.id;
     // eslint-disable-next-line no-console
-    console.log(
-      `VIDEOMARK: New Session start Session ID[${this.session_id}]`
-    );
+    console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
   }
 
   get_session_id() {
