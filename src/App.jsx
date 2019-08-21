@@ -1,8 +1,5 @@
 import React, { lazy, Suspense } from "react";
 import { Switch, Route } from "react-router-dom";
-import { createMuiTheme } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import style from "./App.module.css";
@@ -13,6 +10,7 @@ import AppDataActions from "./js/utils/AppDataActions";
 import { ViewingsProvider } from "./js/containers/ViewingsProvider";
 import { StatsDataProvider } from "./js/containers/StatsDataProvider";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
+import ThemeProvider from "./js/components/ThemeProvider";
 import Modal from "./js/components/Modal";
 import Header from "./js/containers/Header";
 
@@ -20,13 +18,6 @@ const Stats = lazy(() => import("./js/containers/Stats"));
 const History = lazy(() => import("./js/containers/History"));
 const Welcome = lazy(() => import("./js/components/Welcome"));
 const NotFound = lazy(() => import("./js/components/NotFound"));
-
-const theme = createMuiTheme({
-  palette: {
-    primary: { main: "#1c2d69" },
-    secondary: { main: "#d1101b" }
-  }
-});
 
 class App extends React.Component {
   constructor() {
@@ -65,8 +56,7 @@ class App extends React.Component {
     return (
       <ViewingsProvider>
         <StatsDataProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
+          <ThemeProvider>
             <MigrationDialog />
             <div className={style.qoe_log_view}>
               <Header />
