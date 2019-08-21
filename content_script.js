@@ -1,21 +1,19 @@
+const storage = {
+  get: keys => new Promise(resolve => chrome.storage.local.get(keys, resolve)),
+  set: items => new Promise(resolve => chrome.storage.local.set(items, resolve))
+};
+
 const state = {};
 const useId = async viewingId => {
   if (typeof state[viewingId] === "string" || Number.isFinite(state[viewingId]))
     return state[viewingId];
 
-  const { index } = await new Promise(resolve =>
-    chrome.storage.local.get("index", resolve)
-  );
+  const { index } = await storage.get("index");
   if (Array.isArray(index)) {
     const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
-    await new Promise(resolve =>
-      chrome.storage.local.set(
-        {
-          index: [...index, id]
-        },
-        resolve
-      )
-    );
+    await storage.set({
+      index: [...index, id]
+    });
     state[viewingId] = id;
   } else {
     state[viewingId] = viewingId;
@@ -23,13 +21,21 @@ const useId = async viewingId => {
   return state[viewingId];
 };
 
-const inject_script = opt => {
+const inject_script = async opt => {
   // --- inject script, to opt.target --- ///
   const target = document.getElementsByTagName(opt.target)[0];
 
   const script = document.createElement("script");
   script.setAttribute("type", "text/javascript");
   script.setAttribute("src", opt.script);
+
+  const { session, settings } = await storage.get(["session", "settings"]);
+  if (session !== undefined) {
+    script.dataset.session = new URLSearchParams({ ...session }).toString();
+  }
+  if (settings !== undefined) {
+    script.dataset.settings = new URLSearchParams({ ...settings }).toString();
+  }
 
   return target.appendChild(script);
 };
@@ -39,19 +45,29 @@ const message_listener = async event => {
     event.source !== window ||
     !event.data.type ||
     !event.data.method ||
-    event.data.type !== "FROM_SODIUM_JS" ||
-    event.data.method !== "set_video"
+    event.data.type !== "FROM_SODIUM_JS"
   )
     return;
 
-  if (!event.data.id || !event.data.video) return;
-  const id = await useId(event.data.id);
-  chrome.storage.local.set({
-    [id]: event.data.video
-  });
+  switch (event.data.method) {
+    case "set_session": {
+      const { id, expires } = event.data;
+      if (id == null || expires == null) return;
+      await storage.set({ session: { id, expires } });
+      break;
+    }
+    case "set_video": {
+      if (!event.data.id || !event.data.video) return;
+      const id = await useId(event.data.id);
+      await storage.set({
+        [id]: event.data.video
+      });
+      break;
+    }
+  }
 };
 
-chrome.storage.local.get("AgreedTerm", value => {
+storage.get("AgreedTerm").then(value => {
   if (!("AgreedTerm" in value)) {
     return;
   }
