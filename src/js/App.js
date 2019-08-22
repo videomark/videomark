@@ -1,31 +1,11 @@
 // eslint-disable-next-line import/no-unresolved
-import uuidv4 from "uuid/v4";
 import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
-import { version } from "../../package.json";
 
-// --- New Session --- //
-const session = new SessionData(uuidv4(), version);
-
-// --- UI --- //
-const ui = new UI(Config.get_ui_target());
-
-/**
- * video の検索と保持しているvideoの更新
- */
-function video_search() {
-  const video_elms = document.getElementsByTagName("video");
-  session.set_video_elms(video_elms);
-  // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-  if (!session.get_video_availability()) {
-    ui.remove_element();
-  }
-}
-
-(() => {
+(async () => {
   // --- support --- //
   if (/*  !performance || */ !document || !window) {
     // eslint-disable-next-line no-console
@@ -52,21 +32,25 @@ function video_search() {
   };
   */
 
-  // eslint-disable-next-line no-console
-  console.log(
-    `VIDEOMARK: New Session start Session ID[${session.get_session_id()}]`
-  );
+  // --- New Session --- //
+  const session = new SessionData();
+  await session.init();
+
+  // --- UI --- //
+  const ui = new UI(Config.get_ui_target());
 
   // --- YouTube Hook --- //
   YouTubeTypeHandler.hook_youtube();
 
-  // --- video list --- //
-  video_search();
-
   // --- update video list --- //
   window.setInterval(() => {
-    // --- update video list --- //
-    video_search();
+    // video の検索と保持しているvideoの更新
+    const elms = document.getElementsByTagName("video");
+    session.set_video_elms(elms);
+    // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
+    if (!session.get_video_availability()) {
+      ui.remove_element();
+    }
   }, Config.get_search_video_interval());
 
   // --- update latest qoe view element --- //
