@@ -29,6 +29,7 @@ class Viewing {
   async init() {
     if (this.sessionId === undefined && this.videoId === undefined)
       this.cache = await this.load();
+    // FIXME: this.cache が undefined のケースに対応する
     return this.id;
   }
 
