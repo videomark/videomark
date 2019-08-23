@@ -26,7 +26,9 @@ const List = styled(MuiList)({
 });
 
 const Header = () => {
-  const router = useRouter();
+  const { history } = useRouter();
+  const close =
+    history.length > 1 ? () => history.goBack() : () => window.close();
 
   return (
     <AppBar color="default">
@@ -46,7 +48,7 @@ const Header = () => {
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton color="primary" onClick={() => router.history.goBack()}>
+          <IconButton color="primary" onClick={close}>
             <Close color="action" />
           </IconButton>
         </Grid>
