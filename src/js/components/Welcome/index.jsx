@@ -8,7 +8,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
 import Button from "@material-ui/core/Button";
 import Input from "@material-ui/icons/Input";
-import { ReactComponent as AboutHelp } from "./about-help.svg";
+import { ReactComponent as Usage } from "./usage.svg";
 import { isWeb } from "../../utils/Utils";
 import videoPlatforms from "../../utils/videoPlatforms.json";
 import dino from "../../../images/dino.png";
@@ -32,8 +32,8 @@ const ImportButton = () => (
 export default () => (
   <>
     {isWeb() ? <ExperimentalSnackbar /> : null}
-    <Box position="fixed" top={48} right={24}>
-      <AboutHelp />
+    <Box position="fixed" top={48} right={14}>
+      <Usage />
     </Box>
     <Box paddingTop={8}>
       <Grid container justify="space-between">

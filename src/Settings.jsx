@@ -6,6 +6,8 @@ import Box from "@material-ui/core/Box";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Close from "@material-ui/icons/Close";
 import Paper from "@material-ui/core/Paper";
 import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -14,6 +16,7 @@ import Divider from "@material-ui/core/Divider";
 import uuidv4 from "uuid/v4";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
+import useRouter from "./js/utils/useRouter";
 import ThemeProvider from "./js/components/ThemeProvider";
 import { clearStore } from "./js/containers/StatsDataProvider";
 import { useSession, useSettings } from "./js/utils/ChromeExtensionWrapper";
@@ -22,23 +25,35 @@ const List = styled(MuiList)({
   padding: 0
 });
 
-const Header = () => (
-  <AppBar color="default">
-    <Box
-      height={48}
-      component={Grid}
-      container
-      alignItems="center"
-      justify="center"
-    >
-      <Grid item>
-        <Typography component="h1" variant="h6">
-          設定
-        </Typography>
-      </Grid>
-    </Box>
-  </AppBar>
-);
+const Header = () => {
+  const router = useRouter();
+
+  return (
+    <AppBar color="default">
+      <Box
+        height={48}
+        component={Grid}
+        container
+        alignItems="center"
+        justify="space-between"
+      >
+        <Grid item>
+          <Box paddingLeft={6} />
+        </Grid>
+        <Grid item>
+          <Typography component="h1" variant="h6">
+            設定
+          </Typography>
+        </Grid>
+        <Grid item>
+          <IconButton color="primary" onClick={() => router.history.goBack()}>
+            <Close color="action" />
+          </IconButton>
+        </Grid>
+      </Box>
+    </AppBar>
+  );
+};
 
 const PrivacySettings = ({ settings, session, saveSession }) => {
   const { expires_in: expiresIn } = settings === undefined ? {} : settings;

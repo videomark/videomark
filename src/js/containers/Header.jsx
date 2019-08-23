@@ -1,5 +1,4 @@
 import React from "react";
-import { withRouter } from "react-router";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
@@ -8,7 +7,9 @@ import Tabs from "@material-ui/core/Tabs";
 import MuiTab from "@material-ui/core/Tab";
 import IconButton from "@material-ui/core/IconButton";
 import Help from "@material-ui/icons/Help";
+import Settings from "@material-ui/icons/Settings";
 import { isMobile, isExtension } from "../utils/Utils";
+import useRouter from "../utils/useRouter";
 
 const helpUrl = (base => {
   if (isMobile()) return new URL("android", base);
@@ -24,9 +25,11 @@ const Tab = withStyles(theme => ({
     },
     fontSize: theme.typography.h6.fontSize
   }
-}))(props => <MuiTab {...props} />); // eslint-disable-line react/jsx-props-no-spreading
+}))(MuiTab);
 
-export default withRouter(({ history }) => {
+export default () => {
+  const router = useRouter();
+  const { history } = router;
   const links = [
     { path: "/", label: "計測結果" },
     { path: "/history", label: "履歴" }
@@ -40,7 +43,7 @@ export default withRouter(({ history }) => {
     <AppBar color="default">
       <Grid container alignItems="center" justify="space-between">
         <Grid item>
-          <Box paddingLeft={6} />
+          <Box paddingLeft={12} />
         </Grid>
         <Grid item>
           <Tabs
@@ -58,8 +61,14 @@ export default withRouter(({ history }) => {
           <IconButton color="primary" href={helpUrl}>
             <Help color="action" />
           </IconButton>
+          <IconButton
+            color="primary"
+            onClick={() => router.history.push("/settings")}
+          >
+            <Settings color="action" />
+          </IconButton>
         </Grid>
       </Grid>
     </AppBar>
   );
-});
+};
