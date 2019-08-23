@@ -56,6 +56,7 @@ const ViewingDetail = ({
         </div>
       </div>
       <div className={`${style.title} ${style.modalTitle}`}>{title}</div>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <VideoQuality {...quality} startTime={startTime} />
       <Box mt={2} px={1}>
         <QoEValueGraphList

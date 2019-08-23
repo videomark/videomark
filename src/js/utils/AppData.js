@@ -1,5 +1,6 @@
 // アプリケーションの全体データ
 // コールバックを指定をし、対象のデータが更新された時に全箇所に流す;
+/* eslint-disable max-classes-per-file */
 import AppDataActions from "./AppDataActions";
 
 class Data {

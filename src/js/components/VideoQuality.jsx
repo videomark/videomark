@@ -73,11 +73,13 @@ export const VideoQuality = ({
               ? "n/a"
               : `${(bitrate / 1e3).toLocaleString()} kbps`
           }
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.bitrate}
         />
         <DItem
           dt="解像度"
           dd={classes.resolution.na ? "n/a" : `${videoWidth} × ${videoHeight}`}
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.resolution}
         />
         <DItem
@@ -87,6 +89,7 @@ export const VideoQuality = ({
               ? "n/a"
               : `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`
           }
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.framerate}
         />
         <DItem
@@ -94,6 +97,7 @@ export const VideoQuality = ({
           dd={`${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(
             2
           )} % (${droppedVideoFrames} / ${totalVideoFrames})`}
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.dropped}
         />
         <DItem
@@ -106,6 +110,7 @@ export const VideoQuality = ({
                   100
                 ).toFixed(2)} % )`
           }
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.waiting}
         />
         <DItem
@@ -118,6 +123,7 @@ export const VideoQuality = ({
                   locale
                 })}`
           }
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.playing}
         />
       </Grid>

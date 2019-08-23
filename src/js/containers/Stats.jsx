@@ -223,6 +223,11 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
       ])
     )
   }));
+  const tooltip = ({ id, indexValue: qoe, value }) =>
+    `QoE ${qoe}${
+      qoe < 5 ? `以上${(Number(qoe) + 0.1).toFixed(1)}未満` : ""
+    }: ${value.toLocaleString()}件 (${id})`;
+
   return (
     <Box m={0} component="figure">
       <Typography
@@ -262,11 +267,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
                 itemHeight: 24
               }
             ]}
-            tooltip={({ id, indexValue: qoe, value }) =>
-              `QoE ${qoe}${
-                qoe < 5 ? `以上${(Number(qoe) + 0.1).toFixed(1)}未満` : ""
-              }: ${value.toLocaleString()}件 (${id})`
-            }
+            tooltip={tooltip}
           />
         </Box>
         <Box position="relative">

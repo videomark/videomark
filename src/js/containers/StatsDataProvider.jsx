@@ -266,7 +266,7 @@ export const StatsDataProvider = props => {
   }, [viewings, addData]);
   return (
     <StatsDataContext.Provider
-      {...props}
+      {...props} // eslint-disable-line react/jsx-props-no-spreading
       value={data === undefined ? {} : { streamDefer, ...data }}
     />
   );

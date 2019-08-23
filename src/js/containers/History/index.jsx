@@ -26,11 +26,6 @@ const regionalAverageQoE = new RegionalAverageQoE();
 const hourlyAverageQoE = new HourlyAverageQoE();
 
 class History extends Component {
-  static propTypes = {
-    indexes: PropTypes.arrayOf(PropTypes.instanceOf(Object)).isRequired,
-    viewingModels: PropTypes.instanceOf(Map).isRequired
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -115,6 +110,10 @@ class History extends Component {
     );
   }
 }
+History.propTypes = {
+  indexes: PropTypes.arrayOf(PropTypes.instanceOf(Object)).isRequired,
+  viewingModels: PropTypes.instanceOf(Map).isRequired
+};
 const initialState = {
   loading: true,
   indexes: [],

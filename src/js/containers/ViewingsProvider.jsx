@@ -17,6 +17,8 @@ export const ViewingsProvider = props => {
   useEffect(() => {
     main();
   }, [setViewings]);
+
+  // eslint-disable-next-line react/jsx-props-no-spreading
   return <ViewingsContext.Provider {...props} value={viewings} />;
 };
 export default ViewingsProvider;

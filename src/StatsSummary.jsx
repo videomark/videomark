@@ -245,6 +245,22 @@ const Stats = withStyles(theme => ({
     if (!internal) request(setResBody);
   }, []);
 
+  const styledColumns = [
+    ...(index ? [column.index] : []),
+    ...columns,
+    { title: "件数", field: "count", type: "numeric" },
+    { title: "QoE (平均)", field: "average", type: "numeric" }
+  ].map(c => ({
+    ...c,
+    headerStyle: { padding: 0 },
+    cellStyle: { padding: 0 }
+  }));
+  const formattedData = data.map((a, i) => ({
+    index: i + 1,
+    ...a,
+    average: Number(a.average).toFixed(2)
+  }));
+
   return (
     <Paper className={classes.root}>
       {resBody === undefined ? (
@@ -254,22 +270,9 @@ const Stats = withStyles(theme => ({
       ) : (
         <MaterialTable
           title={title}
-          columns={[
-            ...(index ? [column.index] : []),
-            ...columns,
-            { title: "件数", field: "count", type: "numeric" },
-            { title: "QoE (平均)", field: "average", type: "numeric" }
-          ].map(c => ({
-            ...c,
-            headerStyle: { padding: 0 },
-            cellStyle: { padding: 0 }
-          }))}
-          components={{ Container: props => <div {...props} /> }}
-          data={data.map((a, i) => ({
-            index: i + 1,
-            ...a,
-            average: Number(a.average).toFixed(2)
-          }))}
+          columns={styledColumns}
+          components={{ Container: props => <div {...props} /> }} // eslint-disable-line react/jsx-props-no-spreading
+          data={formattedData}
           options={{
             sorting: true,
             exportButton: internal,
@@ -402,6 +405,7 @@ export default () => {
             { type: "jp-subdivision", title: "地域" }
           ].map(stats => (
             <Grid key={stats.type} item xs={12} sm={6}>
+              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Stats {...stats} />
             </Grid>
           ))}
@@ -418,6 +422,7 @@ export default () => {
             { type: "service", title: "全体" }
           ].map(stats => (
             <Grid key={stats.type} item xs={12} sm>
+              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Stats {...stats} />
             </Grid>
           ))}
@@ -434,6 +439,7 @@ export default () => {
             { type: "isp", title: "全体" }
           ].map(stats => (
             <Grid key={stats.type} item xs={12} sm>
+              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Stats {...stats} />
             </Grid>
           ))}

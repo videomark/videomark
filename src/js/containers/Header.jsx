@@ -24,7 +24,7 @@ const Tab = withStyles(theme => ({
     },
     fontSize: theme.typography.h6.fontSize
   }
-}))(props => <MuiTab {...props} />);
+}))(props => <MuiTab {...props} />); // eslint-disable-line react/jsx-props-no-spreading
 
 export default withRouter(({ history }) => {
   const links = [

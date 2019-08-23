@@ -12,6 +12,7 @@ const ErrorSnackbar = props => {
   const classes = useStyles();
   return (
     <Snackbar doing={doing} onClose={onClose}>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <SnackbarContent className={classes.root} {...props} />
     </Snackbar>
   );

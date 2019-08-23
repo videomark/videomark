@@ -21,6 +21,7 @@ const SimplePage = ({ title, ...props }) => (
           トップに戻る
         </Button>
       </Grid>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <Grid item {...props} />
     </Grid>
   </Container>

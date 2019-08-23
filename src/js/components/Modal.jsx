@@ -9,6 +9,7 @@ class Modal extends React.Component {
     const { open, children, closeCallback } = this.props;
     return (
       <div className={classNames(style.modal, { [style.open]: open })}>
+        {/* eslint-disable jsx-a11y/control-has-associated-label */}
         <div
           className={style.modal_bg}
           onClick={() => closeCallback && closeCallback()}

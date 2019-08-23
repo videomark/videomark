@@ -18,6 +18,7 @@ export const storage = () => {
   };
   const get = (keyOrFunction, callback) => {
     if (keyOrFunction instanceof Function)
+      // eslint-disable-next-line prefer-object-spread
       return keyOrFunction(Object.assign({}, data));
     return callback({ [keyOrFunction]: data[keyOrFunction] });
   };
@@ -117,6 +118,7 @@ export const migration = async () => {
     if (obj instanceof Function) return;
     if (obj.log === undefined) {
       const { latest_qoe: log, ...tmp } = obj;
+      // eslint-disable-next-line prefer-object-spread
       Object.assign(tmp, { log });
       await new Promise(resolve => storage().set({ [i]: tmp }, resolve));
     } else {
