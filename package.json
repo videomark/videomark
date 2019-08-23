@@ -46,7 +46,6 @@
     "material-table": "^1.50.0",
     "material-ui-flat-pagination": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
-    "object.fromentries": "^2.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "p-iteration": "^1.1.8",
     "pnp-webpack-plugin": "^1.5.0",

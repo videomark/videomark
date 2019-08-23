@@ -1,4 +1,3 @@
-import fromEntries from "object.fromentries";
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router";
 import { withRouter, Link as RouterLink } from "react-router-dom";
@@ -19,9 +18,6 @@ import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import LoadingProgress from "../components/LoadingProgress";
-
-// FIXME: for chrome version < 73
-if (!Object.fromEntries) fromEntries.shim();
 
 const timeFormatFromMinutes = min =>
   `${
