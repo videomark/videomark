@@ -1,4 +1,5 @@
 import { forEach } from "p-iteration";
+import { useState, useEffect, useCallback } from "react";
 import { isMobile, isExtension, isWeb } from "../Utils";
 import data from "./EmbeddedData";
 
@@ -30,6 +31,24 @@ export const storage = () => {
     remove
   };
 };
+
+const useStorage = key => {
+  const [state, setState] = useState(undefined);
+
+  useEffect(() => {
+    storage().get(key, obj => setState(obj[key] === undefined ? {} : obj[key]));
+  }, [setState]);
+
+  const save = useCallback(
+    attributes =>
+      storage().set({ [key]: attributes }, () => setState(attributes)),
+    [setState]
+  );
+
+  return [state, save];
+};
+export const useSession = () => useStorage("session");
+export const useSettings = () => useStorage("settings");
 
 export const isCurrentVersion = async () => {
   const { version } = await new Promise(resolve =>
