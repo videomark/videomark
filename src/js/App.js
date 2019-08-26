@@ -40,7 +40,7 @@ import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
   const ui = new UI(Config.get_ui_target());
 
   // --- YouTube Hook --- //
-  YouTubeTypeHandler.hook_youtube();
+  await YouTubeTypeHandler.hook_youtube();
 
   // --- update video list --- //
   window.setInterval(() => {
