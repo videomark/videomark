@@ -107,6 +107,10 @@ export default class Config {
     );
     return settings;
   }
+
+  static is_quality_control() {
+    return Config.quality_control;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
@@ -229,6 +233,9 @@ Config.prev_count_for_qoe = 3; // 7000ms から 1000ms 毎に問い合わせ
 // 最新QoE値が取得できた場合、最大カウントまで到達したが値が取得できなかった場合、いずれかの場合であっても
 // 以降は latest_qoe_update * trans_interval * check_state_interval ms毎の問い合わせになる
 Config.max_count_for_qoe = 20; // 27000ms
+
+// QoE制御
+Config.quality_control = true;
 
 // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
 if (window.sodium === undefined && document.currentScript != null) {

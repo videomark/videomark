@@ -225,21 +225,20 @@ export default class SessionData {
       if (request) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
-        tasks.push(...[
-          (async () => {
-            qoe = await this._request_qoe(main_video);
-            if (qoe)
-              main_video.add_latest_qoe({
-                date: Date.now(),
-                qoe
-              });
-          })(),
-          // quality
-          (async () => {
+        tasks.push((async () => {
+          qoe = await this._request_qoe(main_video);
+          if (qoe)
+            main_video.add_latest_qoe({
+              date: Date.now(),
+              qoe
+            });
+        })());
+        if (Config.is_quality_control()) {
+          tasks.push((async () => {
             const recommend_bitrate = await this._request_recommend_bitrate(main_video);
             if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
-          })()
-        ]);
+          })());
+        }
       }
       // --- save to storage --- //
       this._store_session(main_video);

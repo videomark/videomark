@@ -73,10 +73,10 @@ class YouTubeTypeHandler {
         const { host } = new URL(location.href)
         if (!(host === "www.youtube.com" || host === "m.youtube.com")) return;
 
-        // --- XHR --- //
+        // --- XHR async --- //
         YouTubeTypeHandler.hook_youtube_xhr();
 
-        // --- PLayer --- //
+        // --- PLayer async --- //
         YouTubeTypeHandler.hook_youtube_player();
     }
 
