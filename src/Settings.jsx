@@ -14,6 +14,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import uuidv4 from "uuid/v4";
+import addYears from "date-fns/addYears";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
 import useRouter from "./js/utils/useRouter";
@@ -149,10 +150,44 @@ Reset.defaultProps = {
   resetSettings: undefined
 };
 
+const useOverwriteSessionId = ({
+  settings,
+  saveSettings,
+  session,
+  saveSession,
+  searchParam
+}) => {
+  const { location } = useRouter();
+  const searchParams = new URLSearchParams(location.search);
+  const sessionId = searchParams.get(searchParam);
+
+  if (
+    session === undefined ||
+    settings === undefined ||
+    sessionId == null ||
+    session.id === sessionId ||
+    !/^[a-z0-9]+$/.test(sessionId)
+  )
+    return;
+
+  const expiresIn = addYears(0, 10).getTime();
+
+  saveSettings({ expires_in: expiresIn });
+  saveSession({ id: sessionId, expires: Date.now() + expiresIn });
+};
+
 export default () => {
   const [settings, saveSettings] = useSettings();
   const [session, saveSession] = useSession();
   const resetSettings = () => saveSettings({});
+
+  useOverwriteSessionId({
+    settings,
+    saveSettings,
+    session,
+    saveSession,
+    searchParam: "session_id"
+  });
 
   return (
     <ThemeProvider>
