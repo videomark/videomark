@@ -1,10 +1,11 @@
 import { forEach } from "p-iteration";
 import { useState, useEffect, useCallback } from "react";
 import { isMobile, isExtension, isWeb } from "../Utils";
-import data from "./EmbeddedData";
+import EmbeddedData from "./EmbeddedData";
 
 export const VERSION = new Date("2019-07-18T00:00:00Z").getTime();
 
+let data = EmbeddedData;
 export const storage = () => {
   if (isMobile()) {
     return window.sodium.storage.local;
@@ -26,10 +27,15 @@ export const storage = () => {
     delete data[key];
     callback();
   };
+  const clear = (callback = () => {}) => {
+    data = {};
+    callback();
+  };
   return {
     set,
     get,
-    remove
+    remove,
+    clear
   };
 };
 
@@ -87,6 +93,27 @@ export const allViewings = async () => {
     .sort(([, a], [, b]) => a - b)
     .map(([id]) => [id, obj[id]]);
   return new Map(entries);
+};
+
+export const clearViewings = async () => {
+  const [
+    { version },
+    { session },
+    { settings },
+    { AgreedTerm }
+  ] = await Promise.all(
+    ["version", "session", "settings", "AgreedTerm"].map(
+      key => new Promise(resolve => storage().get(key, resolve))
+    )
+  );
+
+  await new Promise(resolve => storage().clear(resolve));
+  await new Promise(resolve =>
+    storage().set(
+      { version, index: [], session, settings, AgreedTerm },
+      resolve
+    )
+  );
 };
 
 let migrationLock;

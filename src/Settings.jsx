@@ -30,7 +30,11 @@ import {
   clearStore as clearStatsCache,
   getStoredIndex as getStatsCacheIndex
 } from "./js/containers/StatsDataProvider";
-import { useSession, useSettings } from "./js/utils/ChromeExtensionWrapper";
+import {
+  useSession,
+  useSettings,
+  clearViewings
+} from "./js/utils/ChromeExtensionWrapper";
 
 const List = styled(MuiList)({
   padding: 0
@@ -129,6 +133,21 @@ const useDialog = () => {
               onAgree={handler}
             />
           );
+        case "clearViewings":
+          return setDialog(
+            <Dialog
+              open
+              title="計測履歴を削除します"
+              description={[
+                "計測履歴と統計グラフのキャッシュを削除します。",
+                "ただし、サーバーに保存されているデータは残ります。"
+              ].join("")}
+              disagree="キャンセル"
+              agree="削除"
+              onClose={onClose}
+              onAgree={handler}
+            />
+          );
         case "clearStatsCache":
           return setDialog(
             <Dialog
@@ -181,6 +200,14 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
       ),
     [openDialog, saveSession, expiresIn]
   );
+  const openClearViewingsDialog = useCallback(
+    () =>
+      openDialog("clearViewings", () => {
+        clearStatsCache();
+        clearViewings();
+      }),
+    [openDialog]
+  );
   const openStatsCacheDialog = useCallback(
     () => openDialog("clearStatsCache", () => clearStatsCache()),
     [openDialog]
@@ -220,6 +247,11 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             disabled={sessionId === undefined}
           >
             <ListItemText primary="セッションIDのリセット" />
+            <ArrowRight />
+          </ListItem>
+          <Divider component="li" />
+          <ListItem button onClick={openClearViewingsDialog}>
+            <ListItemText primary="計測履歴の削除" />
             <ArrowRight />
           </ListItem>
           <Divider component="li" />
