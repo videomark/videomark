@@ -12,6 +12,7 @@ import Paper from "@material-ui/core/Paper";
 import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ArrowRight from "@material-ui/icons/ArrowRight";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import MuiDialog from "@material-ui/core/Dialog";
@@ -219,6 +220,7 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             disabled={sessionId === undefined}
           >
             <ListItemText primary="セッションIDのリセット" />
+            <ArrowRight />
           </ListItem>
           <Divider component="li" />
           <ListItem
@@ -227,6 +229,7 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             disabled={getStatsCacheIndex().size === 0}
           >
             <ListItemText primary="統計グラフのキャッシュを削除" />
+            <ArrowRight />
           </ListItem>
         </List>
       </Paper>
@@ -266,6 +269,7 @@ const Reset = ({ settings, resetSettings }) => {
             disabled={settings === undefined}
           >
             <ListItemText primary="初期設定に戻す" />
+            <ArrowRight />
           </ListItem>
         </List>
       </Paper>
