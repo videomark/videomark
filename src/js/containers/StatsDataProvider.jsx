@@ -99,7 +99,7 @@ const reducer = (data, chunk) => ({
 });
 const getStoredValue = () =>
   JSON.parse(localStorage.getItem("statsData")) || initialData;
-const getStoredIndex = () =>
+export const getStoredIndex = () =>
   new Set(JSON.parse(localStorage.getItem("statsDataIndex")) || []);
 const store = (index, chunk) => {
   const stored = getStoredValue();

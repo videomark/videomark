@@ -25,7 +25,10 @@ import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
 import useRouter from "./js/utils/useRouter";
 import ThemeProvider from "./js/components/ThemeProvider";
-import { clearStore } from "./js/containers/StatsDataProvider";
+import {
+  clearStore as clearStatsCache,
+  getStoredIndex as getStatsCacheIndex
+} from "./js/containers/StatsDataProvider";
 import { useSession, useSettings } from "./js/utils/ChromeExtensionWrapper";
 
 const List = styled(MuiList)({
@@ -178,7 +181,7 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
     [openDialog, saveSession, expiresIn]
   );
   const openStatsCacheDialog = useCallback(
-    () => openDialog("clearStatsCache", () => clearStore()),
+    () => openDialog("clearStatsCache", () => clearStatsCache()),
     [openDialog]
   );
 
@@ -218,7 +221,11 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             <ListItemText primary="セッションIDのリセット" />
           </ListItem>
           <Divider component="li" />
-          <ListItem button onClick={openStatsCacheDialog}>
+          <ListItem
+            button
+            onClick={openStatsCacheDialog}
+            disabled={getStatsCacheIndex().size === 0}
+          >
             <ListItemText primary="統計グラフのキャッシュを削除" />
           </ListItem>
         </List>
@@ -306,7 +313,7 @@ export default () => {
   const resetSettings = useCallback(() => {
     saveSettings({});
     saveSession({});
-    clearStore();
+    clearStatsCache();
   }, [saveSettings, saveSession]);
 
   useOverwriteSessionId({
