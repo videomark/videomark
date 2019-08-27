@@ -141,8 +141,12 @@ const useDialog = () => {
           return setDialog(
             <Dialog
               open
-              title="初期設定に戻します"
-              description="変更した設定を最初の状態に戻します。"
+              title="設定のリセット"
+              description={[
+                "セッションIDを削除し、設定を既定値にリセットします。",
+                "統計グラフのキャッシュを削除します。",
+                "ただし、計測結果とその履歴はそのまま残ります。"
+              ].join("")}
               disagree="キャンセル"
               agree="リセット"
               onClose={onClose}
@@ -206,7 +210,11 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             />
           </ListItem>
           <Divider component="li" />
-          <ListItem button onClick={openResetSessionDialog}>
+          <ListItem
+            button
+            onClick={openResetSessionDialog}
+            disabled={sessionId === undefined}
+          >
             <ListItemText primary="セッションIDのリセット" />
           </ListItem>
           <Divider component="li" />
@@ -248,9 +256,7 @@ const Reset = ({ settings, resetSettings }) => {
           <ListItem
             button
             onClick={openResetSettingsDialog}
-            disabled={
-              settings === undefined || Object.keys(settings).length === 0
-            }
+            disabled={settings === undefined}
           >
             <ListItemText primary="初期設定に戻す" />
           </ListItem>
@@ -297,7 +303,11 @@ const useOverwriteSessionId = ({
 export default () => {
   const [settings, saveSettings] = useSettings();
   const [session, saveSession] = useSession();
-  const resetSettings = () => saveSettings({});
+  const resetSettings = useCallback(() => {
+    saveSettings({});
+    saveSession({});
+    clearStore();
+  }, [saveSettings, saveSession]);
 
   useOverwriteSessionId({
     settings,
