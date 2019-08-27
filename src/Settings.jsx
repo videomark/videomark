@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { styled } from "@material-ui/styles";
 import Container from "@material-ui/core/Container";
@@ -13,6 +13,12 @@ import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
+import MuiDialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import uuidv4 from "uuid/v4";
 import addYears from "date-fns/addYears";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
@@ -58,14 +64,119 @@ const Header = () => {
   );
 };
 
+const Dialog = ({
+  title,
+  description,
+  disagree,
+  agree,
+  open,
+  onClose,
+  onAgree
+}) => (
+  <MuiDialog open={open} onClose={onClose}>
+    <DialogTitle>{title}</DialogTitle>
+    <DialogContent>
+      <DialogContentText>{description}</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose} color="primary">
+        {disagree}
+      </Button>
+      <Button
+        onClick={(...args) => {
+          onAgree(...args);
+          onClose(...args);
+        }}
+        color="secondary"
+        autoFocus
+      >
+        {agree}
+      </Button>
+    </DialogActions>
+  </MuiDialog>
+);
+Dialog.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  disagree: PropTypes.string.isRequired,
+  agree: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onAgree: PropTypes.func.isRequired
+};
+
+const useDialog = () => {
+  const [dialog, setDialog] = useState(null);
+  const openDialog = useCallback(
+    (type, handler) => {
+      const onClose = () => {
+        setDialog(null);
+      };
+      switch (type) {
+        case "resetSession":
+          return setDialog(
+            <Dialog
+              open
+              title="セッションIDをリセットします"
+              description="現在使われているセッションIDを削除し、新しいセッションIDを生成します。"
+              disagree="キャンセル"
+              agree="リセット"
+              onClose={onClose}
+              onAgree={handler}
+            />
+          );
+        case "clearStatsCache":
+          return setDialog(
+            <Dialog
+              open
+              title="統計グラフのキャッシュを削除します"
+              description="統計グラフのパフォーマンス改善のために使用されている一時データを削除します。"
+              disagree="キャンセル"
+              agree="削除"
+              onClose={onClose}
+              onAgree={handler}
+            />
+          );
+        case "resetSettings":
+          return setDialog(
+            <Dialog
+              open
+              title="初期設定に戻します"
+              description="変更した設定を最初の状態に戻します。"
+              disagree="キャンセル"
+              agree="リセット"
+              onClose={onClose}
+              onAgree={handler}
+            />
+          );
+        default:
+          return setDialog(null);
+      }
+    },
+    [setDialog]
+  );
+
+  return [dialog, openDialog];
+};
+
 const PrivacySettings = ({ settings, session, saveSession }) => {
   const { expires_in: expiresIn } = settings === undefined ? {} : settings;
   const { id: sessionId } = session === undefined ? { id: "..." } : session;
-  const resetSession = () =>
-    saveSession({
-      id: uuidv4(),
-      expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
-    });
+  const [dialog, openDialog] = useDialog();
+  const openResetSessionDialog = useCallback(
+    () =>
+      openDialog("resetSession", () =>
+        saveSession({
+          id: uuidv4(),
+          expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
+        })
+      ),
+    [openDialog, saveSession, expiresIn]
+  );
+  const openStatsCacheDialog = useCallback(
+    () => openDialog("clearStatsCache", () => clearStore()),
+    [openDialog]
+  );
 
   return (
     <Box marginY={4}>
@@ -75,6 +186,7 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
         </Typography>
       </Box>
       <Paper>
+        {dialog}
         <List>
           <ListItem>
             <ListItemText
@@ -94,11 +206,11 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             />
           </ListItem>
           <Divider component="li" />
-          <ListItem button onClick={resetSession}>
+          <ListItem button onClick={openResetSessionDialog}>
             <ListItemText primary="セッションIDのリセット" />
           </ListItem>
           <Divider component="li" />
-          <ListItem button onClick={() => clearStore()}>
+          <ListItem button onClick={openStatsCacheDialog}>
             <ListItemText primary="統計グラフのキャッシュを削除" />
           </ListItem>
         </List>
@@ -118,6 +230,11 @@ PrivacySettings.defaultProps = {
 };
 
 const Reset = ({ settings, resetSettings }) => {
+  const [dialog, openDialog] = useDialog();
+  const openResetSettingsDialog = useCallback(
+    () => openDialog("resetSettings", () => resetSettings()),
+    [openDialog]
+  );
   return (
     <Box marginY={4}>
       <Box marginY={1}>
@@ -126,12 +243,13 @@ const Reset = ({ settings, resetSettings }) => {
         </Typography>
       </Box>
       <Paper>
+        {dialog}
         <List>
           <ListItem
             button
-            onClick={resetSettings}
+            onClick={openResetSettingsDialog}
             disabled={
-              settings === undefined ? true : Object.keys(settings).length === 0
+              settings === undefined || Object.keys(settings).length === 0
             }
           >
             <ListItemText primary="初期設定に戻す" />
