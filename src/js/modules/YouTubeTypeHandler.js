@@ -591,9 +591,11 @@ class YouTubeTypeHandler {
                 .find(e => Number.parseInt(e.bitrate, 10) === bitrate);
             // const quality = YouTubeTypeHandler.qualityLabelTable[quality_label.replace(/[^0-9^\\.]/g, "")];
             const quality = YouTubeTypeHandler.qualityLabelTable[/\d+/.exec(quality_label)[0]];
-            // eslint-disable-next-line camelcase, no-console
-            console.log(`VIDEOMARK: Playback quality [quality:${quality_label}(${quality}), bitrate:${bitrate}, itag:${itag}, type:${type}, size:${size}]`);
-            this.player.setPlaybackQualityRange(quality, quality);
+            if (quality) {
+                // eslint-disable-next-line camelcase, no-console
+                console.log(`VIDEOMARK: Playback quality [quality:${quality_label}(${quality}), bitrate:${bitrate}, itag:${itag}, type:${type}, size:${size}]`);
+                this.player.setPlaybackQualityRange(quality, quality);
+            }
         } catch (e) {
             // 
         }
