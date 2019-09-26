@@ -1,6 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import { Redirect } from "react-router";
-import { withRouter, Link as RouterLink } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -280,18 +279,21 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
     </Box>
   );
 });
-const DeferLoadSnackbar = withRouter(({ location }) => {
+const DeferLoadSnackbar = () => {
   const [open, setOpen] = useState(true);
   const { streamDefer } = useContext(StatsDataContext);
-  if (streamDefer === undefined) return null;
-  if (new URLSearchParams(location.search).has("all")) {
+  const onClose = useCallback(() => setOpen(false), [setOpen]);
+  const onClick = useCallback(() => {
     streamDefer.resolve();
-    return null;
-  }
-  const onClose = () => setOpen(false);
+    onClose();
+  }, [streamDefer, onClose]);
+
+  if (streamDefer == null) return null;
+
   const message = "計測件数が多いため、最近の結果のみ表示しています。";
   const action = (
-    <Link component={RouterLink} to={{ search: "all" }} color="inherit">
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid
+    <Link component="button" onClick={onClick} color="inherit">
       全ての計測結果を解析する...
     </Link>
   );
@@ -300,7 +302,7 @@ const DeferLoadSnackbar = withRouter(({ location }) => {
       <SnackbarContent message={message} action={action} />
     </Snackbar>
   );
-});
+};
 
 export default () => {
   const viewings = useContext(ViewingsContext);
