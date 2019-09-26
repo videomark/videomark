@@ -1,4 +1,42 @@
 export default class ParaviTypeHandler {
+    // eslint-disable-next-line camelcase
+    static is_paravi_type() {
+        try {
+            if (videojs &&
+                videojs.getAllPlayers instanceof Function &&
+                videojs.getAllPlayers().length !== 0 &&
+                videojs.getAllPlayers()[0].dash &&
+                videojs.getAllPlayers()[0].dash.shakaPlayer &&
+                videojs.getAllPlayers()[0].bufferedEnd instanceof Function &&
+                videojs.getAllPlayers()[0].duration instanceof Function &&
+                videojs.getAllPlayers()[0].currentTime instanceof Function &&
+                videojs.getAllPlayers()[0].dash.shakaPlayer.getStats instanceof Function &&
+                videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks instanceof Function &&
+                videojs.getAllPlayers()[0].dash.shakaPlayer.getMediaElement instanceof Function)
+                return true;
+
+            return false;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // eslint-disable-next-line camelcase
+    static get_play_list_info() {
+        /* TODO
+        const formats = videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks();
+        return formats
+            .map(e => ({
+                representationId: e.id,
+                bps: e.videoBandwidth,
+                videoWidth: e.width,
+                videoHeight: e.height,
+                fps: e.frameRate,
+                chunkDuration: YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION,
+                serverIp: new URL(e.url).host
+            }))
+        */
+    }
 
     // eslint-disable-next-line camelcase
     static get_duration() {
@@ -56,44 +94,5 @@ export default class ParaviTypeHandler {
     // eslint-disable-next-line camelcase, no-unused-vars
     static get_current_time(video) {    // TVerのインターフェースと合わせる
         return videojs.getAllPlayers()[0].currentTime();
-    }
-
-    // eslint-disable-next-line camelcase
-    static get_play_list_info() {
-        /* TODO
-        const formats = videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks();
-        return formats
-            .map(e => ({
-                representationId: e.id,
-                bps: e.videoBandwidth,
-                videoWidth: e.width,
-                videoHeight: e.height,
-                fps: e.frameRate,
-                chunkDuration: YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION,
-                serverIp: new URL(e.url).host
-            }))
-        */
-    }
-
-    // eslint-disable-next-line camelcase
-    static is_paravi_type() {
-        try {
-            if (videojs &&
-                videojs.getAllPlayers instanceof Function &&
-                videojs.getAllPlayers().length !== 0 &&
-                videojs.getAllPlayers()[0].dash &&
-                videojs.getAllPlayers()[0].dash.shakaPlayer &&
-                videojs.getAllPlayers()[0].bufferedEnd instanceof Function &&
-                videojs.getAllPlayers()[0].duration instanceof Function &&
-                videojs.getAllPlayers()[0].currentTime instanceof Function &&
-                videojs.getAllPlayers()[0].dash.shakaPlayer.getStats instanceof Function &&
-                videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks instanceof Function &&
-                videojs.getAllPlayers()[0].dash.shakaPlayer.getMediaElement instanceof Function)
-                return true;
-
-            return false;
-        } catch (e) {
-            return false;
-        }
     }
 }
