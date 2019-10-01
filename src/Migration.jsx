@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -46,7 +45,7 @@ export const MigrationDialog = () => {
   );
 };
 
-export default withRouter(() => {
+export default () => {
   const [open, setOpen] = useState(null);
   const onClick = () => setOpen(true);
 
@@ -58,4 +57,4 @@ export default withRouter(() => {
       {open && <MigrationDialog />}
     </SimplePage>
   );
-});
+};
