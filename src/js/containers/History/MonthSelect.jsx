@@ -7,22 +7,24 @@ import {
   isThisMonth
 } from "date-fns";
 import ja from "date-fns/locale/ja";
+import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
-import { withStyles } from "@material-ui/core/styles";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
 
-const MonthSelect = withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   date: {
     ...theme.typography.subtitle1,
     margin: 0,
     lineHeight: 1,
     display: "inline"
   }
-}))(({ classes }) => {
+}));
+const MonthSelect = () => {
+  const classes = useStyles();
   const [date, setDate] = useState(startOfMonth(new Date()));
   const handleLastMonth = () => {
     setDate(subMonths(date, 1));
@@ -58,5 +60,5 @@ const MonthSelect = withStyles(theme => ({
       </Grid>
     </Grid>
   );
-});
+};
 export default MonthSelect;

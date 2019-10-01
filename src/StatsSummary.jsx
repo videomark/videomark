@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
@@ -9,7 +10,6 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { withStyles } from "@material-ui/core/styles";
 import Clear from "@material-ui/icons/Clear";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
@@ -25,14 +25,16 @@ import Subdivision from "./js/utils/Subdivision";
 import videoPlatforms from "./js/utils/videoPlatforms.json";
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 
-const Stats = withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(2)
   },
   code: {
     fontSize: 12
   }
-}))(({ classes, title, type }) => {
+}));
+const Stats = ({ title, type }) => {
+  const classes = useStyles();
   const baseUrl = new URL("https://sodium.webdino.org:8443/");
   const days = "日月火水木金土";
   const daysOrder = ({ day: a }, { day: b }) =>
@@ -370,7 +372,7 @@ const Stats = withStyles(theme => ({
       </Grid>
     </Paper>
   );
-});
+};
 Stats.propTypes = {
   title: PropTypes.string.isRequired,
   type: PropTypes.oneOf([
