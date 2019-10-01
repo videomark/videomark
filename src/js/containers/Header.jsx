@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
@@ -9,7 +10,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Help from "@material-ui/icons/Help";
 import Settings from "@material-ui/icons/Settings";
 import { isMobile, isExtension } from "../utils/Utils";
-import useRouter from "../utils/useRouter";
 
 const helpUrl = (base => {
   if (isMobile()) return new URL("android", base);
@@ -28,8 +28,7 @@ const Tab = withStyles(theme => ({
 }))(MuiTab);
 
 export default () => {
-  const router = useRouter();
-  const { history } = router;
+  const history = useHistory();
   const links = [
     { path: "/", label: "計測結果" },
     { path: "/history", label: "履歴" }
@@ -61,10 +60,7 @@ export default () => {
           <IconButton color="primary" href={helpUrl}>
             <Help color="action" />
           </IconButton>
-          <IconButton
-            color="primary"
-            onClick={() => router.history.push("/settings")}
-          >
+          <IconButton color="primary" onClick={() => history.push("/settings")}>
             <Settings color="action" />
           </IconButton>
         </Grid>

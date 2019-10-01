@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
+import { useHistory, useLocation } from "react-router";
 import { styled } from "@material-ui/styles";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
@@ -24,7 +25,6 @@ import uuidv4 from "uuid/v4";
 import addYears from "date-fns/addYears";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
-import useRouter from "./js/utils/useRouter";
 import ThemeProvider from "./js/components/ThemeProvider";
 import {
   clearStore as clearStatsCache,
@@ -41,7 +41,7 @@ const List = styled(MuiList)({
 });
 
 const Header = () => {
-  const { history } = useRouter();
+  const history = useHistory();
   const close =
     history.length > 1 ? () => history.goBack() : () => window.close();
 
@@ -324,7 +324,7 @@ const useOverwriteSessionId = ({
   saveSession,
   searchParam
 }) => {
-  const { location } = useRouter();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const sessionId = searchParams.get(searchParam);
 
