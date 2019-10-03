@@ -21,22 +21,27 @@ export default class VideoHandler {
         }
     }
 
+    // eslint-disable-next-line camelcase
     get_duration() {
         return this.handler.get_duration();
     }
 
+    // eslint-disable-next-line camelcase
     get_video_width() {
         return this.handler.get_video_width();
     }
 
+    // eslint-disable-next-line camelcase
     get_video_height() {
         return this.handler.get_video_height();
     }
 
+    // eslint-disable-next-line camelcase
     get_bitrate() {
         return this.handler.get_bitrate();
     }
 
+    // eslint-disable-next-line camelcase
     get_video_bitrate() {
         let videoBitrate = -1;
 
@@ -46,14 +51,17 @@ export default class VideoHandler {
         return videoBitrate;
     }
 
+    // eslint-disable-next-line camelcase
     get_receive_buffer() {
         return this.handler.get_receive_buffer();
     }
 
+    // eslint-disable-next-line camelcase
     get_framerate() {
         return this.handler.get_framerate();
     }
 
+    // eslint-disable-next-line camelcase
     get_segment_domain() {
         return this.handler.get_segment_domain();
     }
@@ -62,10 +70,12 @@ export default class VideoHandler {
      * 現在の再生位置
      * @param {HTMLElement} video 
      */
+    // eslint-disable-next-line camelcase
     get_current_time(video) {
         return this.handler.get_current_time(video);
     }
 
+    // eslint-disable-next-line camelcase
     get_video_title() {
         let title;
 
@@ -96,6 +106,7 @@ export default class VideoHandler {
         return title;
     }
 
+    // eslint-disable-next-line camelcase
     get_video_thumbnail() {
         let thumbnail;
 
@@ -109,6 +120,7 @@ export default class VideoHandler {
         return thumbnail;
     }
 
+    // eslint-disable-next-line camelcase
     get_id_by_video_holder() {
         let id_by_video_holder;
 
@@ -118,6 +130,7 @@ export default class VideoHandler {
         return id_by_video_holder;
     }
 
+    // eslint-disable-next-line camelcase
     get_view_count() {
         let view_count = -1;
 
@@ -127,41 +140,51 @@ export default class VideoHandler {
         return view_count;
     }
 
+    // eslint-disable-next-line camelcase
     get_play_list_info() {
         let list = [];
 
+        if (this.handler === ParaviTypeHandler)
+            list = ParaviTypeHandler.get_play_list_info();
         if (this.handler instanceof YouTubeTypeHandler)
             list = YouTubeTypeHandler.get_play_list_info();
 
         return list;
     }
 
+    // eslint-disable-next-line camelcase
     get_throughput_info() {
         let list = [];
 
-        if (this.handler instanceof YouTubeTypeHandler)
+        if (this.handler === ParaviTypeHandler)
+            list = ParaviTypeHandler.get_throughput_info();
+        else if (this.handler instanceof YouTubeTypeHandler)
             list = YouTubeTypeHandler.get_throughput_info();
 
         return list;
     }
 
+    // eslint-disable-next-line camelcase
     is_main_video(video) {
         if (this.handler.is_main_video instanceof Function)
             return this.handler.is_main_video(video);
         return true;
     }
 
+    // eslint-disable-next-line camelcase
     is_cm(video) {
         if (this.handler.is_cm instanceof Function)
             return this.handler.is_cm(video);
         return false;
     }
 
+    // eslint-disable-next-line camelcase
     set_quality(bitrate) {
         if (this.handler.set_quality instanceof Function)
             return this.handler.set_quality(bitrate);
     }
 
+    // eslint-disable-next-line camelcase
     add_cm_listener(listener) {
         if (this.handler.add_cm_listener instanceof Function)
             this.handler.add_cm_listener(listener);
