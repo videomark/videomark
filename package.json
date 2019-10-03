@@ -6,6 +6,7 @@
   "license": "ISC",
   "dependencies": {
     "lit-html": "^1.0.0",
+    "mpd-parser": "^0.8.1",
     "msgpack-lite": "^0.1.26",
     "uuid": "^3.3.2"
   },
