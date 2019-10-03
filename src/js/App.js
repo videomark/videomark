@@ -4,6 +4,7 @@ import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
+import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 
 (async () => {
   // --- support --- //
@@ -41,6 +42,9 @@ import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 
   // --- YouTube Hook --- //
   await YouTubeTypeHandler.hook_youtube();
+
+  // --- Paravi Hook --- //
+  await ParaviTypeHandler.hook_paravi();
 
   // --- update video list --- //
   window.setInterval(() => {
