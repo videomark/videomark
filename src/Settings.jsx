@@ -332,8 +332,7 @@ const useOverwriteSessionId = ({
     session === undefined ||
     settings === undefined ||
     sessionId == null ||
-    session.id === sessionId ||
-    !/^[a-z0-9]+$/.test(sessionId)
+    session.id === sessionId
   )
     return;
 
