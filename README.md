@@ -47,6 +47,16 @@ develop モードで確認をする場合、[Chrome Extension の README に記�
 
 # 開発者向け機能
 
+## ルーティング一覧
+
+| エンドポイント          | 説明                   |
+| ----------------------- | ---------------------- |
+| `index.html#/stats`     | 統計                   |
+| `index.html#/import`    | 計測結果のインポート   |
+| `index.html#/export`    | 計測結果のエクスポート |
+| `index.html#/migration` | 最新のデータ形式に移行 |
+| `index.html#/rollback`  | 以前のデータ形式に戻す |
+
 ## 計測時のセッション ID の変更
 
 `index.html#/settings?session_id={セッション ID}` にアクセスすると指定したセッション ID に設定される。
