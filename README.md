@@ -44,3 +44,10 @@ develop モードでアプリケーションの起動をする。
 
 ブラウザのストレージに存在するデータをロードして画面を構築するため開発モードで実行するとデータのロードが行えず、空データの時と同じ挙動をする。
 develop モードで確認をする場合、[Chrome Extension の README に記載の手順](https://github.com/videomark/videomark-extension/) でエクスポートしたストレージデータを [EmbeddedData.js](https://github.com/videomark/videomark-log-view/blob/master/src/js/utils/ChromeExtensionWrapper/EmbeddedData.js) に埋め込めば確認が可能。
+
+# 開発者向け機能
+
+## 計測時のセッション ID の変更
+
+`index.html#/settings?session_id={セッション ID}` にアクセスすると指定したセッション ID に設定される。
+この時設定されるデフォルトの有効期限は 10 年間。
