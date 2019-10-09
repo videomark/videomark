@@ -336,6 +336,8 @@ const useOverwriteSessionId = ({
   )
     return;
 
+  // TODO: https://github.com/webdino/sodium/issues/233
+  // NOTE: オーバーフロー無く十分に長い適当な期間
   const expiresIn = addYears(0, 10).getTime();
 
   saveSettings({ expires_in: expiresIn });
