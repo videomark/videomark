@@ -10,6 +10,8 @@ Web VideoMark プロジェクトの紹介、ツールのダウンロード、使
   - QoE 値集計を行う node アプリケーション
 - [fluentd-config](https://github.com/videomark/fluentd-config)
   - fluentd の設定ファイルなど
+- [sodium-bot](https://github.com/videomark/sodium-bot)
+  - 動画配信サービスの視聴品質の自動計測のためのスクリプト
 - [sodium.js](https://github.com/videomark/sodium.js) [![Netlify Status](https://api.netlify.com/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.com/sites/sodium-js/deploys)
   - 動画配信サービス利用時に計測を行うためのコンテンツスクリプト
 - [videomark-browser](https://github.com/videomark/videomark-browser)
