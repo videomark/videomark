@@ -1,0 +1,26 @@
+{
+  "name": "videomark-mini-stats",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "module": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/videomark/videomark-log-view.git",
+    "directory": "packages/videomark-mini-stats"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "react": "~16"
+  },
+  "devDependencies": {
+    "@types/react": "~16",
+    "@types/react-dom": "~16",
+    "react-dom": "~16",
+    "typescript": "~3.6"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "parcel demo/index.html"
+  }
+}

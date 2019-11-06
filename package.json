@@ -137,5 +137,8 @@
     "presets": [
       "react-app"
     ]
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
