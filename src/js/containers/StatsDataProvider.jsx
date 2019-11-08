@@ -79,7 +79,9 @@ const reducer = (data, chunk) => ({
     sum: chunk.qoeStats.sum + data.qoeStats.sum,
     count: chunk.qoeStats.count + data.qoeStats.count
   },
-  qoeTimeline: [...chunk.qoeTimeline, ...data.qoeTimeline],
+  qoeTimeline: [...chunk.qoeTimeline, ...data.qoeTimeline].sort(
+    ({ time: a }, { time: b }) => (a < b ? -1 : +1)
+  ),
   qoeFrequency: Object.entries(data.qoeFrequency).reduce(
     (obj, [qoe, stats]) => {
       const pastStats = chunk.qoeFrequency[qoe] || {};
