@@ -235,7 +235,7 @@ Config.prev_count_for_qoe = 3; // 7000ms から 1000ms 毎に問い合わせ
 Config.max_count_for_qoe = 20; // 27000ms
 
 // QoE制御
-Config.quality_control = true;
+Config.quality_control = false;
 
 // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
 if (window.sodium === undefined && document.currentScript != null) {
