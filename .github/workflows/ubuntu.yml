@@ -8,6 +8,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: sudo apt-get install fonts-noto-cjk chromium-browser
+      - run: sudo apt-get install xvfb fonts-noto-cjk chromium-browser
       - run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=yes npm --prefix .ci install
-      - run: npm --prefix .ci test
+      - run: xvfb-run npm --prefix .ci test
