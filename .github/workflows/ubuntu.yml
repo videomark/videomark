@@ -13,4 +13,4 @@ jobs:
       - run: npm --prefix .ci install
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
-      - run: npm --prefix .ci test
+      - run: xvfb-run npm --prefix .ci test
