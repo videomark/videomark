@@ -1,0 +1,13 @@
+name: ubuntu
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: sudo apt-get install fonts-noto-cjk chromium-browser
+      - run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=yes npm --prefix .ci install
+      - run: npm --prefix .ci test
