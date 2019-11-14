@@ -56,9 +56,13 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-const chunkhash   = process.env.PUBLIC_URL ? ".[chunkhash:8]"   : "";
-const mediahash   = process.env.PUBLIC_URL ? ".[hash:8]"        : "";
-const contenthash = process.env.PUBLIC_URL ? ".[contenthash:8]" : "";
+const isExtension = Boolean(process.env.PUBLIC_URL);
+const chunkhash   = isExtension ? ".[chunkhash:8]"   : "";
+const mediahash   = isExtension ? ".[hash:8]"        : "";
+const contenthash = isExtension ? ".[contenthash:8]" : "";
+const url_loader_options = isExtension ?
+  {name: `static/media/[name]${mediahash}.[ext]`, limit: 10000}:
+  {name: `static/media/[name]${mediahash}.[ext]`};
 
 // common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -204,7 +208,7 @@ module.exports = {
     },
     // Keep the runtime chunk seperated to enable long term caching
     // https://twitter.com/wSokra/status/969679223278505985
-    runtimeChunk: true
+    runtimeChunk: isExtension
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -280,10 +284,7 @@ module.exports = {
           {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
             loader: require.resolve("url-loader"),
-            options: {
-              limit: 10000,
-              name: `static/media/[name]${mediahash}.[ext]`
-            }
+            options: url_loader_options
           },
           // Process application JS with Babel.
           // The preset includes JSX, Flow, TypeScript and some ESnext features.
@@ -429,7 +430,7 @@ module.exports = {
     ]
   },
   plugins: [
-    !process.env.PUBLIC_URL && new webpack.optimize.LimitChunkCountPlugin({
+    !isExtension && new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
     }),
     new SriPlugin({
