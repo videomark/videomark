@@ -361,7 +361,7 @@ export default class SessionData {
     this.endTime = performance.now();
     this.sequence += 1;
 
-    return {
+    let param = {
       version: this.version,
       date: new Date().toISOString(),
       startTime: this.startTime,
@@ -369,11 +369,24 @@ export default class SessionData {
       session: this.session_id,
       location: window.location.href,
       userAgent: this.userAgent,
-      appVersion: this.appVersion,
       sequence: this.sequence,
       video: [video.get()],
       resource_timing: []
     };
+
+    let netinfo = {};
+    ["downlink", "downlinkMax", "effectiveType", "rtt", "type", "apn", "plmn", "sim"].forEach(e => {
+      if (navigator.connection[e] === Infinity) {
+        netinfo[e] = Number.MAX_VALUE;
+      } else if (navigator.connection[e] === -Infinity) {
+        netinfo[e] = Number.MIN_VALUE;
+      } else {
+        netinfo[e] = navigator.connection[e];
+      }
+    });
+    param["netinfo"] = netinfo;
+
+    return param;
   }
 
   static event_wait(elm, type, ms) {

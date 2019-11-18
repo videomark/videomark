@@ -249,17 +249,10 @@ export default class VideoData {
    *
    */
   get() {
-    const id_str = this.video_elm.getAttribute("id");
-    const id_val = id_str && id_str.length !== 0 ? id_str : "";
-    const class_val = Array.from(this.video_elm.classList);
-
     const val = {
       property: {
         uuid: this.uuid,
-        id: id_val,
         viewCount: this.video_handler.get_view_count(),
-        class: class_val,
-        src: this.video_elm.src,
         domainName: this.video_handler.get_segment_domain(),
         width: this.video_elm.width,
         height: this.video_elm.height,
