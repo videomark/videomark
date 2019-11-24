@@ -138,6 +138,7 @@ export default class VideoData {
     const videoBitrate = this.video_handler.get_video_bitrate();
     const receiveBuffer = this.video_handler.get_receive_buffer();
     const framerate = this.video_handler.get_framerate();
+    const throughput = this.video_handler.get_throughput_info()
     const speed = this.video_elm.playbackRate;
     const representation = this.video_handler.get_representation();
 
@@ -154,6 +155,7 @@ export default class VideoData {
       videoBitrate,
       receiveBuffer,
       framerate,
+      throughput,
       speed
     };
   }
