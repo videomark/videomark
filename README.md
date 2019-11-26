@@ -120,18 +120,26 @@ ChromeExtension/sodium.js
 
 1送信毎のデータ
 
-| 項目              | 値                                    |
-| --------------- | ------------------------------------ |
-| version         | sodium.jsのバージョン(1.1.0)               |
-| date            | 送信日時(Date.now())                     |
-| startTime       | データ収集開始時間(DOMHighResTimeStamp, 初回は0) |
-| endTime         | データ収集終了時間(DOMHighResTimeStamp)       |
-| session         | セッションID(UUID)                        |
-| location        | window.location.href                 |
-| userAgent       | ユーザーエージェント                           |
-| appVersion      | navigator.appVersion                 |
-| sequence        | 同一セッション内のシーケンス番号(0から連番)              |
-| resource_timing | 未使用                                  |
+| 項目                    | 値                                    |
+| --------------------- | ------------------------------------ |
+| version               | sodium.jsのバージョン(1.1.0)               |
+| date                  | 送信日時(Date.now())                     |
+| startTime             | データ収集開始時間(DOMHighResTimeStamp, 初回は0) |
+| endTime               | データ収集終了時間(DOMHighResTimeStamp)       |
+| session               | セッションID(UUID)                        |
+| location              | window.location.href                 |
+| userAgent             | ユーザーエージェント                           |
+| appVersion            | navigator.appVersion                 |
+| sequence              | 同一セッション内のシーケンス番号(0から連番)              |
+| resource_timing       | -                                    |
+| netinfo.downlink      | 下り速度(Mbps)                           |
+| netinfo.downlinkMax   | 最大下り速度(Mbps)                         |
+| netinfo.effectiveType | 有効なタイプ                            |
+| netinfo.rtt           | RTT                                  |
+| netinfo.type          | デバイスがネットワーク通信に使用している接続の種類            |
+| netinfo.apn           | アクセスポイント                             |
+| netinfo.plmn          | ルーティングエリア                            |
+| netinfo.sim           | SIM                                  |
 
 ### video
 
@@ -192,7 +200,8 @@ videoの属性情報
 | end                     | ダウンロード終了時刻          |
 | startUnplayedBufferSize | ダウンロード開始時未再生バッファ    |
 | endUnplayedBufferSize   | ダウンロード終了時未再生バッファ    |
-| bps                     | ビットレート              |
+| bitrate                 | ビットレート              |
+| representationId        | Representation ID   |
 
 #### play_list_info
 
