@@ -134,7 +134,7 @@ ChromeExtension/sodium.js
 | resource_timing       | -                                    |
 | netinfo.downlink      | 下り速度(Mbps)                           |
 | netinfo.downlinkMax   | 最大下り速度(Mbps)                         |
-| netinfo.effectiveType | 有効なタイプ                            |
+| netinfo.effectiveType | 有効なタイプ                               |
 | netinfo.rtt           | RTT                                  |
 | netinfo.type          | デバイスがネットワーク通信に使用している接続の種類            |
 | netinfo.apn           | アクセスポイント                             |
@@ -213,6 +213,8 @@ videoの属性情報
 | videoHeight      | videoの高さ      |
 | fps              | フレームレート       |
 | chunkDuration    | チャンクの再生時間     |
+| container        | コンテナ          |
+| codec            | コーデック         |
 | serverIp         | チャック配布元(FQDN) |
 
 #### Event
