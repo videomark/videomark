@@ -146,7 +146,7 @@ class YouTubeTypeHandler {
     }
 
     /*
-     * ytd-palyerにsodium用のフィールド追加
+     * ytd-playerにsodium用のフィールド追加
      * 初期化が終わっていない段階で値にアクセスした場合エラー値を返す
      */
     // eslint-disable-next-line camelcase
