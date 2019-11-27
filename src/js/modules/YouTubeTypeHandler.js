@@ -211,8 +211,8 @@ class YouTubeTypeHandler {
                 s
                     .split('&')
                     .forEach(ss => {
-                        const [key, value] = ss.split('=');
-                        l[key] = value;
+                        const [key, ...values] = ss.split('=');
+                        l[key] = decodeURIComponent(values.join('='));
                     });
                 ret.push(l);
             })
