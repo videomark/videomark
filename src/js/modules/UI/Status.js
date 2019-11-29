@@ -1,7 +1,7 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
-import Chart from 'chart.js';
+import sparkline from '@fnando/sparkline';
 
 export default class Status {
   constructor() {
@@ -10,9 +10,9 @@ export default class Status {
 
   attach(root) {
     this.root = root;
-    this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => null);
-    this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => null);
-    this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => null);
+    this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
+    this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
+    this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
     this.chart = null;
   }
 
@@ -47,13 +47,12 @@ export default class Status {
       }
     };
 
-    console.log(latest);
-    this.bitrate_history.shift();
-    this.bitrate_history.push(latest.bitrate);
-    this.thruput_history.shift();
-    this.thruput_history.push((latest.throughput && latest.throughput.length ? latest.throughput[latest.throughput.length - 1] : {}).throughput);
-    this.droprate_history.shift();
-    this.droprate_history.push(latest.droppedVideoFrames / latest.totalVideoFrames);
+    this.bitrate_history.push(Number(latest.bitrate));
+    if (this.bitrate_history.length > Status.HISTORY_NUMBER) this.bitrate_history.shift();
+    this.thruput_history.push(Number((latest.throughput && latest.throughput.length ? latest.throughput[latest.throughput.length - 1] : {}).throughput));
+    if (this.thruput_history.length > Status.HISTORY_NUMBER) this.thruput_history.shift();
+    this.droprate_history.push(Number(latest.droppedVideoFrames / latest.totalVideoFrames));
+    if (this.droprate_history.length > Status.HISTORY_NUMBER) this.droprate_history.shift();
 
     return html`
       <style>
@@ -74,6 +73,21 @@ export default class Status {
           color: lightgray;
           font-size: 14px;
           font-weight: bold;
+        }
+        #bitrate_chart {
+          stroke: rgb(54, 162, 235);
+          stroke-width: 2px;
+          fill: none;
+        }
+        #thruput_chart {
+          stroke: rgb(75, 192, 192);
+          stroke-width: 2px;
+          fill: none;
+        }
+        #droprate_chart {
+          stroke: rgb(255, 99, 132);
+          stroke-width: 2px;
+          fill: none;
         }
       </style>
       <div
@@ -101,7 +115,10 @@ export default class Status {
               : "計測中..."}
           </summary>
           ${open ? quality({ sessionId, videoId }) : ""}
-          <canvas id="chart"></canvas>
+          <div>
+            <svg id="bitrate_chart"></svg>
+            <svg id="droprate_chart"></svg>
+          </div>
         </details>
       </div>
     `;
@@ -115,66 +132,11 @@ export default class Status {
   }
 
   drawChart() {
-    if (this.chart) {
-      this.chart.update();
-      return;
-    }
-
-    let chartData = {
-      labels: Array.from({length:Status.HISTORY_NUMBER}, (v, i) => i),
-      datasets: [{
-        borderColor: Status.BITRATE_COLOR,
-        backgroundColor: Status.BITRATE_COLOR,
-        fill: false,
-        data: this.bitrate_history,
-        yAxisID: 'bitrate-axis',
-      }, {
-        borderColor: Status.THRUPUT_COLOR,
-        backgroundColor: Status.THRUPUT_COLOR,
-        fill: false,
-        data: this.thruput_history,
-        yAxisID: 'thruput-axis'
-      }, {
-        borderColor: Status.DROPRATE_COLOR,
-        backgroundColor: Status.DROPRATE_COLOR,
-        fill: false,
-        data: this.droprate_history,
-        yAxisID: 'droprate-axis'
-      }]
-    };
-
-    this.chart = Chart.Line(this.root.getElementById('chart').getContext('2d'), {
-      type: 'line',
-      data: chartData,
-      options: {
-        animation: false,
-        legend: false,
-        tooltips: false,
-        scales: {
-          xAxes: [{
-            display: false,
-          }],
-          yAxes: [{
-            id: 'bitrate-axis',
-            display: false,
-          }, {
-            id: 'thruput-axis',
-            display: false,
-          }, {
-            id: 'droprate-axis',
-            display: false,
-            ticks: {
-              min: 0,
-              max: 1
-            }
-          }],
-        }
-      }
-    });
+    sparkline(this.root.getElementById('bitrate_chart'), this.bitrate_history, {max:Status.BITRATE_MAX, min:0});
+    //sparkline(this.root.getElementById('thruput_chart'), this.thruput_history);
+    sparkline(this.root.getElementById('droprate_chart'), this.droprate_history, {max:100, min:0});
   }
 }
 
 Status.HISTORY_NUMBER = 30;
-Status.BITRATE_COLOR  = 'rgb(54, 162, 235)';
-Status.THRUPUT_COLOR  = 'rgb(75, 192, 192)';
-Status.DROPRATE_COLOR = 'rgb(255, 99, 132)';
+Status.BITRATE_MAX = 20 * 1024 * 1024;
