@@ -75,6 +75,10 @@ export default class VideoData {
     });
 
     this.video_handler.add_cm_listener(args => this._cm_listener(args));
+
+    this.transfer_size = 0;
+    this.transfer_diff = 0;
+    this.resources_length = 0;
   }
 
   get_video_id() {
@@ -243,6 +247,16 @@ export default class VideoData {
 
     const quality = this.get_quality();
     this.playback_quality.push(quality);
+
+    if (this.is_main_video()) {
+      let resources = performance.getEntriesByType("resource").slice();
+      let now_resources_length = resources.length;
+      // youtubeでは、ページを開いた直後はresourceの数が増減する現象があるので、減った場合は最初から数え直す
+      if (now_resources_length < this.resources_length) this.resources_length = 0;
+      this.transfer_diff = resources.slice(this.resources_length).reduce((a, c) => a + c.transferSize, 0);
+      this.transfer_size += this.transfer_diff;
+      this.resources_length = now_resources_length;
+    }
   }
 
   /**
