@@ -53,6 +53,10 @@ class Viewing {
     return Promise.resolve(this.cache.location);
   }
 
+  get transferSize() {
+    return Promise.resolve(this.cache.transfer_size);
+  }
+
   get startTime() {
     return Promise.resolve(new Date(this.cache.start_time));
   }
