@@ -21,6 +21,7 @@ export default class SessionData {
     this.sequence = 0;
     this.video = [];
     this.latest_qoe_update_count = 0;
+    this.hostToIp = {};
   }
 
   async init() {
@@ -54,6 +55,9 @@ export default class SessionData {
     this.session_id = session.id;
     // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
+
+    // eslint-disable-next-line no-underscore-dangle
+    this._location_ip();
   }
 
   get_session_id() {
@@ -368,6 +372,7 @@ export default class SessionData {
       endTime: this.endTime,
       session: this.session_id,
       location: window.location.href,
+      locationIp: this.hostToIp[new URL(window.location.href).host],
       userAgent: this.userAgent,
       sequence: this.sequence,
       video: [video.get()],
@@ -389,6 +394,22 @@ export default class SessionData {
     return param;
   }
 
+  // eslint-disable-next-line camelcase
+  async _location_ip() {
+    const url = new URL(window.location.href);
+    const ip = await new Promise((resolve) => {
+      const listener = (event) => {
+        if (event.data.host !== url.host || event.data.type !== "CONTENT_SCRIPT_JS") return;
+        window.removeEventListener("message", listener)
+        resolve(event.data.ip);
+      }
+      window.addEventListener("message", listener)
+      window.postMessage({ host: url.host, method: "get_ip", type: "FROM_SODIUM_JS" })
+    });
+    this.hostToIp[url.host] = ip;
+  }
+
+  // eslint-disable-next-line camelcase
   static event_wait(elm, type, ms) {
     let eventResolver;
     const event = new Promise(resolve => {

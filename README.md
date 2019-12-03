@@ -128,6 +128,7 @@ ChromeExtension/sodium.js
 | endTime               | データ収集終了時間(DOMHighResTimeStamp)       |
 | session               | セッションID(UUID)                        |
 | location              | window.location.href                 |
+| locationIp            | locationのIPアドレス                      |
 | userAgent             | ユーザーエージェント                           |
 | appVersion            | navigator.appVersion                 |
 | sequence              | 同一セッション内のシーケンス番号(0から連番)              |
