@@ -334,7 +334,7 @@ class YouTubeTypeHandler {
             },
             audio: {
                 container: audio.container,
-                audio: audio.codec
+                codec: audio.codec
             }
         };
     }
