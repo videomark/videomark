@@ -164,6 +164,15 @@ export default class VideoHandler {
         return list;
     }
 
+    get_codec_info() {
+        let info = {};
+
+        if (this.handler instanceof YouTubeTypeHandler)
+            info = YouTubeTypeHandler.get_codec_info();
+
+        return info;
+    }
+
     // eslint-disable-next-line camelcase
     is_main_video(video) {
         if (this.handler.is_main_video instanceof Function)

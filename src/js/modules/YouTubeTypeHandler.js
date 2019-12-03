@@ -320,6 +320,25 @@ class YouTubeTypeHandler {
         }, []);
     }
 
+    // eslint-disable-next-line camelcase
+    static get_codec_info() {
+        const player = document.querySelector('#movie_player');
+        const stats = player.getVideoStats();
+        const list = YouTubeTypeHandler.get_play_list_info();
+        const video = list.find(e => e.representationId === stats.fmt);
+        const audio = list.find(e => e.representationId === stats.afmt);
+        return {
+            video: {
+                container: video.container,
+                codec: video.codec
+            },
+            audio: {
+                container: audio.container,
+                audio: audio.codec
+            }
+        };
+    }
+
     constructor(elm) {
 
         YouTubeTypeHandler.throughputHistories = [];
