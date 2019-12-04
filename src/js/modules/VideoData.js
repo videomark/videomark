@@ -30,6 +30,7 @@ export default class VideoData {
     this.current_play_pos_date = -1;
     this.events = [];
     this.last_events = {};
+    this.cm_events = [];
     this.resolution = {
       width: -1,
       height: -1,
@@ -126,14 +127,17 @@ export default class VideoData {
     const receiveBuffer = this.video_handler.get_receive_buffer();
     const framerate = this.video_handler.get_framerate();
     const speed = this.video_elm.playbackRate;
+    const representation = this.video_handler.get_representation();
 
     return {
       totalVideoFrames: this.total,
       droppedVideoFrames: this.dropped,
       creationTime: this.creation_time,
+      creationDate: Date.now(),
       deltaTotalVideoFrames: this.delta_total,
       deltaDroppedVideoFrames: this.delta_dropped,
       deltaTime: this.delta_creation_time,
+      representation,
       bitrate,
       videoBitrate,
       receiveBuffer,
@@ -258,6 +262,8 @@ export default class VideoData {
         uuid: this.uuid,
         viewCount: this.video_handler.get_view_count(),
         domainName: this.video_handler.get_segment_domain(),
+        serviceName: this.video_handler.get_service_name(),
+        holderId: this.id_by_video_holder,
         width: this.video_elm.width,
         height: this.video_elm.height,
         videoWidth: this.video_handler.get_video_width(),
@@ -275,7 +281,8 @@ export default class VideoData {
         this.playback_quality.length
       ),
       play_list_info: this.video_handler.get_play_list_info(),
-      throughput_info: this.video_handler.get_throughput_info()
+      throughput_info: this.video_handler.get_throughput_info(),
+      cmHistory: this.cm_events.splice(0, this.cm_events.length)
     };
     Config.get_event_type_names().forEach(s => {
       val[`event_${s}`] = [];
@@ -422,8 +429,10 @@ export default class VideoData {
 
     if (cm) {
       type = "pause";
+      this.cm_events.push({ type: "cm", time });
     } else {
       type = "play";
+      this.cm_events.push({ type: "main", time });
       if (this.play_start_time === -1) this.play_start_time = Date.now();
     }
 
