@@ -156,6 +156,10 @@ export default class VideoData {
     return this.video_handler.get_codec_info();
   }
 
+  get_service_name() {
+    return this.video_handler.get_service_name()
+  }
+
   set_quality(bitrate) {
     console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
     this.video_handler.set_quality(bitrate);
@@ -262,7 +266,6 @@ export default class VideoData {
         uuid: this.uuid,
         viewCount: this.video_handler.get_view_count(),
         domainName: this.video_handler.get_segment_domain(),
-        serviceName: this.video_handler.get_service_name(),
         holderId: this.id_by_video_holder,
         width: this.video_elm.width,
         height: this.video_elm.height,

@@ -129,6 +129,7 @@ ChromeExtension/sodium.js
 | session               | セッションID(UUID)                        |
 | location              | window.location.href                 |
 | locationIp            | locationのIPアドレス                      |
+| serviceName           | サービス名                                |
 | userAgent             | ユーザーエージェント                           |
 | appVersion            | navigator.appVersion                 |
 | sequence              | 同一セッション内のシーケンス番号(0から連番)              |
@@ -158,7 +159,6 @@ videoの属性情報
 | viewCount           | 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1 |
 | src                 | videoタグのsrc属性                                     |
 | domainName          | videoのセグメント配布ドメイン                                 |
-| serviceName         | サービス名                                             |
 | holderId            | サービスが付加したID                                       |
 | width               | videoタグの表示幅                                       |
 | height              | videoタグの表示高さ                                      |
