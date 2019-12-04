@@ -1,5 +1,5 @@
 import * as React from "react";
-declare type StatsData = {
+interface StatsData {
     count: number;
     playingTime: Array<{
         day: string;
@@ -8,7 +8,7 @@ declare type StatsData = {
     averageQoE: number;
     averageWaitingRatio: number;
     averageDroppedVideoFrameRatio: number;
-};
+}
 declare const SVG: React.FC<{
     data: StatsData;
 }>;

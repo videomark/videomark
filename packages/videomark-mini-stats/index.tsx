@@ -1,17 +1,14 @@
 import * as React from "react";
+import Calendar from "./components/Calendar";
+import JPText from "./components/JPText";
 
-// NOTE: to add css: @import url("https://fonts.googleapis.com/css?family=Noto+Sans+JP");
-const JPText: React.FC<React.SVGProps<SVGTextElement>> = props => (
-  <text fontFamily="Noto Sans JP" {...props}></text>
-);
-
-type StatsData = {
+interface StatsData {
   count: number;
   playingTime: Array<{ day: string; value: number }>;
   averageQoE: number;
   averageWaitingRatio: number;
   averageDroppedVideoFrameRatio: number;
-};
+}
 
 const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
   const {
@@ -33,22 +30,30 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
       width={512}
       height={512}
     >
+      <rect x={0} y={0} width={512} height={512} fill="#FFFFFF" />
       <JPText x={20} y={50} fontSize={40}>
         VideoMark 動画視聴統計
       </JPText>
-      <JPText x={20} y={100} fontSize={24}>
+      <Calendar
+        x={56}
+        y={88}
+        transform={`translate(${56},${88})`}
+        data={playingTime}
+      />
+      {/* 400x240 */}
+      <JPText x={20} y={340} fontSize={24}>
         平均品質 {averageQoE}
       </JPText>
-      <JPText x={20} y={150} fontSize={24}>
+      <JPText x={20} y={380} fontSize={24}>
         フレームドロップ率 {averageDroppedVideoFrameRatio}
       </JPText>
-      <JPText x={20} y={200} fontSize={24}>
+      <JPText x={20} y={420} fontSize={24}>
         待機時間割合 {averageWaitingRatio}
       </JPText>
-      <JPText x={20} y={250} fontSize={24}>
+      <JPText x={20} y={460} fontSize={24}>
         視聴時間 {total}
       </JPText>
-      <JPText x={20} y={300} fontSize={24}>
+      <JPText x={20} y={500} fontSize={24}>
         動画件数 {count}
       </JPText>
     </svg>
