@@ -1,5 +1,6 @@
 import * as React from "react";
 import Calendar from "./components/Calendar";
+import Badge from "./components/Badge";
 import JPText from "./components/JPText";
 
 interface StatsData {
@@ -19,10 +20,12 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
     averageDroppedVideoFrameRatio
   } = data;
 
-  const total = playingTime.reduce(
-    (previousValue, { value: currentValue }) => previousValue + currentValue,
+  const totalMinutes = playingTime.reduce(
+    (previousValue, { value: currentValue }) =>
+      previousValue + currentValue / 60e3,
     0
   );
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +34,13 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
       height={512}
     >
       <rect x={0} y={0} width={512} height={512} fill="#FFFFFF" />
-      <JPText x={20} y={50} fontSize={40}>
+      <JPText
+        x="50%"
+        y={16}
+        textAnchor="middle"
+        dominantBaseline="text-before-edge"
+        fontSize={32}
+      >
         VideoMark 動画視聴統計
       </JPText>
       <Calendar
@@ -40,21 +49,36 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         transform={`translate(${56},${88})`}
         data={playingTime}
       />
-      {/* 400x240 */}
-      <JPText x={20} y={340} fontSize={24}>
-        平均品質 {averageQoE}
-      </JPText>
-      <JPText x={20} y={380} fontSize={24}>
+      <Badge
+        x={56}
+        y={320}
+        transform={`translate(${56},${320})`}
+        label="平均品質"
+        message={averageQoE.toFixed(1)}
+      />
+      <Badge
+        x={56}
+        y={390}
+        transform={`translate(${56},${390})`}
+        label="視聴時間"
+        message={[
+          totalMinutes > 60
+            ? `${Math.floor(totalMinutes / 60).toLocaleString()}時間`
+            : "",
+          `${Math.floor(totalMinutes % 60)}分`
+        ].join("")}
+      />
+      <JPText x="2%" y={460} fontSize={12}>
         フレームドロップ率 {averageDroppedVideoFrameRatio}
       </JPText>
-      <JPText x={20} y={420} fontSize={24}>
+      <JPText x="2%" y={480} fontSize={12}>
         待機時間割合 {averageWaitingRatio}
       </JPText>
-      <JPText x={20} y={460} fontSize={24}>
-        視聴時間 {total}
-      </JPText>
-      <JPText x={20} y={500} fontSize={24}>
+      <JPText x="2%" y={500} fontSize={12}>
         動画件数 {count}
+      </JPText>
+      <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
+        https://vm.webdino.org/
       </JPText>
     </svg>
   );

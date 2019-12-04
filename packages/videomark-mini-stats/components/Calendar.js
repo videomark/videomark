@@ -9,7 +9,6 @@ import format from "date-fns/format";
 import locale from "date-fns/locale/ja";
 import JPText from "./JPText";
 const width = 400;
-// const height = 240;
 const weeks = 16;
 const daySize = width / weeks;
 const { min, max } = Math;
