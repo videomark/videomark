@@ -29,6 +29,10 @@ function App() {
   return (
     <>
       <section>
+        <h1>JSON</h1>
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      </section>
+      <section>
         <h1>SVG</h1>
         <SVG data={data} />
       </section>
