@@ -4,21 +4,30 @@ import YouTubeTypeHandler from './YouTubeTypeHandler';
 
 export default class VideoHandler {
     constructor(elm) {
+        this.serviceName = "";
         if (ParaviTypeHandler.is_paravi_type()) {
             this.handler = ParaviTypeHandler;
+            this.serviceName = "paravi";
             // eslint-disable-next-line no-console
             console.log('Paravi Type Handler');
         } else if (TVerTypeHandler.is_tver_type()) {
             this.handler = TVerTypeHandler;
+            this.serviceName = "tver";
             // eslint-disable-next-line no-console
             console.log('TVer Type Handler');
         } else if (YouTubeTypeHandler.is_youtube_type()) {
             this.handler = new YouTubeTypeHandler(elm);
+            this.serviceName = "youtube";
             // eslint-disable-next-line no-console
             console.log('YouTube Type Handler');
         } else {
             throw new Error('unknown type');
         }
+    }
+
+    // eslint-disable-next-line camelcase
+    get_service_name() {
+        return this.serviceName;
     }
 
     // eslint-disable-next-line camelcase
@@ -164,6 +173,7 @@ export default class VideoHandler {
         return list;
     }
 
+    // eslint-disable-next-line camelcase
     get_codec_info() {
         let info = {};
 
@@ -171,6 +181,16 @@ export default class VideoHandler {
             info = YouTubeTypeHandler.get_codec_info();
 
         return info;
+    }
+
+    // eslint-disable-next-line camelcase
+    get_representation() {
+        let representation = {};
+
+        if (this.handler instanceof YouTubeTypeHandler)
+            representation = YouTubeTypeHandler.get_representation();
+
+        return representation;
     }
 
     // eslint-disable-next-line camelcase
