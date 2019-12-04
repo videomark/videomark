@@ -24,7 +24,7 @@ function App() {
 
     anchor.download = new Date().toLocaleString();
     anchor.href = canvas.toDataURL();
-  }, [canvasRef, imageRef]);
+  }, []);
 
   return (
     <>
