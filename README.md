@@ -158,6 +158,8 @@ videoの属性情報
 | viewCount           | 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1 |
 | src                 | videoタグのsrc属性                                     |
 | domainName          | videoのセグメント配布ドメイン                                 |
+| serviceName         | サービス名                                             |
+| holderId            | サービスが付加したID                                       |
 | width               | videoタグの表示幅                                       |
 | height              | videoタグの表示高さ                                      |
 | videoWidth          | videoの幅                                           |
@@ -180,7 +182,9 @@ videoの属性情報
 | ----------------------- | ------------------------- |
 | totalVideoFrames        | 総フレーム数                    |
 | droppedVideoFrames      | 損失フレーム数                   |
-| creationTime            | 計測時間(DOMHighResTimeStamp) |
+| creationTime            | 計測時刻(DOMHighResTimeStamp) |
+| creationDate            | 計測時刻(Date.nwo())          |
+| representation          | representationID          |
 | bitrate                 | 音声、ビデオの合計ビットレート           |
 | videoBitrate            | ビデオのビットレート                |
 | receiveBuffer           | 受信済み動画再生時間 取得不可能の場合 -1    |
@@ -246,6 +250,13 @@ Eventは、以下の種類ものと前回発生時との差分のdelta値を含�
 | progress | ロード     |
 | waiting  | ロード待ち   |
 | canplay  | 再生開始可能  |
+
+##### cmHistory
+
+| 項目   | 値                                                               |
+| ---- | --------------------------------------------------------------- |
+| type | CMまたは、Mainに切り替わったことを示す文字列。CMに切り替わった場合、"cm"　Mainに切り替わった場合、"main" |
+| time | 発生時間(Date.now())                                                |
 
 ### QoEサーバー対応
 
