@@ -7,14 +7,11 @@ import addDays from "date-fns/addDays";
 import getDate from "date-fns/getDate";
 import format from "date-fns/format";
 import locale from "date-fns/locale/ja";
+import { min, max, clamp, floor } from "./math";
 import JPText from "./JPText";
 const width = 400;
 const weeks = 16;
 const daySize = width / weeks;
-const { min, max } = Math;
-const clamp = (minValue, maxValue) => (value) => {
-    return max(minValue, min(maxValue, value));
-};
 const maxLuminance = 93.3; // %
 const minLuminance = 35; // %
 const clampLuminance = clamp(minLuminance, maxLuminance);
@@ -53,7 +50,6 @@ const minAndMax = (days) => {
     const values = [...days.values()];
     return [min(...values), max(...values)];
 };
-const { floor } = Math;
 /** 日付を平面座標にマッピング */
 const dateToXY = (begin, daySize) => {
     return (date) => {

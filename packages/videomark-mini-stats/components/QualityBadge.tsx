@@ -1,16 +1,24 @@
 import * as React from "react";
+import { clamp } from "./math";
+import QualityStars from "./QualityStars";
 import JPText from "./JPText";
+
+const clampQuality = clamp(1, 5);
 
 const width = 400;
 const labelColor = "#555555";
 const messageColor = "#9BCC0A";
 
-interface BadgeProps extends React.SVGProps<SVGGElement> {
+interface QualityBadgeProps extends React.SVGProps<SVGGElement> {
   label: string;
-  message: string;
+  quality: number;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ label, message, ...props }) => (
+export const QualityBadge: React.FC<QualityBadgeProps> = ({
+  label,
+  quality,
+  ...props
+}) => (
   <g {...props}>
     <rect x={0} width={160} height={40} fill={labelColor} />
     <JPText
@@ -25,18 +33,24 @@ export const Badge: React.FC<BadgeProps> = ({ label, message, ...props }) => (
     </JPText>
     <rect x={160} width={width - 160} height={40} fill={messageColor} />
     <JPText
-      x={160 + (width - 160) / 2}
+      x={196}
       y={22}
-      width={160}
-      textAnchor="middle"
       dominantBaseline="middle"
       fontSize={24}
       fontWeight="bold"
       fill="#ffffff"
     >
-      {message}
+      {clampQuality(quality).toFixed(1)}
     </JPText>
+    <QualityStars
+      x={240}
+      y={22}
+      transform={`translate(${240},${22})`}
+      width={width - 160}
+      height={40}
+      quality={quality}
+    />
   </g>
 );
 
-export default Badge;
+export default QualityBadge;

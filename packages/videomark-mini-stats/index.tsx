@@ -1,5 +1,7 @@
 import * as React from "react";
+import { floor } from "./components/math";
 import Calendar from "./components/Calendar";
+import QualityBadge from "./components/QualityBadge";
 import Badge from "./components/Badge";
 import JPText from "./components/JPText";
 
@@ -33,7 +35,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
       width={512}
       height={512}
     >
-      <rect x={0} y={0} width={512} height={512} fill="#FFFFFF" />
+      <rect x={0} y={0} width="100%" height="100%" fill="#FFFFFF" />
       <JPText
         x="50%"
         y={16}
@@ -49,12 +51,12 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         transform={`translate(${56},${88})`}
         data={playingTime}
       />
-      <Badge
+      <QualityBadge
         x={56}
         y={320}
         transform={`translate(${56},${320})`}
         label="平均品質"
-        message={averageQoE.toFixed(1)}
+        quality={averageQoE}
       />
       <Badge
         x={56}
@@ -63,9 +65,9 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         label="視聴時間"
         message={[
           totalMinutes > 60
-            ? `${Math.floor(totalMinutes / 60).toLocaleString()}時間`
+            ? `${floor(totalMinutes / 60).toLocaleString()}時間`
             : "",
-          `${Math.floor(totalMinutes % 60)}分`
+          `${floor(totalMinutes % 60)}分`
         ].join("")}
       />
       <JPText x="2%" y={460} fontSize={12}>
