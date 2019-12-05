@@ -12,7 +12,7 @@ const SVG = ({ data }) => {
         React.createElement("rect", { x: 0, y: 0, width: "100%", height: "100%", fill: "#FFFFFF" }),
         React.createElement(JPText, { x: "50%", y: 20, textAnchor: "middle", dominantBaseline: "text-before-edge", fontSize: 32 }, "VideoMark \u52D5\u753B\u8996\u8074\u7D71\u8A08"),
         React.createElement(Calendar, { x: 56, y: 88, transform: `translate(${56},${88})`, data: playingTimeWithDate }),
-        React.createElement(QualityBadge, { x: 56, y: 320, transform: `translate(${56},${320})`, label: "\u5E73\u5747\u54C1\u8CEA", quality: averageQoE }),
+        React.createElement(QualityBadge, { x: 56, y: 320, transform: `translate(${56},${320})`, label: "\u5E73\u5747\u54C1\u8CEA", quality: Number.isFinite(averageQoE) ? averageQoE : 1 }),
         React.createElement(JPText, { x: "64%", y: 368, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
             "\u30D5\u30EC\u30FC\u30E0\u30C9\u30ED\u30C3\u30D7\u7387",
             " ",
