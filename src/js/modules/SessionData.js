@@ -6,7 +6,7 @@ import msgpack from "msgpack-lite";
 import Config from "./Config";
 import VideoData from "./VideoData";
 import { useStorage } from "./Storage";
-import { useStatStorage } from "./StatStorage";
+import { saveTransferSize } from "./StatStorage";
 import { version } from "../../../package.json";
 
 export default class SessionData {
@@ -354,8 +354,7 @@ export default class SessionData {
         .slice(-Config.max_log)
     });
 
-    const stat = useStatStorage();
-    await stat.save_transfer_size(video.transfer_diff);
+    await saveTransferSize(video.transfer_diff);
   }
 
   /**
