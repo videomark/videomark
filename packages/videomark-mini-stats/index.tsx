@@ -27,7 +27,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
       <rect x={0} y={0} width="100%" height="100%" fill="#FFFFFF" />
       <JPText
         x="50%"
-        y={16}
+        y={20}
         textAnchor="middle"
         dominantBaseline="text-before-edge"
         fontSize={32}
@@ -47,32 +47,56 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         label="平均品質"
         quality={averageQoE}
       />
-      <Badge
-        x={56}
-        y={390}
-        transform={`translate(${56},${390})`}
-        label="視聴時間"
-        message={timeFormat(total)}
-      />
-      <JPText x="2%" y={444} fontSize={12}>
+      <JPText
+        x="64%"
+        y={368}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
         フレームドロップ率{" "}
         {Number.isFinite(averageDroppedVideoFrameRatio)
           ? (averageDroppedVideoFrameRatio * 100).toFixed(1)
           : 0}
         %
       </JPText>
-      <JPText x="2%" y={464} fontSize={12}>
+      <JPText
+        x="88%"
+        y={368}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
         待機時間割合{" "}
         {Number.isNaN(averageWaitingRatio)
           ? (averageWaitingRatio * 100).toFixed(1)
           : 0}
         %
       </JPText>
-      <JPText x="2%" y={484} fontSize={12}>
-        動画件数 {Number.isFinite(count) ? count : 0}
-      </JPText>
-      <JPText x="2%" y={504} fontSize={12}>
+      <Badge
+        x={56}
+        y={400}
+        transform={`translate(${56},${400})`}
+        label="視聴時間"
+        message={timeFormat(total)}
+      />
+      <JPText
+        x="64%"
+        y={448}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
         1日あたり {timeFormat(daily)}
+      </JPText>
+      <JPText
+        x="88%"
+        y={448}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
+        動画件数 {Number.isFinite(count) ? count : 0}
       </JPText>
       <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
         https://vm.webdino.org/

@@ -18,6 +18,8 @@ const maxLuminance = 93.3; // %
 const minLuminance = 35; // %
 const clampLuminance = clamp(minLuminance, maxLuminance);
 
+const labelFontSize = 14;
+
 /** 値が存在しない時の色 */
 const blankColor = `hsl(0,0%,${maxLuminance}%)`;
 
@@ -92,10 +94,11 @@ export const Calendar: React.FC<CalendarProps> = ({ data, ...gprops }) => {
         ? [
             <JPText
               key={text}
-              x={x}
+              x={x + daySize / 2}
               y={0}
+              textAnchor="middle"
               dominantBaseline="text-before-edge"
-              fontSize={12}
+              fontSize={labelFontSize}
             >
               {text}
             </JPText>

@@ -15,6 +15,7 @@ const daySize = width / weeks;
 const maxLuminance = 93.3; // %
 const minLuminance = 35; // %
 const clampLuminance = clamp(minLuminance, maxLuminance);
+const labelFontSize = 14;
 /** 値が存在しない時の色 */
 const blankColor = `hsl(0,0%,${maxLuminance}%)`;
 /** @param rate 0 のとき薄い色、1 のとき濃い色を返す */
@@ -63,7 +64,7 @@ export const Calendar = ({ data, ...gprops }) => {
         return [
             ...(getDate(date) === 1
                 ? [
-                    React.createElement(JPText, { key: text, x: x, y: 0, dominantBaseline: "text-before-edge", fontSize: 12 }, text)
+                    React.createElement(JPText, { key: text, x: x + daySize / 2, y: 0, textAnchor: "middle", dominantBaseline: "text-before-edge", fontSize: labelFontSize }, text)
                 ]
                 : []),
             React.createElement(CalendarDay, { key: day, x: x, y: y + 20, rate: rate(value) })
