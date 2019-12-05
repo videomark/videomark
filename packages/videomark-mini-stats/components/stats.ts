@@ -41,6 +41,8 @@ const withDate = (data: StatsData["playingTime"]) =>
   data.map(({ day, value }) => ({ date: new Date(day), day, value }));
 
 const totalPlayingTime = (playingTime: StatsData["playingTime"]) => {
+  if (playingTime == null) return 0;
+
   return playingTime.reduce(
     (previousValue, { value: currentValue }) =>
       Number.isFinite(currentValue)
@@ -54,12 +56,14 @@ const totalPlayingTime = (playingTime: StatsData["playingTime"]) => {
 export const playingTimeStats = (data: StatsData["playingTime"]) => {
   const playingTimeWithDate = sortAsc(withDate(data));
   const total = totalPlayingTime(data);
-  const begin = playingTimeWithDate[0].date;
-  const totalDays = differenceInDays(new Date(), begin);
+  const now = new Date();
+  const begin =
+    playingTimeWithDate.length > 0 ? playingTimeWithDate[0].date : now;
+  const totalDays = differenceInDays(now, begin);
 
   return {
     playingTimeWithDate,
     total,
-    daily: total / totalDays
+    daily: totalDays > 0 ? total / totalDays : 0
   };
 };

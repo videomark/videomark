@@ -55,13 +55,21 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         message={timeFormat(total)}
       />
       <JPText x="2%" y={444} fontSize={12}>
-        フレームドロップ率 {(averageDroppedVideoFrameRatio * 100).toFixed(1)}%
+        フレームドロップ率{" "}
+        {Number.isFinite(averageDroppedVideoFrameRatio)
+          ? (averageDroppedVideoFrameRatio * 100).toFixed(1)
+          : 0}
+        %
       </JPText>
       <JPText x="2%" y={464} fontSize={12}>
-        待機時間割合 {(averageWaitingRatio * 100).toFixed(1)}%
+        待機時間割合{" "}
+        {Number.isNaN(averageWaitingRatio)
+          ? (averageWaitingRatio * 100).toFixed(1)
+          : 0}
+        %
       </JPText>
       <JPText x="2%" y={484} fontSize={12}>
-        動画件数 {count}
+        動画件数 {Number.isFinite(count) ? count : 0}
       </JPText>
       <JPText x="2%" y={504} fontSize={12}>
         1日あたり {timeFormat(daily)}

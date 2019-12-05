@@ -15,16 +15,22 @@ const SVG = ({ data }) => {
         React.createElement(QualityBadge, { x: 56, y: 320, transform: `translate(${56},${320})`, label: "\u5E73\u5747\u54C1\u8CEA", quality: averageQoE }),
         React.createElement(Badge, { x: 56, y: 390, transform: `translate(${56},${390})`, label: "\u8996\u8074\u6642\u9593", message: timeFormat(total) }),
         React.createElement(JPText, { x: "2%", y: 444, fontSize: 12 },
-            "\u30D5\u30EC\u30FC\u30E0\u30C9\u30ED\u30C3\u30D7\u7387 ",
-            (averageDroppedVideoFrameRatio * 100).toFixed(1),
+            "\u30D5\u30EC\u30FC\u30E0\u30C9\u30ED\u30C3\u30D7\u7387",
+            " ",
+            Number.isFinite(averageDroppedVideoFrameRatio)
+                ? (averageDroppedVideoFrameRatio * 100).toFixed(1)
+                : 0,
             "%"),
         React.createElement(JPText, { x: "2%", y: 464, fontSize: 12 },
-            "\u5F85\u6A5F\u6642\u9593\u5272\u5408 ",
-            (averageWaitingRatio * 100).toFixed(1),
+            "\u5F85\u6A5F\u6642\u9593\u5272\u5408",
+            " ",
+            Number.isNaN(averageWaitingRatio)
+                ? (averageWaitingRatio * 100).toFixed(1)
+                : 0,
             "%"),
         React.createElement(JPText, { x: "2%", y: 484, fontSize: 12 },
             "\u52D5\u753B\u4EF6\u6570 ",
-            count),
+            Number.isFinite(count) ? count : 0),
         React.createElement(JPText, { x: "2%", y: 504, fontSize: 12 },
             "1\u65E5\u3042\u305F\u308A ",
             timeFormat(daily)),
