@@ -48,7 +48,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         quality={Number.isFinite(averageQoE) ? averageQoE : 1}
       />
       <JPText
-        x="64%"
+        x="60%"
         y={368}
         textAnchor="end"
         dominantBaseline="text-before-edge"
@@ -81,7 +81,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         message={timeFormat(total)}
       />
       <JPText
-        x="64%"
+        x="60%"
         y={448}
         textAnchor="end"
         dominantBaseline="text-before-edge"

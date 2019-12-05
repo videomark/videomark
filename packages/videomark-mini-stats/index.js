@@ -13,7 +13,7 @@ const SVG = ({ data }) => {
         React.createElement(JPText, { x: "50%", y: 20, textAnchor: "middle", dominantBaseline: "text-before-edge", fontSize: 32 }, "VideoMark \u52D5\u753B\u8996\u8074\u7D71\u8A08"),
         React.createElement(Calendar, { x: 56, y: 88, transform: `translate(${56},${88})`, data: playingTimeWithDate }),
         React.createElement(QualityBadge, { x: 56, y: 320, transform: `translate(${56},${320})`, label: "\u5E73\u5747\u54C1\u8CEA", quality: Number.isFinite(averageQoE) ? averageQoE : 1 }),
-        React.createElement(JPText, { x: "64%", y: 368, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
+        React.createElement(JPText, { x: "60%", y: 368, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
             "\u30D5\u30EC\u30FC\u30E0\u30C9\u30ED\u30C3\u30D7\u7387",
             " ",
             Number.isFinite(averageDroppedVideoFrameRatio)
@@ -28,7 +28,7 @@ const SVG = ({ data }) => {
                 : 0,
             "%"),
         React.createElement(Badge, { x: 56, y: 400, transform: `translate(${56},${400})`, label: "\u8996\u8074\u6642\u9593", message: timeFormat(total) }),
-        React.createElement(JPText, { x: "64%", y: 448, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
+        React.createElement(JPText, { x: "60%", y: 448, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
             "1\u65E5\u3042\u305F\u308A ",
             timeFormat(daily)),
         React.createElement(JPText, { x: "88%", y: 448, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
