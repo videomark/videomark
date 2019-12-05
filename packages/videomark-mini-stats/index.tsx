@@ -1,17 +1,10 @@
 import * as React from "react";
-import { floor } from "./components/math";
 import Calendar from "./components/Calendar";
 import QualityBadge from "./components/QualityBadge";
 import Badge from "./components/Badge";
 import JPText from "./components/JPText";
-
-interface StatsData {
-  count: number;
-  playingTime: Array<{ day: string; value: number }>;
-  averageQoE: number;
-  averageWaitingRatio: number;
-  averageDroppedVideoFrameRatio: number;
-}
+import timeFormat from "./components/jpTimeFormat";
+import { StatsData, playingTimeStats } from "./components/stats";
 
 const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
   const {
@@ -22,11 +15,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
     averageDroppedVideoFrameRatio
   } = data;
 
-  const totalMinutes = playingTime.reduce(
-    (previousValue, { value: currentValue }) =>
-      previousValue + currentValue / 60e3,
-    0
-  );
+  const { playingTimeWithDate, total, daily } = playingTimeStats(playingTime);
 
   return (
     <svg
@@ -49,7 +38,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         x={56}
         y={88}
         transform={`translate(${56},${88})`}
-        data={playingTime}
+        data={playingTimeWithDate}
       />
       <QualityBadge
         x={56}
@@ -63,21 +52,19 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         y={390}
         transform={`translate(${56},${390})`}
         label="視聴時間"
-        message={[
-          totalMinutes > 60
-            ? `${floor(totalMinutes / 60).toLocaleString()}時間`
-            : "",
-          `${floor(totalMinutes % 60)}分`
-        ].join("")}
+        message={timeFormat(total)}
       />
-      <JPText x="2%" y={460} fontSize={12}>
-        フレームドロップ率 {averageDroppedVideoFrameRatio}
+      <JPText x="2%" y={444} fontSize={12}>
+        フレームドロップ率 {(averageDroppedVideoFrameRatio * 100).toFixed(1)}%
       </JPText>
-      <JPText x="2%" y={480} fontSize={12}>
-        待機時間割合 {averageWaitingRatio}
+      <JPText x="2%" y={464} fontSize={12}>
+        待機時間割合 {(averageWaitingRatio * 100).toFixed(1)}%
       </JPText>
-      <JPText x="2%" y={500} fontSize={12}>
+      <JPText x="2%" y={484} fontSize={12}>
         動画件数 {count}
+      </JPText>
+      <JPText x="2%" y={504} fontSize={12}>
+        1日あたり {timeFormat(daily)}
       </JPText>
       <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
         https://vm.webdino.org/

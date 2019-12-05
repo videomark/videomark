@@ -1,5 +1,4 @@
 import * as React from "react";
-import compareAsc from "date-fns/compareAsc";
 import startOfWeek from "date-fns/startOfWeek";
 import subWeeks from "date-fns/subWeeks";
 import differenceInDays from "date-fns/differenceInDays";
@@ -7,7 +6,8 @@ import addDays from "date-fns/addDays";
 import getDate from "date-fns/getDate";
 import format from "date-fns/format";
 import locale from "date-fns/locale/ja";
-import { min, max, clamp, floor } from "./math";
+import { clamp, floor } from "./math";
+import { sliceDate, minAndMax } from "./stats";
 import JPText from "./JPText";
 const width = 400;
 const weeks = 16;
@@ -29,26 +29,10 @@ const dayBorderWidth = 2;
 const dayBorderColor = "#ffffff";
 /** props.rate が 0 のとき薄い色、1 のとき濃い色の■ */
 const CalendarDay = ({ rate, ...props }) => (React.createElement("rect", Object.assign({ width: daySize, height: daySize, fill: rateToColor(rate), stroke: dayBorderColor, strokeWidth: dayBorderWidth }, props)));
-/** 文字列 yyyy-MM-dd を Date オブジェクトに変換 */
-const withDate = (data) => data.map(({ day, value }) => ({ date: new Date(day), day, value }));
-/** 昇順ソート */
-const sortAsc = (days) => {
-    return days.sort(({ date: a }, { date: b }) => compareAsc(a, b));
-};
 /** 表示する範囲の最初の日曜日 */
 const beginDate = (now) => {
     const start = startOfWeek(subWeeks(now, weeks - 1));
     return start;
-};
-/** 任意の日より後ろの全要素 */
-const sliceDate = (ascDays, begin) => {
-    const startIndex = ascDays.findIndex(({ date }) => begin <= date);
-    return new Map(ascDays.slice(startIndex).map(({ day, value }) => [day, value]));
-};
-/** 最小値と最大値 */
-const minAndMax = (days) => {
-    const values = [...days.values()];
-    return [min(...values), max(...values)];
 };
 /** 日付を平面座標にマッピング */
 const dateToXY = (begin, daySize) => {
@@ -62,8 +46,7 @@ const dateToXY = (begin, daySize) => {
 export const Calendar = ({ data, ...gprops }) => {
     const now = new Date();
     const begin = beginDate(now);
-    const ascDays = sortAsc(withDate(data));
-    const days = sliceDate(ascDays, begin);
+    const days = sliceDate(data, begin);
     const [minValue, maxValue] = minAndMax(days);
     const rate = (value) => (value - minValue) / (maxValue - minValue);
     const toXY = dateToXY(begin, daySize);
