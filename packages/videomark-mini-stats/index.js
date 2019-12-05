@@ -23,7 +23,7 @@ const SVG = ({ data }) => {
         React.createElement(JPText, { x: "88%", y: 368, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
             "\u5F85\u6A5F\u6642\u9593\u5272\u5408",
             " ",
-            Number.isNaN(averageWaitingRatio)
+            Number.isFinite(averageWaitingRatio)
                 ? (averageWaitingRatio * 100).toFixed(1)
                 : 0,
             "%"),
@@ -33,7 +33,7 @@ const SVG = ({ data }) => {
             timeFormat(daily)),
         React.createElement(JPText, { x: "88%", y: 448, textAnchor: "end", dominantBaseline: "text-before-edge", fontSize: 14 },
             "\u52D5\u753B\u4EF6\u6570 ",
-            Number.isFinite(count) ? count : 0),
+            Number.isFinite(count) ? count.toLocaleString() : 0),
         React.createElement(JPText, { x: "98%", y: "99%", textAnchor: "end", fontSize: 10, fillOpacity: 0.5 }, "https://vm.webdino.org/")));
 };
 export default SVG;

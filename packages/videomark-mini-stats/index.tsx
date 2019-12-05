@@ -68,7 +68,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         fontSize={14}
       >
         待機時間割合{" "}
-        {Number.isNaN(averageWaitingRatio)
+        {Number.isFinite(averageWaitingRatio)
           ? (averageWaitingRatio * 100).toFixed(1)
           : 0}
         %
@@ -96,7 +96,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         dominantBaseline="text-before-edge"
         fontSize={14}
       >
-        動画件数 {Number.isFinite(count) ? count : 0}
+        動画件数 {Number.isFinite(count) ? count.toLocaleString() : 0}
       </JPText>
       <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
         https://vm.webdino.org/
