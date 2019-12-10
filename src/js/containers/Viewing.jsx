@@ -46,6 +46,7 @@ export const fetch = async ({ model, regionalStats, hourlyStats }) => {
   const title = await model.title;
   const location = await model.location;
   const thumbnail = await model.thumbnail;
+  const transferSize = (await model.transferSize) || 0;
   const startTime = await model.startTime;
   const qoe = await model.qoe;
   const quality = await model.quality;
@@ -56,6 +57,7 @@ export const fetch = async ({ model, regionalStats, hourlyStats }) => {
     title,
     location,
     thumbnail,
+    transferSize,
     startTime,
     qoe,
     quality,

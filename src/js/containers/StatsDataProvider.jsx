@@ -48,6 +48,7 @@ const initialData = {
   initialState: true,
   length: 0,
   playingTime: [],
+  transferSize: [],
   qoeStats: {
     sum: 0,
     count: 0
@@ -64,6 +65,18 @@ const reducer = (data, chunk) => ({
   initialState: false,
   length: chunk.length + data.length,
   playingTime: [...chunk.playingTime, ...data.playingTime]
+    .sort(({ day: a }, { day: b }) => (a < b ? -1 : +1))
+    .reduce((accumulator, { day, value }) => {
+      if (accumulator.length === 0) return [{ day, value }];
+      const last = accumulator.slice(-1)[0];
+      return [
+        ...accumulator.slice(0, -1),
+        ...(last.day === day
+          ? [{ day, value: last.value + value }]
+          : [last, { day, value }])
+      ];
+    }, []),
+  transferSize: [...chunk.transferSize, ...data.transferSize]
     .sort(({ day: a }, { day: b }) => (a < b ? -1 : +1))
     .reduce((accumulator, { day, value }) => {
       if (accumulator.length === 0) return [{ day, value }];
@@ -142,7 +155,12 @@ const dispatcher = dispatch => {
       const column = {
         index: viewingModels.map(viewingModel => viewingModel.id)
       };
-      [column.startTime, column.endTime, column.service] = await Promise.all([
+      [
+        column.startTime,
+        column.endTime,
+        column.service,
+        column.transferSize
+      ] = await Promise.all([
         Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
         Promise.all(viewingModels.map(viewingModel => viewingModel.endTime)),
         Promise.all(
@@ -150,6 +168,9 @@ const dispatcher = dispatch => {
             async viewingModel =>
               urlToVideoPlatform(await viewingModel.location).id
           )
+        ),
+        Promise.all(
+          viewingModels.map(viewingModel => viewingModel.transferSize)
         )
       ]);
       const now = Date.now();
@@ -166,6 +187,9 @@ const dispatcher = dispatch => {
       column.date = column.startTime.map(startTime =>
         format(startTime, "yyyy-MM-dd")
       );
+      column.month = column.startTime.map(startTime =>
+        format(startTime, "yyyy-MM")
+      );
       const df = new DataFrame(column).withColumn("playing", row => {
         const { timing } = row.get("quality");
         const { pause } = timing || { pause: 0 };
@@ -177,6 +201,16 @@ const dispatcher = dispatch => {
         ["aggregate", [group => group.stat.sum("playing")]],
         ["toArray", []],
         ["map", [([date, playing]) => ({ day: date, value: playing })]]
+      ]);
+      const tdf = new DataFrame(column).withColumn("transferSize", row => {
+        const transfer = row.get("transferSize");
+        return Number.isFinite(transfer) ? transfer : 0;
+      });
+      const transferSize = await delayCaller(tdf, [
+        ["groupBy", ["month"]],
+        ["aggregate", [group => group.stat.sum("transferSize")]],
+        ["toArray", []],
+        ["map", [([month, transfer]) => ({ day: month, value: transfer })]]
       ]);
       const qoeTimeline = await delayCaller(df, [
         ["select", ["index", "service", "startTime", "qoe"]],
@@ -222,6 +256,7 @@ const dispatcher = dispatch => {
         length: viewingModels.length,
         storeIndex,
         playingTime,
+        transferSize,
         qoeStats: {
           sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
           count: qoeTimeline.length
