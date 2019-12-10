@@ -49,6 +49,10 @@ const initialData = {
   length: 0,
   playingTime: [],
   transferSize: [],
+  totalPlayingTime: 0,
+  totalWaitingTime: 0,
+  droppedVideoFrames: 0,
+  totalVideoFrames: 0,
   qoeStats: {
     sum: 0,
     count: 0
@@ -88,6 +92,10 @@ const reducer = (data, chunk) => ({
           : [last, { day, value }])
       ];
     }, []),
+  totalPlayingTime: chunk.totalPlayingTime + data.totalPlayingTime,
+  totalWaitingTime: chunk.totalWaitingTime + data.totalWaitingTime,
+  droppedVideoFrames: chunk.droppedVideoFrames + data.droppedVideoFrames,
+  totalVideoFrames: chunk.totalVideoFrames + data.totalVideoFrames,
   qoeStats: {
     sum: chunk.qoeStats.sum + data.qoeStats.sum,
     count: chunk.qoeStats.count + data.qoeStats.count
@@ -213,6 +221,39 @@ const dispatcher = dispatch => {
         ["toArray", []],
         ["map", [([month, transfer]) => ({ day: month, value: transfer })]]
       ]);
+      const {
+        totalPlayingTime,
+        totalWaitingTime,
+        droppedVideoFrames,
+        totalVideoFrames
+      } = df.reduce(
+        (acc, row) => {
+          const playing = row.get("playing");
+          const {
+            droppedVideoFrames: dropped,
+            totalVideoFrames: frames,
+            timing
+          } = row.get("quality");
+          const { waiting } = timing || { waiting: 0 };
+
+          return {
+            totalPlayingTime:
+              acc.totalPlayingTime + Number.isFinite(playing) ? playing : 0,
+            totalWaitingTime:
+              acc.totalWaitingTime + Number.isFinite(waiting) ? waiting : 0,
+            droppedVideoFrames:
+              acc.droppedVideoFrames + Number.isFinite(dropped) ? dropped : 0,
+            totalVideoFrames:
+              acc.totalVideoFrames + Number.isFinite(frames) ? frames : 0
+          };
+        },
+        {
+          totalPlayingTime: 0,
+          totalWaitingTime: 0,
+          droppedVideoFrames: 0,
+          totalVideoFrames: 0
+        }
+      );
       const qoeTimeline = await delayCaller(df, [
         ["select", ["index", "service", "startTime", "qoe"]],
         ["dropMissingValues", [["index", "service", "startTime", "qoe"]]],
@@ -258,6 +299,10 @@ const dispatcher = dispatch => {
         storeIndex,
         playingTime,
         transferSize,
+        totalPlayingTime,
+        totalWaitingTime,
+        droppedVideoFrames,
+        totalVideoFrames,
         qoeStats: {
           sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
           count: qoeTimeline.length

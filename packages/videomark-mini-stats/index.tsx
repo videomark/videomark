@@ -45,10 +45,10 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         y={320}
         transform={`translate(${56},${320})`}
         label="平均品質"
-        quality={averageQoE}
+        quality={Number.isFinite(averageQoE) ? averageQoE : 1}
       />
       <JPText
-        x="64%"
+        x="60%"
         y={368}
         textAnchor="end"
         dominantBaseline="text-before-edge"
@@ -68,7 +68,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         fontSize={14}
       >
         待機時間割合{" "}
-        {Number.isNaN(averageWaitingRatio)
+        {Number.isFinite(averageWaitingRatio)
           ? (averageWaitingRatio * 100).toFixed(1)
           : 0}
         %
@@ -81,7 +81,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         message={timeFormat(total)}
       />
       <JPText
-        x="64%"
+        x="60%"
         y={448}
         textAnchor="end"
         dominantBaseline="text-before-edge"
@@ -96,7 +96,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         dominantBaseline="text-before-edge"
         fontSize={14}
       >
-        動画件数 {Number.isFinite(count) ? count : 0}
+        動画件数 {Number.isFinite(count) ? count.toLocaleString() : 0}
       </JPText>
       <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
         https://vm.webdino.org/

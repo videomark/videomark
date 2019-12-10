@@ -15,6 +15,7 @@ import { ResponsiveBar } from "@nivo/bar";
 import { ResponsiveScatterPlotCanvas } from "@nivo/scatterplot";
 import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
+import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import LoadingProgress from "../components/LoadingProgress";
 
@@ -334,6 +335,11 @@ export default () => {
           <Grid item xs={12}>
             <PlayingTimeCalendar />
           </Grid>
+        </Grid>
+        <Grid item xs={12} container justify="flex-end">
+          <MiniStatsDownloadButton>
+            計測結果を画像として保存
+          </MiniStatsDownloadButton>
         </Grid>
         <Grid item xs={12}>
           <Grid item>
