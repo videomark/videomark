@@ -15,6 +15,7 @@ import { ResponsiveBar } from "@nivo/bar";
 import { ResponsiveScatterPlotCanvas } from "@nivo/scatterplot";
 import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
+import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
 import videoPlatforms from "../utils/videoPlatforms.json";
 import LoadingProgress from "../components/LoadingProgress";
 
@@ -24,16 +25,25 @@ const timeFormatFromMinutes = min =>
   }${Math.floor(min % 60)}分`;
 const timeFormat = msec => timeFormatFromMinutes(Math.floor(msec / 1e3 / 60));
 
+const sizeFormat = bytes =>
+  new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2
+  }).format(bytes / 1024.0 / 1024.0 / 1024.0);
+
 const PlayingTimeStats = () => {
-  const { initialState, length, playingTime } = useContext(StatsDataContext);
-  const sum = playingTime.map(({ value }) => value).reduce((a, c) => a + c, 0);
+  const { initialState, length, playingTime, transferSize } = useContext(
+    StatsDataContext
+  );
+  const sum = playingTime.reduce((a, c) => a + c.value, 0);
+  const size = transferSize.reduce((a, c) => a + c.value, 0);
   const text = initialState ? (
     <>
       ...
       <LoadingProgress />
     </>
   ) : (
-    `${length.toLocaleString()}件 ${timeFormat(sum)}`
+    `${length.toLocaleString()}件 ${timeFormat(sum)} ${sizeFormat(size)} GB`
   );
   return (
     <Typography component="small" variant="caption">
@@ -325,6 +335,11 @@ export default () => {
           <Grid item xs={12}>
             <PlayingTimeCalendar />
           </Grid>
+        </Grid>
+        <Grid item xs={12} container justify="flex-end">
+          <MiniStatsDownloadButton>
+            計測結果を画像として保存
+          </MiniStatsDownloadButton>
         </Grid>
         <Grid item xs={12}>
           <Grid item>

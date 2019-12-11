@@ -9,21 +9,21 @@ const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
 )}`;
 
 function App() {
-  const canvasRef = useRef<HTMLCanvasElement>();
-  const imageRef = useRef<HTMLImageElement>();
   const anchorRef = useRef<HTMLAnchorElement>();
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const image = imageRef.current;
-    const anchor = anchorRef.current;
+    const image = new Image();
+    image.src = url;
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      canvas.getContext("2d").drawImage(image, 0, 0);
 
-    canvas.width = image.width;
-    canvas.height = image.height;
-    canvas.getContext("2d").drawImage(image, 0, 0);
-
-    anchor.download = new Date().toLocaleString();
-    anchor.href = canvas.toDataURL();
+      const anchor = anchorRef.current;
+      anchor.download = new Date().toLocaleString();
+      anchor.href = canvas.toDataURL();
+    };
   }, []);
 
   return (
@@ -35,14 +35,6 @@ function App() {
       <section>
         <h1>SVG</h1>
         <SVG data={data} />
-      </section>
-      <section>
-        <h1>Image</h1>
-        <img ref={imageRef} src={url} />
-      </section>
-      <section>
-        <h1>Canvas</h1>
-        <canvas ref={canvasRef} />
       </section>
       <section>
         <h1>URL</h1>

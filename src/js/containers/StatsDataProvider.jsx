@@ -48,6 +48,11 @@ const initialData = {
   initialState: true,
   length: 0,
   playingTime: [],
+  transferSize: [],
+  totalPlayingTime: 0,
+  totalWaitingTime: 0,
+  droppedVideoFrames: 0,
+  totalVideoFrames: 0,
   qoeStats: {
     sum: 0,
     count: 0
@@ -75,13 +80,30 @@ const reducer = (data, chunk) => ({
           : [last, { day, value }])
       ];
     }, []),
+  transferSize: [...chunk.transferSize, ...data.transferSize]
+    .sort(({ day: a }, { day: b }) => (a < b ? -1 : +1))
+    .reduce((accumulator, { day, value }) => {
+      if (accumulator.length === 0) return [{ day, value }];
+      const last = accumulator.slice(-1)[0];
+      return [
+        ...accumulator.slice(0, -1),
+        ...(last.day === day
+          ? [{ day, value: last.value + value }]
+          : [last, { day, value }])
+      ];
+    }, []),
+  totalPlayingTime: chunk.totalPlayingTime + data.totalPlayingTime,
+  totalWaitingTime: chunk.totalWaitingTime + data.totalWaitingTime,
+  droppedVideoFrames: chunk.droppedVideoFrames + data.droppedVideoFrames,
+  totalVideoFrames: chunk.totalVideoFrames + data.totalVideoFrames,
   qoeStats: {
     sum: chunk.qoeStats.sum + data.qoeStats.sum,
     count: chunk.qoeStats.count + data.qoeStats.count
   },
-  qoeTimeline: [...chunk.qoeTimeline, ...data.qoeTimeline].sort(
-    ({ time: a }, { time: b }) => (a < b ? -1 : +1)
-  ),
+  qoeTimeline: [
+    ...chunk.qoeTimeline,
+    ...data.qoeTimeline
+  ].sort(({ time: a }, { time: b }) => (a < b ? -1 : +1)),
   qoeFrequency: Object.entries(data.qoeFrequency).reduce(
     (obj, [qoe, stats]) => {
       const pastStats = chunk.qoeFrequency[qoe] || {};
@@ -142,7 +164,12 @@ const dispatcher = dispatch => {
       const column = {
         index: viewingModels.map(viewingModel => viewingModel.id)
       };
-      [column.startTime, column.endTime, column.service] = await Promise.all([
+      [
+        column.startTime,
+        column.endTime,
+        column.service,
+        column.transferSize
+      ] = await Promise.all([
         Promise.all(viewingModels.map(viewingModel => viewingModel.startTime)),
         Promise.all(viewingModels.map(viewingModel => viewingModel.endTime)),
         Promise.all(
@@ -150,6 +177,9 @@ const dispatcher = dispatch => {
             async viewingModel =>
               urlToVideoPlatform(await viewingModel.location).id
           )
+        ),
+        Promise.all(
+          viewingModels.map(viewingModel => viewingModel.transferSize)
         )
       ]);
       const now = Date.now();
@@ -166,6 +196,9 @@ const dispatcher = dispatch => {
       column.date = column.startTime.map(startTime =>
         format(startTime, "yyyy-MM-dd")
       );
+      column.month = column.startTime.map(startTime =>
+        format(startTime, "yyyy-MM")
+      );
       const df = new DataFrame(column).withColumn("playing", row => {
         const { timing } = row.get("quality");
         const { pause } = timing || { pause: 0 };
@@ -178,6 +211,49 @@ const dispatcher = dispatch => {
         ["toArray", []],
         ["map", [([date, playing]) => ({ day: date, value: playing })]]
       ]);
+      const tdf = new DataFrame(column).withColumn("transferSize", row => {
+        const transfer = row.get("transferSize");
+        return Number.isFinite(transfer) ? transfer : 0;
+      });
+      const transferSize = await delayCaller(tdf, [
+        ["groupBy", ["month"]],
+        ["aggregate", [group => group.stat.sum("transferSize")]],
+        ["toArray", []],
+        ["map", [([month, transfer]) => ({ day: month, value: transfer })]]
+      ]);
+      const {
+        totalPlayingTime,
+        totalWaitingTime,
+        droppedVideoFrames,
+        totalVideoFrames
+      } = df.reduce(
+        (acc, row) => {
+          const playing = row.get("playing");
+          const {
+            droppedVideoFrames: dropped,
+            totalVideoFrames: frames,
+            timing
+          } = row.get("quality");
+          const { waiting } = timing || { waiting: 0 };
+
+          return {
+            totalPlayingTime:
+              acc.totalPlayingTime + Number.isFinite(playing) ? playing : 0,
+            totalWaitingTime:
+              acc.totalWaitingTime + Number.isFinite(waiting) ? waiting : 0,
+            droppedVideoFrames:
+              acc.droppedVideoFrames + Number.isFinite(dropped) ? dropped : 0,
+            totalVideoFrames:
+              acc.totalVideoFrames + Number.isFinite(frames) ? frames : 0
+          };
+        },
+        {
+          totalPlayingTime: 0,
+          totalWaitingTime: 0,
+          droppedVideoFrames: 0,
+          totalVideoFrames: 0
+        }
+      );
       const qoeTimeline = await delayCaller(df, [
         ["select", ["index", "service", "startTime", "qoe"]],
         ["dropMissingValues", [["index", "service", "startTime", "qoe"]]],
@@ -222,6 +298,11 @@ const dispatcher = dispatch => {
         length: viewingModels.length,
         storeIndex,
         playingTime,
+        transferSize,
+        totalPlayingTime,
+        totalWaitingTime,
+        droppedVideoFrames,
+        totalVideoFrames,
         qoeStats: {
           sum: qoeTimeline.reduce((a, { value }) => a + value, 0),
           count: qoeTimeline.length

@@ -1,15 +1,10 @@
 import * as React from "react";
 import Calendar from "./components/Calendar";
+import QualityBadge from "./components/QualityBadge";
 import Badge from "./components/Badge";
 import JPText from "./components/JPText";
-
-interface StatsData {
-  count: number;
-  playingTime: Array<{ day: string; value: number }>;
-  averageQoE: number;
-  averageWaitingRatio: number;
-  averageDroppedVideoFrameRatio: number;
-}
+import timeFormat from "./components/jpTimeFormat";
+import { StatsData, playingTimeStats } from "./components/stats";
 
 const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
   const {
@@ -20,11 +15,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
     averageDroppedVideoFrameRatio
   } = data;
 
-  const totalMinutes = playingTime.reduce(
-    (previousValue, { value: currentValue }) =>
-      previousValue + currentValue / 60e3,
-    0
-  );
+  const { playingTimeWithDate, total, daily } = playingTimeStats(playingTime);
 
   return (
     <svg
@@ -33,10 +24,10 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
       width={512}
       height={512}
     >
-      <rect x={0} y={0} width={512} height={512} fill="#FFFFFF" />
+      <rect x={0} y={0} width="100%" height="100%" fill="#FFFFFF" />
       <JPText
         x="50%"
-        y={16}
+        y={20}
         textAnchor="middle"
         dominantBaseline="text-before-edge"
         fontSize={32}
@@ -47,35 +38,65 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         x={56}
         y={88}
         transform={`translate(${56},${88})`}
-        data={playingTime}
+        data={playingTimeWithDate}
       />
-      <Badge
+      <QualityBadge
         x={56}
         y={320}
         transform={`translate(${56},${320})`}
         label="平均品質"
-        message={averageQoE.toFixed(1)}
+        quality={Number.isFinite(averageQoE) ? averageQoE : 1}
       />
+      <JPText
+        x="60%"
+        y={368}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
+        フレームドロップ率{" "}
+        {Number.isFinite(averageDroppedVideoFrameRatio)
+          ? (averageDroppedVideoFrameRatio * 100).toFixed(1)
+          : 0}
+        %
+      </JPText>
+      <JPText
+        x="88%"
+        y={368}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
+        待機時間割合{" "}
+        {Number.isFinite(averageWaitingRatio)
+          ? (averageWaitingRatio * 100).toFixed(1)
+          : 0}
+        %
+      </JPText>
       <Badge
         x={56}
-        y={390}
-        transform={`translate(${56},${390})`}
+        y={400}
+        transform={`translate(${56},${400})`}
         label="視聴時間"
-        message={[
-          totalMinutes > 60
-            ? `${Math.floor(totalMinutes / 60).toLocaleString()}時間`
-            : "",
-          `${Math.floor(totalMinutes % 60)}分`
-        ].join("")}
+        message={timeFormat(total)}
       />
-      <JPText x="2%" y={460} fontSize={12}>
-        フレームドロップ率 {averageDroppedVideoFrameRatio}
+      <JPText
+        x="60%"
+        y={448}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
+        1日あたり {timeFormat(daily)}
       </JPText>
-      <JPText x="2%" y={480} fontSize={12}>
-        待機時間割合 {averageWaitingRatio}
-      </JPText>
-      <JPText x="2%" y={500} fontSize={12}>
-        動画件数 {count}
+      <JPText
+        x="88%"
+        y={448}
+        textAnchor="end"
+        dominantBaseline="text-before-edge"
+        fontSize={14}
+      >
+        動画件数 {Number.isFinite(count) ? count.toLocaleString() : 0}
       </JPText>
       <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
         https://vm.webdino.org/
