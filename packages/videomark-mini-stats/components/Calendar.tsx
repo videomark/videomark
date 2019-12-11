@@ -77,7 +77,10 @@ export const Calendar: React.FC<CalendarProps> = ({ data, ...gprops }) => {
   const begin = beginDate(now);
   const days = sliceDate(data, begin);
   const [minValue, maxValue] = minAndMax(days);
-  const rate = (value: number) => (value - minValue) / (maxValue - minValue);
+  const rate = (value: number) =>
+    minValue === maxValue
+      ? value / value
+      : (value - minValue) / (maxValue - minValue);
   const toXY = dateToXY(begin, daySize);
   const includingBlank = [
     ...Array(differenceInDays(addDays(now, 1), begin)).keys()

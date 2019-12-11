@@ -64,6 +64,6 @@ export const playingTimeStats = (data: StatsData["playingTime"]) => {
   return {
     playingTimeWithDate,
     total,
-    daily: totalDays > 0 ? total / totalDays : 0
+    daily: totalDays > 0 ? total / totalDays : total
   };
 };
