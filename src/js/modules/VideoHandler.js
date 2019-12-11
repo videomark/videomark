@@ -92,7 +92,9 @@ export default class VideoHandler {
             title = this.handler.get_video_title();
 
         if (!title) {
+            // eslint-disable-next-line camelcase
             const og_title = document.querySelector("meta[property='og:title']");
+            // eslint-disable-next-line camelcase
             if (og_title)
                 title = og_title.content;
 
@@ -121,8 +123,9 @@ export default class VideoHandler {
 
         if (this.handler.get_video_thumbnail instanceof Function)
             thumbnail = this.handler.get_video_thumbnail();
-
+        // eslint-disable-next-line camelcase
         const og_image = document.querySelector("meta[property='og:image']")
+        // eslint-disable-next-line camelcase
         if (!thumbnail && og_image)
             thumbnail = og_image.content;
 
@@ -131,21 +134,27 @@ export default class VideoHandler {
 
     // eslint-disable-next-line camelcase
     get_id_by_video_holder() {
+        // eslint-disable-next-line camelcase
         let id_by_video_holder;
 
         if (this.handler.get_id_by_video_holder instanceof Function)
+            // eslint-disable-next-line camelcase
             id_by_video_holder = this.handler.get_id_by_video_holder();
 
+        // eslint-disable-next-line camelcase
         return id_by_video_holder;
     }
 
     // eslint-disable-next-line camelcase
     get_view_count() {
+        // eslint-disable-next-line camelcase
         let view_count = -1;
 
         if (this.handler.get_view_count instanceof Function)
+            // eslint-disable-next-line camelcase
             view_count = this.handler.get_view_count();
 
+        // eslint-disable-next-line camelcase
         return view_count;
     }
 
@@ -210,7 +219,7 @@ export default class VideoHandler {
     // eslint-disable-next-line camelcase
     set_quality(bitrate) {
         if (this.handler.set_quality instanceof Function)
-            return this.handler.set_quality(bitrate);
+            this.handler.set_quality(bitrate);
     }
 
     // eslint-disable-next-line camelcase
