@@ -40,7 +40,7 @@ export const QualityBadge: React.FC<QualityBadgeProps> = ({
       fontWeight="bold"
       fill="#ffffff"
     >
-      {clampQuality(quality).toFixed(1)}
+      {Number.isFinite(quality) ? clampQuality(quality).toFixed(1) : "n/a"}
     </JPText>
     <QualityStars
       x={240}

@@ -3,7 +3,7 @@ import { clamp } from "./math";
 import JPText from "./JPText";
 const clampQuality = clamp(1, 5);
 export const QualityStars = ({ quality, ...props }) => {
-    const rate = clampQuality(quality) / 5;
+    const rate = quality > 0 ? clampQuality(quality) / 5 : 0;
     return (React.createElement("g", Object.assign({}, props),
         React.createElement("defs", null,
             React.createElement("linearGradient", { id: "quality-stars-fill" },

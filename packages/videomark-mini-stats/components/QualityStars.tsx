@@ -12,7 +12,7 @@ export const QualityStars: React.FC<QualityStarsProps> = ({
   quality,
   ...props
 }) => {
-  const rate = clampQuality(quality) / 5;
+  const rate = quality > 0 ? clampQuality(quality) / 5 : 0;
 
   return (
     <g {...props}>

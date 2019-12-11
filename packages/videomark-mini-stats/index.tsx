@@ -45,7 +45,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         y={320}
         transform={`translate(${56},${320})`}
         label="平均品質"
-        quality={Number.isFinite(averageQoE) ? averageQoE : 1}
+        quality={averageQoE}
       />
       <JPText
         x="60%"
