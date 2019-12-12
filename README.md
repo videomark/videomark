@@ -129,7 +129,6 @@ ChromeExtension/sodium.js
 | session               | セッションID(UUID)                        |
 | location              | window.location.href                 |
 | locationIp            | locationのIPアドレス                      |
-| serviceName           | サービス名                                |
 | userAgent             | ユーザーエージェント                           |
 | appVersion            | navigator.appVersion                 |
 | sequence              | 同一セッション内のシーケンス番号(0から連番)              |

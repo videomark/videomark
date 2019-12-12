@@ -1,33 +1,32 @@
 import ParaviTypeHandler from './ParaviTypeHandler';
 import TVerTypeHandler from './TVerTypeHandler';
 import YouTubeTypeHandler from './YouTubeTypeHandler';
+import GeneralTypeHandler from './GeneralTypeHandler';
 
 export default class VideoHandler {
     constructor(elm) {
-        this.serviceName = "";
+        const url = new URL(window.location.href);
         if (ParaviTypeHandler.is_paravi_type()) {
             this.handler = ParaviTypeHandler;
-            this.serviceName = "paravi";
             // eslint-disable-next-line no-console
             console.log('Paravi Type Handler');
         } else if (TVerTypeHandler.is_tver_type()) {
             this.handler = TVerTypeHandler;
-            this.serviceName = "tver";
             // eslint-disable-next-line no-console
             console.log('TVer Type Handler');
         } else if (YouTubeTypeHandler.is_youtube_type()) {
             this.handler = new YouTubeTypeHandler(elm);
-            this.serviceName = "youtube";
             // eslint-disable-next-line no-console
             console.log('YouTube Type Handler');
         } else {
-            throw new Error('unknown type');
+            if (url.host === "www.youtube.com" ||
+                url.host === "m.youtube.com") {
+                throw new Error("hostname is youtube but not played ");
+            }
+            this.handler = new GeneralTypeHandler(elm);
+            // eslint-disable-next-line no-console
+            console.log('Unknown Type Handler');
         }
-    }
-
-    // eslint-disable-next-line camelcase
-    get_service_name() {
-        return this.serviceName;
     }
 
     // eslint-disable-next-line camelcase

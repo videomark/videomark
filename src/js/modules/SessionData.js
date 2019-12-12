@@ -373,7 +373,6 @@ export default class SessionData {
       session: this.session_id,
       location: window.location.href,
       locationIp: this.hostToIp[new URL(window.location.href).host],
-      serviceName: video.get_service_name(),
       userAgent: this.userAgent,
       sequence: this.sequence,
       video: [video.get()],
