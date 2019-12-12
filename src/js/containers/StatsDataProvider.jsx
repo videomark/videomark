@@ -45,6 +45,8 @@ const fetchQoE = async viewingModels => {
 };
 
 const initialData = {
+  /** Stats data structure version. */
+  version: 1,
   initialState: true,
   length: 0,
   playingTime: [],
@@ -67,6 +69,7 @@ const initialData = {
 };
 const reducer = (data, chunk) => ({
   initialState: false,
+  version: data.version,
   length: chunk.length + data.length,
   playingTime: [...chunk.playingTime, ...data.playingTime]
     .sort(({ day: a }, { day: b }) => (a < b ? -1 : +1))
@@ -325,6 +328,10 @@ export const StatsDataProvider = props => {
   useEffect(() => {
     if (viewings === undefined) return;
     if (!data.initialState) return;
+
+    // NOTE: 古いキャッシュが存在する場合、削除する
+    if (getStoredValue().version !== initialData.version) clearStore();
+
     const tmp = new Map(viewings);
     const storedIndex = getStoredIndex();
     addData(getStoredValue());
