@@ -291,6 +291,9 @@ export default class VideoData {
       play_list_info: this.video_handler.get_play_list_info(),
       throughput_info: this.video_handler.get_throughput_info()
     };
+    if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
+      val["property"]["src"] = this.video_elm.src;
+    }
     Config.get_event_type_names().forEach(s => {
       val[`event_${s}`] = [];
       val[`event_${s}_delta`] = [];
