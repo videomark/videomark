@@ -15,7 +15,7 @@ import ParaviTypeHandler from "./modules/ParaviTypeHandler";
   }
 
   /*
-  // --- resouce buffer --- //
+  // --- resource buffer --- //
   let res_buf_full_cnt = 0;
 
   performance.onresourcetimingbufferfull = () => {
