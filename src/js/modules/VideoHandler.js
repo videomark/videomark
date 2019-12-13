@@ -19,9 +19,12 @@ export default class VideoHandler {
             // eslint-disable-next-line no-console
             console.log('YouTube Type Handler');
         } else {
+            // TODO この判定は、session でやるべき
             if (url.host === "www.youtube.com" ||
-                url.host === "m.youtube.com") {
-                throw new Error("hostname is youtube but not played ");
+                url.host === "m.youtube.com" ||
+                url.host === "www.paravi.jp" ||
+                url.host === "tver.jp") {
+                throw new Error("hostname is qoe target but not played ");
             }
             this.handler = new GeneralTypeHandler(elm);
             // eslint-disable-next-line no-console
