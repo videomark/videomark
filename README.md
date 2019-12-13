@@ -130,17 +130,23 @@ ChromeExtension/sodium.js
 | location              | window.location.href                 |
 | locationIp            | locationのIPアドレス                      |
 | userAgent             | ユーザーエージェント                           |
-| appVersion            | navigator.appVersion                 |
 | sequence              | 同一セッション内のシーケンス番号(0から連番)              |
 | resource_timing       | -                                    |
-| netinfo.downlink      | 下り速度(Mbps)                           |
-| netinfo.downlinkMax   | 最大下り速度(Mbps)                         |
-| netinfo.effectiveType | 有効なタイプ                               |
-| netinfo.rtt           | RTT                                  |
-| netinfo.type          | デバイスがネットワーク通信に使用している接続の種類            |
-| netinfo.apn           | アクセスポイント                             |
-| netinfo.plmn          | ルーティングエリア                            |
-| netinfo.sim           | SIM                                  |
+
+### netinfo
+Network Information API より取得した情報を送信する  
+http://wicg.github.io/netinfo/#networkinformation-interface
+
+| 項目                    | 値                                    |
+| --------------------- | ------------------------------------ |
+| downlink      | 下り速度(Mbps)<br>※ Videomark Browser または隠しオプション enable-experimental-web-platform-features 有効時                           |
+| downlinkMax   | 最大下り速度(Mbps)                         |
+| effectiveType | 有効なタイプ                               |
+| rtt           | RTT                                  |
+| type          | デバイスがネットワーク通信に使用している接続の種類<br>※ Videomark Browser または隠しオプション enable-experimental-web-platform-features 有効時            |
+| apn           | アクセスポイント<br>※ Videomark Browser 独自拡張                            |
+| plmn          | ルーティングエリア<br>※ Videomark Browser 独自拡張                           |
+| sim           | SIM<br>※ Videomark Browser 独自拡張                                 |
 
 ### video
 
@@ -153,10 +159,8 @@ videoの属性情報
 | 項目                  | 値                                                 |
 | ------------------- | ------------------------------------------------- |
 | uuid                | videoを識別するためのUUID                                 |
-| id                  | videoタグのid属性                                      |
-| class               | videoタグのclass属性                                   |
 | viewCount           | 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1 |
-| src                 | videoタグのsrc属性                                     |
+| src                 | videoタグのsrc属性<br>※ blob URL の場合は除外                                    |
 | domainName          | videoのセグメント配布ドメイン                                 |
 | holderId            | サービスが付加したID                                       |
 | width               | videoタグの表示幅                                       |
@@ -264,7 +268,6 @@ QoEサーバーに対応するために以下のデータを追加した。
 | filed                                | QoE                                                 | detail                       |
 | ------------------------------------ | --------------------------------------------------- | ---------------------------- |
 | userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                   |
-| appVersion                           | requestNotificationBasicInformation.osInfo          | クライアントバージョン                  |
 | video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | videoの再生時間(秒)                |
 | video.property.domainName            | requestNotificationViewingInformation.domainName    | videoのセグメント配布ドメイン            |
 | video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                       |
@@ -281,8 +284,6 @@ Paraviは、Video.js + Shaka Player で実装されている。上記のフィ�
 
 -   userAgent
     -   window.navigator.userAgentの値
--   appVersion
-    -   window.navigator.appVersion
 -   video.property.mediaSize
     -   Class: videojs.Player duration()
 -   video.property.domainName
@@ -310,8 +311,6 @@ TVerは、Video.jsで実装されている。上記のフィールドの値は�
 
 -   userAgent
     -   window.navigator.userAgentの値
--   appVersion
-    -   window.navigator.appVersion
 -   video.property.mediaSize
     -   Class: videojs.Player duration()
 -   video.property.domainName
@@ -341,8 +340,6 @@ YouTubeのiFrameAPIを使用して上記のフィールドの値を取得して�
 
 -   userAgent
     -   window.navigator.userAgentの値
--   appVersion
-    -   window.navigator.appVersion
 -   video.property.mediaSize
     -   getDuration()
 -   video.property.domainName

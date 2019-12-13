@@ -3,7 +3,7 @@
  */
 export default class Config {
   static is_mobile() {
-    return window.sodium;
+    return Boolean(window.sodium);
   }
 
   static get_collect_interval() {

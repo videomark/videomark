@@ -6,6 +6,7 @@ import msgpack from "msgpack-lite";
 import Config from "./Config";
 import VideoData from "./VideoData";
 import { useStorage } from "./Storage";
+import { saveTransferSize } from "./StatStorage";
 import { version } from "../../../package.json";
 
 export default class SessionData {
@@ -360,6 +361,7 @@ export default class SessionData {
       end_time: -1,
       thumbnail: video.get_thumbnail(),
       title: video.get_title(),
+      transfer_size: video.transfer_size,
       log: [
         ...(storage.cache.log || []).filter(a => !("qoe" in a)),
         ...video.get_latest_qoe(),
@@ -376,6 +378,8 @@ export default class SessionData {
         .sort(({ date: ad }, { date: bd }) => ad - bd)
         .slice(-Config.max_log)
     });
+
+    await saveTransferSize(video.transfer_diff);
   }
 
   /**
