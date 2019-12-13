@@ -9,6 +9,7 @@ import { useStorage } from "./Storage";
 import { version } from "../../../package.json";
 
 export default class SessionData {
+
   constructor() {
     this.version = version;
     this.startTime = 0;
@@ -56,10 +57,10 @@ export default class SessionData {
     // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
 
-    // eslint-disable-next-line no-underscore-dangle
-    this._location_ip();
+    this.locationIp();
   }
 
+  // eslint-disable-next-line camelcase
   get_session_id() {
     return this.session_id;
   }
@@ -67,6 +68,7 @@ export default class SessionData {
   /**
    * 計測対象のvideo
    */
+  // eslint-disable-next-line camelcase
   get_main_video() {
     return this.video.find(e => e.is_main_video());
   }
@@ -74,8 +76,11 @@ export default class SessionData {
   /**
    * videoの利用可否
    */
+  // eslint-disable-next-line camelcase
   get_video_availability() {
+    // eslint-disable-next-line camelcase
     const main_video = this.get_main_video();
+    // eslint-disable-next-line camelcase
     if (main_video === undefined) return false;
     return main_video.is_available();
   }
@@ -83,6 +88,7 @@ export default class SessionData {
   /**
    * 各videoのクオリティ情報の更新
    */
+  // eslint-disable-next-line camelcase
   update_quality_info() {
     this.video.forEach(e => e.update());
   }
@@ -91,13 +97,16 @@ export default class SessionData {
    * videoリストの更新
    * @param {HTMLCollection} elms
    */
+  // eslint-disable-next-line camelcase
   set_video_elms(elms) {
     Array.prototype.forEach.call(elms, elm => {
       if (!this.video.find(e => e.video_elm === elm)) {
+        // eslint-disable-next-line camelcase
         const video_id = uuidv4();
         try {
+          // eslint-disable-next-line camelcase
           const new_video = new VideoData(elm, video_id);
-          /* eslint-disable no-console */
+          /* eslint-disable no-console, camelcase */
           console.log(`VIDEOMARK: new video found uuid[${video_id}]`);
           this.video.push(new_video);
         } catch (err) {
@@ -151,7 +160,7 @@ export default class SessionData {
       console.log(`VIDEOMARK: STATE CHANGE play ${new Date(start_time)}`);
 
       try {
-        // eslint-disable-next-line no-await-in-loop
+        // eslint-disable-next-line no-await-in-loop, no-underscore-dangle
         await this._play_started(main_video);
       } catch (err) {
         console.log(`VIDEOMARK: ${err}`);
@@ -159,6 +168,7 @@ export default class SessionData {
     }
   }
 
+  // eslint-disable-next-line camelcase
   async _play_started(main_video) {
     const qoe_request_start =
       Config.get_trans_interval() * Config.get_send_data_count_for_qoe() -
@@ -179,7 +189,7 @@ export default class SessionData {
         request = i > qoe_request_start;
       }
 
-      // eslint-disable-next-line no-await-in-loop
+      // eslint-disable-next-line no-await-in-loop, no-underscore-dangle
       qoe = await this._transaction(
         main_video,
         data,
@@ -204,7 +214,7 @@ export default class SessionData {
           0;
       }
 
-      // eslint-disable-next-line no-await-in-loop
+      // eslint-disable-next-line no-await-in-loop, no-underscore-dangle
       qoe = await this._transaction(
         main_video,
         data,
@@ -224,12 +234,14 @@ export default class SessionData {
     if (main_video.is_available()) {
       if (data) {
         // --- send to fluent --- //
+        // eslint-disable-next-line no-underscore-dangle
         this._send_data(main_video);
       }
       if (request) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
         tasks.push((async () => {
+          // eslint-disable-next-line no-underscore-dangle
           qoe = await this._request_qoe(main_video);
           if (qoe)
             main_video.add_latest_qoe({
@@ -239,12 +251,14 @@ export default class SessionData {
         })());
         if (Config.is_quality_control()) {
           tasks.push((async () => {
+            // eslint-disable-next-line no-underscore-dangle
             const recommend_bitrate = await this._request_recommend_bitrate(main_video);
             if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
           })());
         }
       }
       // --- save to storage --- //
+      // eslint-disable-next-line no-underscore-dangle
       this._store_session(main_video);
     }
 
@@ -258,6 +272,7 @@ export default class SessionData {
     return qoe;
   }
 
+  // eslint-disable-next-line camelcase
   async _send_data(video) {
     try {
       const ret = await fetch(Config.get_fluent_url(), {
@@ -265,6 +280,7 @@ export default class SessionData {
         headers: {
           "Content-type": "application/msgpack"
         },
+        // eslint-disable-next-line no-underscore-dangle
         body: msgpack.encode(this._to_json(video))
       });
       if (!ret.ok) {
@@ -275,6 +291,7 @@ export default class SessionData {
     }
   }
 
+  // eslint-disable-next-line camelcase
   async _request_qoe(video) {
     try {
       const ret = await fetch(`${Config.get_sodium_server_url()}/latest_qoe`, {
@@ -297,9 +314,11 @@ export default class SessionData {
       return Number.isNaN(qoe) ? null : qoe;
     } catch (err) {
       console.error(`VIDEOMARK: ${err}`);
+      return null;
     }
   }
 
+  // eslint-disable-next-line camelcase
   async _request_recommend_bitrate(video) {
     try {
       const ret = await fetch(`${Config.get_sodium_server_url()}/recommend_bitrate`, {
@@ -322,9 +341,11 @@ export default class SessionData {
       return Number.isNaN(recommendBitrate) ? null : recommendBitrate;
     } catch (err) {
       console.error(`VIDEOMARK: ${err}`);
+      return null;
     }
   }
 
+  // eslint-disable-next-line camelcase
   async _store_session(video) {
     const storage = useStorage({
       sessionId: this.session_id,
@@ -360,12 +381,13 @@ export default class SessionData {
   /**
    * 送信データフォーマットに変換
    */
+  // eslint-disable-next-line camelcase
   _to_json(video) {
     this.startTime = this.endTime;
     this.endTime = performance.now();
     this.sequence += 1;
 
-    let param = {
+    const param = {
       version: this.version,
       date: new Date().toISOString(),
       startTime: this.startTime,
@@ -379,7 +401,7 @@ export default class SessionData {
       resource_timing: []
     };
 
-    let netinfo = {};
+    const netinfo = {};
     ["downlink", "downlinkMax", "effectiveType", "rtt", "type", "apn", "plmn", "sim"].forEach(e => {
       if (navigator.connection[e] === Infinity) {
         netinfo[e] = Number.MAX_VALUE;
@@ -389,13 +411,12 @@ export default class SessionData {
         netinfo[e] = navigator.connection[e];
       }
     });
-    param["netinfo"] = netinfo;
+    param.netinfo = netinfo;
 
     return param;
   }
 
-  // eslint-disable-next-line camelcase
-  async _location_ip() {
+  async locationIp() {
     const url = new URL(window.location.href);
     const ip = await new Promise((resolve) => {
       const listener = (event) => {
