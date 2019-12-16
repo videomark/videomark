@@ -27,17 +27,27 @@ export const STREAM_BUFFER_SIZE = 60;
 export const viewingModelsStream = viewings => {
   const ids = [...viewings.keys()];
   const pull = async controller => {
-    if (ids.length === 0) return controller.close();
+    if (ids.length === 0) {
+      controller.close();
+      return;
+    }
+
     const buffer = await Promise.all(
       ids.splice(-STREAM_BUFFER_SIZE).map(async id => {
         const viewing = viewings.get(id);
-        return viewing instanceof Function
-          ? new ViewingModel({ id, ...(await viewing()) })
-          : new ViewingModel({ id, ...viewing });
+        const initialState =
+          viewing instanceof Function ? await viewing() : viewing;
+        return new ViewingModel({
+          id,
+          ...initialState
+        }).init();
       })
     );
-    await Promise.all(buffer.map(viewingModel => viewingModel.init()));
-    return controller.enqueue(buffer);
+
+    const filtered = buffer.filter(({ valid }) => valid);
+    const invalid = buffer.filter(({ valid }) => !valid);
+    dataErase.add(...invalid.map(({ id }) => id));
+    controller.enqueue(filtered);
   };
   return new ReadableStream({ pull });
 };
