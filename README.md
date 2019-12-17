@@ -131,6 +131,7 @@ ChromeExtension/sodium.js
 | locationIp            | locationのIPアドレス                      |
 | userAgent             | ユーザーエージェント                           |
 | sequence              | 同一セッション内のシーケンス番号(0から連番)              |
+| calc                  | QoE計算可能フラグ              |
 | resource_timing       | -                                    |
 
 ### netinfo
