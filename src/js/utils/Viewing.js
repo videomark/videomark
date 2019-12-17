@@ -69,7 +69,8 @@ class Viewing {
     if (this.cache.start_time < this.cache.end_time)
       return Promise.resolve(new Date(this.cache.end_time));
     const log = this.cache.log || [];
-    const { date } = log.slice(-1)[0] || {};
+    // NOTE: 時刻が得られない場合、視聴時間ゼロとみなす
+    const { date } = log.slice(-1)[0] || { date: this.cache.start_time };
     return Promise.resolve(new Date(date));
   }
 
