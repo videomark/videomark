@@ -34,10 +34,20 @@ export default class Config {
     return this.ui.id;
   }
 
+  static get_ui_observer() {
+    const { host } = new window.URL(window.location.href);
+    if (host === "m.youtube.com") {
+      return this.ui.m_youtube_com.observe;
+    }
+    return null;
+  }
+
   static get_ui_target() {
     const { host } = new window.URL(window.location.href);
     let result = "";
-    if (host.includes("youtube")) {
+    if (host === "m.youtube.com") {
+      result = this.ui.m_youtube_com.target;
+    } else if (host.includes("youtube")) {
       result = this.ui.youtube.target;
     } else if (host.includes("tver")) {
       result = this.ui.tver.target;
@@ -51,7 +61,9 @@ export default class Config {
   static get_style() {
     const { host } = new window.URL(window.location.href);
     let result = "";
-    if (host.includes("youtube")) {
+    if (host === "m.youtube.com") {
+      result = this.ui.m_youtube_com.style;
+    } else if (host.includes("youtube")) {
       result = this.ui.youtube.style;
     } else if (host.includes("paravi")) {
       result = this.ui.paravi.style;
@@ -151,6 +163,39 @@ Config.ui = {
   id: "__videomark_ui"
 };
 
+// m.youtube.com では #player-control-overlay のclassを監視して表示/非表示を切り替える
+// see https://github.com/webdino/sodium/issues/295
+Config.ui.m_youtube_com = {
+  /** @param {Function} callback 監視対象が変更されたとき呼ばれる関数。引数trueならフェードイン、それ以外フェードアウト。 */
+  observe(callback) {
+    const target = document.querySelector("#player-control-overlay");
+    if (target == null) return null;
+
+    const observer = new MutationObserver(() => {
+      // NOTE: 停止時やタップしたとき.fadeinが存在する
+      callback(target.classList.contains("fadein"));
+    });
+
+    observer.observe(target, {
+      // NOTE: classが変更されたとき
+      attributeFilter: ["class"]
+    });
+
+    return observer;
+  },
+  target: "#player-control-container",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+
+:not(.fadein)#${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
 // YouTube ではコンロール非表示時に #movie_player に .ytp-autohide 付与
 Config.ui.youtube = {
   target: "#movie_player",
@@ -243,7 +288,7 @@ if (window.sodium === undefined && document.currentScript != null) {
   Config.session = {
     id: session.get("id"),
     expires: Number(session.get("expires"))
-  }
+  };
 
   Config.settings = [
     ...new URLSearchParams(document.currentScript.dataset.settings)
