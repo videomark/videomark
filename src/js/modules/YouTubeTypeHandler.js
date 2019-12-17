@@ -221,23 +221,27 @@ class YouTubeTypeHandler {
 
     // eslint-disable-next-line camelcase
     static get_play_list_info() {
-        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
-        return formats
-            .map(e => {
-                const { groups: { container, codec } }
-                    = /(?<=video\/|audio\/)(?<container>\S+);(?:\S+)"(?<codec>\S+)"/.exec(e.type);
-                return {
-                    representationId: e.itag,
-                    bps: Number.parseInt(e.bitrate, 10),
-                    videoWidth: e.size ? Number.parseInt(e.size.split('x')[0], 10) : -1,
-                    videoHeight: e.size ? Number.parseInt(e.size.split('x')[1], 10) : -1,
-                    container,
-                    codec,
-                    fps: e.fps ? Number.parseInt(e.fps, 10) : -1,
-                    chunkDuration: YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION,
-                    serverIp: new URL(e.url).host
-                };
-            })
+        try {
+            const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+            return formats
+                .map(e => {
+                    const { groups: { container, codec } }
+                        = /(?<=video\/|audio\/)(?<container>\S+);(?:\S+)"(?<codec>\S+)"/.exec(e.type);
+                    return {
+                        representationId: e.itag,
+                        bps: Number.parseInt(e.bitrate, 10),
+                        videoWidth: e.size ? Number.parseInt(e.size.split('x')[0], 10) : -1,
+                        videoHeight: e.size ? Number.parseInt(e.size.split('x')[1], 10) : -1,
+                        container,
+                        codec,
+                        fps: e.fps ? Number.parseInt(e.fps, 10) : -1,
+                        chunkDuration: YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION,
+                        serverIp: new URL(e.url).host
+                    };
+                })
+        } catch {
+            return [];
+        }
     }
 
     // eslint-disable-next-line camelcase
@@ -329,12 +333,12 @@ class YouTubeTypeHandler {
         const audio = list.find(e => e.representationId === stats.afmt);
         return {
             video: {
-                container: video.container,
-                codec: video.codec
+                container: video ? video.container : null,
+                codec: video ? video.codec : null
             },
             audio: {
-                container: audio.container,
-                codec: audio.codec
+                container: audio ? audio.container : null,
+                codec: audio ? audio.codec : null
             }
         };
     }
