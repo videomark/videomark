@@ -46,7 +46,7 @@ export const viewingModelsStream = viewings => {
 
     const filtered = buffer.filter(({ valid }) => valid);
     const invalid = buffer.filter(({ valid }) => !valid);
-    dataErase.add(...invalid.map(({ id }) => id));
+    if (invalid.length > 0) dataErase.add(...invalid.map(({ id }) => id));
     controller.enqueue(filtered);
   };
   return new ReadableStream({ pull });
