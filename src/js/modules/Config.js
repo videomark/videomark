@@ -169,11 +169,15 @@ Config.ui.m_youtube_com = {
   /** @param {Function} callback 監視対象が変更されたとき呼ばれる関数。引数trueならフェードイン、それ以外フェードアウト。 */
   observe(callback) {
     const target = document.querySelector("#player-control-overlay");
-    if (target == null) return null;
+    if (target == null) {
+      callback(null);
+      return;
+    }
 
+    // NOTE: 停止時やタップしたとき.fadeinが存在する
+    const hasFadein = () => target.classList.contains("fadein");
     const observer = new MutationObserver(() => {
-      // NOTE: 停止時やタップしたとき.fadeinが存在する
-      callback(target.classList.contains("fadein"));
+      callback(hasFadein());
     });
 
     observer.observe(target, {
@@ -181,7 +185,7 @@ Config.ui.m_youtube_com = {
       attributeFilter: ["class"]
     });
 
-    return observer;
+    callback(hasFadein());
   },
   target: "#player-control-container",
   style: `#${Config.ui.id} {
