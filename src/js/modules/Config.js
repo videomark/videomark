@@ -187,7 +187,7 @@ Config.ui.m_youtube_com = {
 
     callback(hasFadein());
   },
-  target: "#player-control-container",
+  target: "#player-container-id",
   style: `#${Config.ui.id} {
   position: absolute;
   top: 12px;
