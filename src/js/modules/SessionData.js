@@ -238,7 +238,7 @@ export default class SessionData {
         // eslint-disable-next-line no-underscore-dangle
         this._send_data(main_video);
       }
-      if (request) {
+      if (request && main_video.is_calculatable()) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
         tasks.push((async () => {
@@ -263,7 +263,7 @@ export default class SessionData {
       this._store_session(main_video);
     }
 
-    // --- set timeout --- //
+    // --- wait next --- //
     // eslint-disable-next-line no-loop-func
     tasks.push(new Promise(resolve => setTimeout(() => resolve(), wait)));
 
@@ -401,6 +401,7 @@ export default class SessionData {
       locationIp: this.hostToIp[new URL(window.location.href).host],
       userAgent: this.userAgent,
       sequence: this.sequence,
+      calc: video.is_calculatable(),
       video: [video.get()],
       resource_timing: []
     };
