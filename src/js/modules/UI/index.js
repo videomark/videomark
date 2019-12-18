@@ -53,5 +53,14 @@ export default class UI {
     this.element.attachShadow({ mode: "open" });
     this.status.attach(this.element.shadowRoot);
     target.appendChild(this.element);
+
+    // プレイヤーのコントローラーを監視して表示/非表示を切り替える
+    const ovserve = Config.get_ui_observer();
+    if (ovserve != null) {
+      ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
+        if (fadein) this.element.classList.add("fadein");
+        else this.element.classList.remove("fadein");
+      });
+    }
   }
 }
