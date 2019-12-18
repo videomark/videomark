@@ -2,29 +2,40 @@ import ParaviTypeHandler from './ParaviTypeHandler';
 import TVerTypeHandler from './TVerTypeHandler';
 import YouTubeTypeHandler from './YouTubeTypeHandler';
 import GeneralTypeHandler from './GeneralTypeHandler';
+import NicoVideoTypeHandler from './NicoVideoTypeHandler';
 
 export default class VideoHandler {
     constructor(elm) {
+
+        this.calQoeFlg = false;
         const url = new URL(window.location.href);
+
         if (ParaviTypeHandler.is_paravi_type()) {
             this.handler = ParaviTypeHandler;
+            this.calQoeFlg = true;
             // eslint-disable-next-line no-console
             console.log('Paravi Type Handler');
         } else if (TVerTypeHandler.is_tver_type()) {
             this.handler = TVerTypeHandler;
+            this.calQoeFlg = true;
             // eslint-disable-next-line no-console
             console.log('TVer Type Handler');
         } else if (YouTubeTypeHandler.is_youtube_type()) {
             this.handler = new YouTubeTypeHandler(elm);
+            this.calQoeFlg = true;
             // eslint-disable-next-line no-console
             console.log('YouTube Type Handler');
+        } else if (url.host === "www.nicovideo.jp") {
+            this.handler = new NicoVideoTypeHandler(elm);
+            // eslint-disable-next-line no-console
+            console.log('NicoVideo Type Handler');
         } else {
             // TODO この判定は、session でやるべき
             if (url.host === "www.youtube.com" ||
                 url.host === "m.youtube.com" ||
                 url.host === "www.paravi.jp" ||
                 url.host === "tver.jp") {
-                throw new Error("hostname is qoe target but not played ");
+                throw new Error("hostname is qoe target but not played");
             }
             this.handler = new GeneralTypeHandler(elm);
             // eslint-disable-next-line no-console
@@ -216,6 +227,11 @@ export default class VideoHandler {
         if (this.handler.is_cm instanceof Function)
             return this.handler.is_cm(video);
         return false;
+    }
+
+    // eslint-disable-next-line camelcase
+    is_calculatable() {
+        return this.calQoeFlg;
     }
 
     // eslint-disable-next-line camelcase
