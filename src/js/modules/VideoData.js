@@ -235,6 +235,11 @@ export default class VideoData {
     return true;
   }
 
+  // eslint-disable-next-line camelcase
+  is_calculatable() {
+    return this.video_handler.is_calculatable();
+  }
+
   /**
    *
    */
@@ -277,12 +282,15 @@ export default class VideoData {
     this.playback_quality.push(quality);
 
     if (this.is_main_video()) {
-      let resources = performance.getEntriesByType("resource").slice();
-      let now_resources_length = resources.length;
+      const resources = performance.getEntriesByType("resource").slice();
+      // eslint-disable-next-line camelcase
+      const now_resources_length = resources.length;
       // youtubeでは、ページを開いた直後はresourceの数が増減する現象があるので、減った場合は最初から数え直す
+      // eslint-disable-next-line camelcase
       if (now_resources_length < this.resources_length) this.resources_length = 0;
       this.transfer_diff = resources.slice(this.resources_length).reduce((a, c) => a + c.transferSize, 0);
       this.transfer_size += this.transfer_diff;
+      // eslint-disable-next-line camelcase
       this.resources_length = now_resources_length;
     }
   }
@@ -318,7 +326,7 @@ export default class VideoData {
       cmHistory: this.cm_events.splice(0, this.cm_events.length)
     };
     if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
-      val["property"]["src"] = this.video_elm.src;
+      val.property.src = this.video_elm.src;
     }
     Config.get_event_type_names().forEach(s => {
       val[`event_${s}`] = [];
