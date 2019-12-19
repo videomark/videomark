@@ -49,13 +49,12 @@ const inject_script = async opt => {
   script.setAttribute("type", "text/javascript");
   script.setAttribute("src", opt.script);
 
-  const { session, settings } = await storage.get(["session", "settings"]);
+  const { session, settings, transfer_size } = await storage.get(["session", "settings", "transfer_size"]);
   if (session !== undefined) {
     script.dataset.session = new URLSearchParams({ ...session }).toString();
   }
-  if (settings !== undefined) {
-    script.dataset.settings = new URLSearchParams({ ...settings }).toString();
-  }
+  script.dataset.settings      = JSON.stringify(settings      || {});
+  script.dataset.transfer_size = JSON.stringify(transfer_size || {});
 
   return target.appendChild(script);
 };
