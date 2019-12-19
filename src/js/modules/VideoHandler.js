@@ -1,8 +1,10 @@
 import ParaviTypeHandler from './ParaviTypeHandler';
 import TVerTypeHandler from './TVerTypeHandler';
 import YouTubeTypeHandler from './YouTubeTypeHandler';
-import GeneralTypeHandler from './GeneralTypeHandler';
 import NicoVideoTypeHandler from './NicoVideoTypeHandler';
+import NicoLiveTypeHandler from './NicoLiveTypeHandler';
+import FodTypeHandler from './FodTypeHandler';
+import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
 
 export default class VideoHandler {
     constructor(elm) {
@@ -29,17 +31,20 @@ export default class VideoHandler {
             this.handler = new NicoVideoTypeHandler(elm);
             // eslint-disable-next-line no-console
             console.log('NicoVideo Type Handler');
-        } else {
-            // TODO この判定は、session でやるべき
-            if (url.host === "www.youtube.com" ||
-                url.host === "m.youtube.com" ||
-                url.host === "www.paravi.jp" ||
-                url.host === "tver.jp") {
-                throw new Error("hostname is qoe target but not played");
-            }
-            this.handler = new GeneralTypeHandler(elm);
+        } else if (/live\d.nicovideo.jp/.test(url.host)) {
+            this.handler = new NicoLiveTypeHandler(elm);
             // eslint-disable-next-line no-console
-            console.log('Unknown Type Handler');
+            console.log('NicoLive Type Handler');
+        } else if (url.host === "i.fod.fujitv.co.jp") {
+            this.handler = new FodTypeHandler(elm);
+            // eslint-disable-next-line no-console
+            console.log('Fod Type Handler');
+        } else if (url.host === "www.nhk-ondemand.jp") {
+            this.handler = new NHKOndemandTypeHandler(elm);
+            // eslint-disable-next-line no-console
+            console.log('NHK Ondemand Type Handler');
+        } else {
+            throw new Error('Unknown Type Handler');
         }
     }
 
