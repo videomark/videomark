@@ -1,6 +1,7 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
+import Config from "../Config";
 import sparkline from '@videomark/sparkline';
 
 export default class Status {
@@ -13,6 +14,15 @@ export default class Status {
     this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
     this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
     this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
+    this.max_bitrate = 20 * 1024 * 1024; // 20Mbps
+    this.read_settings();
+  }
+
+  async read_settings() {
+    const bitrate_control = await Config.get_bitrate_control();
+    if (bitrate_control) this.max_bitrate = Math.min(this.max_bitrate, bitrate_control);
+    const quota_bitrate = await Config.get_quota_bitrate();
+    if (quota_bitrate) this.max_bitrate = Math.min(this.max_bitrate, quota_bitrate);
   }
 
   detach() {
@@ -118,6 +128,7 @@ export default class Status {
           ${open ? quality({ sessionId, videoId }) : ""}
           <div>
             <svg id="bitrate_chart"></svg>
+            <svg id="thruput_chart"></svg>
             <svg id="droprate_chart"></svg>
           </div>
         </details>
@@ -133,11 +144,10 @@ export default class Status {
   }
 
   drawChart() {
-    sparkline(this.root.getElementById('bitrate_chart'), this.bitrate_history, {max:Status.BITRATE_MAX, min:0});
-    //sparkline(this.root.getElementById('thruput_chart'), this.thruput_history);
+    sparkline(this.root.getElementById('bitrate_chart'), this.bitrate_history, {max:this.max_bitrate, min:0});
+    sparkline(this.root.getElementById('thruput_chart'), this.thruput_history, {max:this.max_bitrate, min:0});
     sparkline(this.root.getElementById('droprate_chart'), this.droprate_history, {max:100, min:0});
   }
 }
 
 Status.HISTORY_NUMBER = 30;
-Status.BITRATE_MAX = 20 * 1024 * 1024;
