@@ -161,13 +161,13 @@ class YouTubeTypeHandler {
         const player = await elm.getPlayerPromise();
         if (!player.sodiumLoadVideoByPlayerVars && !player.sodiumUpdateVideoData && !player.sodiumGetAvailableQualityLevels) {
             // eslint-disable-next-line no-undef
-            YouTubeTypeHandler.sodiumAdaptiveFmts = ytplayer.config ? ytplayer.config.args.adaptive_fmts : null;
+            if (ytplayer.config && ytplayer.config.args) YouTubeTypeHandler.set_adaptive_formats(ytplayer.config.args.player_response)
             player.sodiumLoadVideoByPlayerVars = player.loadVideoByPlayerVars;
             player.sodiumUpdateVideoData = player.updateVideoData;
             player.sodiumGetAvailableQualityLevels = player.getAvailableQualityLevels;
             // eslint-disable-next-line func-names, prefer-arrow-callback
             player.loadVideoByPlayerVars = function (arg) { // thisを変えられないためアロー演算子は使わない
-                YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
+                YouTubeTypeHandler.set_adaptive_formats(arg.player_response);
                 return this.sodiumLoadVideoByPlayerVars(arg);
             };
             // eslint-disable-next-line func-names, prefer-arrow-callback
@@ -177,6 +177,16 @@ class YouTubeTypeHandler {
                 return this.sodiumUpdateVideoData(arg);
             };
         }
+    }
+
+    // eslint-disable-next-line camelcase
+    static set_adaptive_formats(response) {
+        if (!response) return;
+        try {
+            const json = JSON.parse(response);
+            if (json.streamingData)
+                YouTubeTypeHandler.sodiumAdaptiveFmts = json.streamingData.adaptiveFormats;
+        } catch (e) { /* do nothing */ }
     }
 
     // eslint-disable-next-line camelcase
@@ -201,22 +211,23 @@ class YouTubeTypeHandler {
     }
 
     // eslint-disable-next-line camelcase
-    static convert_adaptive_formats(str) {
-        const ret = [];
-        // eslint-disable-next-line no-undef
-        decodeURIComponent(str)
-            .split(',')
-            .forEach(s => {
-                const l = {};
-                s
-                    .split('&')
-                    .forEach(ss => {
-                        const [key, ...values] = ss.split('=');
-                        l[key] = decodeURIComponent(values.join('='));
-                    });
-                ret.push(l);
-            })
-        return ret;
+    static convert_adaptive_formats(formats) {
+        return formats
+            .reduce((acc, cur) => {
+                const v = Object.assign(cur);
+                v.bitrate = v.averageBitrate;
+                v.size = v.width && v.height ? `${v.width}x${v.height}` : null;
+                v.itag = `${v.itag}`;
+                try {
+                    const { groups: { type, container, codec } } =
+                        /(?<type>\S+)\/(?<container>\S+);(?:\s+)codecs="(?<codec>\S+)"/.exec(v.mimeType);
+                    v.type = type;
+                    v.container = container;
+                    v.codec = codec;
+                } catch (e) { /* do nothing */ }
+                acc.push(v);
+                return acc;
+            }, []);
     }
 
     // eslint-disable-next-line camelcase
@@ -225,21 +236,19 @@ class YouTubeTypeHandler {
             const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
             return formats
                 .map(e => {
-                    const { groups: { container, codec } }
-                        = /(?<=video\/|audio\/)(?<container>\S+);(?:\S+)"(?<codec>\S+)"/.exec(e.type);
                     return {
                         representationId: e.itag,
                         bps: Number.parseInt(e.bitrate, 10),
                         videoWidth: e.size ? Number.parseInt(e.size.split('x')[0], 10) : -1,
                         videoHeight: e.size ? Number.parseInt(e.size.split('x')[1], 10) : -1,
-                        container,
-                        codec,
+                        container: e.container,
+                        codec: e.codec,
                         fps: e.fps ? Number.parseInt(e.fps, 10) : -1,
                         chunkDuration: YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION,
                         serverIp: new URL(e.url).host
                     };
                 })
-        } catch {
+        } catch (e) {
             return [];
         }
     }
