@@ -1,7 +1,7 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
-import sparkline from '@fnando/sparkline';
+import sparkline from '@videomark/sparkline';
 
 export default class Status {
   constructor() {
@@ -13,7 +13,6 @@ export default class Status {
     this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
     this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
     this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
-    this.chart = null;
   }
 
   detach() {
@@ -75,11 +74,13 @@ export default class Status {
           font-weight: bold;
         }
         #bitrate_chart {
+          position: absolute;
           stroke: rgb(54, 162, 235);
           stroke-width: 2px;
-          fill: none;
+          fill: rgba(54, 162, 235, .3);
         }
         #thruput_chart {
+          position: absolute;
           stroke: rgb(75, 192, 192);
           stroke-width: 2px;
           fill: none;
@@ -128,7 +129,7 @@ export default class Status {
     if (this.root == null) return;
     Object.assign(this.state, state);
     render(this.template, this.root);
-    this.drawChart();
+    if (this.state.open) this.drawChart();
   }
 
   drawChart() {

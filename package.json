@@ -5,7 +5,7 @@
   "author": "soar-vixen@acutus.co.jp",
   "license": "ISC",
   "dependencies": {
-    "@fnando/sparkline": "file:../sparkline",
+    "@videomark/sparkline": "github:videomark/sparkline",
     "lit-html": "^1.0.0",
     "mpd-parser": "^0.8.1",
     "msgpack-lite": "^0.1.26",
