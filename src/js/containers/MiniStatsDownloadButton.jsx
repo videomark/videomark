@@ -1,29 +1,10 @@
 import React, { useContext, useCallback } from "react";
 import PropTypes from "prop-types";
-import ReactDOMServer from "react-dom/server";
-import MiniStatsSVG from "videomark-mini-stats";
+import { shareOrDownload } from "videomark-mini-stats";
 import { withStyles } from "@material-ui/core/styles";
 import MuiButton from "@material-ui/core/Button";
 import teal from "@material-ui/core/colors/teal";
 import { StatsDataContext } from "./StatsDataProvider";
-
-const save = data => {
-  const image = new Image();
-  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-    ReactDOMServer.renderToString(<MiniStatsSVG data={data} />)
-  )}`;
-  image.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = image.width;
-    canvas.height = image.height;
-    canvas.getContext("2d").drawImage(image, 0, 0);
-
-    const anchor = document.createElement("a");
-    anchor.download = new Date().toLocaleString();
-    anchor.href = canvas.toDataURL();
-    anchor.click();
-  };
-};
 
 const Button = withStyles(theme => ({
   root: {
@@ -55,7 +36,7 @@ export const MiniStatsDownloadButton = ({ children }) => {
     averageWaitingRatio: totalWaitingTime / totalPlayingTime,
     averageDroppedVideoFrameRatio: droppedVideoFrames / totalVideoFrames
   };
-  const onClick = useCallback(() => save(miniStatsData), [length]);
+  const onClick = useCallback(() => shareOrDownload(miniStatsData), [length]);
 
   return <Button onClick={onClick}>{children}</Button>;
 };
