@@ -17,6 +17,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
     get_video_title() {
 
         try {
+
             return document
                 .querySelector(".VideoTitle")
                 .textContent
