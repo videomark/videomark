@@ -5,6 +5,7 @@ import NicoVideoTypeHandler from './NicoVideoTypeHandler';
 import NicoLiveTypeHandler from './NicoLiveTypeHandler';
 import FodTypeHandler from './FodTypeHandler';
 import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
+import DTVTypeHandler from './DTVTypeHandler';
 
 export default class VideoHandler {
     constructor(elm) {
@@ -43,6 +44,10 @@ export default class VideoHandler {
             this.handler = new NHKOndemandTypeHandler(elm);
             // eslint-disable-next-line no-console
             console.log('NHK Ondemand Type Handler');
+        } else if (/\S+.video.dmkt-sp.jp/.test(url.host)) {
+            this.handler = new DTVTypeHandler(elm);
+            // eslint-disable-next-line no-console
+            console.log('dTV Type Handler');
         } else {
             throw new Error('Unknown Type Handler');
         }
