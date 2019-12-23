@@ -82,9 +82,13 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
     // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
     is_cm(video) {
 
-        return !Array
-            .from(document.querySelectorAll('video'))
-            .find(e => e.src === window.location.href)
+        const videList = Array.from(document.querySelectorAll('video'));
+        if (videList.length > 1)
+            return !Array
+                .from(document.querySelectorAll('video'))
+                .find(e => e.src === window.location.href)
+
+        return false;
     }
 
     // eslint-disable-next-line camelcase
