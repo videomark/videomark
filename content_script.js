@@ -3,6 +3,8 @@ const storage = {
   set: items => new Promise(resolve => chrome.storage.local.set(items, resolve))
 };
 
+const port = chrome.runtime.connect({ name: "sodium-extension-communication-port" });
+
 const state = {};
 const useId = async viewingId => {
   if (typeof state[viewingId] === "string" || Number.isFinite(state[viewingId]))
@@ -29,7 +31,7 @@ const save_transfer_size = async transfer_diff => {
   if (!transfer_size) transfer_size = {};
 
   const now = new Date();
-  const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", {minimumIntegerDigits: 2}).format(now.getMonth()+1)}`;
+  const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", { minimumIntegerDigits: 2 }).format(now.getMonth() + 1)}`;
   const size = (transfer_size[month] || 0) + transfer_diff;
   transfer_size[month] = size;
   storage.set({ transfer_size });
@@ -83,6 +85,11 @@ const message_listener = async event => {
       await save_transfer_size(transfer_diff);
       break;
     }
+    case "get_ip": {
+      const ip = await getIp(event.data.host);
+      event.source.postMessage({ ip, host: event.data.host, type: "CONTENT_SCRIPT_JS" });
+      break;
+    }
   }
 };
 
@@ -102,3 +109,35 @@ storage.get("AgreedTerm").then(value => {
     target: "body"
   });
 });
+
+function getIp(host) {
+  const requestId = getRandomToken();
+  return new Promise((resolve, reject) => {
+    const listener = (value) => {
+      try {
+        if (value.requestId === requestId) resolve(value.ip);
+      } catch (e) {
+        reject(e);
+      } finally {
+        port.onMessage.removeListener(listener);
+      }
+      return true;
+    }
+    port.onMessage.addListener(listener);
+    port.postMessage({
+      requestId,
+      method: "getIp",
+      args: [host]
+    });
+  });
+}
+
+function getRandomToken() {
+  const randomPool = new Uint8Array(16);
+  crypto.getRandomValues(randomPool);
+  let hex = '';
+  for (var i = 0; i < randomPool.length; ++i) {
+    hex += randomPool[i].toString(16);
+  }
+  return hex;
+}
