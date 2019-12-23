@@ -6,6 +6,10 @@ import NicoLiveTypeHandler from './NicoLiveTypeHandler';
 import FodTypeHandler from './FodTypeHandler';
 import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
 import DTVTypeHandler from './DTVTypeHandler';
+import AbemaTVVideoTypeHandler from './AbemaTVVideoTypeHandler';
+import AbemaTVLiveTypeHandler from './AbemaTVLiveTypeHandler';
+import AmazonPrimeVideoTypeHandler from './AmazonPrimeVideoTypeHandler';
+
 
 export default class VideoHandler {
     constructor(elm) {
@@ -48,6 +52,22 @@ export default class VideoHandler {
             this.handler = new DTVTypeHandler(elm);
             // eslint-disable-next-line no-console
             console.log('dTV Type Handler');
+        } else if (url.host === "abema.tv") {
+            if (url.pathname.split('/').indexOf("video") >= 0) {
+                this.handler = new AbemaTVVideoTypeHandler(elm);
+                // eslint-disable-next-line no-console
+                console.log('Abema TV Video Type Handler');
+            } else if (url.pathname.split('/').indexOf("now-on-air") >= 0) {
+                this.handler = new AbemaTVLiveTypeHandler(elm);
+                // eslint-disable-next-line no-console
+                console.log('Abema TV Live Type Handler');
+            } else {
+                throw new Error('AbemaTV ignores top page and unknown page video.');
+            }
+        } else if (url.host === "www.amazon.co.jp") {
+            this.handler = new AmazonPrimeVideoTypeHandler(elm);
+            // eslint-disable-next-line no-console
+            console.log('Amazon Prime Video Type Handler');
         } else {
             throw new Error('Unknown Type Handler');
         }
