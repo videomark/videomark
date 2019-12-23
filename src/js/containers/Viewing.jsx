@@ -21,7 +21,7 @@ import NoImage from "../../images/noimage.svg";
 export const VideoThumbnail = ({ className, title, thumbnail }) => (
   <img
     className={className}
-    src={thumbnail}
+    src={thumbnail == null ? NoImage : thumbnail}
     alt={title}
     onError={e => {
       e.target.src = NoImage;
@@ -31,7 +31,10 @@ export const VideoThumbnail = ({ className, title, thumbnail }) => (
 VideoThumbnail.propTypes = {
   className: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  thumbnail: PropTypes.string.isRequired
+  thumbnail: PropTypes.string
+};
+VideoThumbnail.defaultProps = {
+  thumbnail: null
 };
 
 export const toTimeString = date => {
