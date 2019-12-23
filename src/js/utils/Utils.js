@@ -1,9 +1,9 @@
-import videoPlatforms from "./videoPlatforms.json";
+import videoPlatforms from "./videoPlatforms";
 
 export const urlToVideoPlatform = url => {
   try {
     const { host } = new URL(url);
-    return videoPlatforms.find(({ id }) => host.includes(id)) || {};
+    return videoPlatforms.find(platform => platform.host.test(host)) || {};
   } catch (e) {
     if (e instanceof TypeError) return {};
     throw e;

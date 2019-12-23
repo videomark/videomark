@@ -11,7 +11,7 @@ import { urlToVideoPlatform } from "../../utils/Utils";
 import RegionalAverageQoE from "../../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../../utils/HourlyAverageQoE";
 import DataErase from "../../utils/DataErase";
-import videoPlatforms from "../../utils/videoPlatforms.json";
+import videoPlatforms from "../../utils/videoPlatforms";
 import waitForContentRendering from "../../utils/waitForContentRendering";
 import style from "../../../css/GridContainer.module.css";
 import ViewingDetail from "../ViewingDetail";

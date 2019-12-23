@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import Input from "@material-ui/icons/Input";
 import { ReactComponent as Usage } from "./usage.svg";
 import { isWeb } from "../../utils/Utils";
-import videoPlatforms from "../../utils/videoPlatforms.json";
+import videoPlatforms from "../../utils/videoPlatforms";
 import dino from "../../../images/dino.png";
 
 const ExperimentalSnackbar = () => {

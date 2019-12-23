@@ -14,7 +14,7 @@ import {
   viewingModelsStream
 } from "./ViewingsProvider";
 import { urlToVideoPlatform } from "../utils/Utils";
-import videoPlatforms from "../utils/videoPlatforms.json";
+import videoPlatforms from "../utils/videoPlatforms";
 import Api from "../utils/Api";
 
 const fetchQoE = async viewingModels => {

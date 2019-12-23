@@ -7,7 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
-import videoPlatforms from "../../utils/videoPlatforms.json";
+import videoPlatforms from "../../utils/videoPlatforms";
 
 const styles = theme => ({
   root: {
