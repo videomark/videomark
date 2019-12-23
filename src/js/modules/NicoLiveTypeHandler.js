@@ -1,6 +1,6 @@
-import NicoVideoTypeHandler from "./NicoVideoTypeHandler";
+import GeneralTypeHandler from "./GeneralTypeHandler";
 
-export default class NicoLiveTypeHandler extends NicoVideoTypeHandler {
+export default class NicoLiveTypeHandler extends GeneralTypeHandler {
 
     constructor(elm) {
 
@@ -31,6 +31,23 @@ export default class NicoLiveTypeHandler extends NicoVideoTypeHandler {
     }
 
     // eslint-disable-next-line camelcase, class-methods-use-this
+    get_id_by_video_holder() {
+
+        try {
+
+            const [id] = new URL(window.location.href)
+                .pathname
+                .split('/')
+                .splice(-1);
+
+            return id;
+        } catch (e) {
+
+            return "";
+        }
+    }
+
+    // eslint-disable-next-line camelcase, class-methods-use-this
     get_view_count() {
 
         return -1;
@@ -48,15 +65,5 @@ export default class NicoLiveTypeHandler extends NicoVideoTypeHandler {
     is_cm(video) {
 
         return false;
-    }
-
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
-    add_cm_listener(listener) {
-
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    clear() {
-
     }
 }
