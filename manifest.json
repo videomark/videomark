@@ -20,7 +20,13 @@
     "unlimitedStorage",
     "*://*.tver.jp/*",
     "*://*.paravi.jp/*",
-    "*://*.youtube.com/*"
+    "*://*.youtube.com/*",
+    "*://*.nicovideo.jp/*",
+    "*://*.fod.fujitv.co.jp/*",
+    "*://*.nhk-ondemand.jp/*",
+    "*://*.video.dmkt-sp.jp/*",
+    "*://abema.tv/*",
+    "*://*.amazon.co.jp/*"
   ],
   "browser_action": {
     "default_icon": {
@@ -35,7 +41,13 @@
       "matches": [
         "*://*.tver.jp/*",
         "*://*.paravi.jp/*",
-        "*://*.youtube.com/*"
+        "*://*.youtube.com/*",
+        "*://*.nicovideo.jp/*",
+        "*://*.fod.fujitv.co.jp/*",
+        "*://*.nhk-ondemand.jp/*",
+        "*://*.video.dmkt-sp.jp/*",
+        "*://abema.tv/*",
+        "*://*.amazon.co.jp/*"
       ],
       "js": ["content_script.js"],
       "all_frames": true
