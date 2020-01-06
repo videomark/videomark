@@ -18,30 +18,41 @@ import videoPlatforms from "../utils/videoPlatforms";
 import Api from "../utils/Api";
 
 const fetchQoE = async viewingModels => {
-  if (viewingModels.length === 0) return [];
-  if (!window.navigator.onLine)
-    return Promise.all(viewingModels.map(viewing => viewing.qoe));
-  const response = await Api.fixed(
-    viewingModels.map(viewing => ({
-      session_id: viewing.sessionId,
-      video_id: viewing.videoId
-    }))
+  const getQoE = async () => {
+    return Promise.all(viewingModels.map(({ qoe }) => qoe));
+  };
+
+  const request = viewingModels
+    .filter(({ qoeCalculatable }) => qoeCalculatable)
+    .map(({ sessionId, videoId }) => ({
+      session_id: sessionId,
+      video_id: videoId
+    }));
+
+  if (request.length === 0) return getQoE();
+  if (!window.navigator.onLine) return getQoE();
+
+  const response = await Api.fixed(request);
+
+  if (!response.ok) return getQoE();
+
+  const json = await response.json();
+  const table = new Map(
+    json.map(({ viewing_id: key, qoe: value }) => [
+      key.slice(0, 73), // NOTE: ハイフン4つを含むUUID 36文字 x 2 + "_" 1文字
+      value
+    ])
   );
-  const json = response.ok ? await response.json() : undefined;
-  return json === undefined
-    ? Array(viewingModels.length)
-    : Promise.all(
-        viewingModels.map(async viewing => {
-          const { qoe } =
-            json.find(({ viewing_id: id }) =>
-              id.startsWith(viewing.viewingId)
-            ) || {};
-          await viewing.save({
-            qoe
-          });
-          return qoe;
-        })
-      );
+
+  return Promise.all(
+    viewingModels.map(async viewing => {
+      const qoe = table.get(viewing.viewingId);
+
+      if (qoe != null) await viewing.save({ qoe });
+
+      return qoe;
+    })
+  );
 };
 
 const initialData = {

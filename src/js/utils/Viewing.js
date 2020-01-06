@@ -37,6 +37,13 @@ class Viewing {
     return this.cache != null;
   }
 
+  get qoeCalculatable() {
+    return (
+      this.valid &&
+      (!("calc" in this.cache) /* NOTE: 互換性のため */ || this.cache.calc)
+    );
+  }
+
   async save(attributes) {
     const tmp = await this.load();
     Object.assign(tmp, attributes);
@@ -96,9 +103,8 @@ class Viewing {
   }
 
   get qoe() {
-    if (this.cache.qoe > 0) {
-      return Promise.resolve(this.cache.qoe);
-    }
+    if (!this.qoeCalculatable) return Promise.resolve();
+    if (this.cache.qoe > 0) return Promise.resolve(this.cache.qoe);
 
     return this.fetchFixedQoeApi().then(() => this.cache.qoe);
   }
