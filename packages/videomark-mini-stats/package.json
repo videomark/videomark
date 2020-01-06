@@ -17,12 +17,15 @@
   "devDependencies": {
     "@types/react": "~16",
     "@types/react-dom": "~16",
-    "parcel-bundler": "~1",
+    "parcel": "~1",
     "react-dom": "~16",
-    "typescript": "~3.6"
+    "typescript": "~3.7"
   },
   "scripts": {
     "build": "tsc",
     "dev": "parcel demo/index.html"
-  }
+  },
+  "browserslist": [
+    "last 1 chrome version"
+  ]
 }

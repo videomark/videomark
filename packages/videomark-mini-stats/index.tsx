@@ -1,10 +1,34 @@
 import * as React from "react";
+import * as ReactDOMServer from "react-dom/server";
 import Calendar from "./components/Calendar";
 import QualityBadge from "./components/QualityBadge";
 import Badge from "./components/Badge";
 import JPText from "./components/JPText";
 import timeFormat from "./components/jpTimeFormat";
 import { StatsData, playingTimeStats } from "./components/stats";
+
+type ShareData = {
+  files: File[];
+  text: string;
+  url: string;
+};
+
+interface Navigator {
+  share?: (data: ShareData) => Promise<unknown>;
+}
+
+declare var navigator: Navigator;
+
+const title = "VideoMark 動画視聴統計";
+const site = "https://vm.webdino.org";
+const width = 512; // px
+const height = 512; // px
+const appName = "videomark";
+const shareData = ({ files }: { files: File[] }): ShareData => ({
+  text: `動画視聴統計 #${appName}`,
+  url: site,
+  files
+});
 
 const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
   const {
@@ -21,8 +45,8 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
-      width={512}
-      height={512}
+      width={width}
+      height={height}
     >
       <rect x={0} y={0} width="100%" height="100%" fill="#FFFFFF" />
       <JPText
@@ -32,7 +56,7 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         dominantBaseline="text-before-edge"
         fontSize={32}
       >
-        VideoMark 動画視聴統計
+        {title}
       </JPText>
       <Calendar
         x={56}
@@ -99,10 +123,63 @@ const SVG: React.FC<{ data: StatsData }> = ({ data }) => {
         動画件数 {Number.isFinite(count) ? count.toLocaleString() : 0}
       </JPText>
       <JPText x="98%" y="99%" textAnchor="end" fontSize={10} fillOpacity={0.5}>
-        https://vm.webdino.org/
+        {site}
       </JPText>
     </svg>
   );
+};
+
+const statsToCanvas = async (
+  data: StatsData
+): Promise<HTMLCanvasElement | undefined> => {
+  const image = new Image();
+  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+    ReactDOMServer.renderToString(<SVG data={data} />)
+  )}`;
+  await new Promise(resolve => {
+    image.onload = resolve;
+  });
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (context == null) return undefined;
+  canvas.width = image.width;
+  canvas.height = image.height;
+  context.drawImage(image, 0, 0);
+  return canvas;
+};
+
+const share = async (canvas: HTMLCanvasElement, filename: string) => {
+  if (navigator.share == null) return undefined;
+  const blob = await new Promise<Parameters<BlobCallback>[0]>(resolve =>
+    canvas.toBlob(resolve)
+  );
+  if (blob == null) return;
+  const file = new File([blob], filename, { type: blob.type });
+  const data = shareData({ files: [file] });
+  try {
+    await navigator.share(data);
+    return data;
+  } catch (error) {
+    return undefined;
+  }
+};
+
+const download = (canvas: HTMLCanvasElement, filename: string) => {
+  const dataUrl = canvas.toDataURL();
+  const anchor = document.createElement("a");
+  anchor.download = filename;
+  anchor.href = dataUrl;
+  anchor.click();
+  return true;
+};
+
+export const shareOrDownload = async (data: StatsData): Promise<void> => {
+  // NOTE: Web Share APIを使うために正しい拡張子を与える
+  const filename = `${appName}-${Date.now()}.png`;
+  const canvas = await statsToCanvas(data);
+  if (canvas == null) return;
+  const shared = await share(canvas, filename);
+  if (shared == null) download(canvas, filename);
 };
 
 export default SVG;
