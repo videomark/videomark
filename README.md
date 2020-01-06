@@ -135,7 +135,7 @@ ChromeExtension/sodium.js
 | resource_timing       | -                                    |
 
 ### netinfo
-Network Information API より取得した情報を送信する  
+Network Information API より取得した情報を送信する
 http://wicg.github.io/netinfo/#networkinformation-interface
 
 | 項目                    | 値                                    |
@@ -389,6 +389,7 @@ Chrome Extension のストレージに以下のデータを記録する。
         end_time                : -1
         thumbnail               : サムネイル画像の URL
         title                   : 動画のタイトル
+        calc                    : QoE計算可否
         log                     : 動画品質のログ [{ date: (Date | number), qoe?: (number | null), quality?: { totalVideoFramesなど } }]
     }
 
