@@ -362,6 +362,7 @@ export default class SessionData {
       thumbnail: video.get_thumbnail(),
       title: video.get_title(),
       transfer_size: video.transfer_size,
+      calc: video.is_calculatable(),
       log: [
         ...(storage.cache.log || []).filter(a => !("qoe" in a)),
         ...video.get_latest_qoe(),
