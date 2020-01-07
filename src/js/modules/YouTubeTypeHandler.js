@@ -182,6 +182,7 @@ class YouTubeTypeHandler {
     // eslint-disable-next-line camelcase
     static set_adaptive_formats(response) {
         if (!response) return;
+        if (YouTubeTypeHandler.sodiumAdaptiveFmts) return;
         try {
             const json = JSON.parse(response);
             if (json.streamingData)
@@ -215,7 +216,7 @@ class YouTubeTypeHandler {
         return formats
             .reduce((acc, cur) => {
                 const v = Object.assign(cur);
-                v.bitrate = v.averageBitrate;
+                v.bitrate = v.bitrate ? v.bitrate : v.averageBitrate;
                 v.size = v.width && v.height ? `${v.width}x${v.height}` : null;
                 v.itag = `${v.itag}`;
                 try {
