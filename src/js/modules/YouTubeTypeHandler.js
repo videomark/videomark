@@ -188,6 +188,29 @@ class YouTubeTypeHandler {
             if (json.streamingData)
                 YouTubeTypeHandler.sodiumAdaptiveFmts = json.streamingData.adaptiveFormats;
         } catch (e) { /* do nothing */ }
+        try {
+            YouTubeTypeHandler.check_formats();
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
+        }
+    }
+
+    // eslint-disable-next-line camelcase
+    static check_formats() {
+        let message;
+        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+        const ret = formats.find(e => {
+            let val = !e.itag || !e.bitrate || !e.type || !e.container || !e.codec;
+            if (val) {
+                message = `itag:${e.itag}, bitrate:${e.bitrate}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
+                return val;
+            }
+            if (e.type === "video") val = !e.fps || !e.size
+            if (val) message = `itag:${e.itag}, bitrate:${e.bitrate}, fps:${e.fps}, size:${e.size}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
+            return val;
+        });
+        if (ret) throw new Error(message);
     }
 
     // eslint-disable-next-line camelcase
