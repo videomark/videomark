@@ -3,7 +3,9 @@ const storage = {
   set: items => new Promise(resolve => chrome.storage.local.set(items, resolve))
 };
 
-const port = chrome.runtime.connect({ name: "sodium-extension-communication-port" });
+const port = chrome.runtime.connect({
+  name: "sodium-extension-communication-port"
+});
 
 const state = {};
 const useId = async viewingId => {
@@ -31,11 +33,13 @@ const save_transfer_size = async transfer_diff => {
   if (!transfer_size) transfer_size = {};
 
   const now = new Date();
-  const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", { minimumIntegerDigits: 2 }).format(now.getMonth() + 1)}`;
+  const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", {
+    minimumIntegerDigits: 2
+  }).format(now.getMonth() + 1)}`;
   const size = (transfer_size[month] || 0) + transfer_diff;
   transfer_size[month] = size;
   storage.set({ transfer_size });
-}
+};
 
 const inject_script = async opt => {
   // --- inject script, to opt.target --- ///
@@ -87,7 +91,11 @@ const message_listener = async event => {
     }
     case "get_ip": {
       const ip = await getIp(event.data.host);
-      event.source.postMessage({ ip, host: event.data.host, type: "CONTENT_SCRIPT_JS" });
+      event.source.postMessage({
+        ip,
+        host: event.data.host,
+        type: "CONTENT_SCRIPT_JS"
+      });
       break;
     }
   }
@@ -113,7 +121,7 @@ storage.get("AgreedTerm").then(value => {
 function getIp(host) {
   const requestId = getRandomToken();
   return new Promise((resolve, reject) => {
-    const listener = (value) => {
+    const listener = value => {
       try {
         if (value.requestId === requestId) resolve(value.ip);
       } catch (e) {
@@ -122,7 +130,7 @@ function getIp(host) {
         port.onMessage.removeListener(listener);
       }
       return true;
-    }
+    };
     port.onMessage.addListener(listener);
     port.postMessage({
       requestId,
@@ -135,7 +143,7 @@ function getIp(host) {
 function getRandomToken() {
   const randomPool = new Uint8Array(16);
   crypto.getRandomValues(randomPool);
-  let hex = '';
+  let hex = "";
   for (var i = 0; i < randomPool.length; ++i) {
     hex += randomPool[i].toString(16);
   }
