@@ -107,7 +107,14 @@ RemoveButton.propTypes = {
 const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
   const viewing = useViewing(model);
   if (viewing == null) return null;
-  const { title, location, thumbnail, startTime, quality } = viewing;
+  const {
+    title,
+    location,
+    thumbnail,
+    startTime,
+    quality,
+    qoeCalculatable
+  } = viewing;
 
   const Title = () => (
     <Grid container component={Box} paddingX={2} paddingY={1}>
@@ -130,13 +137,15 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
       <Title />
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <VideoQuality {...quality} startTime={startTime} />
-      <Box mt={2} px={1}>
-        <QoE
-          model={viewing}
-          regionalStats={regionalAverageQoE}
-          hourlyStats={hourlyAverageQoE}
-        />
-      </Box>
+      {qoeCalculatable ? (
+        <Box mt={2} px={1}>
+          <QoE
+            model={viewing}
+            regionalStats={regionalAverageQoE}
+            hourlyStats={hourlyAverageQoE}
+          />
+        </Box>
+      ) : null}
       <RemoveButton model={viewing} />
     </div>
   );
