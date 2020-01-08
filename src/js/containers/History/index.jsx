@@ -37,8 +37,7 @@ class History extends Component {
     };
   }
 
-  async componentDidMount() {
-    await Promise.all([regionalAverageQoE.init(), hourlyAverageQoE.init()]);
+  componentDidMount() {
     AppData.add(AppDataActions.ViewingList, this, "setState");
   }
 
@@ -153,19 +152,6 @@ const dispatcher = dispatch =>
       });
 
       dispatch({ indexes, viewingModels: active });
-
-      const regions = indexes
-        .map(({ region }) => region || {})
-        .filter(
-          (region, i, self) =>
-            i ===
-            self.findIndex(
-              r =>
-                r.country === region.country &&
-                r.subdivision === region.subdivision
-            )
-        );
-      await Promise.all(regions.map(region => regionalAverageQoE.at(region)));
       await new Promise(resolve => setTimeout(resolve, 15e3));
     }
   });

@@ -25,10 +25,6 @@ class RegionalAverageQoE {
     return this.cache;
   }
 
-  async init() {
-    return this.cache;
-  }
-
   async at({ country, subdivision }) {
     if (
       this.cache[country] === undefined ||

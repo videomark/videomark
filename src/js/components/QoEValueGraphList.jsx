@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import QoEValueGraph from "./QoEValueGraph";
 import RegionalAverageQoEGraph from "./RegionalAverageQoEGraph";
@@ -10,8 +12,7 @@ const QoEValueGraphList = ({
   regionalAverage,
   hour,
   hourlyAverage,
-  isDetail,
-  color
+  isLowQuality
 }) => {
   switch (value) {
     case -1:
@@ -34,28 +35,35 @@ const QoEValueGraphList = ({
   const hourlyAverageValue = hour === undefined ? 0 : hourlyAverage;
 
   return (
-    <>
+    <Grid item xs={12} container justify="center">
+      {isLowQuality ? (
+        <Grid item>
+          <Box mt={1}>
+            <Typography
+              align="center"
+              variant="caption"
+              compBoxonent="small"
+              color="textSecondary"
+            >
+              フレームドロップが発生したため実際の体感品質とは異なる可能性があります。
+            </Typography>
+          </Box>
+        </Grid>
+      ) : null}
       <QoEValueGraph
-        label={isDetail ? "視聴時の体感品質" : "体感品質"}
+        label="視聴時の体感品質"
         qoe={value}
-        modal={isDetail}
-        color={color}
+        color={isLowQuality ? "text.secondary" : "default"}
       />
       <RegionalAverageQoEGraph
         region={region}
         regionalAverage={regionalAverage}
-        isDetail={isDetail}
       />
       <QoEValueGraph
-        label={
-          isDetail
-            ? `同じ時間帯の体感品質の平均 (${hourDisplayName})`
-            : hourDisplayName
-        }
+        label={`同じ時間帯の体感品質の平均 (${hourDisplayName})`}
         qoe={hourlyAverageValue}
-        modal={isDetail}
       />
-    </>
+    </Grid>
   );
 };
 QoEValueGraphList.propTypes = {
@@ -67,8 +75,7 @@ QoEValueGraphList.propTypes = {
   regionalAverage: PropTypes.number,
   hour: PropTypes.number,
   hourlyAverage: PropTypes.number,
-  isDetail: PropTypes.bool,
-  color: PropTypes.string
+  isLowQuality: PropTypes.bool
 };
 QoEValueGraphList.defaultProps = {
   value: undefined,
@@ -76,7 +83,6 @@ QoEValueGraphList.defaultProps = {
   regionalAverage: undefined,
   hour: undefined,
   hourlyAverage: undefined,
-  isDetail: false,
-  color: "default"
+  isLowQuality: false
 };
 export default QoEValueGraphList;

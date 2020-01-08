@@ -3,42 +3,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.qoeValueGraph:not(.modalQoeValueGraph) {
-  font-size: 12px;
-}
-@media (min-width: 600px) {
-  .qoeValueGraph:not(.modalQoeValueGraph) {
-    font-size: 10px;
-  }
-}
-.qoeValueGraph:not(.modalQoeValueGraph) .label {
-  flex-basis: 5.5em;
-  padding-right: 0.5em;
-  text-align: end;
-}
-.qoeValueGraph:not(.modalQoeValueGraph) .qoeBarGraph {
-  flex-basis: calc(100% - 10em);
-}
-.qoeValueGraph:not(.modalQoeValueGraph) .qoeValue {
-  flex-basis: 3.5em;
-  padding-left: 0.5em;
-}
-.qoeValueGraph.modalQoeValueGraph {
   margin-bottom: 15px;
   font-size: 14px;
   flex-wrap: wrap;
   text-align: start;
-}
-.qoeValueGraph.modalQoeValueGraph .label {
-  width: 100%;
-}
-.qoeValueGraph.modalQoeValueGraph .qoeBarGraph {
-  width: calc(100% - 2.5em);
-}
-.qoeValueGraph.modalQoeValueGraph .qoeValue {
-  width: 2.5em;
-  text-align: end;
 }
 
 .label {
@@ -51,6 +19,7 @@
   white-space: nowrap;
 
   height: auto;
+  width: 100%;
   font-size: 1em;
 }
 
@@ -65,6 +34,7 @@
 .qoeBarGraph {
   position: relative;
   height: 0.5em;
+  width: calc(100% - 2.5em);
   border-radius: 1em;
   overflow: hidden;
   background-color: #eee;
@@ -89,4 +59,6 @@
 .qoeValueBar {
   position: absolute;
   height: 100%;
+  width: 2.5em;
+  text-align: end;
 }
