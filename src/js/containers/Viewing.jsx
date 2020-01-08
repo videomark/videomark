@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import format from "date-fns/format";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -34,12 +35,7 @@ VideoThumbnail.defaultProps = {
   thumbnail: null
 };
 
-export const toTimeString = date => {
-  return `${date.getFullYear()}/${date.getMonth() +
-    1}/${`0${date.getDate()}`.slice(
-    -2
-  )} ${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
-};
+export const toTimeString = date => format(date, "yyyy/MM/dd HH:mm");
 
 export const useViewing = model => {
   const [state, dispatch] = useState();
