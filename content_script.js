@@ -105,7 +105,7 @@ storage.get("AgreedTerm").then(value => {
   window.addEventListener("message", message_listener);
 
   inject_script({
-    script: chrome.extension.getURL("/sodium.js"),
+    script: chrome.runtime.getURL("sodium.js"),
     target: "body"
   });
 });

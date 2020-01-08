@@ -1,12 +1,9 @@
+const tabUrlBase = new URL(chrome.runtime.getURL("qoelog/index.html"));
+const tabUrl = new URL("#/", tabUrlBase);
+const termsUrl = new URL(chrome.runtime.getURL("terms.html"));
+
 const hash = window.location.hash;
 let shouldCreateNewTab = true;
-
-const id = chrome.app.getDetails().id;
-const htmlPage = "/qoelog/index.html";
-const termsPage = "/terms.html";
-const tabUrl = "chrome-extension://" + id + htmlPage;
-const termsUrl = "chrome-extension://" + id + termsPage;
-
 const openPage = (windowId, pathname, url) => {
   const extensionsTabs = chrome.extension.getViews({
     type: "tab",
@@ -17,7 +14,10 @@ const openPage = (windowId, pathname, url) => {
   });
 
   extensionsTabs.forEach(extensionTab => {
-    if (extensionTab.location.pathname === htmlPage && shouldCreateNewTab) {
+    if (
+      extensionTab.location.pathname === tabUrl.pathname &&
+      shouldCreateNewTab
+    ) {
       shouldCreateNewTab = false;
       if (hash && extensionTab.location.hash !== hash) {
         chrome.tabs.update(extensionTab.dhcChromeTabId, {
@@ -47,10 +47,10 @@ chrome.windows.getCurrent(currentWindow => {
     const result = "AgreedTerm" in value ? value.AgreedTerm : false;
 
     if (result) {
-      openPage(currentWindow.id, "/index.html", tabUrl);
+      openPage(currentWindow.id, "/index.html", tabUrl.href);
       return;
     }
 
-    openPage(currentWindow.id, "/terms.html", termsUrl);
+    openPage(currentWindow.id, "/terms.html", termsUrl.href);
   });
 });
