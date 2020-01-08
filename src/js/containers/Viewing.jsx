@@ -7,10 +7,11 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import Delete from "@material-ui/icons/Delete";
+import Restore from "@material-ui/icons/Replay";
 import style from "../../css/MeasureContents.module.css";
 import { urlToVideoPlatform } from "../utils/Utils";
 import ViewingModel from "../utils/Viewing";
-import { CrossIcon, Refresh } from "../components/Icons";
 import DataErase from "../utils/DataErase";
 import AppData from "../utils/AppData";
 import AppDataActions from "../utils/AppDataActions";
@@ -68,8 +69,10 @@ const RecoverOrRemoveButton = ({ model }) => {
         className={style.removedStateButton}
         onClick={recover}
       >
-        <Refresh />
-        <span>&nbsp;復元</span>
+        <Restore fontSize="small" />
+        <Box marginLeft={1} component="span">
+          復元
+        </Box>
       </Button>
       <Button
         variant="contained"
@@ -77,8 +80,10 @@ const RecoverOrRemoveButton = ({ model }) => {
         className={style.removedStateButton}
         onClick={remove}
       >
-        <CrossIcon />
-        <span>&nbsp;削除</span>
+        <Delete fontSize="small" />
+        <Box marginLeft={1} component="span">
+          削除
+        </Box>
       </Button>
     </div>
   );

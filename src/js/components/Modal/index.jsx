@@ -1,8 +1,8 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import style from "../../css/Modal.module.css";
-import { CrossIcon } from "./Icons";
+import style from "../../../css/Modal.module.css";
+import { ReactComponent as CrossIcon } from "./times.svg";
 
 class Modal extends React.Component {
   render() {
