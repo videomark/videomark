@@ -2,7 +2,7 @@ const hostToIp = {};
 
 const communicator = {
   getIp: host => ({ ip: hostToIp[host] })
-}
+};
 
 chrome.webRequest.onHeadersReceived.addListener(
   details => {
