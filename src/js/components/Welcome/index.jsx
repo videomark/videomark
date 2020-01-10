@@ -60,15 +60,7 @@ export default () => (
             </ul>
           </Box>
           <Typography>
-            調査対象となる動画配信サービス (
-            {videoPlatforms
-              .map(({ id, name, url }) => (
-                <Link key={id} href={url}>
-                  {name}
-                </Link>
-              ))
-              .map((item, index) => [index > 0 && "、", item])}
-            ) でいつも通り動画をお楽しみください。
+            調査対象となる動画配信サービスでいつも通り動画をお楽しみください。
           </Typography>
           <Typography>
             動画視聴中に自動的に再生品質やネットワーク品質などの視聴情報を記録します。
