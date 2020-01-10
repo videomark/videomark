@@ -60,6 +60,43 @@ const inject_script = async opt => {
   return target.appendChild(script);
 };
 
+/** @class background のプロセスに計測中であることを伝えるためのクラス */
+class AlivePort {
+  constructor() {
+    this.timeout = null;
+    this.port = null;
+
+    /** 計測中であることを伝えるためのPort名 */
+    this.portName = "sodium-extension-alive";
+
+    /**
+     * 計測していないものとしてみなす経過時間
+     * sodium.js の Config.collect_interval と同じ値
+     */
+    this.timeoutIn = 1000;
+  }
+
+  /**
+   * 計測中であることを伝える
+   * 実行後ある時間経過すると計測していないものとみなす
+   */
+  alive() {
+    if (this.timeout != null) clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      if (this.port == null) return;
+      this.port.disconnect();
+      this.port = null;
+    }, this.timeoutIn);
+
+    if (this.port == null) {
+      this.port = chrome.runtime.connect({
+        name: this.portName
+      });
+    }
+  }
+}
+const alivePort = new AlivePort();
+
 const message_listener = async event => {
   if (
     event.source !== window ||
@@ -77,6 +114,8 @@ const message_listener = async event => {
       break;
     }
     case "set_video": {
+      alivePort.alive();
+
       if (!event.data.id || !event.data.video) return;
       const id = await useId(event.data.id);
       await storage.set({

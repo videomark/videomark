@@ -29,6 +29,7 @@
     "*://*.amazon.co.jp/*"
   ],
   "browser_action": {
+    "default_icon": "icons/disabled.png",
     "default_popup": "popup.html"
   },
   "content_scripts": [
