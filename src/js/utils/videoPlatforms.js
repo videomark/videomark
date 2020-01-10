@@ -40,5 +40,26 @@ export default [
     url: "https://www.nhk-ondemand.jp/",
     brandcolor: "#f18b02",
     host: /(^|\.)nhk-ondemand\.jp$/
+  },
+  {
+    id: "dtv",
+    name: "dTV",
+    url: "https://pc.video.dmkt-sp.jp/",
+    brandcolor: "#CC6680",
+    host: /(^|\.)video\.dmkt-sp\.jp$/
+  },
+  {
+    id: "abematv",
+    name: "AbemaTV",
+    url: "https://abema.tv/",
+    brandcolor: "#33AA22",
+    host: /^abema\.tv$/
+  },
+  {
+    id: "amazon-prime-video",
+    name: "Amazon Prime Video",
+    url: "https://www.amazon.co.jp/PrimeVideo",
+    brandcolor: "#015A80",
+    host: /(^|\.)amazon\.co\.jp$/
   }
 ];
