@@ -14,9 +14,10 @@ const List = styled(MuiList)({
 });
 
 const DesignSettings = ({ settings, saveSettings }) => {
-  const { display_on_player: display } = settings || {
-    display_on_player: true
-  };
+  const { display_on_player: uninitializedDisplayOnPlayer } = settings || {};
+  const displayOnPlayer =
+    uninitializedDisplayOnPlayer == null || uninitializedDisplayOnPlayer;
+
   const handleDisplaySettingChange = useCallback(
     event => {
       saveSettings({
@@ -39,7 +40,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
           <ListItem>
             <ListItemText primary="動画再生中のプレイヤー上に計測値を表示する" />
             <Switch
-              checked={display}
+              checked={displayOnPlayer}
               onChange={handleDisplaySettingChange}
               value="Display Setting"
               inputProps={{ "aria-label": "Display Setting" }}
