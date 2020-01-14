@@ -47,6 +47,7 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
     // --- update quality info --- //
     session.update_quality_info();
 
+    if (!Config.get_ui_enabled()) return;
     if (!session.get_video_availability()) return;
 
     // --- show status  --- //

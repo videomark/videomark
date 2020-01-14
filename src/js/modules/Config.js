@@ -117,6 +117,18 @@ export default class Config {
   static is_quality_control() {
     return Config.quality_control;
   }
+
+  static get_ui_enabled() {
+    if (this.ui_enabled == null) {
+      const settings = this.get_settings();
+      this.ui_enabled =
+        settings == null ||
+        settings.display_on_player == null ||
+        settings.display_on_player;
+    }
+
+    return this.ui_enabled;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
