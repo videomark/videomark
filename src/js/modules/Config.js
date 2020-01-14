@@ -311,15 +311,7 @@ if (window.sodium === undefined && document.currentScript != null) {
     expires: Number(session.get("expires"))
   };
 
-  Config.settings = [
-    ...new URLSearchParams(document.currentScript.dataset.settings)
-  ].reduce(
-    (obj, [key, value]) =>
-      Object.assign(obj, {
-        [key]: Number(value)
-      }),
-    {}
-  );
+  Config.settings = JSON.parse(document.currentScript.dataset.settings);
 }
 if (window.sodium !== undefined) {
   window.sodium.storage.local.get("session", ({ session }) => {
