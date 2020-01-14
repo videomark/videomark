@@ -27,8 +27,8 @@ export default class SessionData {
   }
 
   async init() {
-    const settings = await Config.get_settings();
-    let session = await Config.get_default_session();
+    const settings = Config.get_settings();
+    let session = Config.get_default_session();
     if (
       session === undefined ||
       settings === undefined ||

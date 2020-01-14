@@ -106,22 +106,12 @@ export default class Config {
     return this.max_count_for_qoe;
   }
 
-  static async get_default_session() {
-    if (window.sodium === undefined) return this.session;
-
-    const { session } = await new Promise(resolve =>
-      window.sodium.storage.local.get("session", resolve)
-    );
-    return session;
+  static get_default_session() {
+    return this.session;
   }
 
-  static async get_settings() {
-    if (window.sodium === undefined) return this.settings;
-
-    const { settings } = await new Promise(resolve =>
-      window.sodium.storage.local.get("settings", resolve)
-    );
-    return settings;
+  static get_settings() {
+    return this.settings;
   }
 
   static is_quality_control() {
@@ -318,4 +308,12 @@ if (window.sodium === undefined && document.currentScript != null) {
       }),
     {}
   );
+}
+if (window.sodium !== undefined) {
+  window.sodium.storage.local.get("session", ({ session }) => {
+    Config.session = session;
+  });
+  window.sodium.storage.local.get("settings", ({ settings }) => {
+    Config.settings = settings;
+  });
 }
