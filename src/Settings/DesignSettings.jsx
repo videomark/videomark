@@ -38,7 +38,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
       <Paper>
         <List>
           <ListItem>
-            <ListItemText primary="動画再生中のプレイヤー上に計測値を表示する" />
+            <ListItemText primary="計測値を動画再生中のプレイヤーに表示する" />
             <Switch
               checked={displayOnPlayer}
               onChange={handleDisplaySettingChange}
