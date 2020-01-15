@@ -38,7 +38,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
       <Paper>
         <List>
           <ListItem>
-            <ListItemText primary="計測値を動画再生中のプレイヤーに表示する" />
+            <ListItemText primary="計測値を対象の動画の左上に重ねて表示する" />
             <Switch
               checked={displayOnPlayer}
               onChange={handleDisplaySettingChange}
