@@ -11,6 +11,7 @@ const Export = lazy(() => import("./Export"));
 const Migration = lazy(() => import("./Migration"));
 const Rollback = lazy(() => import("./Rollback"));
 const Settings = lazy(() => import("./Settings"));
+const Popup = lazy(() => import("./Popup"));
 
 if (!isDevelop() && isWeb()) window.location.pathname = "unsupported.html";
 else {
@@ -24,6 +25,7 @@ else {
           <Route exact path="/migration" component={Migration} />
           <Route exact path="/rollback" component={Rollback} />
           <Route exact path="/settings" component={Settings} />
+          <Route exact path="/popup" component={Popup} />
           <Route path="/" component={App} />
         </Switch>
       </Suspense>
