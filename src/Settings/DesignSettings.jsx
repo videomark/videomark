@@ -17,7 +17,6 @@ const DesignSettings = ({ settings, saveSettings }) => {
   const { display_on_player: uninitializedDisplayOnPlayer } = settings || {};
   const displayOnPlayer =
     uninitializedDisplayOnPlayer == null || uninitializedDisplayOnPlayer;
-
   const handleDisplaySettingChange = useCallback(
     event => {
       saveSettings({
@@ -39,12 +38,14 @@ const DesignSettings = ({ settings, saveSettings }) => {
         <List>
           <ListItem>
             <ListItemText primary="計測値を対象の動画の左上に重ねて表示する" />
-            <Switch
-              checked={displayOnPlayer}
-              onChange={handleDisplaySettingChange}
-              value="Display Setting"
-              inputProps={{ "aria-label": "Display Setting" }}
-            />
+            {settings && (
+              <Switch
+                checked={displayOnPlayer}
+                onChange={handleDisplaySettingChange}
+                value="Display Setting"
+                inputProps={{ "aria-label": "Display Setting" }}
+              />
+            )}
           </ListItem>
         </List>
       </Paper>
@@ -52,7 +53,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
   );
 };
 DesignSettings.propTypes = {
-  settings: PropTypes.shape({}),
+  settings: PropTypes.shape({ display_on_player: PropTypes.bool }),
   saveSettings: PropTypes.instanceOf(Function)
 };
 DesignSettings.defaultProps = {
