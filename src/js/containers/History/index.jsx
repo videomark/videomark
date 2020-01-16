@@ -11,7 +11,7 @@ import { urlToVideoPlatform } from "../../utils/Utils";
 import RegionalAverageQoE from "../../utils/RegionalAverageQoE";
 import HourlyAverageQoE from "../../utils/HourlyAverageQoE";
 import DataErase from "../../utils/DataErase";
-import videoPlatforms from "../../utils/videoPlatforms.json";
+import videoPlatforms from "../../utils/videoPlatforms";
 import waitForContentRendering from "../../utils/waitForContentRendering";
 import style from "../../../css/GridContainer.module.css";
 import ViewingDetail from "../ViewingDetail";
@@ -37,8 +37,7 @@ class History extends Component {
     };
   }
 
-  async componentDidMount() {
-    await Promise.all([regionalAverageQoE.init(), hourlyAverageQoE.init()]);
+  componentDidMount() {
     AppData.add(AppDataActions.ViewingList, this, "setState");
   }
 
@@ -153,19 +152,6 @@ const dispatcher = dispatch =>
       });
 
       dispatch({ indexes, viewingModels: active });
-
-      const regions = indexes
-        .map(({ region }) => region || {})
-        .filter(
-          (region, i, self) =>
-            i ===
-            self.findIndex(
-              r =>
-                r.country === region.country &&
-                r.subdivision === region.subdivision
-            )
-        );
-      await Promise.all(regions.map(region => regionalAverageQoE.at(region)));
       await new Promise(resolve => setTimeout(resolve, 15e3));
     }
   });

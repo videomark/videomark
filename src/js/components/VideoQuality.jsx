@@ -1,6 +1,5 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
@@ -127,25 +126,6 @@ export const VideoQuality = ({
           {...classes.playing}
         />
       </Grid>
-      {isLowQuality({
-        droppedVideoFrames,
-        totalVideoFrames
-      }) ? (
-        <Grid item xs={12} container justify="center">
-          <Grid item>
-            <Box mt={1}>
-              <Typography
-                align="center"
-                variant="caption"
-                component="small"
-                color="textSecondary"
-              >
-                フレームドロップが発生したため実際の体感品質とは異なる可能性があります。
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      ) : null}
     </Grid>
   );
 };

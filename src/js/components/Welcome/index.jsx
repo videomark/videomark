@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import Input from "@material-ui/icons/Input";
 import { ReactComponent as Usage } from "./usage.svg";
 import { isWeb } from "../../utils/Utils";
-import videoPlatforms from "../../utils/videoPlatforms.json";
+import videoPlatforms from "../../utils/videoPlatforms";
 import dino from "../../../images/dino.png";
 
 const ExperimentalSnackbar = () => {
@@ -52,23 +52,17 @@ export default () => (
           </Typography>
           <Box fontSize="body1.fontSize">
             <ul>
-              {videoPlatforms.map(({ id, name, url }) => (
-                <li key={id}>
-                  <Link href={url}>{name}</Link>
-                </li>
-              ))}
+              {videoPlatforms.map(({ id, name, url, experimental }) =>
+                experimental ? null : (
+                  <li key={id}>
+                    <Link href={url}>{name}</Link>
+                  </li>
+                )
+              )}
             </ul>
           </Box>
           <Typography>
-            調査対象となる動画配信サービス (
-            {videoPlatforms
-              .map(({ id, name, url }) => (
-                <Link key={id} href={url}>
-                  {name}
-                </Link>
-              ))
-              .map((item, index) => [index > 0 && "、", item])}
-            ) でいつも通り動画をお楽しみください。
+            調査対象となる動画配信サービスでいつも通り動画をお楽しみください。
           </Typography>
           <Typography>
             動画視聴中に自動的に再生品質やネットワーク品質などの視聴情報を記録します。

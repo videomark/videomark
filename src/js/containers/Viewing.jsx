@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import format from "date-fns/format";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { isLowQuality } from "../components/VideoQuality";
-import QoEValueGraphList from "../components/QoEValueGraphList";
+import Delete from "@material-ui/icons/Delete";
+import Restore from "@material-ui/icons/Replay";
 import style from "../../css/MeasureContents.module.css";
 import { urlToVideoPlatform } from "../utils/Utils";
 import ViewingModel from "../utils/Viewing";
-import RegionalAverageQoE from "../utils/RegionalAverageQoE";
-import HourlyAverageQoE from "../utils/HourlyAverageQoE";
-import { CrossIcon, Refresh } from "../components/Icons";
 import DataErase from "../utils/DataErase";
 import AppData from "../utils/AppData";
 import AppDataActions from "../utils/AppDataActions";
@@ -21,7 +20,7 @@ import NoImage from "../../images/noimage.svg";
 export const VideoThumbnail = ({ className, title, thumbnail }) => (
   <img
     className={className}
-    src={thumbnail}
+    src={thumbnail == null ? NoImage : thumbnail}
     alt={title}
     onError={e => {
       e.target.src = NoImage;
@@ -31,136 +30,88 @@ export const VideoThumbnail = ({ className, title, thumbnail }) => (
 VideoThumbnail.propTypes = {
   className: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  thumbnail: PropTypes.string.isRequired
+  thumbnail: PropTypes.string
+};
+VideoThumbnail.defaultProps = {
+  thumbnail: null
 };
 
-export const toTimeString = date => {
-  return `${date.getFullYear()}/${date.getMonth() +
-    1}/${`0${date.getDate()}`.slice(
-    -2
-  )} ${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
-};
+export const toTimeString = date => format(date, "yyyy/MM/dd HH:mm");
 
-export const fetch = async ({ model, regionalStats, hourlyStats }) => {
-  await model.init();
-  const title = await model.title;
-  const location = await model.location;
-  const thumbnail = await model.thumbnail;
-  const transferSize = (await model.transferSize) || 0;
-  const startTime = await model.startTime;
-  const qoe = await model.qoe;
-  const quality = await model.quality;
-  const region = (await model.region) || {};
-  const regionalAverage = await regionalStats.at(region);
-  const hourlyAverage = await hourlyStats.at(startTime.getHours());
-  return {
-    title,
-    location,
-    thumbnail,
-    transferSize,
-    startTime,
-    qoe,
-    quality,
-    region,
-    regionalAverage,
-    hourlyAverage
-  };
-};
-
-const Viewing = ({
-  model,
-  regionalAverageQoE: regionalStats,
-  hourlyAverageQoE: hourlyStats,
-  disabled
-}) => {
-  const [viewing, setViewing] = useState();
+export const useViewing = model => {
+  const [state, dispatch] = useState();
   useEffect(() => {
-    (async () => {
-      setViewing(await fetch({ model, regionalStats, hourlyStats }));
-    })();
-  }, [setViewing]);
-  if (!viewing) return null;
-  const {
-    title,
-    location,
-    thumbnail,
-    startTime,
-    qoe,
-    quality,
-    region,
-    regionalAverage,
-    hourlyAverage
-  } = viewing;
+    model.init().then(dispatch);
+  }, [model, dispatch]);
+  return state;
+};
 
-  const GraphList = () => (
-    <Grid container style={{ height: 76 }} alignItems="center">
-      <Grid item xs style={{ paddingLeft: 4, paddingRight: 4 }}>
-        <QoEValueGraphList
-          value={qoe}
-          region={region}
-          regionalAverage={regionalAverage}
-          hour={startTime.getHours()}
-          hourlyAverage={hourlyAverage}
-          color={isLowQuality(quality) ? "text.secondary" : "default"}
-        />
-      </Grid>
-    </Grid>
-  );
-  const RecoverOrRemoveButton = () => (
+const RecoverOrRemoveButton = ({ model }) => {
+  const recover = useCallback(() => {
+    DataErase.recover(model.id);
+    // FIXME: ViewingListをrender()しないと表示が変わらない
+    AppData.update(AppDataActions.ViewingList, state => state);
+  }, [model]);
+
+  const remove = useCallback(() => {
+    DataErase.remove(model.id);
+    AppData.update(AppDataActions.ViewingList, state => ({
+      ...state,
+      removed: [...state.removed, model.id]
+    }));
+  }, [model]);
+
+  return (
     <div className={style.removedStateButtons}>
       <Button
         variant="contained"
         color="primary"
         className={style.removedStateButton}
-        onClick={() => {
-          DataErase.recover(model.id);
-          // FIXME: ViewingListをrender()しないと表示が変わらない
-          AppData.update(AppDataActions.ViewingList, state => state);
-        }}
+        onClick={recover}
       >
-        <Refresh />
-        <span>&nbsp;復元</span>
+        <Restore fontSize="small" />
+        <Box marginLeft={1} component="span">
+          復元
+        </Box>
       </Button>
       <Button
         variant="contained"
         color="secondary"
         className={style.removedStateButton}
-        onClick={async () => {
-          await DataErase.remove(model.id);
-          AppData.update(AppDataActions.ViewingList, state =>
-            Object.assign(state, {
-              removed: [...state.removed, model.id]
-            })
-          );
-        }}
+        onClick={remove}
       >
-        <CrossIcon />
-        <span>&nbsp;削除</span>
+        <Delete fontSize="small" />
+        <Box marginLeft={1} component="span">
+          削除
+        </Box>
       </Button>
     </div>
   );
-  const DisabledInfo = () => (
-    <Grid
-      container
-      style={{ height: 76 }}
-      direction="column"
-      justify="flex-end"
-    >
-      <Grid item>
-        <Typography
-          component="small"
-          variant="caption"
-          color="error"
-          align="center"
-          display="block"
-          gutterBottom
-          style={{ lineHeight: 1.2 }}
-        >
-          次回起動時に削除します。取り消すには復元、今すぐ削除するには削除を押してください。
-        </Typography>
-        <RecoverOrRemoveButton />
+};
+RecoverOrRemoveButton.propTypes = {
+  model: PropTypes.instanceOf(ViewingModel).isRequired
+};
+
+const Viewing = ({ model, disabled }) => {
+  const viewing = useViewing(model);
+  if (viewing == null) return null;
+  const { title, location, thumbnail, startTime } = viewing;
+
+  const Title = () => (
+    <Grid container component={Box} height={72} paddingX={2} paddingY={1}>
+      <Grid item className={style.title}>
+        {title}
       </Grid>
     </Grid>
+  );
+
+  const DisabledInfo = () => (
+    <>
+      <Typography variant="caption" color="error" component={Box} paddingX={1}>
+        次回起動時に削除します。取り消すには復元、今すぐ削除するには削除を押してください。
+      </Typography>
+      <RecoverOrRemoveButton model={viewing} />
+    </>
   );
 
   return (
@@ -169,9 +120,10 @@ const Viewing = ({
         <CardMedia
           component={() => (
             <VideoThumbnail
-              className={
-                style.thumbnail + (disabled ? ` ${style.removedThumbnail}` : "")
-              }
+              className={[
+                style.thumbnail,
+                disabled ? style.removedThumbnail : null
+              ].join(" ")}
               title={title}
               thumbnail={thumbnail}
             />
@@ -183,15 +135,13 @@ const Viewing = ({
           <span>{toTimeString(startTime)}</span>
         </div>
       </div>
-      <div className={style.title}>{title}</div>
-      {disabled ? <DisabledInfo /> : <GraphList />}
+      <Title />
+      {disabled ? <DisabledInfo /> : null}
     </Card>
   );
 };
 Viewing.propTypes = {
   model: PropTypes.instanceOf(ViewingModel).isRequired,
-  regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
-  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
   disabled: PropTypes.bool
 };
 Viewing.defaultProps = {

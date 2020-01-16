@@ -4,32 +4,20 @@ import QoEValueGraph from "./QoEValueGraph";
 import Country from "../utils/Country";
 import Subdivision from "../utils/Subdivision";
 
-const RegionalAverageQoEGraph = ({ region, regionalAverage, isDetail }) => {
+const RegionalAverageQoEGraph = ({ region, regionalAverage }) => {
   const { country, subdivision } = region || {};
   const regionDisplayName = Country.isJapan(country)
     ? Subdivision.codeToName(subdivision)
     : Country.codeToName(country);
 
   if (regionDisplayName === undefined) {
-    const label = "不明";
-    const detail = "視聴地域の推定に失敗";
-
-    return (
-      <QoEValueGraph
-        label={isDetail ? detail : label}
-        qoe={NaN}
-        modal={isDetail}
-      />
-    );
+    return <QoEValueGraph label="視聴地域の推定に失敗" />;
   }
 
-  const label = regionDisplayName;
-  const detail = `同じ地域の体感品質の平均 (${regionDisplayName})`;
   return (
     <QoEValueGraph
-      label={isDetail ? detail : label}
+      label={`同じ地域の体感品質の平均 (${regionDisplayName})`}
       qoe={regionalAverage}
-      modal={isDetail}
     />
   );
 };
@@ -38,13 +26,11 @@ RegionalAverageQoEGraph.propTypes = {
     country: PropTypes.string,
     subdivision: PropTypes.string
   }),
-  regionalAverage: PropTypes.number,
-  isDetail: PropTypes.bool
+  regionalAverage: PropTypes.number
 };
 RegionalAverageQoEGraph.defaultProps = {
   region: undefined,
-  regionalAverage: undefined,
-  isDetail: false
+  regionalAverage: undefined
 };
 
 export default RegionalAverageQoEGraph;

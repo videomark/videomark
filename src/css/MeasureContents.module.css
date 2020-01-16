@@ -8,15 +8,14 @@
 
 .title {
   text-overflow: ellipsis;
-  white-space: nowrap;
   overflow: hidden;
-  line-height: 20px;
-  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* autoprefixer: ignore next */
+  -webkit-box-orient: vertical;
+  line-height: 1.5;
 
   font-size: 18px;
-  padding: 0 10px;
-  margin: 14px 0;
-  width: auto;
 }
 
 .movieInfo {
@@ -66,14 +65,4 @@
 
 .modalMain .movieInfo {
   font-size: 1rem;
-}
-
-.modalTitle {
-  text-overflow: clip;
-  white-space: normal;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  /* autoprefixer: ignore next */
-  -webkit-box-orient: vertical;
-  line-height: 1.5;
 }

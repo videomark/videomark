@@ -7,7 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
-import videoPlatforms from "../../utils/videoPlatforms.json";
+import videoPlatforms from "../../utils/videoPlatforms";
 
 const styles = theme => ({
   root: {
@@ -64,11 +64,13 @@ class SiteSelect extends Component {
             name="site"
           >
             <MenuItem value="">すべて</MenuItem>
-            {videoPlatforms.map(({ id, name }) => (
-              <MenuItem key={id} value={id}>
-                {name}
-              </MenuItem>
-            ))}
+            {videoPlatforms.map(({ id, name, experimental }) =>
+              experimental ? null : (
+                <MenuItem key={id} value={id}>
+                  {name}
+                </MenuItem>
+              )
+            )}
           </Select>
         </FormControl>
       </div>

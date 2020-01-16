@@ -19,11 +19,6 @@ class HourlyAverageQoE {
     return this.cache;
   }
 
-  async init() {
-    await this.at(0);
-    return this.cache;
-  }
-
   async at(hour) {
     if (this.cache[hour] === undefined) await this.fetchHourlyQoEAPI();
     return this.cache[hour];

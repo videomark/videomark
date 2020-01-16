@@ -16,7 +16,7 @@ import { ResponsiveScatterPlotCanvas } from "@nivo/scatterplot";
 import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
-import videoPlatforms from "../utils/videoPlatforms.json";
+import videoPlatforms from "../utils/videoPlatforms";
 import LoadingProgress from "../components/LoadingProgress";
 
 const timeFormatFromMinutes = min =>

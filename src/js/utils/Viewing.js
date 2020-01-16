@@ -37,6 +37,13 @@ class Viewing {
     return this.cache != null;
   }
 
+  get qoeCalculatable() {
+    return (
+      this.valid &&
+      (!("calc" in this.cache) /* NOTE: 互換性のため */ || this.cache.calc)
+    );
+  }
+
   async save(attributes) {
     const tmp = await this.load();
     Object.assign(tmp, attributes);
@@ -46,32 +53,32 @@ class Viewing {
   }
 
   get title() {
-    return Promise.resolve(this.cache.title);
+    return this.cache.title;
   }
 
   get thumbnail() {
-    return Promise.resolve(this.cache.thumbnail);
+    return this.cache.thumbnail;
   }
 
   get location() {
-    return Promise.resolve(this.cache.location);
+    return this.cache.location;
   }
 
   get transferSize() {
-    return Promise.resolve(this.cache.transfer_size);
+    return this.cache.transfer_size;
   }
 
   get startTime() {
-    return Promise.resolve(new Date(this.cache.start_time));
+    return new Date(this.cache.start_time);
   }
 
   get endTime() {
     if (this.cache.start_time < this.cache.end_time)
-      return Promise.resolve(new Date(this.cache.end_time));
+      return new Date(this.cache.end_time);
     const log = this.cache.log || [];
     // NOTE: 時刻が得られない場合、視聴時間ゼロとみなす
     const { date } = log.slice(-1)[0] || { date: this.cache.start_time };
-    return Promise.resolve(new Date(date));
+    return new Date(date);
   }
 
   async fetchFixedQoeApi() {
@@ -95,10 +102,10 @@ class Viewing {
       });
   }
 
+  /** @returns {Promise<number | void>} */
   get qoe() {
-    if (this.cache.qoe > 0) {
-      return Promise.resolve(this.cache.qoe);
-    }
+    if (!this.qoeCalculatable) return Promise.resolve();
+    if (this.cache.qoe > 0) return Promise.resolve(this.cache.qoe);
 
     return this.fetchFixedQoeApi().then(() => this.cache.qoe);
   }
@@ -132,18 +139,23 @@ class Viewing {
       });
   }
 
+  /** @returns {Promise<{ country: string, subdivision?: string } | void>} */
   get region() {
-    if (this.cache.region !== undefined) {
+    if (this.cache.region != null) {
       return Promise.resolve(this.cache.region);
     }
-    return this.fetchStatsInfoApi().then(() => this.cache.region);
+    return this.fetchStatsInfoApi().then(() =>
+      "region" in this.cache && "country" in this.cache.region
+        ? this.cache.region
+        : undefined
+    );
   }
 
   get quality() {
     const log = this.cache.log || [];
     const { date, quality } =
       log.filter(a => "quality" in a).slice(-1)[0] || {};
-    return Promise.resolve({ date: new Date(date), ...quality });
+    return { date: new Date(date), ...quality };
   }
 }
 
