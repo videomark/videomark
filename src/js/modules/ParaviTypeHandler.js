@@ -186,23 +186,6 @@ export default class ParaviTypeHandler {
         } catch (e) { /* DO NOTHING */ }
         return id;
     }
-    /*
-
-    // eslint-disable-next-line camelcase
-    static get_play_list_info() {
-        const formats = videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks();
-        return formats
-            .map(e => ({
-                representationId: e.videoId,
-                bps: e.videoBandwidth,
-                videoWidth: e.width,
-                videoHeight: e.height,
-                fps: e.frameRate,
-                chunkDuration: ParaviTypeHandler.DEFAULT_CHUNK_DURATION,
-                serverIp: "dummy" // new URL(e.url).host
-            }))
-    }
-    */
 
     // eslint-disable-next-line camelcase
     static get_play_list_info() {
