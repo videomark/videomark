@@ -5,6 +5,7 @@ import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
+import IIJTypeHandler from "./modules/IIJTypeHandler";
 
 (async () => {
   // --- support --- //
@@ -26,6 +27,9 @@ import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 
   // --- Paravi Hook --- //
   await ParaviTypeHandler.hook_paravi();
+
+  // --- IIJ Hook --- //
+  await IIJTypeHandler.hook_iij();
 
   // --- update video list --- //
   window.setInterval(() => {
