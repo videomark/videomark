@@ -7,9 +7,11 @@ import Status from "./Status";
 export default class UI {
   /**
    * @param {string} target CSS selector string
+   * @param {string} style CSS
    */
-  constructor(target) {
+  constructor(target, style) {
     this.target = target;
+    this.style = style;
 
     // Inserted element
     this.element = null;
@@ -32,8 +34,11 @@ export default class UI {
   }
 
   insert_element() {
-    const target = document.querySelector(this.target);
-    if (target === null) {
+    const target =
+      this.target == null /* デフォルト: videoタグの親 */
+        ? (document.querySelector("video") || {}).parentNode
+        : document.querySelector(this.target);
+    if (target == null) {
       console.error(
         `VIDEOMARK: No element found matching query string "${this.target}"`
       );
@@ -42,10 +47,10 @@ export default class UI {
 
     const e = name => (childlen = []) => {
       const element = document.createElement(name);
-      childlen.forEach(c => element.appendChild(c));
+      childlen.forEach(c => element.append(c));
       return element;
     };
-    const style = e("style")([document.createTextNode(Config.get_style())]);
+    const style = e("style")([this.style]);
     document.head.appendChild(style);
 
     this.element = e("div")();

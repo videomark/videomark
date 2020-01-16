@@ -42,40 +42,14 @@ export default class Config {
     return null;
   }
 
-  static get_ui_target() {
-    const { host } = new window.URL(window.location.href);
-    let result = "";
-    if (host === "m.youtube.com") {
-      result = this.ui.m_youtube_com.target;
-    } else if (host.includes("youtube")) {
-      result = this.ui.youtube.target;
-    } else if (host.includes("tver")) {
-      result = this.ui.tver.target;
-    } else if (host.includes("paravi")) {
-      result = this.ui.paravi.target;
-    } else {
-      result = this.ui.general.target;
-    }
-
-    return result;
+  static get_ui_target(platform) {
+    if (platform in this.ui) return this.ui[platform].target;
+    return this.ui.general.target;
   }
 
-  static get_style() {
-    const { host } = new window.URL(window.location.href);
-    let result = "";
-    if (host === "m.youtube.com") {
-      result = this.ui.m_youtube_com.style;
-    } else if (host.includes("youtube")) {
-      result = this.ui.youtube.style;
-    } else if (host.includes("paravi")) {
-      result = this.ui.paravi.style;
-    } else if (host.includes("tver")) {
-      result = this.ui.tver.style;
-    } else {
-      result = this.ui.general.style;
-    }
-
-    return result;
+  static get_style(platform) {
+    if (platform in this.ui) return this.ui[platform].style;
+    return this.ui.general.style;
   }
 
   static get_DEFAULT_RESOURCE_BUFFER_SIZE() {
@@ -129,6 +103,12 @@ export default class Config {
 
     return this.ui_enabled;
   }
+
+  static get_video_platform() {
+    const matcher = this.video_platform_matcher(window.location);
+    const match = this.video_platforms.find(matcher);
+    return match && match.id;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
@@ -162,9 +142,80 @@ Config.event_type_names = [
   "canplay"
 ];
 
+// 動画配信サービス
+Config.video_platforms = [
+  {
+    // YouTube Mobile
+    id: "m_youtube_com",
+    host: /^m\.youtube\.com$/
+  },
+  {
+    // YouTube
+    id: "youtube",
+    host: /(^|[^m]\.)youtube\.com$/
+  },
+  {
+    // Paravi
+    id: "paravi",
+    host: /(^|\.)paravi\.jp$/
+  },
+  {
+    // TVer
+    id: "tver",
+    host: /(^|\.)tver\.jp$/
+  },
+  {
+    // FOD
+    id: "fod",
+    host: /^i\.fod\.fujitv\.co\.jp$/
+  },
+  {
+    // ニコニコ動画
+    id: "nicovideo",
+    host: /^www\.nicovideo\.jp$/
+  },
+  {
+    // ニコニコ生放送
+    id: "nicolive",
+    host: /^live\d\.nicovideo\.jp$/
+  },
+  {
+    // NHKオンデマンド
+    id: "nhkondemand",
+    host: /^www\.nhk-ondemand\.jp$/
+  },
+  {
+    // dTV
+    id: "dtv",
+    host: /\.video\.dmkt-sp\.jp$/
+  },
+  {
+    // AbemaTV
+    id: "abematv",
+    host: /^abema\.tv$/,
+    pathname: /^\/now-on-air\//
+  },
+  {
+    // Abemaビデオ
+    id: "abemavideo",
+    host: /^abema\.tv$/,
+    pathname: /^\/(?!now-on-air\/)/
+  },
+  {
+    // Amazon Prime Video
+    id: "amazonprimevideo",
+    host: /^www\.amazon\.co\.jp$/
+  }
+];
+
+Config.video_platform_matcher = ({ host, pathname }) => platform => {
+  return (
+    platform.host.test(host) &&
+    (platform.pathname == null || platform.pathname.test(pathname))
+  );
+};
+
 // 表示用
-// 動画サービスのプレイヤーでコントローラが表示されるタイミングだけ表示
-// :hover 疑似クラスなどでなく、表示タイミングはプレイヤー実装に委ねる
 Config.ui = {
   id: "__videomark_ui"
 };
@@ -206,7 +257,7 @@ Config.ui.m_youtube_com = {
 }`
 };
 
-// YouTube ではコンロール非表示時に #movie_player に .ytp-autohide 付与
+// YouTube
 Config.ui.youtube = {
   target: "#movie_player",
   style: `#${Config.ui.id} {
@@ -259,14 +310,91 @@ Config.ui.paravi = {
 }`
 };
 
-Config.ui.general = {
-  target: "video",
+// TODO: FOD
+// Config.ui.fod = {};
+
+// TODO: ニコニコ動画
+// Config.ui.nicovideo = {};
+
+// TODO: ニコニコ生放送
+// Config.ui.nicolive = {};
+
+// NHKオンデマンド
+Config.ui.nhkondemand = {
+  target: null,
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
   top: 12px;
   left: 12px;
-  transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
+  transition: 200ms;
+}
+.player__controls[style="display: none;"] + #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// dTV
+Config.ui.dtv = {
+  target: null,
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.controller-hidden > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// TODO: AbemaTV
+// Config.ui.abematv = {};
+
+// Abemaビデオ
+Config.ui.abemavideo = {
+  target: ".com-vod-VODScreen-container",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// Amazon Prime Video
+Config.ui.amazonprimevideo = {
+  target: ".scalingUiContainerBottom",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.hideCursor + #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// デフォルトではvideoタグの親に挿入
+// :hoverに反応して不透明度を変える
+Config.ui.general = {
+  target: null,
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+}
+#${Config.ui.id}:not(:hover) {
+  opacity: 0.5;
+  transition: 500ms;
 }`
 };
 
