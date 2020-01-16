@@ -52,11 +52,13 @@ export default () => (
           </Typography>
           <Box fontSize="body1.fontSize">
             <ul>
-              {videoPlatforms.map(({ id, name, url }) => (
-                <li key={id}>
-                  <Link href={url}>{name}</Link>
-                </li>
-              ))}
+              {videoPlatforms.map(({ id, name, url, experimental }) =>
+                experimental ? null : (
+                  <li key={id}>
+                    <Link href={url}>{name}</Link>
+                  </li>
+                )
+              )}
             </ul>
           </Box>
           <Typography>

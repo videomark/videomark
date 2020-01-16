@@ -64,11 +64,13 @@ class SiteSelect extends Component {
             name="site"
           >
             <MenuItem value="">すべて</MenuItem>
-            {videoPlatforms.map(({ id, name }) => (
-              <MenuItem key={id} value={id}>
-                {name}
-              </MenuItem>
-            ))}
+            {videoPlatforms.map(({ id, name, experimental }) =>
+              experimental ? null : (
+                <MenuItem key={id} value={id}>
+                  {name}
+                </MenuItem>
+              )
+            )}
           </Select>
         </FormControl>
       </div>

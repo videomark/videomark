@@ -61,5 +61,12 @@ export default [
     url: "https://www.amazon.co.jp/PrimeVideo",
     brandcolor: "#015A80",
     host: /(^|\.)amazon\.co\.jp$/
+  },
+  {
+    id: "iijtwilightconcert",
+    experimental: true,
+    name: "TWILIGHT CONCERT",
+    brandcolor: "#CCB42B",
+    host: /^pr\.iij\.ad\.jp$/
   }
 ];
