@@ -330,7 +330,7 @@ Config.ui.nhkondemand = {
   left: 12px;
   transition: 200ms;
 }
-.player__controls[style="display: none;"] + #${Config.ui.id} {
+.player__controls[style="display: none;"] ~ #${Config.ui.id} {
   opacity: 0;
 }`
 };
