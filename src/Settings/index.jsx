@@ -25,16 +25,17 @@ import uuidv4 from "uuid/v4";
 import addYears from "date-fns/addYears";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
-import ThemeProvider from "./js/components/ThemeProvider";
+import DesignSettings from "./DesignSettings";
+import ThemeProvider from "../js/components/ThemeProvider";
 import {
   clearStore as clearStatsCache,
   getStoredIndex as getStatsCacheIndex
-} from "./js/containers/StatsDataProvider";
+} from "../js/containers/StatsDataProvider";
 import {
   useSession,
   useSettings,
   clearViewings
-} from "./js/utils/ChromeExtensionWrapper";
+} from "../js/utils/ChromeExtensionWrapper";
 
 const List = styled(MuiList)({
   padding: 0
@@ -340,7 +341,10 @@ const useOverwriteSessionId = ({
   // NOTE: オーバーフロー無く十分に長い適当な期間
   const expiresIn = addYears(0, 10).getTime();
 
-  saveSettings({ expires_in: expiresIn });
+  saveSettings({
+    ...settings,
+    expires_in: expiresIn
+  });
   saveSession({ id: sessionId, expires: Date.now() + expiresIn });
 };
 
@@ -366,6 +370,7 @@ export default () => {
       <Header />
       <Box paddingTop={6}>
         <Container maxWidth="sm">
+          <DesignSettings settings={settings} saveSettings={saveSettings} />
           <PrivacySettings
             settings={settings}
             saveSettings={saveSettings}
