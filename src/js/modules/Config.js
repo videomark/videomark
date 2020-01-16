@@ -205,6 +205,11 @@ Config.video_platforms = [
     // Amazon Prime Video
     id: "amazonprimevideo",
     host: /^www\.amazon\.co\.jp$/
+  },
+  {
+    // IIJ TWILIGHT CONCERT
+    id: "iijtwilightconcert",
+    host: /^pr\.iij\.ad\.jp$/
   }
 ];
 
@@ -381,6 +386,19 @@ Config.ui.amazonprimevideo = {
   opacity: 0;
 }`
 };
+
+// IIJ TWILIGHT CONCERT
+Config.ui.iijtwilightconcert = {
+  target: null,
+  style: `#${Config.ui.id} {
+  transform: translate(12px, calc(12px - 450px));
+  width: fit-content;
+}
+#${Config.ui.id}:not(:hover) {
+  opacity: 0.5;
+  transition: 500ms;
+}`
+}
 
 // デフォルトではvideoタグの親に挿入
 // :hoverに反応して不透明度を変える
