@@ -34,11 +34,8 @@ export default class Config {
     return this.ui.id;
   }
 
-  static get_ui_observer() {
-    const { host } = new window.URL(window.location.href);
-    if (host === "m.youtube.com") {
-      return this.ui.m_youtube_com.observe;
-    }
+  static get_ui_observer(platform) {
+    if (platform in this.ui) return this.ui[platform].observe;
     return null;
   }
 
@@ -256,7 +253,6 @@ Config.ui.m_youtube_com = {
   left: 12px;
   transition: 200ms;
 }
-
 :not(.fadein)#${Config.ui.id} {
   opacity: 0;
 }`

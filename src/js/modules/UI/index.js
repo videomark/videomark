@@ -8,10 +8,12 @@ export default class UI {
   /**
    * @param {string} target CSS selector string
    * @param {string} style CSS
+   * @param {(fadein: boolean) => void} ovserve コントローラーを監視して表示/非表示を切り替える
    */
-  constructor(target, style) {
+  constructor(target, style, ovserve) {
     this.target = target;
     this.style = style;
+    this.ovserve = ovserve;
 
     // Inserted element
     this.element = null;
@@ -59,10 +61,8 @@ export default class UI {
     this.status.attach(this.element.shadowRoot);
     target.appendChild(this.element);
 
-    // プレイヤーのコントローラーを監視して表示/非表示を切り替える
-    const ovserve = Config.get_ui_observer();
-    if (ovserve != null) {
-      ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
+    if (this.ovserve != null) {
+      this.ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
         if (fadein) this.element.classList.add("fadein");
         else this.element.classList.remove("fadein");
       });
