@@ -9,6 +9,7 @@ import DTVTypeHandler from './DTVTypeHandler';
 import AbemaTVVideoTypeHandler from './AbemaTVVideoTypeHandler';
 import AbemaTVLiveTypeHandler from './AbemaTVLiveTypeHandler';
 import AmazonPrimeVideoTypeHandler from './AmazonPrimeVideoTypeHandler';
+import IIJTypeHandler from './IIJTypeHandler';
 
 
 export default class VideoHandler {
@@ -68,6 +69,11 @@ export default class VideoHandler {
             this.handler = new AmazonPrimeVideoTypeHandler(elm);
             // eslint-disable-next-line no-console
             console.log('Amazon Prime Video Type Handler');
+        } else if (url.host === "pr.iij.ad.jp") {
+            this.handler = new IIJTypeHandler(elm);
+            this.calQoeFlg = true;
+            // eslint-disable-next-line no-console
+            console.log('IIJ Type Handler');
         } else {
             throw new Error('Unknown Type Handler');
         }
@@ -105,7 +111,14 @@ export default class VideoHandler {
 
     // eslint-disable-next-line camelcase
     get_receive_buffer() {
-        return this.handler.get_receive_buffer();
+        let receive = -1;
+
+        if (this.handler instanceof IIJTypeHandler)
+            receive = IIJTypeHandler.get_receive_buffer();
+        else if (this.handler.get_receive_buffer instanceof Function)
+            receive = this.handler.get_receive_buffer();
+
+        return receive;
     }
 
     // eslint-disable-next-line camelcase
@@ -205,10 +218,10 @@ export default class VideoHandler {
     get_play_list_info() {
         let list = [];
 
-        if (this.handler === ParaviTypeHandler)
-            list = ParaviTypeHandler.get_play_list_info();
         if (this.handler instanceof YouTubeTypeHandler)
             list = YouTubeTypeHandler.get_play_list_info();
+        else if (this.handler.get_play_list_info instanceof Function)
+            list = this.handler.get_play_list_info();
 
         return list;
     }
@@ -217,10 +230,10 @@ export default class VideoHandler {
     get_throughput_info() {
         let list = [];
 
-        if (this.handler === ParaviTypeHandler)
-            list = ParaviTypeHandler.get_throughput_info();
-        else if (this.handler instanceof YouTubeTypeHandler)
+        if (this.handler instanceof YouTubeTypeHandler)
             list = YouTubeTypeHandler.get_throughput_info();
+        else if (this.handler.get_throughput_info instanceof Function)
+            list = this.handler.get_throughput_info();
 
         return list;
     }
@@ -231,6 +244,8 @@ export default class VideoHandler {
 
         if (this.handler instanceof YouTubeTypeHandler)
             info = YouTubeTypeHandler.get_codec_info();
+        else if (this.handler.get_codec_info instanceof Function)
+            info = this.handler.get_codec_info();
 
         return info;
     }
@@ -241,6 +256,8 @@ export default class VideoHandler {
 
         if (this.handler instanceof YouTubeTypeHandler)
             representation = YouTubeTypeHandler.get_representation();
+        else if (this.handler.get_representation instanceof Function)
+            representation = this.handler.get_representation();
 
         return representation;
     }
