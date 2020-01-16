@@ -1,56 +1,25 @@
-const hash = window.location.hash;
-let shouldCreateNewTab = true;
+const logViewUrl = chrome.runtime.getURL("qoelog/index.html#/");
+const inLogView = url => url.startsWith(logViewUrl);
+const termsUrl = chrome.runtime.getURL("terms.html");
 
-const id = chrome.app.getDetails().id;
-const htmlPage = "/qoelog/index.html";
-const termsPage = "/terms.html";
-const tabUrl = "chrome-extension://" + id + htmlPage;
-const termsUrl = "chrome-extension://" + id + termsPage;
-
-const openPage = (windowId, pathname, url) => {
-  const extensionsTabs = chrome.extension.getViews({
-    type: "tab",
-    windowId
+const openPage = async url => {
+  const { id: currentWindowId } = await new Promise(resolve => {
+    chrome.windows.getCurrent(resolve);
   });
-  const launcher = extensionsTabs.find(extensionTab => {
-    return extensionTab.location.pathname === pathname;
-  });
+  const view = chrome.extension
+    .getViews({ type: "tab", windowId: currentWindowId })
+    .find(({ location }) =>
+      url === logViewUrl ? inLogView(location.href) : location.href === url
+    );
 
-  extensionsTabs.forEach(extensionTab => {
-    if (extensionTab.location.pathname === htmlPage && shouldCreateNewTab) {
-      shouldCreateNewTab = false;
-      if (hash && extensionTab.location.hash !== hash) {
-        chrome.tabs.update(extensionTab.dhcChromeTabId, {
-          active: true,
-          url: url + hash
-        });
-      } else {
-        chrome.tabs.update(extensionTab.dhcChromeTabId, { active: true });
-      }
-    }
-  });
-
-  if (shouldCreateNewTab) {
-    chrome.tabs.create({
-      url: url + hash
-    });
+  if (view == null) {
+    chrome.tabs.create({ url });
   }
 
-  if (launcher) {
-    launcher.close();
-  }
   window.close();
 };
 
-chrome.windows.getCurrent(currentWindow => {
-  chrome.storage.local.get("AgreedTerm", value => {
-    const result = "AgreedTerm" in value ? value.AgreedTerm : false;
-
-    if (result) {
-      openPage(currentWindow.id, "/index.html", tabUrl);
-      return;
-    }
-
-    openPage(currentWindow.id, "/terms.html", termsUrl);
-  });
+chrome.storage.local.get("AgreedTerm", value => {
+  const agreed = "AgreedTerm" in value && value.AgreedTerm;
+  openPage(agreed ? logViewUrl : termsUrl);
 });

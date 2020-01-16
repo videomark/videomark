@@ -16,9 +16,7 @@ window.onload = () => {
     if (terms && privacy) {
       console.log("ok");
       chrome.storage.local.set({ AgreedTerm: true });
-      const url = new URL(location.href);
-      url.pathname = "/qoelog/index.html";
-      location.href = url.href;
+      location.href = chrome.runtime.getURL("qoelog/index.html");
     }
   };
 

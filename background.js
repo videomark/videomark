@@ -2,7 +2,7 @@ const hostToIp = {};
 
 const communicator = {
   getIp: host => ({ ip: hostToIp[host] })
-}
+};
 
 chrome.webRequest.onHeadersReceived.addListener(
   details => {
@@ -46,4 +46,21 @@ chrome.runtime.onConnect.addListener(port => {
     ret["requestId"] = value.requestId;
     port.postMessage(ret);
   });
+});
+
+/** 計測中であることをツールバーのアイコンで通知する */
+const updateIcon = (tabId, enabled) => {
+  chrome.browserAction.setIcon({
+    tabId,
+    path: enabled ? "icons/enabled.png" : "icons/disabled.png"
+  });
+};
+
+// Port名"sodium-extension-alive"の接続状況に応じて計測中であることを受け取る
+chrome.runtime.onConnect.addListener(port => {
+  const { name, sender } = port;
+  if (name !== "sodium-extension-alive") return;
+  const tabId = sender.tab.id;
+  port.onDisconnect.addListener(() => updateIcon(tabId, false));
+  updateIcon(tabId, true);
 });
