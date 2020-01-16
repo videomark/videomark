@@ -26,7 +26,8 @@
     "*://*.nhk-ondemand.jp/*",
     "*://*.video.dmkt-sp.jp/*",
     "*://abema.tv/*",
-    "*://*.amazon.co.jp/*"
+    "*://*.amazon.co.jp/*",
+    "*://pr.iij.ad.jp/*"
   ],
   "browser_action": {
     "default_icon": "icons/disabled.png",
@@ -43,7 +44,8 @@
         "*://*.nhk-ondemand.jp/*",
         "*://*.video.dmkt-sp.jp/*",
         "*://abema.tv/*",
-        "*://*.amazon.co.jp/*"
+        "*://*.amazon.co.jp/*",
+        "*://pr.iij.ad.jp/*"
       ],
       "js": ["content_script.js"],
       "all_frames": true
