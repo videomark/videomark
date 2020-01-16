@@ -35,7 +35,7 @@ export default [
     host: /(^|\.)nicovideo\.jp$/
   },
   {
-    id: "nhk-ondemand",
+    id: "nhkondemand",
     name: "NHKオンデマンド",
     url: "https://www.nhk-ondemand.jp/",
     brandcolor: "#f18b02",
@@ -56,7 +56,7 @@ export default [
     host: /^abema\.tv$/
   },
   {
-    id: "amazon-prime-video",
+    id: "amazonprimevideo",
     name: "Amazon Prime Video",
     url: "https://www.amazon.co.jp/PrimeVideo",
     brandcolor: "#015A80",
