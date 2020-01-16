@@ -350,8 +350,22 @@ Config.ui.dtv = {
 }`
 };
 
-// TODO: AbemaTV
-// Config.ui.abematv = {};
+// AbemaTV
+Config.ui.abematv = {
+  target: ".com-tv-TVScreen__player",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.com-tv-TVScreen__player > .com-tv-TVScreen__overlay--cursor-hidden ~ #${
+    Config.ui.id
+  } {
+  opacity: 0;
+}`
+};
 
 // Abemaビデオ
 Config.ui.abemavideo = {
@@ -394,7 +408,7 @@ Config.ui.iijtwilightconcert = {
   opacity: 0.5;
   transition: 500ms;
 }`
-}
+};
 
 // デフォルトではvideoタグの親に挿入
 // :hoverに反応して不透明度を変える
