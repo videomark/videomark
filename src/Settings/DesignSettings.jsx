@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { styled } from "@material-ui/styles";
 import Box from "@material-ui/core/Box";
@@ -14,17 +14,19 @@ const List = styled(MuiList)({
 });
 
 const DesignSettings = ({ settings, saveSettings }) => {
+  const [changes, setChanges] = useState(false);
   const { display_on_player: uninitializedDisplayOnPlayer } = settings || {};
   const displayOnPlayer =
     uninitializedDisplayOnPlayer == null || uninitializedDisplayOnPlayer;
   const handleDisplaySettingChange = useCallback(
     event => {
+      setChanges(!changes);
       saveSettings({
         ...settings,
         display_on_player: event.target.checked
       });
     },
-    [saveSettings]
+    [changes, setChanges, settings, saveSettings]
   );
 
   return (
@@ -37,7 +39,10 @@ const DesignSettings = ({ settings, saveSettings }) => {
       <Paper>
         <List>
           <ListItem>
-            <ListItemText primary="計測値を対象の動画の左上に重ねて表示する" />
+            <ListItemText
+              primary="計測値を対象の動画の左上に重ねて表示する"
+              secondary={changes ? "新しいページを読み込むと反映されます" : ""}
+            />
             {settings && (
               <Switch
                 checked={displayOnPlayer}
