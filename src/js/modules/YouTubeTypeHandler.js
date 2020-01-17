@@ -376,6 +376,16 @@ class YouTubeTypeHandler {
         };
     }
 
+    // eslint-disable-next-line camelcase
+    static get_representation() {
+        const player = document.querySelector('#movie_player');
+        const stats = player.getVideoStats();
+        return {
+            video: stats.fmt,
+            audio: stats.afmt
+        };
+    }
+
     constructor(elm) {
 
         YouTubeTypeHandler.throughputHistories = [];

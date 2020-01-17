@@ -5,33 +5,15 @@ import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
+import IIJTypeHandler from "./modules/IIJTypeHandler";
 
 (async () => {
   // --- support --- //
-  if (/*  !performance || */ !document || !window) {
+  if (!document || !window) {
     // eslint-disable-next-line no-console
     console.warn("VIDEOMARK: NOT supported");
     return;
   }
-
-  /*
-  // --- resouce buffer --- //
-  let res_buf_full_cnt = 0;
-
-  performance.onresourcetimingbufferfull = () => {
-    // eslint-disable-next-line no-console
-    console.warn('VIDEOMARK: Resource Timing Buffer is FULL!');
-    if (performance.setResourceTimingBufferSize instanceof Function) {
-      // eslint-disable-next-line no-console
-      console.log('VIDEOMARK: ... Performance.setResourceTimingBufferSize() = supported');
-      res_buf_full_cnt += 1;
-      performance.setResourceTimingBufferSize(res_buf_full_cnt * Config.get_DEFAULT_RESOURCE_BUFFER_SIZE());
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn('VIDEOMARK: ... Performance.setResourceTimingBufferSize() = NOT supported');
-    }
-  };
-  */
 
   // --- New Session --- //
   const session = new SessionData();
@@ -45,6 +27,9 @@ import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 
   // --- Paravi Hook --- //
   await ParaviTypeHandler.hook_paravi();
+
+  // --- IIJ Hook --- //
+  await IIJTypeHandler.hook_iij();
 
   // --- update video list --- //
   window.setInterval(() => {

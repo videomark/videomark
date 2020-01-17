@@ -131,10 +131,11 @@ ChromeExtension/sodium.js
 | locationIp            | locationのIPアドレス                      |
 | userAgent             | ユーザーエージェント                           |
 | sequence              | 同一セッション内のシーケンス番号(0から連番)              |
+| calc                  | QoE計算可能フラグ              |
 | resource_timing       | -                                    |
 
 ### netinfo
-Network Information API より取得した情報を送信する  
+Network Information API より取得した情報を送信する
 http://wicg.github.io/netinfo/#networkinformation-interface
 
 | 項目                    | 値                                    |
@@ -162,6 +163,7 @@ videoの属性情報
 | viewCount           | 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1 |
 | src                 | videoタグのsrc属性<br>※ blob URL の場合は除外                                    |
 | domainName          | videoのセグメント配布ドメイン                                 |
+| holderId            | サービスが付加したID                                       |
 | width               | videoタグの表示幅                                       |
 | height              | videoタグの表示高さ                                      |
 | videoWidth          | videoの幅                                           |
@@ -184,7 +186,9 @@ videoの属性情報
 | ----------------------- | ------------------------- |
 | totalVideoFrames        | 総フレーム数                    |
 | droppedVideoFrames      | 損失フレーム数                   |
-| creationTime            | 計測時間(DOMHighResTimeStamp) |
+| creationTime            | 計測時刻(DOMHighResTimeStamp) |
+| creationDate            | 計測時刻(Date.nwo())          |
+| representation          | representationID          |
 | bitrate                 | 音声、ビデオの合計ビットレート           |
 | videoBitrate            | ビデオのビットレート                |
 | receiveBuffer           | 受信済み動画再生時間 取得不可能の場合 -1    |
@@ -250,6 +254,13 @@ Eventは、以下の種類ものと前回発生時との差分のdelta値を含�
 | progress | ロード     |
 | waiting  | ロード待ち   |
 | canplay  | 再生開始可能  |
+
+##### cmHistory
+
+| 項目   | 値                                                               |
+| ---- | --------------------------------------------------------------- |
+| type | CMまたは、Mainに切り替わったことを示す文字列。CMに切り替わった場合、"cm"　Mainに切り替わった場合、"main" |
+| time | 発生時間(Date.now())                                                |
 
 ### QoEサーバー対応
 
@@ -378,6 +389,7 @@ Chrome Extension のストレージに以下のデータを記録する。
         end_time                : -1
         thumbnail               : サムネイル画像の URL
         title                   : 動画のタイトル
+        calc                    : QoE計算可否
         log                     : 動画品質のログ [{ date: (Date | number), qoe?: (number | null), quality?: { totalVideoFramesなど } }]
     }
 

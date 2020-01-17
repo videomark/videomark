@@ -30,6 +30,7 @@ export default class VideoData {
     this.current_play_pos_date = -1;
     this.events = [];
     this.last_events = {};
+    this.cm_events = [];
     this.resolution = {
       width: -1,
       height: -1,
@@ -74,6 +75,7 @@ export default class VideoData {
       func: l
     });
 
+    // eslint-disable-next-line no-underscore-dangle
     this.video_handler.add_cm_listener(args => this._cm_listener(args));
 
     this.transfer_size = 0;
@@ -81,42 +83,52 @@ export default class VideoData {
     this.resources_length = 0;
   }
 
+  // eslint-disable-next-line camelcase
   get_video_id() {
     return this.uuid;
   }
 
+  // eslint-disable-next-line camelcase
   get_title() {
     return this.title;
   }
 
+  // eslint-disable-next-line camelcase
   get_thumbnail() {
     return this.thumbnail;
   }
 
+  // eslint-disable-next-line camelcase
   get_resolution() {
     return this.resolution;
   }
 
+  // eslint-disable-next-line camelcase
   get_media_size() {
     return this.video_handler.get_duration();
   }
 
+  // eslint-disable-next-line camelcase
   get_start_time() {
     return this.play_start_time;
   }
 
+  // eslint-disable-next-line camelcase
   get_end_time() {
     return this.play_end_time;
   }
 
+  // eslint-disable-next-line camelcase
   get_latest_qoe() {
     return this.latest_qoe;
   }
 
+  // eslint-disable-next-line camelcase
   get_domain_name() {
     return this.domain_name;
   }
 
+  // eslint-disable-next-line camelcase
   get_viewport() {
     return {
       width: this.video_elm.width,
@@ -124,20 +136,24 @@ export default class VideoData {
     };
   }
 
+  // eslint-disable-next-line camelcase
   get_quality() {
     const bitrate = this.video_handler.get_bitrate();
     const videoBitrate = this.video_handler.get_video_bitrate();
     const receiveBuffer = this.video_handler.get_receive_buffer();
     const framerate = this.video_handler.get_framerate();
     const speed = this.video_elm.playbackRate;
+    const representation = this.video_handler.get_representation();
 
     return {
       totalVideoFrames: this.total,
       droppedVideoFrames: this.dropped,
       creationTime: this.creation_time,
+      creationDate: Date.now(),
       deltaTotalVideoFrames: this.delta_total,
       deltaDroppedVideoFrames: this.delta_dropped,
       deltaTime: this.delta_creation_time,
+      representation,
       bitrate,
       videoBitrate,
       receiveBuffer,
@@ -146,21 +162,26 @@ export default class VideoData {
     };
   }
 
+  // eslint-disable-next-line camelcase
   get_timing() {
     const now = Date.now();
     const { waiting, pause } = this.timing;
     return { waiting: waiting(now), pause: pause(now) };
   }
 
+  // eslint-disable-next-line camelcase
   get_codec_info() {
     return this.video_handler.get_codec_info();
   }
 
+  // eslint-disable-next-line camelcase
   set_quality(bitrate) {
+    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
     this.video_handler.set_quality(bitrate);
   }
 
+  // eslint-disable-next-line camelcase
   add_latest_qoe(data) {
     this.latest_qoe.push(data);
 
@@ -178,11 +199,13 @@ export default class VideoData {
    * 送信、更新するかどうかを判定する
    * TODO: getを呼び出す前に実行する必要がある
    */
+  // eslint-disable-next-line camelcase
   is_available() {
     // eslint-disable-next-line no-underscore-dangle
     if (!this.is_main_video())
       // TVer IMA3 video 、YouTubeの広告、チャンネルページの動画を除去
       return false;
+    // eslint-disable-next-line camelcase, no-underscore-dangle
     if (this._is_cm())
       // YouTubeの広告時は送信を行わない
       return false;
@@ -196,6 +219,7 @@ export default class VideoData {
     return true;
   }
 
+  // eslint-disable-next-line camelcase
   is_stay() {
     const now = this.video_handler.get_id_by_video_holder();
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
@@ -209,6 +233,11 @@ export default class VideoData {
     }
 
     return true;
+  }
+
+  // eslint-disable-next-line camelcase
+  is_calculatable() {
+    return this.video_handler.is_calculatable();
   }
 
   /**
@@ -253,12 +282,15 @@ export default class VideoData {
     this.playback_quality.push(quality);
 
     if (this.is_main_video()) {
-      let resources = performance.getEntriesByType("resource").slice();
-      let now_resources_length = resources.length;
+      const resources = performance.getEntriesByType("resource").slice();
+      // eslint-disable-next-line camelcase
+      const now_resources_length = resources.length;
       // youtubeでは、ページを開いた直後はresourceの数が増減する現象があるので、減った場合は最初から数え直す
+      // eslint-disable-next-line camelcase
       if (now_resources_length < this.resources_length) this.resources_length = 0;
       this.transfer_diff = resources.slice(this.resources_length).reduce((a, c) => a + c.transferSize, 0);
       this.transfer_size += this.transfer_diff;
+      // eslint-disable-next-line camelcase
       this.resources_length = now_resources_length;
     }
   }
@@ -272,6 +304,7 @@ export default class VideoData {
         uuid: this.uuid,
         viewCount: this.video_handler.get_view_count(),
         domainName: this.video_handler.get_segment_domain(),
+        holderId: this.id_by_video_holder,
         width: this.video_elm.width,
         height: this.video_elm.height,
         videoWidth: this.video_handler.get_video_width(),
@@ -289,10 +322,11 @@ export default class VideoData {
         this.playback_quality.length
       ),
       play_list_info: this.video_handler.get_play_list_info(),
-      throughput_info: this.video_handler.get_throughput_info()
+      throughput_info: this.video_handler.get_throughput_info(),
+      cmHistory: this.cm_events.splice(0, this.cm_events.length)
     };
     if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
-      val["property"]["src"] = this.video_elm.src;
+      val.property.src = this.video_elm.src;
     }
     Config.get_event_type_names().forEach(s => {
       val[`event_${s}`] = [];
@@ -315,14 +349,17 @@ export default class VideoData {
     console.log(`VIDEOMARK: delete video uuid[${this.uuid}]`);
   }
 
+  // eslint-disable-next-line camelcase
   is_main_video() {
     return this.video_handler.is_main_video(this.video_elm);
   }
 
+  // eslint-disable-next-line camelcase
   _is_cm() {
     return this.video_handler.is_cm(this.video_elm);
   }
 
+  // eslint-disable-next-line camelcase
   _is_started() {
     if (this.play_start_time !== -1) return true;
     return false;
@@ -384,6 +421,7 @@ export default class VideoData {
     if (
       playPos < 0 || // 開始前のイベントは無視
       !this.is_main_video() ||
+      // eslint-disable-next-line no-underscore-dangle
       this._is_cm()
     ) {
       /* eslint-disable no-console */
@@ -410,7 +448,9 @@ export default class VideoData {
    * current position update event
    * @param {Event} event
    */
+  // eslint-disable-next-line camelcase
   _position_update_listener(event) {
+    // eslint-disable-next-line no-underscore-dangle
     if (!this.is_main_video() || this._is_cm()) return;
 
     if (this.play_start_time === -1) {
@@ -428,6 +468,7 @@ export default class VideoData {
 
   /**
    */
+  // eslint-disable-next-line camelcase
   _cm_listener(args) {
     const { cm, pos, time } = args;
 
@@ -439,8 +480,10 @@ export default class VideoData {
 
     if (cm) {
       type = "pause";
+      this.cm_events.push({ type: "cm", time });
     } else {
       type = "play";
+      this.cm_events.push({ type: "main", time });
       if (this.play_start_time === -1) this.play_start_time = Date.now();
     }
 

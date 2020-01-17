@@ -53,6 +53,8 @@ export default class Config {
       result = this.ui.tver.target;
     } else if (host.includes("paravi")) {
       result = this.ui.paravi.target;
+    } else {
+      result = this.ui.general.target;
     }
 
     return result;
@@ -69,6 +71,8 @@ export default class Config {
       result = this.ui.paravi.style;
     } else if (host.includes("tver")) {
       result = this.ui.tver.style;
+    } else {
+      result = this.ui.general.style;
     }
 
     return result;
@@ -250,6 +254,17 @@ Config.ui.paravi = {
 }
 .inactive > #${Config.ui.id} {
   opacity: 0;
+}`
+};
+
+Config.ui.general = {
+  target: "video",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
 }`
 };
 
