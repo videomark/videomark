@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
@@ -11,6 +10,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import { useSettings } from "./js/utils/ChromeExtensionWrapper";
 import ThemeProvider from "./js/components/ThemeProvider";
 import DesignSettings from "./Settings/DesignSettings";
+import logo from "./images/logo.png";
 
 // ポップアップウィンドウのサイズを調整
 const CSS = () => <style>{`body{min-width:286px;}`}</style>;
@@ -59,9 +59,7 @@ export default () => {
     <ThemeProvider>
       <CSS />
       <Box paddingTop={2} component={Container}>
-        <Typography component="h1" variant="h4" align="center">
-          Web VideoMark
-        </Typography>
+        <img src={logo} alt="Web VideoMark" />
         <Box marginTop={2}>
           <LabeledIconButton href="#/" icon={EqualizerIcon} label="測定結果" />
           <LabeledIconButton href="#/history" icon={HistoryIcon} label="履歴" />
