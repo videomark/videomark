@@ -7,9 +7,13 @@ import Status from "./Status";
 export default class UI {
   /**
    * @param {string} target CSS selector string
+   * @param {string} style CSS
+   * @param {(fadein: boolean) => void} ovserve コントローラーを監視して表示/非表示を切り替える
    */
-  constructor(target) {
+  constructor(target, style, ovserve) {
     this.target = target;
+    this.style = style;
+    this.ovserve = ovserve;
 
     // Inserted element
     this.element = null;
@@ -32,8 +36,11 @@ export default class UI {
   }
 
   insert_element() {
-    const target = document.querySelector(this.target);
-    if (target === null) {
+    const target =
+      this.target == null /* デフォルト: videoタグの親 */
+        ? (document.querySelector("video") || {}).parentNode
+        : document.querySelector(this.target);
+    if (target == null) {
       console.error(
         `VIDEOMARK: No element found matching query string "${this.target}"`
       );
@@ -42,10 +49,10 @@ export default class UI {
 
     const e = name => (childlen = []) => {
       const element = document.createElement(name);
-      childlen.forEach(c => element.appendChild(c));
+      childlen.forEach(c => element.append(c));
       return element;
     };
-    const style = e("style")([document.createTextNode(Config.get_style())]);
+    const style = e("style")([this.style]);
     document.head.appendChild(style);
 
     this.element = e("div")();
@@ -54,10 +61,8 @@ export default class UI {
     this.status.attach(this.element.shadowRoot);
     target.appendChild(this.element);
 
-    // プレイヤーのコントローラーを監視して表示/非表示を切り替える
-    const ovserve = Config.get_ui_observer();
-    if (ovserve != null) {
-      ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
+    if (this.ovserve != null) {
+      this.ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
         if (fadein) this.element.classList.add("fadein");
         else this.element.classList.remove("fadein");
       });

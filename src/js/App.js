@@ -20,7 +20,12 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
   await session.init();
 
   // --- UI --- //
-  const ui = new UI(Config.get_ui_target());
+  const platform = Config.get_video_platform();
+  const ui = new UI(
+    Config.get_ui_target(platform),
+    Config.get_style(platform),
+    Config.get_ui_observer(platform)
+  );
 
   // --- YouTube Hook --- //
   await YouTubeTypeHandler.hook_youtube();
@@ -47,6 +52,7 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
     // --- update quality info --- //
     session.update_quality_info();
 
+    if (!Config.get_ui_enabled()) return;
     if (!session.get_video_availability()) return;
 
     // --- show status  --- //

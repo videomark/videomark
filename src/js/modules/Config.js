@@ -34,48 +34,19 @@ export default class Config {
     return this.ui.id;
   }
 
-  static get_ui_observer() {
-    const { host } = new window.URL(window.location.href);
-    if (host === "m.youtube.com") {
-      return this.ui.m_youtube_com.observe;
-    }
+  static get_ui_observer(platform) {
+    if (platform in this.ui) return this.ui[platform].observe;
     return null;
   }
 
-  static get_ui_target() {
-    const { host } = new window.URL(window.location.href);
-    let result = "";
-    if (host === "m.youtube.com") {
-      result = this.ui.m_youtube_com.target;
-    } else if (host.includes("youtube")) {
-      result = this.ui.youtube.target;
-    } else if (host.includes("tver")) {
-      result = this.ui.tver.target;
-    } else if (host.includes("paravi")) {
-      result = this.ui.paravi.target;
-    } else {
-      result = this.ui.general.target;
-    }
-
-    return result;
+  static get_ui_target(platform) {
+    if (platform in this.ui) return this.ui[platform].target;
+    return this.ui.general.target;
   }
 
-  static get_style() {
-    const { host } = new window.URL(window.location.href);
-    let result = "";
-    if (host === "m.youtube.com") {
-      result = this.ui.m_youtube_com.style;
-    } else if (host.includes("youtube")) {
-      result = this.ui.youtube.style;
-    } else if (host.includes("paravi")) {
-      result = this.ui.paravi.style;
-    } else if (host.includes("tver")) {
-      result = this.ui.tver.style;
-    } else {
-      result = this.ui.general.style;
-    }
-
-    return result;
+  static get_style(platform) {
+    if (platform in this.ui) return this.ui[platform].style;
+    return this.ui.general.style;
   }
 
   static get_DEFAULT_RESOURCE_BUFFER_SIZE() {
@@ -106,26 +77,34 @@ export default class Config {
     return this.max_count_for_qoe;
   }
 
-  static async get_default_session() {
-    if (window.sodium === undefined) return this.session;
-
-    const { session } = await new Promise(resolve =>
-      window.sodium.storage.local.get("session", resolve)
-    );
-    return session;
+  static get_default_session() {
+    return this.session;
   }
 
-  static async get_settings() {
-    if (window.sodium === undefined) return this.settings;
-
-    const { settings } = await new Promise(resolve =>
-      window.sodium.storage.local.get("settings", resolve)
-    );
-    return settings;
+  static get_settings() {
+    return this.settings;
   }
 
   static is_quality_control() {
     return Config.quality_control;
+  }
+
+  static get_ui_enabled() {
+    if (this.ui_enabled == null) {
+      const settings = this.get_settings();
+      this.ui_enabled =
+        settings == null ||
+        settings.display_on_player == null ||
+        settings.display_on_player;
+    }
+
+    return this.ui_enabled;
+  }
+
+  static get_video_platform() {
+    const matcher = this.video_platform_matcher(window.location);
+    const match = this.video_platforms.find(matcher);
+    return match && match.id;
   }
 }
 
@@ -160,9 +139,85 @@ Config.event_type_names = [
   "canplay"
 ];
 
+// 動画配信サービス
+Config.video_platforms = [
+  {
+    // YouTube Mobile
+    id: "m_youtube_com",
+    host: /^m\.youtube\.com$/
+  },
+  {
+    // YouTube
+    id: "youtube",
+    host: /(^|[^m]\.)youtube\.com$/
+  },
+  {
+    // Paravi
+    id: "paravi",
+    host: /(^|\.)paravi\.jp$/
+  },
+  {
+    // TVer
+    id: "tver",
+    host: /(^|\.)tver\.jp$/
+  },
+  {
+    // FOD
+    id: "fod",
+    host: /^i\.fod\.fujitv\.co\.jp$/
+  },
+  {
+    // ニコニコ動画
+    id: "nicovideo",
+    host: /^www\.nicovideo\.jp$/
+  },
+  {
+    // ニコニコ生放送
+    id: "nicolive",
+    host: /^live\d\.nicovideo\.jp$/
+  },
+  {
+    // NHKオンデマンド
+    id: "nhkondemand",
+    host: /^www\.nhk-ondemand\.jp$/
+  },
+  {
+    // dTV
+    id: "dtv",
+    host: /\.video\.dmkt-sp\.jp$/
+  },
+  {
+    // AbemaTV
+    id: "abematv",
+    host: /^abema\.tv$/,
+    pathname: /^\/now-on-air\//
+  },
+  {
+    // Abemaビデオ
+    id: "abemavideo",
+    host: /^abema\.tv$/,
+    pathname: /^\/(?!now-on-air\/)/
+  },
+  {
+    // Amazon Prime Video
+    id: "amazonprimevideo",
+    host: /^www\.amazon\.co\.jp$/
+  },
+  {
+    // IIJ TWILIGHT CONCERT
+    id: "iijtwilightconcert",
+    host: /^pr\.iij\.ad\.jp$/
+  }
+];
+
+Config.video_platform_matcher = ({ host, pathname }) => platform => {
+  return (
+    platform.host.test(host) &&
+    (platform.pathname == null || platform.pathname.test(pathname))
+  );
+};
+
 // 表示用
-// 動画サービスのプレイヤーでコントローラが表示されるタイミングだけ表示
-// :hover 疑似クラスなどでなく、表示タイミングはプレイヤー実装に委ねる
 Config.ui = {
   id: "__videomark_ui"
 };
@@ -198,13 +253,12 @@ Config.ui.m_youtube_com = {
   left: 12px;
   transition: 200ms;
 }
-
 :not(.fadein)#${Config.ui.id} {
   opacity: 0;
 }`
 };
 
-// YouTube ではコンロール非表示時に #movie_player に .ytp-autohide 付与
+// YouTube
 Config.ui.youtube = {
   target: "#movie_player",
   style: `#${Config.ui.id} {
@@ -257,14 +311,118 @@ Config.ui.paravi = {
 }`
 };
 
-Config.ui.general = {
-  target: "video",
+// TODO: FOD
+// Config.ui.fod = {};
+
+// TODO: ニコニコ動画
+// Config.ui.nicovideo = {};
+
+// TODO: ニコニコ生放送
+// Config.ui.nicolive = {};
+
+// NHKオンデマンド
+Config.ui.nhkondemand = {
+  target: null,
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
   top: 12px;
   left: 12px;
-  transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
+  transition: 200ms;
+}
+.player__controls[style="display: none;"] ~ #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// dTV
+Config.ui.dtv = {
+  target: null,
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.controller-hidden > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// AbemaTV
+Config.ui.abematv = {
+  target: ".com-tv-TVScreen__player",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.com-tv-TVScreen__player > .com-tv-TVScreen__overlay--cursor-hidden ~ #${
+    Config.ui.id
+  } {
+  opacity: 0;
+}`
+};
+
+// Abemaビデオ
+Config.ui.abemavideo = {
+  target: ".com-vod-VODScreen-container",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// Amazon Prime Video
+Config.ui.amazonprimevideo = {
+  target: ".scalingUiContainerBottom",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  transition: 200ms;
+}
+.hideCursor + #${Config.ui.id} {
+  opacity: 0;
+}`
+};
+
+// IIJ TWILIGHT CONCERT
+Config.ui.iijtwilightconcert = {
+  target: null,
+  style: `#${Config.ui.id} {
+  transform: translate(12px, calc(12px - 450px));
+  width: fit-content;
+}
+#${Config.ui.id}:not(:hover) {
+  opacity: 0.5;
+  transition: 500ms;
+}`
+};
+
+// デフォルトではvideoタグの親に挿入
+// :hoverに反応して不透明度を変える
+Config.ui.general = {
+  target: null,
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+}
+#${Config.ui.id}:not(:hover) {
+  opacity: 0.5;
+  transition: 500ms;
 }`
 };
 
@@ -309,13 +467,13 @@ if (window.sodium === undefined && document.currentScript != null) {
     expires: Number(session.get("expires"))
   };
 
-  Config.settings = [
-    ...new URLSearchParams(document.currentScript.dataset.settings)
-  ].reduce(
-    (obj, [key, value]) =>
-      Object.assign(obj, {
-        [key]: Number(value)
-      }),
-    {}
-  );
+  Config.settings = JSON.parse(document.currentScript.dataset.settings);
+}
+if (window.sodium !== undefined) {
+  window.sodium.storage.local.get("session", ({ session }) => {
+    Config.session = session;
+  });
+  window.sodium.storage.local.get("settings", ({ settings }) => {
+    Config.settings = settings;
+  });
 }
