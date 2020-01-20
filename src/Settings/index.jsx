@@ -37,6 +37,9 @@ import {
   clearViewings
 } from "../js/utils/ChromeExtensionWrapper";
 
+/** デフォルトのセッション保持期間 */
+const defaultSessionExpiresIn = 2592e6; //= 30日間 (うるう秒は考慮しない)
+
 const List = styled(MuiList)({
   padding: 0
 });
@@ -196,7 +199,9 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
       openDialog("resetSession", () =>
         saveSession({
           id: uuidv4(),
-          expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
+          expires:
+            Date.now() +
+            (Number.isFinite(expiresIn) ? expiresIn : defaultSessionExpiresIn)
         })
       ),
     [openDialog, saveSession, expiresIn]
