@@ -10,7 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import Delete from "@material-ui/icons/Delete";
 import Restore from "@material-ui/icons/Replay";
 import style from "../../css/MeasureContents.module.css";
-import { urlToVideoPlatform } from "../utils/Utils";
+import { urlToVideoPlatform, megaSizeFormat } from "../utils/Utils";
 import ViewingModel from "../utils/Viewing";
 import DataErase from "../utils/DataErase";
 import AppData from "../utils/AppData";
@@ -95,7 +95,12 @@ RecoverOrRemoveButton.propTypes = {
 const Viewing = ({ model, disabled }) => {
   const viewing = useViewing(model);
   if (viewing == null) return null;
-  const { title, location, thumbnail, startTime } = viewing;
+  const { title, location, thumbnail, startTime, transferSize } = viewing;
+
+  let displayTimeAndSize = toTimeString(startTime);
+  if (transferSize) {
+    displayTimeAndSize += ` ${megaSizeFormat(transferSize)} MB`;
+  }
 
   const Title = () => (
     <Grid container component={Box} height={72} paddingX={2} paddingY={1}>
@@ -132,7 +137,7 @@ const Viewing = ({ model, disabled }) => {
         />
         <div className={style.movieInfo}>
           <span>{urlToVideoPlatform(location).name}</span>
-          <span>{toTimeString(startTime)}</span>
+          <span>{displayTimeAndSize}</span>
         </div>
       </div>
       <Title />

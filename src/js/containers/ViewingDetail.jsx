@@ -9,7 +9,7 @@ import { VideoQuality, isLowQuality } from "../components/VideoQuality";
 import DataErase from "../utils/DataErase";
 import AppDataActions from "../utils/AppDataActions";
 import AppData from "../utils/AppData";
-import { urlToVideoPlatform } from "../utils/Utils";
+import { urlToVideoPlatform, megaSizeFormat } from "../utils/Utils";
 import style from "../../css/MeasureContents.module.css";
 import ViewingModel from "../utils/Viewing";
 import RegionalAverageQoE from "../utils/RegionalAverageQoE";
@@ -34,15 +34,22 @@ VideoLinkWithThumbnail.defaultProps = {
   thumbnail: null
 };
 
-const VideoInfo = ({ location, startTime }) => (
-  <div className={style.movieInfo}>
-    <span>{urlToVideoPlatform(location).name}</span>
-    <span>{toTimeString(startTime)}</span>
-  </div>
-);
+const VideoInfo = ({ location, startTime, transferSize }) => {
+  let displayTimeAndSize = toTimeString(startTime);
+  if (transferSize) {
+    displayTimeAndSize += ` ${megaSizeFormat(transferSize)} MB`;
+  }
+  return (
+    <div className={style.movieInfo}>
+      <span>{urlToVideoPlatform(location).name}</span>
+      <span>{displayTimeAndSize}</span>
+    </div>
+  );
+};
 VideoInfo.propTypes = {
   location: PropTypes.string.isRequired,
-  startTime: PropTypes.instanceOf(Date).isRequired
+  startTime: PropTypes.instanceOf(Date).isRequired,
+  transferSize: PropTypes.number.isRequired
 };
 
 const QoE = ({ model, regionalStats, hourlyStats }) => {
@@ -113,6 +120,7 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
     thumbnail,
     startTime,
     quality,
+    transferSize,
     qoeCalculatable
   } = viewing;
 
@@ -132,7 +140,11 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
           title={title}
           thumbnail={thumbnail}
         />
-        <VideoInfo location={location} startTime={startTime} />
+        <VideoInfo
+          location={location}
+          startTime={startTime}
+          transferSize={transferSize}
+        />
       </div>
       <Title />
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}

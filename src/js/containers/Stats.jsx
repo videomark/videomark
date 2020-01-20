@@ -17,6 +17,7 @@ import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
 import videoPlatforms from "../utils/videoPlatforms";
+import { gigaSizeFormat } from "../utils/Utils";
 import LoadingProgress from "../components/LoadingProgress";
 
 const timeFormatFromMinutes = min =>
@@ -24,12 +25,6 @@ const timeFormatFromMinutes = min =>
     min > 60 ? `${Math.floor(min / 60).toLocaleString()}時間` : ""
   }${Math.floor(min % 60)}分`;
 const timeFormat = msec => timeFormatFromMinutes(Math.floor(msec / 1e3 / 60));
-
-const sizeFormat = bytes =>
-  new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2
-  }).format(bytes / 1024.0 / 1024.0 / 1024.0);
 
 const PlayingTimeStats = () => {
   const { initialState, length, playingTime, transferSize } = useContext(
@@ -43,7 +38,7 @@ const PlayingTimeStats = () => {
       <LoadingProgress />
     </>
   ) : (
-    `${length.toLocaleString()}件 ${timeFormat(sum)} ${sizeFormat(size)} GB`
+    `${length.toLocaleString()}件 ${timeFormat(sum)} ${gigaSizeFormat(size)} GB`
   );
   return (
     <Typography component="small" variant="caption">
