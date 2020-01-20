@@ -80,7 +80,6 @@ export default class VideoData {
 
     this.transfer_size = 0;
     this.transfer_diff = 0;
-    this.resources_length = 0;
   }
 
   // eslint-disable-next-line camelcase
@@ -283,15 +282,9 @@ export default class VideoData {
 
     if (this.is_main_video()) {
       const resources = performance.getEntriesByType("resource").slice();
-      // eslint-disable-next-line camelcase
-      const now_resources_length = resources.length;
-      // youtubeでは、ページを開いた直後はresourceの数が増減する現象があるので、減った場合は最初から数え直す
-      // eslint-disable-next-line camelcase
-      if (now_resources_length < this.resources_length) this.resources_length = 0;
-      this.transfer_diff = resources.slice(this.resources_length).reduce((a, c) => a + c.transferSize, 0);
+      performance.clearResourceTimings();
+      this.transfer_diff = resources.reduce((a, c) => a + c.transferSize, 0);
       this.transfer_size += this.transfer_diff;
-      // eslint-disable-next-line camelcase
-      this.resources_length = now_resources_length;
     }
   }
 
