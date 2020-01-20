@@ -98,7 +98,7 @@ const Viewing = ({ model, disabled }) => {
   const { title, location, thumbnail, startTime, transferSize } = viewing;
 
   let displayTimeAndSize = toTimeString(startTime);
-  if (transferSize) {
+  if (Number.isFinite(transferSize)) {
     displayTimeAndSize += ` ${megaSizeFormat(transferSize)} MB`;
   }
 

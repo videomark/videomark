@@ -36,7 +36,7 @@ VideoLinkWithThumbnail.defaultProps = {
 
 const VideoInfo = ({ location, startTime, transferSize }) => {
   let displayTimeAndSize = toTimeString(startTime);
-  if (transferSize) {
+  if (Number.isFinite(transferSize)) {
     displayTimeAndSize += ` ${megaSizeFormat(transferSize)} MB`;
   }
   return (
@@ -119,8 +119,8 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
     location,
     thumbnail,
     startTime,
-    quality,
     transferSize,
+    quality,
     qoeCalculatable
   } = viewing;
 
