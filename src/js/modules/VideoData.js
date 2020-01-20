@@ -79,7 +79,6 @@ export default class VideoData {
     this.video_handler.add_cm_listener(args => this._cm_listener(args));
 
     this.transfer_size = 0;
-    this.transfer_diff = 0;
   }
 
   // eslint-disable-next-line camelcase
@@ -283,8 +282,7 @@ export default class VideoData {
     if (this.is_main_video()) {
       const resources = performance.getEntriesByType("resource").slice();
       performance.clearResourceTimings();
-      this.transfer_diff = resources.reduce((a, c) => a + c.transferSize, 0);
-      this.transfer_size += this.transfer_diff;
+      this.transfer_size += resources.reduce((a, c) => a + c.transferSize, 0);
     }
   }
 
