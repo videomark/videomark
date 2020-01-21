@@ -25,3 +25,5 @@ export async function saveTransferSize(transfer_diff) {
   storage.set({ transfer_size });
 };
 export default saveTransferSize;
+
+error
