@@ -24,11 +24,11 @@ export default class NHKOndemandTypeHandler extends GeneralTypeHandler {
 
     // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
     set_quality(bitrate) {
-        document.querySelector(".setting").click();
-        const settings = Array.from(document.querySelector(".player__setting--quality").childNodes)
-            .filter(e => e.tagName.toLowerCase() === "dd")
-            .splice(1, 4)
-        // settings 0 - 4 まで HD, 高, 中, 低 の段階で設定することができる
+        // FIXME: settings 0 - 4 まで HD, 高, 中, 低 の段階で設定することができる
+        // document.querySelector(".setting").click();
+        // const settings = Array.from(document.querySelector(".player__setting--quality").childNodes)
+        //     .filter(e => e.tagName.toLowerCase() === "dd")
+        //     .splice(1, 4)
     }
 
     // eslint-disable-next-line class-methods-use-this
