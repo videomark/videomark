@@ -206,7 +206,7 @@ class YouTubeTypeHandler {
                 message = `itag:${e.itag}, bitrate:${e.bitrate}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
                 return val;
             }
-            if (e.type === "video") val = !e.fps || !e.size
+            if (e.type === "video") val = !e.fps || !e.size || !e.quality
             if (val) message = `itag:${e.itag}, bitrate:${e.bitrate}, fps:${e.fps}, size:${e.size}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
             return val;
         });
@@ -670,6 +670,33 @@ class YouTubeTypeHandler {
             }
         } catch (e) {
             // 
+        }
+    }
+
+    // eslint-disable-next-line camelcase, class-methods-use-this
+    set_max_bitrate(bitrate) {
+        try {
+            const { fmt } = this.player.getVideoStats();
+            const formats = YouTubeTypeHandler
+                .convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+            const video = formats
+                .filter(e => e.type === "video")
+                .sort(({ bitrate: a }, { bitrate: b }) => b - a);
+            const [audio] = formats
+                .filter(e => e.type === "audio")
+                .sort(({ bitrate: a }, { bitrate: b }) => b - a);
+            const current = video.find(e => e.itag === fmt);
+            const currentIdx = video.indexOf(current);
+            const select = video.find(e => e.bitrate + audio.bitrate < bitrate);
+            const selectIdx = video.indexOf(select);
+            if (select && selectIdx > currentIdx) // 再生中のbitrateより小さい値が設定された場合変更する
+                this.player.setPlaybackQualityRange(select.quality, select.quality);
+            else
+                // eslint-disable-next-line no-console
+                console.log(`VIDEOMARK: too small or does not need a change bitrate:${bitrate} not changed`);
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn(`VIDEOMARK: failed to find quality label`);
         }
     }
 
