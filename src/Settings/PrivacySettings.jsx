@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import Slider from "@material-ui/core/Slider";
 import ArrowRight from "@material-ui/icons/ArrowRight";
 import Divider from "@material-ui/core/Divider";
 import uuidv4 from "uuid/v4";
@@ -20,6 +22,79 @@ import { clearViewings } from "../js/utils/ChromeExtensionWrapper";
 
 /** デフォルトのセッション保持期間 */
 const defaultSessionExpiresIn = 2592e6; //= 30日間 (うるう秒は考慮しない)
+
+/** セッション保持期間一覧 */
+const sessionExpiresInMarks = [
+  0,
+  86400e3,
+  defaultSessionExpiresIn,
+  31536e6
+].map((expiresIn, value) => ({
+  value,
+  label:
+    expiresIn > 0
+      ? formatDistanceStrict(0, expiresIn, {
+          unit: "day",
+          locale
+        })
+      : "0",
+  expiresIn
+}));
+
+/**
+ * @param {number} expiresIn セッション保持期間
+ * @returns {number}
+ */
+const sessionExpiresInToValue = expiresIn =>
+  (
+    sessionExpiresInMarks.find(mark => mark.expiresIn === expiresIn) ||
+    sessionExpiresInMarks.find(
+      mark => mark.expiresIn === defaultSessionExpiresIn
+    )
+  ).value;
+
+const useStyle = makeStyles(theme => ({
+  sessionExpiresIn: {
+    "& .MuiSlider-root": {
+      marginRight: theme.spacing(2)
+    },
+    "& > *": {
+      flex: 1
+    }
+  }
+}));
+
+const SessionExpiresIn = ({ expiresIn, onChange }) => {
+  const classes = useStyle();
+  return (
+    <ListItem className={classes.sessionExpiresIn}>
+      <ListItemText
+        primary="セッション保持期間"
+        secondary={
+          expiresIn > 0
+            ? formatDistanceStrict(0, expiresIn, { unit: "day", locale })
+            : "新しいページを読み込むまで"
+        }
+      />
+      <Slider
+        color="secondary"
+        marks={sessionExpiresInMarks}
+        max={sessionExpiresInMarks.length - 1}
+        value={sessionExpiresInToValue(expiresIn)}
+        onChange={(_, value) => {
+          onChange(sessionExpiresInMarks[value].expiresIn);
+        }}
+      />
+    </ListItem>
+  );
+};
+SessionExpiresIn.propTypes = {
+  expiresIn: PropTypes.number,
+  onChange: PropTypes.instanceOf(Function).isRequired
+};
+SessionExpiresIn.defaultProps = {
+  expiresIn: defaultSessionExpiresIn
+};
 
 const useDialog = () => {
   const [dialog, setDialog] = useState(null);
@@ -78,9 +153,17 @@ const useDialog = () => {
   return [dialog, openDialog];
 };
 
-const PrivacySettings = ({ settings, session, saveSession }) => {
-  const { expires_in: expiresIn } = settings === undefined ? {} : settings;
-  const { id: sessionId } = session === undefined ? { id: "..." } : session;
+const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
+  const { id: sessionId } = session || {};
+  const { expires_in: expiresIn } = settings || {};
+  const updateSessionExpiresIn = useCallback(
+    ms => {
+      saveSettings({ ...settings, expires_in: ms });
+      saveSession({ ...session, expires: Date.now() + ms });
+    },
+    [settings, saveSettings, session, saveSession]
+  );
+
   const [dialog, openDialog] = useDialog();
   const openResetSessionDialog = useCallback(
     () =>
@@ -124,16 +207,10 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
             />
           </ListItem>
           <Divider component="li" />
-          <ListItem>
-            <ListItemText
-              primary="セッション保持期間"
-              secondary={
-                expiresIn > 0
-                  ? formatDistanceStrict(0, expiresIn, { unit: "day", locale })
-                  : "新しいページを読み込むまで"
-              }
-            />
-          </ListItem>
+          <SessionExpiresIn
+            expiresIn={expiresIn}
+            onChange={updateSessionExpiresIn}
+          />
           <Divider component="li" />
           <ListItem
             button
@@ -163,12 +240,14 @@ const PrivacySettings = ({ settings, session, saveSession }) => {
   );
 };
 PrivacySettings.propTypes = {
-  settings: PropTypes.shape({}),
-  session: PropTypes.shape({}),
+  settings: PropTypes.shape({ expires_in: PropTypes.number }),
+  saveSettings: PropTypes.instanceOf(Function),
+  session: PropTypes.shape({ id: PropTypes.string, expires: PropTypes.number }),
   saveSession: PropTypes.instanceOf(Function)
 };
 PrivacySettings.defaultProps = {
   settings: undefined,
+  saveSettings: undefined,
   session: undefined,
   saveSession: undefined
 };
