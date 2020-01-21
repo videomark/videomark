@@ -6,9 +6,11 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import HistoryIcon from "@material-ui/icons/History";
+import HelpIcon from "@material-ui/icons/Help";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { useSettings } from "./js/utils/ChromeExtensionWrapper";
 import ThemeProvider from "./js/components/ThemeProvider";
+import helpURL from "./js/utils/helpURL";
 import DesignSettings from "./Settings/DesignSettings";
 import logo from "./images/logo.png";
 
@@ -63,6 +65,7 @@ export default () => {
         <Box marginTop={2}>
           <LabeledIconButton href="#/" icon={EqualizerIcon} label="測定結果" />
           <LabeledIconButton href="#/history" icon={HistoryIcon} label="履歴" />
+          <LabeledIconButton href={helpURL} icon={HelpIcon} label="使い方" />
           <LabeledIconButton
             href="#/settings"
             icon={SettingsIcon}
