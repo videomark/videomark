@@ -81,6 +81,10 @@ export default class Config {
     return this.session;
   }
 
+  static get_default_session_expires_in() {
+    return this.session_expires_in;
+  }
+
   static get_settings() {
     return this.settings;
   }
@@ -477,3 +481,6 @@ if (window.sodium !== undefined) {
     Config.settings = settings;
   });
 }
+
+// デフォルトのセッション保持期間
+Config.session_expires_in = 2592e6; //= 30日間 (うるう秒は考慮しない)

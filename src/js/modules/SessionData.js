@@ -38,7 +38,11 @@ export default class SessionData {
         settings === undefined ? NaN : Number(settings.expires_in);
       session = {
         id: uuidv4(),
-        expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
+        expires:
+          Date.now() +
+          (Number.isFinite(expiresIn)
+            ? expiresIn
+            : Config.get_default_session_expires_in())
       };
       if (Config.is_mobile()) {
         window.sodium.storage.local.set({ session });
@@ -243,17 +247,17 @@ export default class SessionData {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
         tasks.push((async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          qoe = await this._request_qoe(main_video);
-          if (qoe)
-            main_video.add_latest_qoe({
-              date: Date.now(),
-              qoe
-            });
+            // eslint-disable-next-line no-underscore-dangle
+            qoe = await this._request_qoe(main_video);
+            if (qoe)
+              main_video.add_latest_qoe({
+                date: Date.now(),
+                qoe
+              });
         })());
         if (Config.is_quality_control()) {
           tasks.push((async () => {
-            // eslint-disable-next-line no-underscore-dangle
+              // eslint-disable-next-line no-underscore-dangle
             const recommend_bitrate = await this._request_recommend_bitrate(main_video);
             if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
           })());
@@ -324,16 +328,16 @@ export default class SessionData {
   async _request_recommend_bitrate(video) {
     try {
       const ret = await fetch(`${Config.get_sodium_server_url()}/recommend_bitrate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ids: {
-            session_id: this.session_id,
-            video_id: video.get_video_id()
-          }
-        })
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ids: {
+              session_id: this.session_id,
+              video_id: video.get_video_id()
+            }
+          })
       });
       if (!ret.ok) {
         throw new Error("SodiumServer(tqapi) response was not ok.");
