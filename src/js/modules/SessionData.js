@@ -481,61 +481,42 @@ export default class SessionData {
     });
   }
 
-  async alt_session_message() {
-    let timer;
+  alt_session_message() {
+    const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
+    const allowVideoHosts = ["i.fod.fujitv.co.jp"];
 
-    const url = new URL(window.location.href);
-    if (!(url.host === "tver.jp" || url.host === "i.fod.fujitv.co.jp"))
-      return;
+    if (window.top === window) {
+      if (!allowHosts.includes(window.location.hostname)) return;
 
-    const eventResolver = event => {
-      try {
-        const { data: { type } } = event;
-        if (type === "ALT_SESSION_MESSAGE_REQ") {
-          const { data: { location, thumbnail } } = event;
-          if (!location || !thumbnail || location === window.location.href) return;
-          // console.log(`RECEIVE: window:${window.location}, location:${location}, thumbnail:${thumbnail}, type:${type}`);
-          this.alt_location = location;
-          this.alt_thumbnail = thumbnail;
-          event.source.postMessage({
-            type: "ALT_SESSION_MESSAGE_RES"
-          }, new URL(location).origin);
-        } else if (type === "ALT_SESSION_MESSAGE_RES") {
-          // console.log(`RECEIVE: window:${window.location}, type:${type}`);
-          window.removeEventListener("message", eventResolver);
-          clearInterval(timer);
-        }
-      } catch (e) { /* do nothing */ }
+      const location = window.location.href;
+      const thumbnail = (
+        document.querySelector("meta[property='og:image']") || {}
+      ).content;
+      const session = { location, thumbnail };
+
+      window.addEventListener("message", event => {
+        const { data, source, origin } = event;
+        if (data.type !== "ALT_SESSION_MESSAGE_REQ") return;
+        if (!allowVideoHosts.includes(new URL(origin).hostname)) return;
+        source.postMessage(
+          { type: "ALT_SESSION_MESSAGE_RES", ...session },
+          origin
+        );
+      });
+    } else {
+      if (!allowVideoHosts.includes(window.location.hostname)) return;
+
+      const eventResolver = event => {
+        const { data, origin } = event;
+        if (data.type !== "ALT_SESSION_MESSAGE_RES") return;
+        if (!allowHosts.includes(new URL(origin).hostname)) return;
+        const { location, thumbnail } = data;
+        this.alt_location = location;
+        this.alt_thumbnail = thumbnail;
+        window.removeEventListener("message", eventResolver);
+      };
+      window.addEventListener("message", eventResolver);
+      window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
     }
-    window.addEventListener("message", eventResolver);
-
-    timer = setInterval(() => {
-      let location;
-      let thumbnail;
-      try {
-        ({ window: { location: { href: location } } } = window)
-          ({ content: thumbnail } = document.querySelector("meta[property='og:image']"))
-      } catch (e) { /* do nothing */ }
-      const origins = Array.from(document.querySelectorAll("iframe"))
-        .filter(e => e.src)
-        .map(e => ({
-          frame: e,
-          origin: new URL(e.src).origin
-        }));
-      if (origins.length === 0) return;
-      try {
-        origins.forEach(e => {
-          Array.from(window.frames).forEach(w => {
-            w.postMessage({
-              location: location || "",
-              thumbnail: thumbnail || "",
-              type: "ALT_SESSION_MESSAGE_REQ"
-            }, e.origin);
-          })
-        });
-      } catch (e) {
-        console.warn(`VIDEOMARK: failed to post of alt location message. ${e}`);
-      }
-    }, 1000);
   }
 }
