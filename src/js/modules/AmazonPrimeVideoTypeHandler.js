@@ -48,6 +48,17 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
     }
 
     // eslint-disable-next-line camelcase, class-methods-use-this
+    get_video_thumbnail() {
+        try {
+            return document
+                .querySelector(".dv-fallback-packshot-image > img")
+                .src
+        } catch (e) {
+            return "";
+        }
+    }
+
+    // eslint-disable-next-line camelcase, class-methods-use-this
     is_main_video(video) {
 
         try {
