@@ -38,15 +38,10 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
 
     // eslint-disable-next-line camelcase, class-methods-use-this
     get_video_title() {
-
         try {
-            console.log(Array.from(document.querySelectorAll('.contentTitlePanel')[0].children).map(e => e.textContent).join());
-
-            return document
-                .querySelector('.contentTitlePanel')
-                .children
+            return [...document.querySelectorAll(".contentTitlePanel > *")]
                 .map(e => e.textContent)
-                .join();
+                .join(", ");
         } catch (e) {
             return "";
         }
