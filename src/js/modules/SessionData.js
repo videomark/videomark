@@ -10,7 +10,6 @@ import { saveTransferSize } from "./StatStorage";
 import { version } from "../../../package.json";
 
 export default class SessionData {
-
   constructor() {
     this.version = version;
     this.startTime = 0;
@@ -132,7 +131,7 @@ export default class SessionData {
   }
 
   async start() {
-    for (; ;) {
+    for (;;) {
       // --- main video --- //
       const main_video = this.get_main_video();
       if (!main_video) {
@@ -150,7 +149,7 @@ export default class SessionData {
 
       // --- play start --- //
       let start_time = -1;
-      for (; start_time === -1 && main_video === this.get_main_video();) {
+      for (; start_time === -1 && main_video === this.get_main_video(); ) {
         // eslint-disable-next-line no-await-in-loop
         await SessionData.event_wait(
           main_video.video_elm,
@@ -246,7 +245,8 @@ export default class SessionData {
       if (request && main_video.is_calculatable()) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
-        tasks.push((async () => {
+        tasks.push(
+          (async () => {
             // eslint-disable-next-line no-underscore-dangle
             qoe = await this._request_qoe(main_video);
             if (qoe)
@@ -254,13 +254,18 @@ export default class SessionData {
                 date: Date.now(),
                 qoe
               });
-        })());
+          })()
+        );
         if (Config.is_quality_control()) {
-          tasks.push((async () => {
+          tasks.push(
+            (async () => {
               // eslint-disable-next-line no-underscore-dangle
-            const recommend_bitrate = await this._request_recommend_bitrate(main_video);
-            if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
-          })());
+              const recommend_bitrate = await this._request_recommend_bitrate(
+                main_video
+              );
+              if (recommend_bitrate) main_video.set_quality(recommend_bitrate);
+            })()
+          );
         }
       }
       // --- save to storage --- //
@@ -327,7 +332,9 @@ export default class SessionData {
   // eslint-disable-next-line camelcase
   async _request_recommend_bitrate(video) {
     try {
-      const ret = await fetch(`${Config.get_sodium_server_url()}/recommend_bitrate`, {
+      const ret = await fetch(
+        `${Config.get_sodium_server_url()}/recommend_bitrate`,
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -338,7 +345,8 @@ export default class SessionData {
               video_id: video.get_video_id()
             }
           })
-      });
+        }
+      );
       if (!ret.ok) {
         throw new Error("SodiumServer(tqapi) response was not ok.");
       }
@@ -413,7 +421,16 @@ export default class SessionData {
     };
 
     const netinfo = {};
-    ["downlink", "downlinkMax", "effectiveType", "rtt", "type", "apn", "plmn", "sim"].forEach(e => {
+    [
+      "downlink",
+      "downlinkMax",
+      "effectiveType",
+      "rtt",
+      "type",
+      "apn",
+      "plmn",
+      "sim"
+    ].forEach(e => {
       if (navigator.connection[e] === Infinity) {
         netinfo[e] = Number.MAX_VALUE;
       } else if (navigator.connection[e] === -Infinity) {
@@ -429,14 +446,22 @@ export default class SessionData {
 
   async locationIp() {
     const url = new URL(window.location.href);
-    const ip = await new Promise((resolve) => {
-      const listener = (event) => {
-        if (event.data.host !== url.host || event.data.type !== "CONTENT_SCRIPT_JS") return;
-        window.removeEventListener("message", listener)
+    const ip = await new Promise(resolve => {
+      const listener = event => {
+        if (
+          event.data.host !== url.host ||
+          event.data.type !== "CONTENT_SCRIPT_JS"
+        )
+          return;
+        window.removeEventListener("message", listener);
         resolve(event.data.ip);
-      }
-      window.addEventListener("message", listener)
-      window.postMessage({ host: url.host, method: "get_ip", type: "FROM_SODIUM_JS" })
+      };
+      window.addEventListener("message", listener);
+      window.postMessage({
+        host: url.host,
+        method: "get_ip",
+        type: "FROM_SODIUM_JS"
+      });
     });
     this.hostToIp[url.host] = ip;
   }
