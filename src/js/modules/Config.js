@@ -254,6 +254,22 @@ Config.ui = {
   id: "__videomark_ui"
 };
 
+// デフォルトではvideoタグの親に挿入
+// :hoverに反応して不透明度を変える
+Config.ui.general = {
+  target: null,
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+}
+#${Config.ui.id}:not(:hover) {
+  opacity: 0.5;
+  transition: 500ms;
+}`
+};
+
 // m.youtube.com では #player-control-overlay のclassを監視して表示/非表示を切り替える
 // see https://github.com/webdino/sodium/issues/295
 Config.ui.m_youtube_com = {
@@ -346,8 +362,11 @@ Config.ui.paravi = {
 // TODO: FOD
 // Config.ui.fod = {};
 
-// TODO: ニコニコ動画
-// Config.ui.nicovideo = {};
+// ニコニコ動画ではコメントより前面になるよう配置
+Config.ui.nicovideo = {
+  ...Config.ui.general,
+  target: ".VideoContainer"
+};
 
 // TODO: ニコニコ生放送
 // Config.ui.nicolive = {};
@@ -421,22 +440,6 @@ Config.ui.iijtwilightconcert = {
   style: `#${Config.ui.id} {
   transform: translate(12px, calc(12px - 450px));
   width: fit-content;
-}
-#${Config.ui.id}:not(:hover) {
-  opacity: 0.5;
-  transition: 500ms;
-}`
-};
-
-// デフォルトではvideoタグの親に挿入
-// :hoverに反応して不透明度を変える
-Config.ui.general = {
-  target: null,
-  style: `#${Config.ui.id} {
-  position: absolute;
-  z-index: 1000001;
-  top: 12px;
-  left: 12px;
 }
 #${Config.ui.id}:not(:hover) {
   opacity: 0.5;
