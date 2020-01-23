@@ -7,7 +7,7 @@ import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 import IIJTypeHandler from "./modules/IIJTypeHandler";
 
-var resourceTimingBufferSize = 150;
+let resourceTimingBufferSize = 150;
 function onResourceTimingBufferFull() {
   resourceTimingBufferSize += 50;
   performance.setResourceTimingBufferSize(resourceTimingBufferSize);
