@@ -131,7 +131,7 @@ export const VideoQuality = ({
           {...classes.playing}
         />
         <DItem
-          dt="総DL容量"
+          dt="通信量"
           dd={
             classes.transferSize.na
               ? "n/a"
