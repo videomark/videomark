@@ -29,6 +29,25 @@ export const startTime = ({ sessionId, videoId }) => {
   return time >= 0 ? time : NaN;
 };
 
+const transferSize = ({ sessionId, videoId }) => {
+  const storage = useStorage({ sessionId, videoId });
+  if (storage.cache === undefined) return NaN;
+  const size = storage.cache.transfer_size;
+  return size >= 0 ? size : NaN;
+};
+
+const sizeFormat = (bytes, exponent) => {
+  const divider = 1024 ** exponent;
+  // 整数部が4桁になったら小数部は省く
+  const fraction = bytes >= divider * 1000 ? 0 : 2;
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: fraction,
+    minimumFractionDigits: fraction
+  }).format(bytes / divider);
+};
+
+const megaSizeFormat = bytes => sizeFormat(bytes, 2);
+
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
@@ -46,6 +65,7 @@ export const quality = ({ sessionId, videoId }) => {
     sessionId,
     videoId
   });
+  const transfer = transferSize({ sessionId, videoId });
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
   const playing = date - startTime({ sessionId, videoId }) - pause;
@@ -56,6 +76,9 @@ export const quality = ({ sessionId, videoId }) => {
   const classes = {
     bitrate: {
       na: !(bitrate >= 0)
+    },
+    transfer: {
+      na: !(transfer >= 0)
     },
     resolution: {
       na: ![videoWidth, videoHeight].every(l => l >= 0)
@@ -107,6 +130,10 @@ export const quality = ({ sessionId, videoId }) => {
       <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
       <dd class=${classMap(classes.bitrate)}>
         ${bitrate >= 0 ? `${(bitrate / 1e3).toLocaleString()} kbps` : "n/a"}
+      </dd>
+      <dt class=${classMap(classes.transfer)}>通信量</dt>
+      <dd class=${classMap(classes.transfer)}>
+        ${transfer >= 0 ? `${megaSizeFormat(transfer)} MB` : "n/a"}
       </dd>
       <dt class=${classMap(classes.resolution)}>解像度</dt>
       <dd class=${classMap(classes.resolution)}>
