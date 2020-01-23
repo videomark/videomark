@@ -1,6 +1,7 @@
 dist/
 dist-dev/
 node_modules/
+*.swp
 
 *acutus*
 /eslint_report.json
