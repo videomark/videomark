@@ -6,8 +6,7 @@ env:
 plugins:
   - prettier
 rules:
-  camelcase: "warn"
-  no-underscore-dangle: "warn"
+  camelcase: "off"
 globals:
   sodium: true
   videojs: true

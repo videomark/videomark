@@ -59,6 +59,7 @@ export default class SessionData {
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
 
     this.locationIp();
+    this.alt_session_message();
   }
 
   // eslint-disable-next-line camelcase
@@ -354,12 +355,12 @@ export default class SessionData {
     });
     await storage.save({
       user_agent: this.userAgent,
-      location: window.location.href,
+      location: this.alt_location || window.location.href,
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
       start_time: video.get_start_time(),
       end_time: -1,
-      thumbnail: video.get_thumbnail(),
+      thumbnail: this.alt_thumbnail || video.get_thumbnail(),
       title: video.get_title(),
       transfer_size: video.transfer_size,
       calc: video.is_calculatable(),
@@ -398,7 +399,7 @@ export default class SessionData {
       startTime: this.startTime,
       endTime: this.endTime,
       session: this.session_id,
-      location: window.location.href,
+      location: this.alt_location || window.location.href,
       locationIp: this.hostToIp[new URL(window.location.href).host],
       userAgent: this.userAgent,
       sequence: this.sequence,
@@ -449,5 +450,63 @@ export default class SessionData {
       elm.removeEventListener(type, eventResolver, false);
       resolve(ret);
     });
+  }
+
+  async alt_session_message() {
+    let timer;
+
+    const url = new URL(window.location.href);
+    if (!(url.host === "tver.jp" || url.host === "i.fod.fujitv.co.jp"))
+      return;
+
+    const eventResolver = event => {
+      try {
+        const { data: { type } } = event;
+        if (type === "ALT_SESSION_MESSAGE_REQ") {
+          const { data: { location, thumbnail } } = event;
+          if (!location || !thumbnail || location === window.location.href) return;
+          // console.log(`RECEIVE: window:${window.location}, location:${location}, thumbnail:${thumbnail}, type:${type}`);
+          this.alt_location = location;
+          this.alt_thumbnail = thumbnail;
+          event.source.postMessage({
+            type: "ALT_SESSION_MESSAGE_RES"
+          }, new URL(location).origin);
+        } else if (type === "ALT_SESSION_MESSAGE_RES") {
+          // console.log(`RECEIVE: window:${window.location}, type:${type}`);
+          window.removeEventListener("message", eventResolver);
+          clearInterval(timer);
+        }
+      } catch (e) { /* do nothing */ }
+    }
+    window.addEventListener("message", eventResolver);
+
+    timer = setInterval(() => {
+      let location;
+      let thumbnail;
+      try {
+        ({ window: { location: { href: location } } } = window)
+          ({ content: thumbnail } = document.querySelector("meta[property='og:image']"))
+      } catch (e) { /* do nothing */ }
+      const origins = Array.from(document.querySelectorAll("iframe"))
+        .filter(e => e.src)
+        .map(e => ({
+          frame: e,
+          origin: new URL(e.src).origin
+        }));
+      if (origins.length === 0) return;
+      try {
+        origins.forEach(e => {
+          Array.from(window.frames).forEach(w => {
+            w.postMessage({
+              location: location || "",
+              thumbnail: thumbnail || "",
+              type: "ALT_SESSION_MESSAGE_REQ"
+            }, e.origin);
+          })
+        });
+      } catch (e) {
+        console.warn(`VIDEOMARK: failed to post of alt location message. ${e}`);
+      }
+    }, 1000);
   }
 }

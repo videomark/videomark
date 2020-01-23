@@ -24,3 +24,4 @@ export async function saveTransferSize(transfer_diff) {
   transfer_size[month] = size;
   storage.set({ transfer_size });
 };
+export default saveTransferSize;
