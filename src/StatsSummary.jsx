@@ -18,6 +18,7 @@ import LastPage from "@material-ui/icons/LastPage";
 import Search from "@material-ui/icons/Search";
 import Send from "@material-ui/icons/Send";
 import Refresh from "@material-ui/icons/Refresh";
+import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
@@ -293,6 +294,7 @@ const Stats = ({ title, type }) => {
             PreviousPage: ChevronLeft,
             ResetSearch: Clear,
             Search,
+            SortArrow: ArrowDownward,
             Export: SaveAlt
           }}
         />
