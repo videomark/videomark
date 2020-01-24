@@ -10,7 +10,6 @@ import { saveTransferSize } from "./StatStorage";
 import { version } from "../../../package.json";
 
 export default class SessionData {
-
   constructor() {
     this.version = version;
     this.startTime = 0;
@@ -38,7 +37,11 @@ export default class SessionData {
         settings === undefined ? NaN : Number(settings.expires_in);
       session = {
         id: uuidv4(),
-        expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
+        expires:
+          Date.now() +
+          (Number.isFinite(expiresIn)
+            ? expiresIn
+            : Config.get_default_session_expires_in())
       };
       if (Config.is_mobile()) {
         window.sodium.storage.local.set({ session });
@@ -128,7 +131,7 @@ export default class SessionData {
   }
 
   async start() {
-    for (; ;) {
+    for (;;) {
       // --- main video --- //
       const main_video = this.get_main_video();
       if (!main_video) {
@@ -146,7 +149,7 @@ export default class SessionData {
 
       // --- play start --- //
       let start_time = -1;
-      for (; start_time === -1 && main_video === this.get_main_video();) {
+      for (; start_time === -1 && main_video === this.get_main_video(); ) {
         // eslint-disable-next-line no-await-in-loop
         await SessionData.event_wait(
           main_video.video_elm,
@@ -242,21 +245,27 @@ export default class SessionData {
       if (request && main_video.is_calculatable()) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
-        tasks.push((async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          qoe = await this._request_qoe(main_video);
-          if (qoe)
-            main_video.add_latest_qoe({
-              date: Date.now(),
-              qoe
-            });
-        })());
-        if (Config.is_quality_control()) {
-          tasks.push((async () => {
+        tasks.push(
+          (async () => {
             // eslint-disable-next-line no-underscore-dangle
-            const recommend_bitrate = await this._request_recommend_bitrate(main_video);
-            if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
-          })());
+            qoe = await this._request_qoe(main_video);
+            if (qoe)
+              main_video.add_latest_qoe({
+                date: Date.now(),
+                qoe
+              });
+          })()
+        );
+        if (Config.is_quality_control()) {
+          tasks.push(
+            (async () => {
+              // eslint-disable-next-line no-underscore-dangle
+              const recommend_bitrate = await this._request_recommend_bitrate(
+                main_video
+              );
+              if (recommend_bitrate) main_video.set_quality(recommend_bitrate);
+            })()
+          );
         }
       }
       // --- save to storage --- //
@@ -323,18 +332,21 @@ export default class SessionData {
   // eslint-disable-next-line camelcase
   async _request_recommend_bitrate(video) {
     try {
-      const ret = await fetch(`${Config.get_sodium_server_url()}/recommend_bitrate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ids: {
-            session_id: this.session_id,
-            video_id: video.get_video_id()
-          }
-        })
-      });
+      const ret = await fetch(
+        `${Config.get_sodium_server_url()}/recommend_bitrate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ids: {
+              session_id: this.session_id,
+              video_id: video.get_video_id()
+            }
+          })
+        }
+      );
       if (!ret.ok) {
         throw new Error("SodiumServer(tqapi) response was not ok.");
       }
@@ -409,7 +421,16 @@ export default class SessionData {
     };
 
     const netinfo = {};
-    ["downlink", "downlinkMax", "effectiveType", "rtt", "type", "apn", "plmn", "sim"].forEach(e => {
+    [
+      "downlink",
+      "downlinkMax",
+      "effectiveType",
+      "rtt",
+      "type",
+      "apn",
+      "plmn",
+      "sim"
+    ].forEach(e => {
       if (navigator.connection[e] === Infinity) {
         netinfo[e] = Number.MAX_VALUE;
       } else if (navigator.connection[e] === -Infinity) {
@@ -425,14 +446,22 @@ export default class SessionData {
 
   async locationIp() {
     const url = new URL(window.location.href);
-    const ip = await new Promise((resolve) => {
-      const listener = (event) => {
-        if (event.data.host !== url.host || event.data.type !== "CONTENT_SCRIPT_JS") return;
-        window.removeEventListener("message", listener)
+    const ip = await new Promise(resolve => {
+      const listener = event => {
+        if (
+          event.data.host !== url.host ||
+          event.data.type !== "CONTENT_SCRIPT_JS"
+        )
+          return;
+        window.removeEventListener("message", listener);
         resolve(event.data.ip);
-      }
-      window.addEventListener("message", listener)
-      window.postMessage({ host: url.host, method: "get_ip", type: "FROM_SODIUM_JS" })
+      };
+      window.addEventListener("message", listener);
+      window.postMessage({
+        host: url.host,
+        method: "get_ip",
+        type: "FROM_SODIUM_JS"
+      });
     });
     this.hostToIp[url.host] = ip;
   }
@@ -452,61 +481,42 @@ export default class SessionData {
     });
   }
 
-  async alt_session_message() {
-    let timer;
+  alt_session_message() {
+    const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
+    const allowVideoHosts = ["i.fod.fujitv.co.jp"];
 
-    const url = new URL(window.location.href);
-    if (!(url.host === "tver.jp" || url.host === "i.fod.fujitv.co.jp"))
-      return;
+    if (window.top === window) {
+      if (!allowHosts.includes(window.location.hostname)) return;
 
-    const eventResolver = event => {
-      try {
-        const { data: { type } } = event;
-        if (type === "ALT_SESSION_MESSAGE_REQ") {
-          const { data: { location, thumbnail } } = event;
-          if (!location || !thumbnail || location === window.location.href) return;
-          // console.log(`RECEIVE: window:${window.location}, location:${location}, thumbnail:${thumbnail}, type:${type}`);
-          this.alt_location = location;
-          this.alt_thumbnail = thumbnail;
-          event.source.postMessage({
-            type: "ALT_SESSION_MESSAGE_RES"
-          }, new URL(location).origin);
-        } else if (type === "ALT_SESSION_MESSAGE_RES") {
-          // console.log(`RECEIVE: window:${window.location}, type:${type}`);
-          window.removeEventListener("message", eventResolver);
-          clearInterval(timer);
-        }
-      } catch (e) { /* do nothing */ }
+      const location = window.location.href;
+      const thumbnail = (
+        document.querySelector("meta[property='og:image']") || {}
+      ).content;
+      const session = { location, thumbnail };
+
+      window.addEventListener("message", event => {
+        const { data, source, origin } = event;
+        if (data.type !== "ALT_SESSION_MESSAGE_REQ") return;
+        if (!allowVideoHosts.includes(new URL(origin).hostname)) return;
+        source.postMessage(
+          { type: "ALT_SESSION_MESSAGE_RES", ...session },
+          origin
+        );
+      });
+    } else {
+      if (!allowVideoHosts.includes(window.location.hostname)) return;
+
+      const eventResolver = event => {
+        const { data, origin } = event;
+        if (data.type !== "ALT_SESSION_MESSAGE_RES") return;
+        if (!allowHosts.includes(new URL(origin).hostname)) return;
+        const { location, thumbnail } = data;
+        this.alt_location = location;
+        this.alt_thumbnail = thumbnail;
+        window.removeEventListener("message", eventResolver);
+      };
+      window.addEventListener("message", eventResolver);
+      window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
     }
-    window.addEventListener("message", eventResolver);
-
-    timer = setInterval(() => {
-      let location;
-      let thumbnail;
-      try {
-        ({ window: { location: { href: location } } } = window)
-          ({ content: thumbnail } = document.querySelector("meta[property='og:image']"))
-      } catch (e) { /* do nothing */ }
-      const origins = Array.from(document.querySelectorAll("iframe"))
-        .filter(e => e.src)
-        .map(e => ({
-          frame: e,
-          origin: new URL(e.src).origin
-        }));
-      if (origins.length === 0) return;
-      try {
-        origins.forEach(e => {
-          Array.from(window.frames).forEach(w => {
-            w.postMessage({
-              location: location || "",
-              thumbnail: thumbnail || "",
-              type: "ALT_SESSION_MESSAGE_REQ"
-            }, e.origin);
-          })
-        });
-      } catch (e) {
-        console.warn(`VIDEOMARK: failed to post of alt location message. ${e}`);
-      }
-    }, 1000);
   }
 }
