@@ -9,13 +9,7 @@ import MuiTab from "@material-ui/core/Tab";
 import IconButton from "@material-ui/core/IconButton";
 import Help from "@material-ui/icons/Help";
 import Settings from "@material-ui/icons/Settings";
-import { isMobile, isExtension } from "../utils/Utils";
-
-const helpUrl = (base => {
-  if (isMobile()) return new URL("android", base);
-  if (isExtension()) return new URL("extension", base);
-  return base;
-})(new URL("https://vm.webdino.org/help/"));
+import helpURL from "../utils/helpURL";
 
 const Tab = withStyles(theme => ({
   root: {
@@ -57,7 +51,7 @@ export default () => {
           </Tabs>
         </Grid>
         <Grid item>
-          <IconButton color="primary" href={helpUrl}>
+          <IconButton color="primary" href={helpURL}>
             <Help color="action" />
           </IconButton>
           <IconButton color="primary" onClick={() => history.push("/settings")}>
