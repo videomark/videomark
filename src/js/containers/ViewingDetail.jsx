@@ -112,6 +112,7 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
     location,
     thumbnail,
     startTime,
+    transferSize,
     quality,
     qoeCalculatable
   } = viewing;
@@ -135,8 +136,12 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
         <VideoInfo location={location} startTime={startTime} />
       </div>
       <Title />
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <VideoQuality {...quality} startTime={startTime} />
+      <VideoQuality
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...quality}
+        startTime={startTime}
+        transferSize={transferSize}
+      />
       {qoeCalculatable ? (
         <Box mt={2} px={1}>
           <QoE

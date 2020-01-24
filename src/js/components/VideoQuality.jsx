@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
+import { megaSizeFormat } from "../utils/Utils";
 
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
@@ -29,6 +30,7 @@ DItem.propTypes = {
 
 export const VideoQuality = ({
   startTime,
+  transferSize,
   date,
   bitrate,
   resolution,
@@ -59,6 +61,9 @@ export const VideoQuality = ({
     },
     playing: {
       na: !Number.isFinite(playing)
+    },
+    transferSize: {
+      na: !Number.isFinite(transferSize)
     }
   };
 
@@ -125,12 +130,23 @@ export const VideoQuality = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.playing}
         />
+        <DItem
+          dt="通信量"
+          dd={
+            classes.transferSize.na
+              ? "n/a"
+              : `${megaSizeFormat(transferSize)} MB`
+          }
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
+          {...classes.transferSize}
+        />
       </Grid>
     </Grid>
   );
 };
 VideoQuality.propTypes = {
   startTime: PropTypes.instanceOf(Date),
+  transferSize: PropTypes.number,
   date: PropTypes.instanceOf(Date),
   bitrate: PropTypes.number,
   resolution: PropTypes.instanceOf(Object),
@@ -142,6 +158,7 @@ VideoQuality.propTypes = {
 };
 VideoQuality.defaultProps = {
   startTime: undefined,
+  transferSize: undefined,
   date: undefined,
   bitrate: undefined,
   resolution: undefined,
