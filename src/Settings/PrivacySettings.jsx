@@ -10,6 +10,7 @@ import Slider from "@material-ui/core/Slider";
 import ArrowRight from "@material-ui/icons/ArrowRight";
 import Divider from "@material-ui/core/Divider";
 import uuidv4 from "uuid/v4";
+import addDays from "date-fns/addDays";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
 import List from "./List";
@@ -21,14 +22,14 @@ import {
 import { clearViewings } from "../js/utils/ChromeExtensionWrapper";
 
 /** デフォルトのセッション保持期間 */
-const defaultSessionExpiresIn = 2592e6; //= 30日間 (うるう秒は考慮しない)
+const defaultSessionExpiresIn = addDays(0, 30).getTime(); // うるう秒は考慮しない
 
 /** セッション保持期間一覧 */
 const sessionExpiresInMarks = [
   0,
-  86400e3,
+  addDays(0, 1).getTime(),
   defaultSessionExpiresIn,
-  31536e6
+  addDays(0, 365).getTime()
 ].map((expiresIn, value) => ({
   value,
   label:
@@ -56,6 +57,7 @@ const sessionExpiresInToValue = expiresIn =>
 const useStyle = makeStyles(theme => ({
   sessionExpiresIn: {
     "& .MuiSlider-root": {
+      marginLeft: theme.spacing(1),
       marginRight: theme.spacing(2)
     },
     "& > *": {
