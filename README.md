@@ -6,27 +6,25 @@ Node.js v10.6.0
 
 # ビルド方法
 
-## Mobile
+公開用のビルドを行う。
+実行後に build ディレクトリが作られその中に成果物が入る。
 
-`npm run build`
+```sh
+npm run build
+```
 
 ## Android Browser 同梱用ビルド
 
-普通にビルドして build ディレクトリを使う。
-
-`build-for-android.sh` で不要ファイル削除まで実行する。
-
-## Chrome Extension 同梱用ビルド
-
-環境変数に `PUBLIC_URL=/qoelog` を設定し`npm run build`を行う。
-`build-for-chrome.sh` を実行してもビルドが可能。
+```sh
+npm run build-android
+```
 
 # 更新方法
 
 ## ChromeExtension
 
 1. ChromeExtension/qoelog ディレクトリの中身を全て削除
-2. ビルドしてできた qoe-log ディレクトリの中身を ChromeExtension/qoelog にコピー
+2. ビルドしてできた build ディレクトリの中身を ChromeExtension/qoelog にコピー
 
 # コマンド
 
@@ -34,11 +32,6 @@ Node.js v10.6.0
 
 develop モードでアプリケーションの起動をする。
 [http://localhost:3000](http://localhost:3000) をブラウザで開く。
-
-## `npm run build`
-
-公開用のビルドを行う。
-実行後に build ディレクトリが作られその中に成果物が入る。
 
 # develop モードでの確認方法
 
