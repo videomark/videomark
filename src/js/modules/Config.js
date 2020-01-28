@@ -191,16 +191,9 @@ Config.video_platforms = [
     host: /\.video\.dmkt-sp\.jp$/
   },
   {
-    // AbemaTV
+    // AbemaTV, Abemaビデオ
     id: "abematv",
-    host: /^abema\.tv$/,
-    pathname: /^\/now-on-air\//
-  },
-  {
-    // Abemaビデオ
-    id: "abemavideo",
-    host: /^abema\.tv$/,
-    pathname: /^\/(?!now-on-air\/)/
+    host: /^abema\.tv$/
   },
   {
     // Amazon Prime Video
@@ -214,11 +207,8 @@ Config.video_platforms = [
   }
 ];
 
-Config.video_platform_matcher = ({ host, pathname }) => platform => {
-  return (
-    platform.host.test(host) &&
-    (platform.pathname == null || platform.pathname.test(pathname))
-  );
+Config.video_platform_matcher = ({ host }) => platform => {
+  return platform.host.test(host);
 };
 
 // 表示用
@@ -354,9 +344,9 @@ Config.ui.dtv = {
 }`
 };
 
-// AbemaTV
+// AbemaTV, Abemaビデオ
 Config.ui.abematv = {
-  target: ".com-tv-TVScreen__player",
+  target: ".com-tv-TVScreen__player, .com-vod-VODScreen-container",
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -366,21 +356,7 @@ Config.ui.abematv = {
 }
 .com-tv-TVScreen__player > .com-tv-TVScreen__overlay--cursor-hidden ~ #${
     Config.ui.id
-  } {
-  opacity: 0;
-}`
-};
-
-// Abemaビデオ
-Config.ui.abemavideo = {
-  target: ".com-vod-VODScreen-container",
-  style: `#${Config.ui.id} {
-  position: absolute;
-  z-index: 1000001;
-  top: 12px;
-  left: 12px;
-  transition: 200ms;
-}
+  },
 .com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
   opacity: 0;
 }`
