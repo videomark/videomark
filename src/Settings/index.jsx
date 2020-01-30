@@ -6,6 +6,7 @@ import addYears from "date-fns/addYears";
 import Header from "./Header";
 import DesignSettings from "./DesignSettings";
 import PrivacySettings from "./PrivacySettings";
+import BitrateControlSettings from "./BitrateControlSettings";
 import Reset from "./Reset";
 import ThemeProvider from "../js/components/ThemeProvider";
 import { clearStore as clearStatsCache } from "../js/containers/StatsDataProvider";
@@ -69,6 +70,10 @@ export default () => {
             saveSettings={saveSettings}
             session={session}
             saveSession={saveSession}
+          />
+          <BitrateControlSettings
+            settings={settings}
+            saveSettings={saveSettings}
           />
           <Reset settings={settings} resetSettings={resetSettings} />
         </Container>
