@@ -9,6 +9,17 @@ import { useStorage } from "./Storage";
 import { saveTransferSize } from "./StatStorage";
 import { version } from "../../../package.json";
 
+async function set_max_bitrate(new_video) {
+  const bitrate_control = await Config.get_bitrate_control();
+  const quota_bitrate = await Config.get_quota_bitrate();
+  let bitrate;
+  if (bitrate_control && quota_bitrate) bitrate = Math.min(bitrate_control, quota_bitrate);
+  else bitrate = bitrate_control || quota_bitrate;
+  const resolution = await Config.get_resolution_control();
+
+  if (bitrate_control || quota_bitrate || resolution) new_video.set_max_bitrate(bitrate, resolution);
+}
+
 export default class SessionData {
 
   constructor() {
@@ -109,6 +120,7 @@ export default class SessionData {
           const new_video = new VideoData(elm, video_id);
           /* eslint-disable no-console, camelcase */
           console.log(`VIDEOMARK: new video found uuid[${video_id}]`);
+          set_max_bitrate(new_video);
           this.video.push(new_video);
         } catch (err) {
           // どのタイプでもない

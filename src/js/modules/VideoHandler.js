@@ -288,9 +288,9 @@ export default class VideoHandler {
     }
 
     // eslint-disable-next-line camelcase
-    set_max_bitrate(bitrate) {
+    set_max_bitrate(bitrate, resolution) {
         if (this.handler.set_max_bitrate instanceof Function)
-            this.handler.set_max_bitrate(bitrate);
+            this.handler.set_max_bitrate(bitrate, resolution);
     }
 
 

@@ -182,8 +182,8 @@ export default class VideoData {
   }
 
   // eslint-disable-next-line camelcase
-  set_max_bitrate(bitrate) {
-    this.video_handler.set_max_bitrate(bitrate);
+  set_max_bitrate(bitrate, resolution) {
+    this.video_handler.set_max_bitrate(bitrate, resolution);
   }
 
   // eslint-disable-next-line camelcase

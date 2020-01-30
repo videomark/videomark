@@ -81,12 +81,50 @@ export default class Config {
     return this.session;
   }
 
-  static get_settings() {
-    return this.settings;
+  static async get_settings() {
+    if (window.sodium === undefined) return this.settings;
+
+    const { settings } = await new Promise(resolve =>
+      window.sodium.storage.local.get("settings", resolve)
+    );
+    return settings || {};
+  }
+
+  static async get_transfer_size() {
+    if (window.sodium === undefined) return this.transfer_size;
+
+    const { transfer_size } = await new Promise(resolve =>
+      window.sodium.storage.local.get("transfer_size", resolve)
+    );
+    return transfer_size || {};
   }
 
   static is_quality_control() {
     return Config.quality_control;
+  }
+
+  static async get_resolution_control() {
+    const { resolution_control_enabled, resolution_control } = await this.get_settings();
+    return resolution_control_enabled ? resolution_control : undefined;
+  }
+
+  static async get_bitrate_control() {
+    const { bitrate_control_enabled, bitrate_control } = await this.get_settings();
+    return bitrate_control_enabled ? bitrate_control : undefined;
+  }
+
+  static async get_quota_bitrate() {
+    const { control_by_traffic_volume, control_by_os_quota, control_by_browser_quota, browser_quota, browser_quota_bitrate } = await this.get_settings();
+    if (!control_by_traffic_volume) return undefined;
+
+    const now = new Date();
+    const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", {minimumIntegerDigits: 2}).format(now.getMonth()+1)}`;
+    const transfer_size = await this.get_transfer_size();
+    const browser_quota_value = browser_quota ? browser_quota * 1024 * 1024 : Infinity;
+    const browser_quota_full = control_by_browser_quota && browser_quota_value < (transfer_size[month] || 0);
+    const os_quota_full = control_by_os_quota;
+
+    return browser_quota_bitrate && (browser_quota_full || os_quota_full) ? browser_quota_bitrate * 1024 : undefined;
   }
 
   static get_ui_enabled() {
@@ -467,7 +505,8 @@ if (window.sodium === undefined && document.currentScript != null) {
     expires: Number(session.get("expires"))
   };
 
-  Config.settings = JSON.parse(document.currentScript.dataset.settings);
+  Config.settings      = JSON.parse(document.currentScript.dataset.settings);
+  Config.transfer_size = JSON.parse(document.currentScript.dataset.transfer_size);
 }
 if (window.sodium !== undefined) {
   window.sodium.storage.local.get("session", ({ session }) => {
