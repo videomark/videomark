@@ -21,7 +21,6 @@ async function set_max_bitrate(new_video) {
 }
 
 export default class SessionData {
-
   constructor() {
     this.version = version;
     this.startTime = 0;
@@ -49,7 +48,11 @@ export default class SessionData {
         settings === undefined ? NaN : Number(settings.expires_in);
       session = {
         id: uuidv4(),
-        expires: Date.now() + (Number.isFinite(expiresIn) ? expiresIn : 0)
+        expires:
+          Date.now() +
+          (Number.isFinite(expiresIn)
+            ? expiresIn
+            : Config.get_default_session_expires_in())
       };
       if (Config.is_mobile()) {
         window.sodium.storage.local.set({ session });
@@ -70,6 +73,7 @@ export default class SessionData {
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
 
     this.locationIp();
+    this.alt_session_message();
   }
 
   // eslint-disable-next-line camelcase
@@ -139,7 +143,7 @@ export default class SessionData {
   }
 
   async start() {
-    for (; ;) {
+    for (;;) {
       // --- main video --- //
       const main_video = this.get_main_video();
       if (!main_video) {
@@ -157,7 +161,7 @@ export default class SessionData {
 
       // --- play start --- //
       let start_time = -1;
-      for (; start_time === -1 && main_video === this.get_main_video();) {
+      for (; start_time === -1 && main_video === this.get_main_video(); ) {
         // eslint-disable-next-line no-await-in-loop
         await SessionData.event_wait(
           main_video.video_elm,
@@ -253,21 +257,27 @@ export default class SessionData {
       if (request && main_video.is_calculatable()) {
         // --- request qoe --- //
         // eslint-disable-next-line no-loop-func
-        tasks.push((async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          qoe = await this._request_qoe(main_video);
-          if (qoe)
-            main_video.add_latest_qoe({
-              date: Date.now(),
-              qoe
-            });
-        })());
-        if (Config.is_quality_control()) {
-          tasks.push((async () => {
+        tasks.push(
+          (async () => {
             // eslint-disable-next-line no-underscore-dangle
-            const recommend_bitrate = await this._request_recommend_bitrate(main_video);
-            if (recommend_bitrate) main_video.set_quality(recommend_bitrate)
-          })());
+            qoe = await this._request_qoe(main_video);
+            if (qoe)
+              main_video.add_latest_qoe({
+                date: Date.now(),
+                qoe
+              });
+          })()
+        );
+        if (Config.is_quality_control()) {
+          tasks.push(
+            (async () => {
+              // eslint-disable-next-line no-underscore-dangle
+              const recommend_bitrate = await this._request_recommend_bitrate(
+                main_video
+              );
+              if (recommend_bitrate) main_video.set_quality(recommend_bitrate);
+            })()
+          );
         }
       }
       // --- save to storage --- //
@@ -334,18 +344,21 @@ export default class SessionData {
   // eslint-disable-next-line camelcase
   async _request_recommend_bitrate(video) {
     try {
-      const ret = await fetch(`${Config.get_sodium_server_url()}/recommend_bitrate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ids: {
-            session_id: this.session_id,
-            video_id: video.get_video_id()
-          }
-        })
-      });
+      const ret = await fetch(
+        `${Config.get_sodium_server_url()}/recommend_bitrate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ids: {
+              session_id: this.session_id,
+              video_id: video.get_video_id()
+            }
+          })
+        }
+      );
       if (!ret.ok) {
         throw new Error("SodiumServer(tqapi) response was not ok.");
       }
@@ -366,12 +379,12 @@ export default class SessionData {
     });
     await storage.save({
       user_agent: this.userAgent,
-      location: window.location.href,
+      location: this.alt_location || window.location.href,
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
       start_time: video.get_start_time(),
       end_time: -1,
-      thumbnail: video.get_thumbnail(),
+      thumbnail: this.alt_thumbnail || video.get_thumbnail(),
       title: video.get_title(),
       transfer_size: video.transfer_size,
       calc: video.is_calculatable(),
@@ -410,7 +423,7 @@ export default class SessionData {
       startTime: this.startTime,
       endTime: this.endTime,
       session: this.session_id,
-      location: window.location.href,
+      location: this.alt_location || window.location.href,
       locationIp: this.hostToIp[new URL(window.location.href).host],
       userAgent: this.userAgent,
       sequence: this.sequence,
@@ -420,7 +433,16 @@ export default class SessionData {
     };
 
     const netinfo = {};
-    ["downlink", "downlinkMax", "effectiveType", "rtt", "type", "apn", "plmn", "sim"].forEach(e => {
+    [
+      "downlink",
+      "downlinkMax",
+      "effectiveType",
+      "rtt",
+      "type",
+      "apn",
+      "plmn",
+      "sim"
+    ].forEach(e => {
       if (navigator.connection[e] === Infinity) {
         netinfo[e] = Number.MAX_VALUE;
       } else if (navigator.connection[e] === -Infinity) {
@@ -436,14 +458,22 @@ export default class SessionData {
 
   async locationIp() {
     const url = new URL(window.location.href);
-    const ip = await new Promise((resolve) => {
-      const listener = (event) => {
-        if (event.data.host !== url.host || event.data.type !== "CONTENT_SCRIPT_JS") return;
-        window.removeEventListener("message", listener)
+    const ip = await new Promise(resolve => {
+      const listener = event => {
+        if (
+          event.data.host !== url.host ||
+          event.data.type !== "CONTENT_SCRIPT_JS"
+        )
+          return;
+        window.removeEventListener("message", listener);
         resolve(event.data.ip);
-      }
-      window.addEventListener("message", listener)
-      window.postMessage({ host: url.host, method: "get_ip", type: "FROM_SODIUM_JS" })
+      };
+      window.addEventListener("message", listener);
+      window.postMessage({
+        host: url.host,
+        method: "get_ip",
+        type: "FROM_SODIUM_JS"
+      });
     });
     this.hostToIp[url.host] = ip;
   }
@@ -461,5 +491,44 @@ export default class SessionData {
       elm.removeEventListener(type, eventResolver, false);
       resolve(ret);
     });
+  }
+
+  alt_session_message() {
+    const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
+    const allowVideoHosts = ["i.fod.fujitv.co.jp"];
+
+    if (window.top === window) {
+      if (!allowHosts.includes(window.location.hostname)) return;
+
+      const location = window.location.href;
+      const thumbnail = (
+        document.querySelector("meta[property='og:image']") || {}
+      ).content;
+      const session = { location, thumbnail };
+
+      window.addEventListener("message", event => {
+        const { data, source, origin } = event;
+        if (data.type !== "ALT_SESSION_MESSAGE_REQ") return;
+        if (!allowVideoHosts.includes(new URL(origin).hostname)) return;
+        source.postMessage(
+          { type: "ALT_SESSION_MESSAGE_RES", ...session },
+          origin
+        );
+      });
+    } else {
+      if (!allowVideoHosts.includes(window.location.hostname)) return;
+
+      const eventResolver = event => {
+        const { data, origin } = event;
+        if (data.type !== "ALT_SESSION_MESSAGE_RES") return;
+        if (!allowHosts.includes(new URL(origin).hostname)) return;
+        const { location, thumbnail } = data;
+        this.alt_location = location;
+        this.alt_thumbnail = thumbnail;
+        window.removeEventListener("message", eventResolver);
+      };
+      window.addEventListener("message", eventResolver);
+      window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
+    }
   }
 }

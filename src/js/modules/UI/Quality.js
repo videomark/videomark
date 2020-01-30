@@ -49,8 +49,10 @@ export const quality = ({ sessionId, videoId }) => {
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
   const playing = date - startTime({ sessionId, videoId }) - pause;
-  const alert = isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const qoe = latestQoE({ sessionId, videoId });
+  const alert =
+    Number.isFinite(qoe) &&
+    isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const classes = {
     bitrate: {
       na: !(bitrate >= 0)

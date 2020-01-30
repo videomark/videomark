@@ -71,31 +71,24 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
     /**
     * 複数のCMは、<video> を使い捨てして再生している
     * 判定するの難しい <video> だけで判断はできないかも
-    * 
+    *
     * CMを判断するのが難しいためすべてメインとして送信する。
     * ただし、session:video = 1:1の関係があるため、
     * is_main_videoでは、現在表示中の <video> を一つ選んでいる。
     */
     // eslint-disable-next-line camelcase, class-methods-use-this
     is_main_video(video) {
-
         try {
-
-            const main = Array
-                .from(document.querySelectorAll('video'))
-                .find(e => e.style.display === "block");
-
-            return video === main;
+          return window.getComputedStyle(video).display === "block";
         } catch (e) {
-
-            return false;
+          return false;
         }
     }
 
     /**
     * 複数のCMは、<video> を使い捨てして再生している
     * 判定するの難しい <video> だけで判断はできないかも
-    * 
+    *
     * CMを判断するのが難しいためすべてメインとして送信する。
     * ただし、session:video = 1:1の関係があるため、
     * is_main_videoでは、現在表示中の <video> を一つ選んでいる。
