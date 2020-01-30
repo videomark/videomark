@@ -4,15 +4,42 @@ const communicator = {
   getIp: host => ({ ip: hostToIp[host] })
 };
 
+/** content_scripts の許可されているOriginかどうか判定 */
+const permittedOrigins = [
+  /^https:\/\/([a-z-]+\.)?youtube\.com$/,
+  /^https:\/\/([a-z-]+\.)?paravi\.jp$/,
+  /^https:\/\/([a-z-]+\.)?tver\.jp$/,
+  "https://i.fod.fujitv.co.jp",
+  "https://www.nicovideo.jp",
+  /^https:\/\/live\d\.nicovideo\.jp$/,
+  "https://www.nhk-ondemand.jp",
+  /^https:\/\/[a-z-]+\.video\.dmkt-sp\.jp$/,
+  "https://abema.tv",
+  "https://www.amazon.co.jp",
+  "https://pr.iij.ad.jp"
+];
+
+/**
+ * content_scripts の許可されているOriginかどうか判定
+ * @param {string} origin
+ * @return {boolean}
+ */
+const isPermittedOrigin = origin =>
+  permittedOrigins.some(stringOrRegExp =>
+    typeof stringOrRegExp === "string"
+      ? stringOrRegExp === origin
+      : stringOrRegExp.test(origin)
+  );
+
 chrome.webRequest.onHeadersReceived.addListener(
-  details => {
-    details.responseHeaders.push({
-      name: "timing-allow-origin",
-      value: "*"
-    });
-    return {
-      responseHeaders: details.responseHeaders
-    };
+  ({ initiator, responseHeaders }) => {
+    const additionalHeaders = [
+      isPermittedOrigin(initiator) && {
+        name: "Timing-Allow-Origin",
+        value: initiator
+      }
+    ].filter(Boolean);
+    return { responseHeaders: [...responseHeaders, ...additionalHeaders] };
   },
   {
     urls: ["<all_urls>"]
