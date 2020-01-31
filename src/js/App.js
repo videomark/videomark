@@ -7,18 +7,6 @@ import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 import IIJTypeHandler from "./modules/IIJTypeHandler";
 
-let resourceTimingBufferSize = 150;
-function onResourceTimingBufferFull() {
-  resourceTimingBufferSize += 50;
-  performance.setResourceTimingBufferSize(resourceTimingBufferSize);
-}
-
-function resetOnResourceTimingBufferFull() {
-  performance.removeEventListener('resourcetimingbufferfull', onResourceTimingBufferFull);
-  performance.setResourceTimingBufferSize(resourceTimingBufferSize);
-  performance.addEventListener('resourcetimingbufferfull', onResourceTimingBufferFull);
-}
-
 (async () => {
   // --- support --- //
   if (!document || !window) {
@@ -28,7 +16,6 @@ function resetOnResourceTimingBufferFull() {
   }
 
   // --- New Session --- //
-  resetOnResourceTimingBufferFull();
   const session = new SessionData();
   await session.init();
 

@@ -77,8 +77,6 @@ export default class VideoData {
 
     // eslint-disable-next-line no-underscore-dangle
     this.video_handler.add_cm_listener(args => this._cm_listener(args));
-
-    this.transfer_size = 0;
   }
 
   // eslint-disable-next-line camelcase
@@ -224,7 +222,7 @@ export default class VideoData {
       // eslint-disable-next-line no-console
       console.log(
         `VIDEOMARK: switch video source removing [${
-        this.id_by_video_holder
+          this.id_by_video_holder
         }] -> [${now}]`
       );
       return false;
@@ -278,12 +276,6 @@ export default class VideoData {
 
     const quality = this.get_quality();
     this.playback_quality.push(quality);
-
-    if (this.is_main_video()) {
-      const resources = performance.getEntriesByType("resource").slice();
-      performance.clearResourceTimings();
-      this.transfer_size += resources.reduce((a, c) => a + c.transferSize, 0);
-    }
   }
 
   /**
@@ -418,7 +410,7 @@ export default class VideoData {
       /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D):${event.type}, VALUE:[${e.toJSON()}], ID:${
-        this.uuid
+          this.uuid
         }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
       );
       return;
@@ -427,7 +419,7 @@ export default class VideoData {
     /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A):${event.type}, VALUE:[${e.toJSON()}], ID:${
-      this.uuid
+        this.uuid
       }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
     );
 
@@ -449,7 +441,7 @@ export default class VideoData {
       /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: set play start time time_update Event[${
-        this.play_start_time
+          this.play_start_time
         }]`
       );
     }
@@ -490,7 +482,7 @@ export default class VideoData {
       /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
-        this.uuid
+          this.uuid
         }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
       );
       return;
@@ -499,7 +491,7 @@ export default class VideoData {
     /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
-      this.uuid
+        this.uuid
       }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
     );
 

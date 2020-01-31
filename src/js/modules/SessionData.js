@@ -4,6 +4,7 @@ import uuidv4 from "uuid/v4";
 import msgpack from "msgpack-lite";
 
 import Config from "./Config";
+import ResourceTiming from "./ResourceTiming";
 import VideoData from "./VideoData";
 import { useStorage } from "./Storage";
 import { saveTransferSize } from "./StatStorage";
@@ -23,6 +24,7 @@ export default class SessionData {
     this.video = [];
     this.latest_qoe_update_count = 0;
     this.hostToIp = {};
+    this.resource = new ResourceTiming();
   }
 
   async init() {
@@ -365,16 +367,17 @@ export default class SessionData {
       sessionId: this.session_id,
       videoId: video.get_video_id()
     });
+    const [prevResource, resource] = this.resource.collect();
     await storage.save({
       user_agent: this.userAgent,
       location: this.alt_location || window.location.href,
+      transfer_size: resource.transferSize,
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
       start_time: video.get_start_time(),
       end_time: -1,
       thumbnail: this.alt_thumbnail || video.get_thumbnail(),
       title: video.get_title(),
-      transfer_size: video.transfer_size,
       calc: video.is_calculatable(),
       log: [
         ...(storage.cache.log || []).filter(a => !("qoe" in a)),
@@ -393,7 +396,7 @@ export default class SessionData {
         .slice(-Config.max_log)
     });
 
-    await saveTransferSize(video.transfer_diff);
+    await saveTransferSize(resource.transferSize - prevResource.transferSize);
   }
 
   /**
