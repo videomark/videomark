@@ -206,7 +206,7 @@ class YouTubeTypeHandler {
                 message = `itag:${e.itag}, bitrate:${e.bitrate}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
                 return val;
             }
-            if (e.type === "video") val = !e.fps || !e.size
+            if (e.type === "video") val = !e.fps || !e.size || !e.quality
             if (val) message = `itag:${e.itag}, bitrate:${e.bitrate}, fps:${e.fps}, size:${e.size}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
             return val;
         });
@@ -670,6 +670,54 @@ class YouTubeTypeHandler {
             }
         } catch (e) {
             // 
+        }
+    }
+
+    // eslint-disable-next-line camelcase, class-methods-use-this
+    set_max_bitrate(bitrate, resolution) {
+        try {
+            const { fmt } = this.player.getVideoStats();
+            const formats = YouTubeTypeHandler
+                .convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+            const { container, codec } = formats.find(e => e.itag === fmt);
+
+            const codecCond = new RegExp(`^${codec.split(".")[0]}`);
+            const qualityMap = {};
+            formats.filter(e => e.type === "video" && e.codec.match(codecCond)).forEach(v => {
+                qualityMap[v.quality] = (qualityMap[v.quality] || {fps:0}).fps > v.fps ? qualityMap[v.quality] : v;
+            });
+            const video = Object.values(qualityMap).sort(({ bitrate: a }, { bitrate: b }) => b - a);
+
+            video.forEach(v => {
+              const [audio, audio2] = formats
+                  .filter(e => e.type === "audio" && e.container === v.container)
+                  .sort(({ bitrate: a }, { bitrate: b }) => b - a);
+              // eslint-disable-next-line no-param-reassign
+              v.audio = v.container === "webm" && v.quality === "tiny" && audio2 ? audio2 : audio;
+              console.log(`VIDEOMARK: set_max_bitrate(): itag=${v.itag} quality=${v.quality} bitrate=${(v.bitrate+v.audio.bitrate)/1024} fps=${v.fps} container=${v.container} codec=${v.codec}/${v.audio.codec}`);
+            });
+
+            const current = video.find(e => e.itag === fmt);
+            const resolutionSelect = video.find(e => e.height <= resolution);
+            const bitrateSelect = video.find(e => e.bitrate + e.audio.bitrate < bitrate);
+            console.log(`VIDEOMARK: set_max_bitrate(): bitrate=${bitrate/1024} resolution=${resolution} container=${container} codec=${codec}`);
+            console.log(`VIDEOMARK: set_max_bitrate(): current: quality=${current.quality} bitrate=${(current.bitrate+current.audio.bitrate)/1024}`);
+            if (bitrateSelect) console.log(`VIDEOMARK: set_max_bitrate(): bitrateSelect: quality=${bitrateSelect.quality} bitrate=${(bitrateSelect.bitrate+bitrateSelect.audio.bitrate)/1024}`);
+            if (resolutionSelect) console.log(`VIDEOMARK: set_max_bitrate(): resolutionSelect: quality=${resolutionSelect.quality} bitrate=${(resolutionSelect.bitrate+resolutionSelect.audio.bitrate)/1024}`);
+
+            let select;
+            if (resolutionSelect && bitrateSelect) select = resolutionSelect.bitrate < bitrateSelect.bitrate ? resolutionSelect : bitrateSelect;
+            else select = resolutionSelect || bitrateSelect || video[video.length - 1];
+            console.log(`VIDEOMARK: set_max_bitrate(): select: quality=${select.quality} bitrate=${(select.bitrate+select.audio.bitrate)/1024}`);
+
+            if (select.bitrate < current.bitrate) // 再生中のbitrateより小さい値が設定された場合変更する
+                this.player.setPlaybackQualityRange(select.quality, select.quality);
+            else
+                // eslint-disable-next-line no-console
+                console.log(`VIDEOMARK: too small or does not need a change bitrate:${bitrate} not changed`);
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn(`VIDEOMARK: failed to find quality label`);
         }
     }
 
