@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { styled } from "@material-ui/styles";
 import { makeStyles } from "@material-ui/core/styles";
@@ -179,74 +179,32 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     browser_quota_bitrate: browserQuotaBitrate
   } = settings || {};
 
-  const [state, setState] = React.useState({
-    resolution_control_enabled: false,
-    bitrate_control_enabled: false,
-    control_by_traffic_volume: false,
-    control_by_os_quota: false,
-    control_by_browser_quota: false
-  });
+  const onResolutionSliderChangeCommitted = useCallback((event, value) => {
+    saveSettings({...settings, resolution_control: resolutionMarks[value].resolution });
+  }, [settings, saveSettings]);
+  const onBitrateSliderChangeCommitted = useCallback((event, value) => {
+    saveSettings({...settings, bitrate_control: bitrateMarks[value].bitrate });
+  }, [settings, saveSettings]);
 
-  function onResolutionSliderChangeCommitted(event, value) {
-    saveSettings(
-      Object.assign(settings, {
-        resolution_control: resolutionMarks[value].resolution
-      })
-    );
-  }
-  function onBitrateSliderChangeCommitted(event, value) {
-    saveSettings(
-      Object.assign(settings, {
-        bitrate_control: bitrateMarks[value].bitrate
-      })
-    );
-  }
+  const onResolutionCheckboxChange = useCallback((event) => {
+    saveSettings({...settings, resolution_control_enabled: event.target.checked });
+    if (!resolutionControl) onResolutionSliderChangeCommitted(null, resolutionMarks.length - 1);
+  }, [settings, saveSettings]);
+  const onBitrateCheckboxChange = useCallback((event) => {
+    saveSettings({...settings, bitrate_control_enabled: event.target.checked });
+    if (!bitrateControl) onBitrateSliderChangeCommitted(null, bitrateMarks.length - 1);
+  }, [settings, saveSettings]);
 
-  function onResolutionCheckboxChange(event) {
-    setState({ ...state, resolution_control_enabled: event.target.checked });
-    saveSettings(
-      Object.assign(settings, {
-        resolution_control_enabled: event.target.checked
-      })
-    );
-    if (!resolutionControl)
-      onResolutionSliderChangeCommitted(null, resolutionMarks.length - 1);
-  }
-  function onBitrateCheckboxChange(event) {
-    setState({ ...state, bitrate_control_enabled: event.target.checked });
-    saveSettings(
-      Object.assign(settings, {
-        bitrate_control_enabled: event.target.checked
-      })
-    );
-    if (!bitrateControl)
-      onBitrateSliderChangeCommitted(null, bitrateMarks.length - 1);
-  }
+  const onBrowserQuotaCheckboxChange = useCallback((event) => {
+    saveSettings({...settings, control_by_traffic_volume: event.target.checked, control_by_browser_quota: event.target.checked });
+  }, [settings, saveSettings]);
 
-  function onBrowserQuotaCheckboxChange(event) {
-    setState({ ...state, control_by_browser_quota: event.target.checked });
-    saveSettings(
-      Object.assign(settings, {
-        control_by_traffic_volume: event.target.checked,
-        control_by_browser_quota: event.target.checked
-      })
-    );
-  }
-
-  function onBrowserQuotaSliderChangeCommitted(event, value) {
-    saveSettings(
-      Object.assign(settings, {
-        browser_quota: quotaMarks[value].quota
-      })
-    );
-  }
-  function onBrowserQuotaBitrateSliderChangeCommitted(event, value) {
-    saveSettings(
-      Object.assign(settings, {
-        browser_quota_bitrate: bitrateMarks[value].bitrate
-      })
-    );
-  }
+  const onBrowserQuotaSliderChangeCommitted = useCallback((event, value) => {
+    saveSettings({...settings, browser_quota: quotaMarks[value].quota });
+  }, [settings, saveSettings]);
+  const onBrowserQuotaBitrateSliderChangeCommitted = useCallback((event, value) => {
+    saveSettings({...settings, browser_quota_bitrate: bitrateMarks[value].bitrate });
+  }, [settings, saveSettings]);
 
   let resolutionCheckbox;
   let bitrateCheckbox;
