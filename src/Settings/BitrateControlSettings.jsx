@@ -11,7 +11,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import Slider from "@material-ui/core/Slider";
-import TextField from "@material-ui/core/TextField";
 
 const List = styled(MuiList)({
   padding: 0
@@ -30,7 +29,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       paddingRight: theme.spacing(4)
     },
     browserQuotaSlider: {
-      paddingLeft: theme.spacing(12),
+      paddingLeft: theme.spacing(6),
       paddingRight: theme.spacing(4)
     },
     browserQuotaBitrateSlider: {
@@ -175,7 +174,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     resolution_control_enabled: resolutionControlEnabled,
     bitrate_control_enabled: bitrateControlEnabled,
     control_by_traffic_volume: controlByTrafficVolume,
-    control_by_os_quota: controlByOsQuota,
     control_by_browser_quota: controlByBrowserQuota,
     browser_quota: browserQuota,
     browser_quota_bitrate: browserQuotaBitrate
@@ -225,26 +223,11 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       onBitrateSliderChangeCommitted(null, bitrateMarks.length - 1);
   }
 
-  function onTrafficVolumeCheckboxChange(event) {
-    setState({ ...state, control_by_traffic_volume: event.target.checked });
-    saveSettings(
-      Object.assign(settings, {
-        control_by_traffic_volume: event.target.checked
-      })
-    );
-  }
-  function onOsQuotaCheckboxChange(event) {
-    setState({ ...state, control_by_os_quota: event.target.checked });
-    saveSettings(
-      Object.assign(settings, {
-        control_by_os_quota: event.target.checked
-      })
-    );
-  }
   function onBrowserQuotaCheckboxChange(event) {
     setState({ ...state, control_by_browser_quota: event.target.checked });
     saveSettings(
       Object.assign(settings, {
+        control_by_traffic_volume: event.target.checked,
         control_by_browser_quota: event.target.checked
       })
     );
@@ -269,8 +252,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
   let bitrateCheckbox;
   let resolutionSlider;
   let bitrateSlider;
-  let trafficVolumeCheckbox;
-  let osQuotaCheckbox;
   let browserQuotaCheckbox;
   let browserQuotaSlider;
   let browserQuotaBitrateSlider;
@@ -329,29 +310,11 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       />
     );
 
-    trafficVolumeCheckbox = (
-      <Checkbox
-        checked={controlByTrafficVolume}
-        value="control_by_traffic_volume"
-        onChange={onTrafficVolumeCheckboxChange}
-        color="primary"
-      />
-    );
-    osQuotaCheckbox = (
-      <Checkbox
-        checked={controlByOsQuota}
-        value="control_by_os_quota"
-        onChange={onOsQuotaCheckboxChange}
-        disabled={!controlByTrafficVolume}
-        color="primary"
-      />
-    );
     browserQuotaCheckbox = (
       <Checkbox
         checked={controlByBrowserQuota}
         value="control_by_browser_quota"
         onChange={onBrowserQuotaCheckboxChange}
-        disabled={!controlByTrafficVolume}
         color="primary"
       />
     );
@@ -369,7 +332,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
     browserQuotaBitrateSlider = (
       <Slider
-        disabled={!controlByTrafficVolume}
+        disabled={!controlByTrafficVolume || !controlByBrowserQuota}
         defaultValue={browserQuotaBitrateIndex}
         marks={bitrateMarks}
         step={null}
@@ -402,18 +365,10 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
           <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
-            {trafficVolumeCheckbox}
-            <ListItemText primary="通信量に応じて動画のビットレート制限を行う" />
-          </ListItem>
-          <ListItem className={classes.nested6}>
-            {osQuotaCheckbox}
-            <ListItemText primary="OS 全体の通信量が OS 設定の警告値を超えたら制限する" />
-          </ListItem>
-          <ListItem className={classes.nested6}>
             {browserQuotaCheckbox}
             <ListItemText primary="月間の VM Browser の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
-          <ListItem className={classes.browserQuotaSlider}>
+          <ListItem className={classes.slider}>
             {browserQuotaSlider}
           </ListItem>
           <ListItem className={classes.nested6}>
