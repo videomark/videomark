@@ -179,32 +179,77 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     browser_quota_bitrate: browserQuotaBitrate
   } = settings || {};
 
-  const onResolutionSliderChangeCommitted = useCallback((event, value) => {
-    saveSettings({...settings, resolution_control: resolutionMarks[value].resolution });
-  }, [settings, saveSettings]);
-  const onBitrateSliderChangeCommitted = useCallback((event, value) => {
-    saveSettings({...settings, bitrate_control: bitrateMarks[value].bitrate });
-  }, [settings, saveSettings]);
+  const onResolutionSliderChangeCommitted = useCallback(
+    (event, value) => {
+      saveSettings({
+        ...settings,
+        resolution_control: resolutionMarks[value].resolution
+      });
+    },
+    [settings, saveSettings]
+  );
+  const onBitrateSliderChangeCommitted = useCallback(
+    (event, value) => {
+      saveSettings({
+        ...settings,
+        bitrate_control: bitrateMarks[value].bitrate
+      });
+    },
+    [settings, saveSettings]
+  );
 
-  const onResolutionCheckboxChange = useCallback((event) => {
-    saveSettings({...settings, resolution_control_enabled: event.target.checked });
-    if (!resolutionControl) onResolutionSliderChangeCommitted(null, resolutionMarks.length - 1);
-  }, [settings, saveSettings]);
-  const onBitrateCheckboxChange = useCallback((event) => {
-    saveSettings({...settings, bitrate_control_enabled: event.target.checked });
-    if (!bitrateControl) onBitrateSliderChangeCommitted(null, bitrateMarks.length - 1);
-  }, [settings, saveSettings]);
+  const onResolutionCheckboxChange = useCallback(
+    event => {
+      saveSettings({
+        ...settings,
+        resolution_control_enabled: event.target.checked
+      });
+      if (!resolutionControl)
+        onResolutionSliderChangeCommitted(null, resolutionMarks.length - 1);
+    },
+    [settings, saveSettings]
+  );
+  const onBitrateCheckboxChange = useCallback(
+    event => {
+      saveSettings({
+        ...settings,
+        bitrate_control_enabled: event.target.checked
+      });
+      if (!bitrateControl)
+        onBitrateSliderChangeCommitted(null, bitrateMarks.length - 1);
+    },
+    [settings, saveSettings]
+  );
 
-  const onBrowserQuotaCheckboxChange = useCallback((event) => {
-    saveSettings({...settings, control_by_traffic_volume: event.target.checked, control_by_browser_quota: event.target.checked });
-  }, [settings, saveSettings]);
+  const onBrowserQuotaCheckboxChange = useCallback(
+    event => {
+      saveSettings({
+        ...settings,
+        control_by_traffic_volume: event.target.checked,
+        control_by_browser_quota: event.target.checked
+      });
+    },
+    [settings, saveSettings]
+  );
 
-  const onBrowserQuotaSliderChangeCommitted = useCallback((event, value) => {
-    saveSettings({...settings, browser_quota: quotaMarks[value].quota });
-  }, [settings, saveSettings]);
-  const onBrowserQuotaBitrateSliderChangeCommitted = useCallback((event, value) => {
-    saveSettings({...settings, browser_quota_bitrate: bitrateMarks[value].bitrate });
-  }, [settings, saveSettings]);
+  const onBrowserQuotaSliderChangeCommitted = useCallback(
+    (event, value) => {
+      saveSettings({
+        ...settings,
+        browser_quota: quotaMarks[value].quota
+      });
+    },
+    [settings, saveSettings]
+  );
+  const onBrowserQuotaBitrateSliderChangeCommitted = useCallback(
+    (event, value) => {
+      saveSettings({
+        ...settings,
+        browser_quota_bitrate: bitrateMarks[value].bitrate
+      });
+    },
+    [settings, saveSettings]
+  );
 
   let resolutionCheckbox;
   let bitrateCheckbox;
@@ -225,7 +270,8 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       ? quotaMarks.filter(mark => mark.quota <= browserQuota).length - 1
       : quotaMarks.length - 1;
     const browserQuotaBitrateIndex = browserQuotaBitrate
-      ? bitrateMarks.filter(mark => mark.bitrate <= browserQuotaBitrate).length - 1
+      ? bitrateMarks.filter(mark => mark.bitrate <= browserQuotaBitrate)
+          .length - 1
       : bitrateMarks.length - 1;
 
     resolutionCheckbox = (
@@ -326,9 +372,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
             {browserQuotaCheckbox}
             <ListItemText primary="月間の VM Browser の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
-          <ListItem className={classes.slider}>
-            {browserQuotaSlider}
-          </ListItem>
+          <ListItem className={classes.slider}>{browserQuotaSlider}</ListItem>
           <ListItem className={classes.nested6}>
             <ListItemText primary="VM Browser の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
