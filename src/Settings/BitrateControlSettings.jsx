@@ -28,6 +28,14 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     slider: {
       paddingLeft: theme.spacing(4),
       paddingRight: theme.spacing(4)
+    },
+    browserQuotaSlider: {
+      paddingLeft: theme.spacing(12),
+      paddingRight: theme.spacing(4)
+    },
+    browserQuotaBitrateSlider: {
+      paddingLeft: theme.spacing(6),
+      paddingRight: theme.spacing(4)
     }
   }));
   const classes = useStyles();
@@ -118,6 +126,49 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     }
   ];
 
+  const quotaMarks = [
+    {
+      value: 0,
+      label: "1GB",
+      quota: 1024
+    },
+    {
+      value: 1,
+      label: "2GB",
+      quota: 2 * 1024
+    },
+    {
+      value: 2,
+      label: "3GB",
+      quota: 3 * 1024
+    },
+    {
+      value: 3,
+      label: "5GB",
+      quota: 5 * 1024
+    },
+    {
+      value: 4,
+      label: "7GB",
+      quota: 7 * 1024
+    },
+    {
+      value: 5,
+      label: "10GB",
+      quota: 10 * 1024
+    },
+    {
+      value: 6,
+      label: "20GB",
+      quota: 20 * 1024
+    },
+    {
+      value: 7,
+      label: "30GB",
+      quota: 30 * 1024
+    }
+  ];
+
   const {
     resolution_control: resolutionControl,
     bitrate_control: bitrateControl,
@@ -199,17 +250,17 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
   }
 
-  function onBrowserQuotaTextFieldChange(event) {
+  function onBrowserQuotaSliderChangeCommitted(event, value) {
     saveSettings(
       Object.assign(settings, {
-        browser_quota: parseInt(event.target.value, 10)
+        browser_quota: quotaMarks[value].quota
       })
     );
   }
-  function onBrowserQuotaBitrateTextFieldChange(event) {
+  function onBrowserQuotaBitrateSliderChangeCommitted(event, value) {
     saveSettings(
       Object.assign(settings, {
-        browser_quota_bitrate: parseInt(event.target.value, 10)
+        browser_quota_bitrate: bitrateMarks[value].bitrate
       })
     );
   }
@@ -221,8 +272,8 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
   let trafficVolumeCheckbox;
   let osQuotaCheckbox;
   let browserQuotaCheckbox;
-  let browserQuotaTextField;
-  let browserQuotaBitrateTextField;
+  let browserQuotaSlider;
+  let browserQuotaBitrateSlider;
   if (settings !== undefined) {
     const resolutionIndex = resolutionControl
       ? resolutionMarks.filter(mark => mark.resolution <= resolutionControl)
@@ -230,6 +281,12 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       : resolutionMarks.length - 1;
     const bitrateIndex = bitrateControl
       ? bitrateMarks.filter(mark => mark.bitrate <= bitrateControl).length - 1
+      : bitrateMarks.length - 1;
+    const browserQuotaIndex = browserQuota
+      ? quotaMarks.filter(mark => mark.quota <= browserQuota).length - 1
+      : quotaMarks.length - 1;
+    const browserQuotaBitrateIndex = browserQuotaBitrate
+      ? bitrateMarks.filter(mark => mark.bitrate <= browserQuotaBitrate).length - 1
       : bitrateMarks.length - 1;
 
     resolutionCheckbox = (
@@ -299,22 +356,26 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       />
     );
 
-    browserQuotaTextField = (
-      <TextField
-        type="number"
-        inputProps={{ min: 1, style: { textAlign: "right" } }}
-        defaultValue={browserQuota}
+    browserQuotaSlider = (
+      <Slider
         disabled={!controlByTrafficVolume || !controlByBrowserQuota}
-        onChange={onBrowserQuotaTextFieldChange}
+        defaultValue={browserQuotaIndex}
+        marks={quotaMarks}
+        step={null}
+        min={0}
+        max={quotaMarks.length - 1}
+        onChangeCommitted={onBrowserQuotaSliderChangeCommitted}
       />
     );
-    browserQuotaBitrateTextField = (
-      <TextField
-        type="number"
-        inputProps={{ min: 1, style: { textAlign: "right" } }}
-        defaultValue={browserQuotaBitrate}
+    browserQuotaBitrateSlider = (
+      <Slider
         disabled={!controlByTrafficVolume}
-        onChange={onBrowserQuotaBitrateTextFieldChange}
+        defaultValue={browserQuotaBitrateIndex}
+        marks={bitrateMarks}
+        step={null}
+        min={0}
+        max={bitrateMarks.length - 1}
+        onChangeCommitted={onBrowserQuotaBitrateSliderChangeCommitted}
       />
     );
   }
@@ -323,26 +384,26 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     <Box marginY={4}>
       <Box marginY={1}>
         <Typography component="h3" variant="body1">
-          ビットレート制御
+          ビットレート制限
         </Typography>
       </Box>
       <Paper>
         <List>
           <ListItem>
             {resolutionCheckbox}
-            <ListItemText primary="動画の解像度制御を行う" />
+            <ListItemText primary="動画の解像度制限を行う" />
           </ListItem>
           <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
             {bitrateCheckbox}
-            <ListItemText primary="動画のビットレート制御を行う" />
+            <ListItemText primary="動画のビットレート制限を行う" />
           </ListItem>
           <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
             {trafficVolumeCheckbox}
-            <ListItemText primary="通信量に応じて動画のビットレート制御を行う" />
+            <ListItemText primary="通信量に応じて動画のビットレート制限を行う" />
           </ListItem>
           <ListItem className={classes.nested6}>
             {osQuotaCheckbox}
@@ -350,20 +411,16 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
           </ListItem>
           <ListItem className={classes.nested6}>
             {browserQuotaCheckbox}
-            <ListItemText primary="VM Browser の動画通信量が指定の値を超えたら制限する" />
+            <ListItemText primary="月間の VM Browser の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
-          <ListItem className={classes.nested12}>
-            月間
-            {browserQuotaTextField}
-            MB
+          <ListItem className={classes.browserQuotaSlider}>
+            {browserQuotaSlider}
           </ListItem>
           <ListItem className={classes.nested6}>
             <ListItemText primary="VM Browser の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
-          <ListItem className={classes.nested6}>
-            上限
-            {browserQuotaBitrateTextField}
-            kbps
+          <ListItem className={classes.browserQuotaBitrateSlider}>
+            {browserQuotaBitrateSlider}
           </ListItem>
         </List>
       </Paper>
