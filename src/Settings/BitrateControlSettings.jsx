@@ -24,10 +24,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     slider: {
       paddingLeft: theme.spacing(4),
       paddingRight: theme.spacing(4)
-    },
-    browserQuotaBitrateSlider: {
-      paddingLeft: theme.spacing(6),
-      paddingRight: theme.spacing(4)
     }
   }));
   const classes = useStyles();
@@ -369,7 +365,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
           <ListItem className={classes.nested6}>
             <ListItemText primary="通信量超過時のビットレート制限" />
           </ListItem>
-          <ListItem className={classes.browserQuotaBitrateSlider}>
+          <ListItem className={classes.slider}>
             {browserQuotaBitrateSlider}
           </ListItem>
         </List>
