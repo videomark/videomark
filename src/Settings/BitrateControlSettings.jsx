@@ -358,19 +358,19 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         <List>
           <ListItem>
             {resolutionCheckbox}
-            <ListItemText primary="動画の解像度制限を行う" />
+            <ListItemText primary="動画の解像度を制限する" />
           </ListItem>
           <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
             {bitrateCheckbox}
-            <ListItemText primary="動画のビットレート制限を行う" />
+            <ListItemText primary="動画のビットレートを制限する" />
           </ListItem>
           <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
             {browserQuotaCheckbox}
-            <ListItemText primary="月間の VM Browser の動画通信量が指定の値を超えたら制限する" />
+            <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
           <ListItem className={classes.slider}>{browserQuotaSlider}</ListItem>
           <ListItem className={classes.nested6}>
