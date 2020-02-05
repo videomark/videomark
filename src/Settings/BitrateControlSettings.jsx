@@ -16,18 +16,18 @@ const List = styled(MuiList)({
   padding: 0
 });
 
-const BitrateControlSettings = ({ settings, saveSettings }) => {
-  const useStyles = makeStyles(theme => ({
-    nested6: {
-      paddingLeft: theme.spacing(6)
-    },
-    slider: {
-      paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4)
-    }
-  }));
-  const classes = useStyles();
+const useStyles = makeStyles(theme => ({
+  nested6: {
+    paddingLeft: theme.spacing(6)
+  },
+  slider: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4)
+  }
+}));
 
+const BitrateControlSettings = ({ settings, saveSettings }) => {
+  const classes = useStyles();
   const resolutionMarks = [
     {
       value: 0,
