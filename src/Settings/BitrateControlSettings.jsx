@@ -21,15 +21,8 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     nested6: {
       paddingLeft: theme.spacing(6)
     },
-    nested12: {
-      paddingLeft: theme.spacing(12)
-    },
     slider: {
       paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4)
-    },
-    browserQuotaSlider: {
-      paddingLeft: theme.spacing(6),
       paddingRight: theme.spacing(4)
     },
     browserQuotaBitrateSlider: {
