@@ -341,7 +341,10 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     <Box marginY={4}>
       <Box marginY={1}>
         <Typography component="h3" variant="body1">
-          ビットレート制限
+          ビットレート制限 (ベータ版)
+        </Typography>
+        <Typography color="textSecondary">
+          実験的な機能です。現在、YouTubeにのみ対応しています。
         </Typography>
       </Box>
       <Paper>
