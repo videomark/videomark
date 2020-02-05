@@ -268,7 +268,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         checked={resolutionControlEnabled}
         value="resolution_control_enabled"
         onChange={onResolutionCheckboxChange}
-        color="primary"
       />
     );
     bitrateCheckbox = (
@@ -276,7 +275,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         checked={bitrateControlEnabled}
         value="bitrate_control_enabled"
         onChange={onBitrateCheckboxChange}
-        color="primary"
       />
     );
 
@@ -289,6 +287,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={resolutionMarks.length - 1}
         onChangeCommitted={onResolutionSliderChangeCommitted}
+        color="secondary"
       />
     );
     bitrateSlider = (
@@ -300,6 +299,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={bitrateMarks.length - 1}
         onChangeCommitted={onBitrateSliderChangeCommitted}
+        color="secondary"
       />
     );
 
@@ -308,7 +308,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         checked={controlByBrowserQuota}
         value="control_by_browser_quota"
         onChange={onBrowserQuotaCheckboxChange}
-        color="primary"
       />
     );
 
@@ -321,6 +320,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={quotaMarks.length - 1}
         onChangeCommitted={onBrowserQuotaSliderChangeCommitted}
+        color="secondary"
       />
     );
     browserQuotaBitrateSlider = (
@@ -332,6 +332,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={bitrateMarks.length - 1}
         onChangeCommitted={onBrowserQuotaBitrateSliderChangeCommitted}
+        color="secondary"
       />
     );
   }
