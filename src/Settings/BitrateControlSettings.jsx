@@ -16,29 +16,18 @@ const List = styled(MuiList)({
   padding: 0
 });
 
-const BitrateControlSettings = ({ settings, saveSettings }) => {
-  const useStyles = makeStyles(theme => ({
-    nested6: {
-      paddingLeft: theme.spacing(6)
-    },
-    nested12: {
-      paddingLeft: theme.spacing(12)
-    },
-    slider: {
-      paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4)
-    },
-    browserQuotaSlider: {
-      paddingLeft: theme.spacing(6),
-      paddingRight: theme.spacing(4)
-    },
-    browserQuotaBitrateSlider: {
-      paddingLeft: theme.spacing(6),
-      paddingRight: theme.spacing(4)
-    }
-  }));
-  const classes = useStyles();
+const useStyles = makeStyles(theme => ({
+  nested6: {
+    paddingLeft: theme.spacing(6)
+  },
+  slider: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4)
+  }
+}));
 
+const BitrateControlSettings = ({ settings, saveSettings }) => {
+  const classes = useStyles();
   const resolutionMarks = [
     {
       value: 0,
@@ -279,7 +268,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         checked={resolutionControlEnabled}
         value="resolution_control_enabled"
         onChange={onResolutionCheckboxChange}
-        color="primary"
       />
     );
     bitrateCheckbox = (
@@ -287,7 +275,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         checked={bitrateControlEnabled}
         value="bitrate_control_enabled"
         onChange={onBitrateCheckboxChange}
-        color="primary"
       />
     );
 
@@ -300,6 +287,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={resolutionMarks.length - 1}
         onChangeCommitted={onResolutionSliderChangeCommitted}
+        color="secondary"
       />
     );
     bitrateSlider = (
@@ -311,6 +299,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={bitrateMarks.length - 1}
         onChangeCommitted={onBitrateSliderChangeCommitted}
+        color="secondary"
       />
     );
 
@@ -319,7 +308,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         checked={controlByBrowserQuota}
         value="control_by_browser_quota"
         onChange={onBrowserQuotaCheckboxChange}
-        color="primary"
       />
     );
 
@@ -332,6 +320,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={quotaMarks.length - 1}
         onChangeCommitted={onBrowserQuotaSliderChangeCommitted}
+        color="secondary"
       />
     );
     browserQuotaBitrateSlider = (
@@ -343,6 +332,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         min={0}
         max={bitrateMarks.length - 1}
         onChangeCommitted={onBrowserQuotaBitrateSliderChangeCommitted}
+        color="secondary"
       />
     );
   }
@@ -351,32 +341,35 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     <Box marginY={4}>
       <Box marginY={1}>
         <Typography component="h3" variant="body1">
-          ビットレート制限
+          ビットレート制限 (ベータ版)
+        </Typography>
+        <Typography color="textSecondary">
+          実験的な機能です。現在、YouTubeにのみ対応しています。
         </Typography>
       </Box>
       <Paper>
         <List>
           <ListItem>
             {resolutionCheckbox}
-            <ListItemText primary="動画の解像度制限を行う" />
+            <ListItemText primary="動画の解像度を制限する" />
           </ListItem>
           <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
             {bitrateCheckbox}
-            <ListItemText primary="動画のビットレート制限を行う" />
+            <ListItemText primary="動画のビットレートを制限する" />
           </ListItem>
           <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
             {browserQuotaCheckbox}
-            <ListItemText primary="月間の VM Browser の動画通信量が指定の値を超えたら制限する" />
+            <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
           </ListItem>
           <ListItem className={classes.slider}>{browserQuotaSlider}</ListItem>
           <ListItem className={classes.nested6}>
             <ListItemText primary="通信量超過時のビットレート制限" />
           </ListItem>
-          <ListItem className={classes.browserQuotaBitrateSlider}>
+          <ListItem className={classes.slider}>
             {browserQuotaBitrateSlider}
           </ListItem>
         </List>
