@@ -7,14 +7,11 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
+import Switch from "@material-ui/core/Switch";
 import Slider from "@material-ui/core/Slider";
 import List from "./List";
 
 const useStyles = makeStyles(theme => ({
-  nested6: {
-    paddingLeft: theme.spacing(6)
-  },
   slider: {
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4)
@@ -197,7 +194,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     [settings, saveSettings]
   );
 
-  const onResolutionCheckboxChange = useCallback(
+  const onResolutionSwitchChange = useCallback(
     event => {
       saveSettings({
         ...settings,
@@ -207,7 +204,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     },
     [settings, saveSettings]
   );
-  const onBitrateCheckboxChange = useCallback(
+  const onBitrateSwitchChange = useCallback(
     event => {
       saveSettings({
         ...settings,
@@ -218,7 +215,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     [settings, saveSettings]
   );
 
-  const onBrowserQuotaCheckboxChange = useCallback(
+  const onBrowserQuotaSwitchChange = useCallback(
     event => {
       saveSettings({
         ...settings,
@@ -250,26 +247,26 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     [settings, saveSettings]
   );
 
-  let resolutionCheckbox;
-  let bitrateCheckbox;
+  let resolutionSwitch;
+  let bitrateSwitch;
   let resolutionSlider;
   let bitrateSlider;
-  let browserQuotaCheckbox;
+  let browserQuotaSwitch;
   let browserQuotaSlider;
   let browserQuotaBitrateSlider;
   if (settings !== undefined) {
-    resolutionCheckbox = (
-      <Checkbox
-        checked={resolutionControlEnabled}
+    resolutionSwitch = (
+      <Switch
+        checked={Boolean(resolutionControlEnabled)}
+        onChange={onResolutionSwitchChange}
         value="resolution_control_enabled"
-        onChange={onResolutionCheckboxChange}
       />
     );
-    bitrateCheckbox = (
-      <Checkbox
-        checked={bitrateControlEnabled}
+    bitrateSwitch = (
+      <Switch
+        checked={Boolean(bitrateControlEnabled)}
+        onChange={onBitrateSwitchChange}
         value="bitrate_control_enabled"
-        onChange={onBitrateCheckboxChange}
       />
     );
 
@@ -298,11 +295,11 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       />
     );
 
-    browserQuotaCheckbox = (
-      <Checkbox
-        checked={controlByBrowserQuota}
+    browserQuotaSwitch = (
+      <Switch
+        checked={Boolean(controlByBrowserQuota)}
+        onChange={onBrowserQuotaSwitchChange}
         value="control_by_browser_quota"
-        onChange={onBrowserQuotaCheckboxChange}
       />
     );
 
@@ -345,23 +342,23 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       <Paper>
         <List>
           <ListItem>
-            {resolutionCheckbox}
             <ListItemText primary="動画の解像度を制限する" />
+            {resolutionSwitch}
           </ListItem>
           <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
-            {bitrateCheckbox}
             <ListItemText primary="動画のビットレートを制限する" />
+            {bitrateSwitch}
           </ListItem>
           <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           <Divider component="li" />
           <ListItem>
-            {browserQuotaCheckbox}
             <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
+            {browserQuotaSwitch}
           </ListItem>
           <ListItem className={classes.slider}>{browserQuotaSlider}</ListItem>
-          <ListItem className={classes.nested6}>
+          <ListItem>
             <ListItemText primary="通信量超過時のビットレート制限" />
           </ListItem>
           <ListItem className={classes.slider}>
