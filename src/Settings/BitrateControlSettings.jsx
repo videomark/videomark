@@ -345,25 +345,35 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
             <ListItemText primary="動画の解像度を制限する" />
             {resolutionSwitch}
           </ListItem>
-          <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
+          {resolutionControlEnabled && (
+            <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
+          )}
           <Divider component="li" />
           <ListItem>
             <ListItemText primary="動画のビットレートを制限する" />
             {bitrateSwitch}
           </ListItem>
-          <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
+          {bitrateControlEnabled && (
+            <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
+          )}
           <Divider component="li" />
           <ListItem>
             <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
             {browserQuotaSwitch}
           </ListItem>
-          <ListItem className={classes.slider}>{browserQuotaSlider}</ListItem>
-          <ListItem>
-            <ListItemText primary="通信量超過時のビットレート制限" />
-          </ListItem>
-          <ListItem className={classes.slider}>
-            {browserQuotaBitrateSlider}
-          </ListItem>
+          {controlByBrowserQuota && (
+            <>
+              <ListItem className={classes.slider}>
+                {browserQuotaSlider}
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="通信量超過時のビットレート制限" />
+              </ListItem>
+              <ListItem className={classes.slider}>
+                {browserQuotaBitrateSlider}
+              </ListItem>
+            </>
+          )}
         </List>
       </Paper>
     </Box>
