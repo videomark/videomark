@@ -1,20 +1,15 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
-import { styled } from "@material-ui/styles";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import Slider from "@material-ui/core/Slider";
-
-const List = styled(MuiList)({
-  padding: 0
-});
+import List from "./List";
 
 const useStyles = makeStyles(theme => ({
   nested6: {
