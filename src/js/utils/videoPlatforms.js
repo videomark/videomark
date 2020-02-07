@@ -29,10 +29,17 @@ export default [
   },
   {
     id: "nicovideo",
-    name: "niconico",
-    url: "https://nicovideo.jp/",
+    name: "ニコニコ動画",
+    url: "https://www.nicovideo.jp/video_top",
     brandcolor: "#333333",
-    host: /(^|\.)nicovideo\.jp$/
+    host: /^www\.nicovideo\.jp$/
+  },
+  {
+    id: "nicolive",
+    name: "ニコニコ生放送",
+    url: "https://live.nicovideo.jp/",
+    brandcolor: "#444444",
+    host: /^live\d?\.nicovideo\.jp$/
   },
   {
     id: "nhkondemand",
