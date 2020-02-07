@@ -69,9 +69,9 @@ chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
     case "update": {
       const major = version =>
         version == null ? 0 : Number(version.slice(".")[0]);
-      const { version } = chrome.runtime.getManifest();
-      if (major(previousVersion) < major(version)) {
-        const url = `https://vm.webdino.org/whatsnew/extension/${version}`;
+      const majorVersion = major(chrome.runtime.getManifest().version);
+      if (major(previousVersion) < majorVersion) {
+        const url = `https://vm.webdino.org/whatsnew/extension/${majorVersion}`;
         chrome.tabs.create({ url });
       }
       break;
