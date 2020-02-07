@@ -58,11 +58,27 @@ chrome.webRequest.onResponseStarted.addListener(
   ["responseHeaders"]
 );
 
-chrome.runtime.onInstalled.addListener(({ reason }) => {
-  if (reason !== "install") return;
-  chrome.browserAction.getPopup({}, url => {
-    chrome.tabs.create({ url });
-  });
+chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
+  switch (reason) {
+    case "install": {
+      chrome.browserAction.getPopup({}, url => {
+        chrome.tabs.create({ url });
+      });
+      break;
+    }
+    case "update": {
+      const major = version =>
+        version == null ? 0 : Number(version.slice(".")[0]);
+      const { version } = chrome.runtime.getManifest();
+      if (major(previousVersion) < major(version)) {
+        const url = `https://vm.webdino.org/whatsnew/extension/${version}`;
+        chrome.tabs.create({ url });
+      }
+      break;
+    }
+    default:
+      break;
+  }
 });
 
 chrome.runtime.onConnect.addListener(port => {
