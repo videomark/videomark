@@ -125,8 +125,8 @@ export default class Config {
       minimumIntegerDigits: 2
     }).format(now.getMonth() + 1)}`;
     const transfer_size = this.get_transfer_size();
-    const browser_quota_value = browser_quota
-      ? browser_quota * 1024 * 1024
+    const browser_quota_value /* byte */ = browser_quota
+      ? browser_quota /* MiB */ * 1024 * 1024
       : Infinity;
     const browser_quota_full =
       control_by_browser_quota &&
@@ -134,7 +134,7 @@ export default class Config {
     const os_quota_full = control_by_os_quota;
 
     return browser_quota_bitrate && (browser_quota_full || os_quota_full)
-      ? browser_quota_bitrate * 1024
+      ? browser_quota_bitrate /* byte */
       : undefined;
   }
 
