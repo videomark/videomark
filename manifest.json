@@ -18,7 +18,17 @@
     "webRequestBlocking",
     "storage",
     "unlimitedStorage",
-    "<all_urls>"
+    "*://*.tver.jp/*",
+    "*://*.paravi.jp/*",
+    "*://*.youtube.com/*",
+    "*://*.nicovideo.jp/*",
+    "*://*.fod.fujitv.co.jp/*",
+    "*://*.nhk-ondemand.jp/*",
+    "*://*.video.dmkt-sp.jp/*",
+    "*://abema.tv/*",
+    "*://*.amazon.co.jp/*",
+    "*://pr.iij.ad.jp/*",
+    "*://edge.iijlive.ipcasting.jp/*"
   ],
   "browser_action": {
     "default_icon": "icons/disabled.png",
