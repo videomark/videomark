@@ -10,13 +10,13 @@ import { useStorage } from "./Storage";
 import { saveTransferSize } from "./StatStorage";
 import { version } from "../../../package.json";
 
-async function set_max_bitrate(new_video) {
-  const bitrate_control = await Config.get_bitrate_control();
-  const quota_bitrate = await Config.get_quota_bitrate();
+function set_max_bitrate(new_video) {
+  const bitrate_control = Config.get_bitrate_control();
+  const quota_bitrate = Config.get_quota_bitrate();
   let bitrate;
   if (bitrate_control && quota_bitrate) bitrate = Math.min(bitrate_control, quota_bitrate);
   else bitrate = bitrate_control || quota_bitrate;
-  const resolution = await Config.get_resolution_control();
+  const resolution = Config.get_resolution_control();
 
   if (bitrate_control || quota_bitrate || resolution) new_video.set_max_bitrate(bitrate, resolution);
 }
