@@ -70,9 +70,9 @@ class AlivePort {
 
     /**
      * 計測していないものとしてみなす経過時間
-     * sodium.js の Config.collect_interval と同じ値
+     * sodium.js の Config.collect_interval に+200ms余裕をもたせる
      */
-    this.timeoutIn = 1000;
+    this.timeoutIn = 1200;
   }
 
   /**
