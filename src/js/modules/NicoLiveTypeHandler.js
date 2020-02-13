@@ -38,7 +38,7 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
             const [id] = new URL(window.location.href)
                 .pathname
                 .split('/')
-                .splice(-1);
+                .slice(-1);
 
             return id;
         } catch (e) {

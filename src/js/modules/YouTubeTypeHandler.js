@@ -1,3 +1,5 @@
+import Config from "./Config";
+
 class YouTubeTypeHandler {
     // eslint-disable-next-line camelcase
     static is_youtube_type() {
@@ -216,7 +218,7 @@ class YouTubeTypeHandler {
     // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
         YouTubeTypeHandler.throughputHistories.push(throughput);
-        YouTubeTypeHandler.throughputHistories.slice(-100);
+        YouTubeTypeHandler.throughputHistories = YouTubeTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
 
     // eslint-disable-next-line camelcase
@@ -297,7 +299,7 @@ class YouTubeTypeHandler {
         const itagCache = {};
         const formats = YouTubeTypeHandler.get_playable_video_format_list();
         const histories = YouTubeTypeHandler.throughputHistories
-            .slice()
+            .splice(0, YouTubeTypeHandler.throughputHistories.length)
             .filter(h => formats.find(f => f.itag === h.itag))
             .reduce((acc, cur) => {
                 let bitrate = itagCache[cur.itag];
@@ -324,9 +326,6 @@ class YouTubeTypeHandler {
                 });
                 return acc;
             }, []);
-
-        // clear histories
-        YouTubeTypeHandler.throughputHistories = [];
 
         // separate by duration 
         return histories.reduce((acc, cur) => {
@@ -708,7 +707,7 @@ class YouTubeTypeHandler {
             let select;
             if (resolutionSelect && bitrateSelect) select = resolutionSelect.bitrate < bitrateSelect.bitrate ? resolutionSelect : bitrateSelect;
             else select = resolutionSelect || bitrateSelect || video[video.length - 1];
-            console.log(`VIDEOMARK: set_max_bitrate(): select: quality=${select.quality} bitrate=${(select.bitrate+select.audio.bitrate)/1024}`);
+            console.log(`VIDEOMARK: set_max_bitrate(): select: quality=${select.quality} bitrate=${(select.bitrate + select.audio.bitrate) / 1024}`);
 
             if (select.bitrate < current.bitrate) // 再生中のbitrateより小さい値が設定された場合変更する
                 this.player.setPlaybackQualityRange(select.quality, select.quality);

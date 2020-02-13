@@ -300,13 +300,16 @@ export default class SessionData {
   // eslint-disable-next-line camelcase
   async _send_data(video) {
     try {
+      // eslint-disable-next-line no-underscore-dangle
+      const body = msgpack.encode(this._to_json(video));
+      if (body.length > Config.get_max_send_size())
+        console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
       const ret = await fetch(Config.get_fluent_url(), {
         method: "POST",
         headers: {
           "Content-type": "application/msgpack"
         },
-        // eslint-disable-next-line no-underscore-dangle
-        body: msgpack.encode(this._to_json(video))
+        body
       });
       if (!ret.ok) {
         throw new Error("fluent response was not ok.");

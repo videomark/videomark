@@ -35,7 +35,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
             const [id] = new URL(window.location.href)
                 .pathname
                 .split('/')
-                .splice(-1);
+                .slice(-1);
 
             return id;
         } catch (e) {

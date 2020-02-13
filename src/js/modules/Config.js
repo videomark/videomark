@@ -155,6 +155,14 @@ export default class Config {
     const match = this.video_platforms.find(matcher);
     return match && match.id;
   }
+
+  static get_max_throughput_history_size() {
+    return this.max_throughput_history_size;
+  }
+
+  static get_max_send_size() {
+    return this.max_send_size;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
@@ -512,3 +520,9 @@ if (window.sodium !== undefined) {
 
 // デフォルトのセッション保持期間
 Config.session_expires_in = 2592e6; //= 30日間 (うるう秒は考慮しない)
+
+// スループット保持するバッファのサイズ
+Config.max_throughput_history_size = 100;
+
+// 送信データ長の警告サイズ(現状では送信を行うが警告を出す。送信をやめるかどうかは検討)
+Config.max_send_size = 2000000; // 2M
