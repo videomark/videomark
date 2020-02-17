@@ -33,7 +33,7 @@
     "build": "webpack --config webpack.prod.js",
     "build-dev": "webpack --config webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint-report-console": "eslint src",
+    "lint": "eslint src",
     "lint-report": "eslint --output-file eslint_report.json --format json src"
   }
 }

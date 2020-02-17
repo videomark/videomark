@@ -1,8 +1,7 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
-import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
-import Config from "../Config";
 import sparkline from '@videomark/sparkline';
+import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
 
 export default class Status {
   constructor() {
@@ -11,9 +10,9 @@ export default class Status {
 
   attach(root) {
     this.root = root;
-    this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
-    this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
-    this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, (v, i) => NaN);
+    this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, () => NaN);
+    this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, () => NaN);
+    this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, () => NaN);
   }
 
   detach() {
