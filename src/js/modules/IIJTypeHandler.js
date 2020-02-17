@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
 import { parse } from 'mpd-parser';
 
+import Config from "./Config";
+
 import GeneralTypeHandler from "./GeneralTypeHandler";
 
 const IIJ_MPD_PATH = "http://edge.iijlive.ipcasting.jp/contents/live/ele/tw/index.mpd";
@@ -89,7 +91,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
         IIJTypeHandler.throughputHistories.push(throughput);
-        IIJTypeHandler.throughputHistories.slice(-100);
+        IIJTypeHandler.throughputHistories = IIJTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
 
     // eslint-disable-next-line camelcase
@@ -264,7 +266,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     get_throughput_info() {
         try {
             return IIJTypeHandler.throughputHistories
-                .slice()
+                .splice(0, IIJTypeHandler.throughputHistories.length)
                 .filter(h => h.itag)
                 .reduce((acc, cur) => {
                     let bitrate;

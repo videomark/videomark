@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
 import { parse } from 'mpd-parser';
 
+import Config from "./Config";
+
 export default class ParaviTypeHandler {
     // eslint-disable-next-line camelcase
     static is_paravi_type() {
@@ -155,7 +157,7 @@ export default class ParaviTypeHandler {
     // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
         ParaviTypeHandler.throughputHistories.push(throughput);
-        ParaviTypeHandler.throughputHistories.slice(-100);
+        ParaviTypeHandler.throughputHistories = ParaviTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
 
     // eslint-disable-next-line camelcase
@@ -237,7 +239,7 @@ export default class ParaviTypeHandler {
                 }, []);
 
             return ParaviTypeHandler.throughputHistories
-                .slice()
+                .splice(0, ParaviTypeHandler.throughputHistories.length)
                 .filter(h =>
                     segmentFilter
                         .find(e => h.url.includes(e.prefix))
