@@ -73,19 +73,25 @@ export default class Status {
           font-size: 14px;
           font-weight: bold;
         }
+        #sparkline_container {
+          position: absolute;
+        }
         #bitrate_chart {
+          width: 95%;
           position: absolute;
           stroke: rgb(54, 162, 235);
           stroke-width: 2px;
           fill: rgba(54, 162, 235, .3);
         }
         #thruput_chart {
+          width: 95%;
           position: absolute;
           stroke: rgb(75, 192, 192);
           stroke-width: 2px;
           fill: none;
         }
         #droprate_chart {
+          width: 95%;
           stroke: rgb(255, 99, 132);
           stroke-width: 2px;
           fill: none;
@@ -115,12 +121,12 @@ export default class Status {
                 `
               : "計測中..."}
           </summary>
-          ${open ? quality({ sessionId, videoId }) : ""}
-          <div>
+          <div id="sparkline_container">
             <svg id="bitrate_chart"></svg>
             <svg id="thruput_chart"></svg>
             <svg id="droprate_chart"></svg>
           </div>
+          ${open ? quality({ sessionId, videoId }) : ""}
         </details>
       </div>
     `;
