@@ -53,6 +53,10 @@ test("YouTube動画に埋め込み後、しばらく経つとQoE値が得られ�
   const summaryText = () => page.evaluate(el => el.textContent.trim(), summary);
   expect(await summaryText()).toBe("計測中...");
   await page.click(videomark);
-  await page.waitFor(el => el.textContent.trim() !== "計測中...", {}, summary);
+  await page.waitFor(
+    el => el.textContent.trim() !== "計測中...",
+    { timeout: 60e3 },
+    summary
+  );
   expect(await summaryText()).toMatch(/^\d{1}\.\d{2}\s/);
-}, 180e3);
+}, 90e3);
