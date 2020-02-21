@@ -3,5 +3,7 @@
     "config:base",
     ":preserveSemverRanges",
     ":maintainLockFilesWeekly"
-  ]
+  ],
+  "schedule": "after 5am and before 6am",
+  "timezone": "Asia/Tokyo"
 }
