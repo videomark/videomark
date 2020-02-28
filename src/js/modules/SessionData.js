@@ -434,6 +434,7 @@ export default class SessionData {
       userAgent: this.userAgent,
       sequence: this.sequence,
       calc: video.is_calculatable(),
+      service: video.get_service(),
       video: [video.get()],
       resource_timing: []
     };
