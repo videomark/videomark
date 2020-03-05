@@ -1,2 +1,4 @@
 *~
-qoelog/manifest.json
+*.swp
+qoelog
+sodium.js
