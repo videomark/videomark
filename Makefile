@@ -5,15 +5,15 @@ clean:
 	rm -rf qoelog
 
 sodium.js:
-	cd ../sodium.js && npm run build
+	npm run build --prefix ../sodium.js
 	cp ../sodium.js/dist/sodium.js .
 
 videomark-log-view:
-	cd ../videomark-log-view && npm run build
+	npm run build --prefix ../videomark-log-view
 	cp -r ../videomark-log-view/build qoelog
 
 npm-install:
-	cd ../sodium.js          && npm install --no-save
-	cd ../videomark-log-view && npm install --no-save
+	npm ci --prefix ../sodium.js
+	npm ci --prefix ../videomark-log-view
 
 .PHONY: all clean sodium.js videomark-log-view npm-install
