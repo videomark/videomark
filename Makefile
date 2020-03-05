@@ -6,11 +6,11 @@ clean:
 
 sodium.js:
 	cd ../sodium.js && npm run build
-	cp ../sodium.js/dist/sodium.js $(CURDIR)
+	cp ../sodium.js/dist/sodium.js .
 
 videomark-log-view:
 	cd ../videomark-log-view && npm run build
-	cp -r ../videomark-log-view/build $(CURDIR)/qoelog
+	cp -r ../videomark-log-view/build qoelog
 
 npm-install:
 	cd ../sodium.js          && npm install --no-save
