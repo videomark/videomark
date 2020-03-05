@@ -4,9 +4,13 @@
 
 # ビルド手順
 
-この拡張機能固有のコードはビルドが必要なコードはありませんが、[sodium.js](<https://github.com/videomark/sodium.js>) および [videomark-log-view](<https://github.com/videomark/videomark-log-view>) のビルド済みファイルと一緒にした状態で利用するため、それぞれのビルドが必要です (手順はそれぞれのリポジトリ参照)。
+この拡張機能固有のコードはビルドが必要なコードはありませんが、[sodium.js](<https://github.com/videomark/sodium.js>) および [videomark-log-view](<https://github.com/videomark/videomark-log-view>) のビルド済みファイルと一緒にした状態で利用するため、それぞれのビルドが必要です。
 
-このリポジトリのファイルに加え、ビルド済みの sodium.js を manifest.json と同じディレクトリに、ビルド済みの videomark-log-view は qoelog ディレクトリに含めると Chrome (や互換性のあるブラウザ) にインストールできます
+このリポジトリがあるディレクトリに [sodium.js](<https://github.com/videomark/sodium.js>) と [videomark-log-view](<https://github.com/videomark/videomark-log-view>) を配置し、このリポジトリで以下のコマンドを実行してください。必要なファイルが自動的にビルド、配置されます。
+```
+make npm-install # 初回のみ実行
+make
+```
 
 # インストール手順
 
