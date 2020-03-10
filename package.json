@@ -69,10 +69,7 @@
     "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx src"
   },
   "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
+    "last 1 chrome version"
   ],
   "jest": {
     "collectCoverageFrom": [
