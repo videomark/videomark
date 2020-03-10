@@ -1,6 +1,13 @@
-import React, { Component, useReducer, useEffect, useContext } from "react";
+import React, {
+  Component,
+  useReducer,
+  useEffect,
+  useContext,
+  useState
+} from "react";
 import PropTypes from "prop-types";
 import { Redirect } from "react-router";
+import startOfMonth from "date-fns/startOfMonth";
 import isSameMonth from "date-fns/isSameMonth";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -31,7 +38,6 @@ class History extends Component {
     this.state = {
       removed: [],
       sites: videoPlatforms.map(({ id }) => id),
-      date: new Date(),
       page: 0,
       perPage: 60
     };
@@ -43,12 +49,11 @@ class History extends Component {
 
   render() {
     const { indexes, viewingModels } = this.props;
-    const { removed, sites, date, page, perPage } = this.state;
+    const { removed, sites, page, perPage } = this.state;
 
     const viewingList = indexes
       .filter(({ id }) => !removed.includes(id))
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
-      .filter(({ startTime }) => isSameMonth(date, startTime))
       .reverse()
       .map(viewing => ({
         ...viewing,
@@ -156,14 +161,22 @@ const dispatcher = dispatch =>
     }
   });
 
+const getLastValue = map => Array.from(map)[map.size - 1][1];
+
 export default () => {
   const viewings = useContext(ViewingsContext);
   const [state, addIndexes] = useReducer(reducer, initialState);
+  const [date, setDate] = useState(new Date());
   useEffect(() => {
     if (viewings !== undefined) {
       // FIXME: storage へのアクセスは他のプロセスをブロックするので開始前に一定時間待つ
       waitForContentRendering().then(() =>
         viewingModelsStream(viewings).pipeTo(dispatcher(addIndexes))
+      );
+
+      // NOTE: 測定結果の中から最新の月をデフォルト値にする
+      getLastValue(viewings)().then(({ start_time: latest }) =>
+        setDate(startOfMonth(latest))
       );
     }
   }, [viewings, addIndexes]);
@@ -174,7 +187,7 @@ export default () => {
       <Box py={1}>
         <Grid container justify="space-between" alignItems="flex-end">
           <Grid item>
-            <MonthSelect />
+            <MonthSelect date={date} setDate={setDate} />
           </Grid>
           <Grid item>
             <SiteSelect />
@@ -184,7 +197,12 @@ export default () => {
       {state.loading ? (
         <LoadingProgress />
       ) : (
-        <History indexes={state.indexes} viewingModels={state.viewingModels} />
+        <History
+          indexes={state.indexes.filter(({ startTime }) =>
+            isSameMonth(date, startTime)
+          )}
+          viewingModels={state.viewingModels}
+        />
       )}
     </>
   );

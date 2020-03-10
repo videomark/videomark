@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from "react";
-import {
-  format,
-  startOfMonth,
-  subMonths,
-  addMonths,
-  isThisMonth
-} from "date-fns";
+import React from "react";
+import PropTypes from "prop-types";
+import { format, subMonths, addMonths, isThisMonth } from "date-fns";
 import ja from "date-fns/locale/ja";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
-import AppData from "../../utils/AppData";
-import AppDataActions from "../../utils/AppDataActions";
 
 const useStyles = makeStyles(theme => ({
   date: {
@@ -23,18 +16,14 @@ const useStyles = makeStyles(theme => ({
     display: "inline"
   }
 }));
-const MonthSelect = () => {
+const MonthSelect = ({ date, setDate }) => {
   const classes = useStyles();
-  const [date, setDate] = useState(startOfMonth(new Date()));
   const handleLastMonth = () => {
     setDate(subMonths(date, 1));
   };
   const handleNextMonth = () => {
     setDate(addMonths(date, 1));
   };
-  useEffect(() => {
-    AppData.update(AppDataActions.ViewingList, { date, page: 0 });
-  }, [date]);
   return (
     <Grid container alignItems="center">
       <Grid item>
@@ -60,5 +49,9 @@ const MonthSelect = () => {
       </Grid>
     </Grid>
   );
+};
+MonthSelect.propTypes = {
+  date: PropTypes.instanceOf(Date).isRequired,
+  setDate: PropTypes.func.isRequired
 };
 export default MonthSelect;
