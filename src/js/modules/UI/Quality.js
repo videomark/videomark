@@ -22,6 +22,12 @@ export const latestQuality = ({ sessionId, videoId }) => {
   return value == null ? {} : { date, ...value };
 };
 
+export const latestThroughput = (list) => {
+  if (!list) return NaN;
+  if (!list.length) return NaN;
+  return list[list.length-1].throughput;
+};
+
 export const startTime = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
   if (storage.cache === undefined) return NaN;
@@ -29,7 +35,7 @@ export const startTime = ({ sessionId, videoId }) => {
   return time >= 0 ? time : NaN;
 };
 
-const transferSize = ({ sessionId, videoId }) => {
+export const transferSize = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
   if (storage.cache === undefined) return NaN;
   const size = storage.cache.transfer_size;
@@ -48,6 +54,8 @@ const sizeFormat = (bytes, exponent) => {
 
 const megaSizeFormat = bytes => sizeFormat(bytes, 2);
 
+const kiloSizeFormat = bytes => sizeFormat(bytes, 1);
+
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
@@ -55,6 +63,7 @@ export const quality = ({ sessionId, videoId }) => {
   const {
     date,
     bitrate,
+    throughput,
     resolution,
     framerate,
     speed,
@@ -70,12 +79,16 @@ export const quality = ({ sessionId, videoId }) => {
   const { waiting, pause } = timing || {};
   const playing = date - startTime({ sessionId, videoId }) - pause;
   const qoe = latestQoE({ sessionId, videoId });
+  const realThroughput = latestThroughput(throughput);
   const alert =
     Number.isFinite(qoe) &&
     isLowQuality({ droppedVideoFrames, totalVideoFrames });
   const classes = {
     bitrate: {
       na: !(bitrate >= 0)
+    },
+    throughput: {
+      na: !(realThroughput >= 0)
     },
     transfer: {
       na: !(transfer >= 0)
@@ -107,7 +120,7 @@ export const quality = ({ sessionId, videoId }) => {
       }
       dl {
         display: grid;
-        grid-template-columns: 1fr minmax(120px, 1fr);
+        grid-template-columns: 1fr 1fr minmax(120px, 1fr);
         font-size: 12px;
         column-gap: 12px;
       }
@@ -125,15 +138,45 @@ export const quality = ({ sessionId, videoId }) => {
       dt {
         font-weight: bold;
       }
+      svg.chart {
+        width: 120px;
+        height: 1.25em;
+        stroke-width: 2px;
+      }
+      #bitrate_chart, #transfer_chart, #framerate_chart {
+        stroke: rgb(54, 162, 235);
+        fill: rgba(54, 162, 235, .3);
+      }
+      #thruput_chart, #resolution_chart, #waiting_chart {
+        stroke: rgb(75, 192, 192);
+        fill: rgba(75, 192, 192, .3);
+      }
+      #droprate_chart, #resolution_chart, #qoe_chart {
+        stroke: rgb(255, 99, 132);
+        fill: rgba(255, 99, 132, .3);
+      }
     </style>
     <dl class=${classMap({ alert })}>
       <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
       <dd class=${classMap(classes.bitrate)}>
-        ${bitrate >= 0 ? `${(bitrate / 1e3).toLocaleString()} kbps` : "n/a"}
+        ${bitrate >= 0 ? `${kiloSizeFormat(bitrate)} kbps` : "n/a"}
+      </dd>
+      <dd class=${classMap(classes.bitrate)}>
+        <svg class="chart" id="bitrate_chart"></svg>
+      </dd>
+      <dt class=${classMap(classes.throughput)}>スループット</dt>
+      <dd class=${classMap(classes.throughput)}>
+        ${realThroughput >= 0 ? `${kiloSizeFormat(realThroughput)} kbps` : "n/a"}
+      </dd>
+      <dd class=${classMap(classes.throughput)}>
+        <svg class="chart" id="thruput_chart"></svg>
       </dd>
       <dt class=${classMap(classes.transfer)}>通信量</dt>
       <dd class=${classMap(classes.transfer)}>
         ${transfer >= 0 ? `${megaSizeFormat(transfer)} MB` : "n/a"}
+      </dd>
+      <dd class=${classMap(classes.transfer)}>
+        <svg class="chart" id="transfer_chart"></svg>
       </dd>
       <dt class=${classMap(classes.resolution)}>解像度</dt>
       <dd class=${classMap(classes.resolution)}>
@@ -141,25 +184,40 @@ export const quality = ({ sessionId, videoId }) => {
           ? `${videoWidth} × ${videoHeight}`
           : "n/a"}
       </dd>
+      <dd class=${classMap(classes.resolution)}>
+        <svg class="chart" id="resolution_chart"></svg>
+      </dd>
       <dt class=${classMap(classes.framerate)}>フレームレート</dt>
       <dd class=${classMap(classes.framerate)}>
         ${framerate >= 0
           ? `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`
           : "n/a"}
       </dd>
+      <dd class=${classMap(classes.framerate)}>
+        <svg class="chart" id="framerate_chart"></svg>
+      </dd>
       <dt class=${classMap(classes.dropped)}>フレームドロップ率</dt>
       <dd class=${classMap(classes.dropped)}>
-        ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % (
-        ${droppedVideoFrames} / ${totalVideoFrames} )
+        ${droppedVideoFrames} / ${totalVideoFrames} (
+        ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % )
+      </dd>
+      <dd class=${classMap(classes.dropped)}>
+        <svg class="chart" id="droprate_chart"></svg>
       </dd>
       <dt class=${classMap(classes.waiting)}>待機時間</dt>
       <dd class=${classMap(classes.waiting)}>
-        ${(waiting / 1e3).toFixed(2)} s (
+        ${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s (
         ${((waiting / playing) * 100).toFixed(2)} % )
+      </dd>
+      <dd class=${classMap(classes.waiting)}>
+        <svg class="chart" id="waiting_chart"></svg>
       </dd>
       <dt class=${classMap(classes.qoe)}>体感品質 (QoE)</dt>
       <dd class=${classMap(classes.qoe)}>
         ${Number.isFinite(qoe) ? qoe.toFixed(2) : "n/a"}
+      </dd>
+      <dd class=${classMap(classes.qoe)}>
+        <svg class="chart" id="qoe_chart"></svg>
       </dd>
     </dl>
   `;

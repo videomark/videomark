@@ -1,18 +1,22 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import sparkline from '@videomark/sparkline';
-import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
+import { quality, latestQoE, latestQuality, isLowQuality, latestThroughput, transferSize } from "./Quality";
+
+const HISTORY_SIZE = 120;
+
+const blankHistory = () => {
+  return Array.from({length:HISTORY_SIZE}, () => NaN);
+};
 
 export default class Status {
   constructor() {
     this.detach();
+    this.historyHolder = {};
   }
 
   attach(root) {
     this.root = root;
-    this.bitrate_history  = Array.from({length:Status.HISTORY_NUMBER}, () => NaN);
-    this.thruput_history  = Array.from({length:Status.HISTORY_NUMBER}, () => NaN);
-    this.droprate_history = Array.from({length:Status.HISTORY_NUMBER}, () => NaN);
   }
 
   detach() {
@@ -46,13 +50,6 @@ export default class Status {
       }
     };
 
-    this.bitrate_history.push(Number(latest.bitrate));
-    if (this.bitrate_history.length > Status.HISTORY_NUMBER) this.bitrate_history.shift();
-    this.thruput_history.push(Number((latest.throughput && latest.throughput.length ? latest.throughput[latest.throughput.length - 1] : {}).throughput));
-    if (this.thruput_history.length > Status.HISTORY_NUMBER) this.thruput_history.shift();
-    this.droprate_history.push(Number(latest.droppedVideoFrames / latest.totalVideoFrames));
-    if (this.droprate_history.length > Status.HISTORY_NUMBER) this.droprate_history.shift();
-
     return html`
       <style>
         .root {
@@ -72,29 +69,6 @@ export default class Status {
           color: lightgray;
           font-size: 14px;
           font-weight: bold;
-        }
-        #sparkline_container {
-          position: absolute;
-        }
-        #bitrate_chart {
-          width: 95%;
-          position: absolute;
-          stroke: rgb(54, 162, 235);
-          stroke-width: 2px;
-          fill: rgba(54, 162, 235, .3);
-        }
-        #thruput_chart {
-          width: 95%;
-          position: absolute;
-          stroke: rgb(75, 192, 192);
-          stroke-width: 2px;
-          fill: none;
-        }
-        #droprate_chart {
-          width: 95%;
-          stroke: rgb(255, 99, 132);
-          stroke-width: 2px;
-          fill: none;
         }
       </style>
       <div
@@ -121,11 +95,6 @@ export default class Status {
                 `
               : "計測中..."}
           </summary>
-          <div id="sparkline_container">
-            <svg id="bitrate_chart"></svg>
-            <svg id="thruput_chart"></svg>
-            <svg id="droprate_chart"></svg>
-          </div>
           ${open ? quality({ sessionId, videoId }) : ""}
         </details>
       </div>
@@ -136,14 +105,74 @@ export default class Status {
     if (this.root == null) return;
     Object.assign(this.state, state);
     render(this.template, this.root);
+
+    this.historyUpdate();
     if (this.state.open) this.drawChart();
   }
 
+  historyUpdate() {
+    const { sessionId, videoId } = this.state;
+    const {
+      date,
+      bitrate,
+      throughput,
+      resolution,
+      framerate,
+      speed,
+      droppedVideoFrames,
+      totalVideoFrames,
+      timing
+    } = latestQuality({
+      sessionId,
+      videoId
+    });
+    const transfer = transferSize({ sessionId, videoId });
+    const { width: videoWidth, height: videoHeight } = resolution || {};
+    const { waiting, pause } = timing || {};
+    const qoe = latestQoE({ sessionId, videoId });
+    const realThroughput = latestThroughput(throughput);
+
+    if (this.historyHolder.videoId !== videoId) {
+      this.historyHolder.videoId = videoId;
+      this.historyHolder.bitrate = blankHistory();
+      this.historyHolder.throughput = blankHistory();
+      this.historyHolder.transfer = blankHistory();
+      this.historyHolder.resolution = blankHistory();
+      this.historyHolder.framerate = blankHistory();
+      this.historyHolder.droppedVideoFrames = blankHistory();
+      this.historyHolder.waiting = blankHistory();
+      this.historyHolder.qoe = blankHistory();
+    }
+    if (this.historyHolder.date !== date) {
+      this.historyHolder.date = date
+      this.historyHolder.bitrate.push(bitrate);
+      this.historyHolder.bitrate.shift();
+      this.historyHolder.throughput.push(realThroughput);
+      this.historyHolder.throughput.shift();
+      this.historyHolder.transfer.push(transfer);
+      this.historyHolder.transfer.shift();
+      this.historyHolder.resolution.push(videoHeight);
+      this.historyHolder.resolution.shift();
+      this.historyHolder.framerate.push(framerate >= 0 ? framerate : NaN);
+      this.historyHolder.framerate.shift();
+      this.historyHolder.droppedVideoFrames.push(droppedVideoFrames);
+      this.historyHolder.droppedVideoFrames.shift();
+      this.historyHolder.waiting.push(waiting);
+      this.historyHolder.waiting.shift();
+      this.historyHolder.qoe.push(qoe);
+      this.historyHolder.qoe.shift();
+    }
+  }
+
   drawChart() {
-    sparkline(this.root.getElementById('bitrate_chart'), this.bitrate_history, {max:this.state.maxBitrate, min:0});
-    sparkline(this.root.getElementById('thruput_chart'), this.thruput_history, {max:this.state.maxBitrate, min:0});
-    sparkline(this.root.getElementById('droprate_chart'), this.droprate_history, {max:100, min:0});
+    const { bitrate, throughput, transfer, resolution, framerate, droppedVideoFrames, waiting, qoe } = this.historyHolder;
+    sparkline(this.root.getElementById('bitrate_chart'), bitrate);
+    sparkline(this.root.getElementById('thruput_chart'), throughput);
+    sparkline(this.root.getElementById('transfer_chart'), transfer);
+    sparkline(this.root.getElementById('resolution_chart'), resolution);
+    sparkline(this.root.getElementById('framerate_chart'), framerate);
+    sparkline(this.root.getElementById('droprate_chart'), droppedVideoFrames);
+    sparkline(this.root.getElementById('waiting_chart'), waiting);
+    sparkline(this.root.getElementById('qoe_chart'), qoe, {min:1.0, max:5.0});
   }
 }
-
-Status.HISTORY_NUMBER = 30;
