@@ -147,11 +147,11 @@ export const quality = ({ sessionId, videoId }) => {
         stroke: rgb(255, 75, 0);
         fill: rgba(255, 75, 0, .3);
       }
-      #resolution_chart, #framerate_chart {
+      #bitrate_chart, #thruput_chart, #qoe_chart {
         stroke: rgb(3, 175, 122);
         fill: rgba(3, 175, 122, .3);
       }
-      #bitrate_chart, #thruput_chart, #qoe_chart {
+      #resolution_chart, #framerate_chart {
         stroke: rgb(0, 90, 255);
         fill: rgba(0, 90, 255, .3);
       }
