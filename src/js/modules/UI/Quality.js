@@ -143,17 +143,17 @@ export const quality = ({ sessionId, videoId }) => {
         height: 1.25em;
         stroke-width: 2px;
       }
-      #bitrate_chart, #transfer_chart, #framerate_chart {
-        stroke: rgb(54, 162, 235);
-        fill: rgba(54, 162, 235, .3);
+      #droprate_chart, #waiting_chart, #transfer_chart {
+        stroke: rgb(255, 75, 0);
+        fill: rgba(255, 75, 0, .3);
       }
-      #thruput_chart, #resolution_chart, #waiting_chart {
-        stroke: rgb(75, 192, 192);
-        fill: rgba(75, 192, 192, .3);
+      #resolution_chart, #framerate_chart {
+        stroke: rgb(3, 175, 122);
+        fill: rgba(3, 175, 122, .3);
       }
-      #droprate_chart, #resolution_chart, #qoe_chart {
-        stroke: rgb(255, 99, 132);
-        fill: rgba(255, 99, 132, .3);
+      #bitrate_chart, #thruput_chart, #qoe_chart {
+        stroke: rgb(0, 90, 255);
+        fill: rgba(0, 90, 255, .3);
       }
     </style>
     <dl class=${classMap({ alert })}>
