@@ -145,7 +145,7 @@ export default class Status {
     }
     if (this.historyHolder.date !== date) {
       this.historyHolder.date = date
-      this.historyHolder.bitrate.push(bitrate);
+      this.historyHolder.bitrate.push(bitrate >= 0 ? bitrate : NaN);
       this.historyHolder.bitrate.shift();
       this.historyHolder.throughput.push(realThroughput);
       this.historyHolder.throughput.shift();
