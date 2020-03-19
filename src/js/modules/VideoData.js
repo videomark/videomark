@@ -77,6 +77,24 @@ export default class VideoData {
 
     // eslint-disable-next-line no-underscore-dangle
     this.video_handler.add_cm_listener(args => this._cm_listener(args));
+
+    this.enable_quality_control = false;
+    this.max_resolution = 2160;
+    this.max_bitrate = 20 * 1024 * 1024; // 20Mbps
+  }
+
+  async read_settings() {
+    const resolution_control = await Config.get_resolution_control();
+    if (resolution_control) this.max_resolution = resolution_control;
+    this.enable_quality_control = this.enable_quality_control || Boolean(resolution_control);
+
+    const bitrate_control = await Config.get_bitrate_control();
+    if (bitrate_control) this.max_bitrate = Math.min(this.max_bitrate, bitrate_control);
+    this.enable_quality_control = this.enable_quality_control || Boolean(bitrate_control);
+
+    const quota_bitrate = await Config.get_quota_bitrate();
+    if (quota_bitrate) this.max_bitrate = Math.min(this.max_bitrate, quota_bitrate);
+    this.enable_quality_control = this.enable_quality_control || Boolean(quota_bitrate);
   }
 
   // eslint-disable-next-line camelcase
@@ -138,6 +156,7 @@ export default class VideoData {
     const videoBitrate = this.video_handler.get_video_bitrate();
     const receiveBuffer = this.video_handler.get_receive_buffer();
     const framerate = this.video_handler.get_framerate();
+    const throughput = this.video_handler.get_throughput_info()
     const speed = this.video_elm.playbackRate;
     const representation = this.video_handler.get_representation();
 
@@ -154,6 +173,7 @@ export default class VideoData {
       videoBitrate,
       receiveBuffer,
       framerate,
+      throughput,
       speed
     };
   }

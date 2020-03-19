@@ -1,10 +1,18 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
-import { quality, latestQoE, latestQuality, isLowQuality } from "./Quality";
+import sparkline from '@videomark/sparkline';
+import { quality, latestQoE, latestQuality, isLowQuality, latestThroughput, transferSize } from "./Quality";
+
+const HISTORY_SIZE = 120;
+
+const blankHistory = () => {
+  return Array.from({length:HISTORY_SIZE}, () => NaN);
+};
 
 export default class Status {
   constructor() {
     this.detach();
+    this.historyHolder = {};
   }
 
   attach(root) {
@@ -23,7 +31,8 @@ export default class Status {
     const { style } = this.root.host;
     if (open) style.setProperty("opacity", 1);
     else style.removeProperty("opacity");
-    const alert = isLowQuality(latestQuality({ sessionId, videoId }));
+    const latest = latestQuality({ sessionId, videoId });
+    const alert = isLowQuality(latest);
     const qoe = latestQoE({ sessionId, videoId });
     const qoeStyles = {
       value: {
@@ -96,5 +105,72 @@ export default class Status {
     if (this.root == null) return;
     Object.assign(this.state, state);
     render(this.template, this.root);
+
+    this.historyUpdate();
+    if (this.state.open) this.drawChart();
+  }
+
+  historyUpdate() {
+    const { sessionId, videoId } = this.state;
+    const {
+      date,
+      bitrate,
+      throughput,
+      resolution,
+      framerate,
+      droppedVideoFrames,
+      timing
+    } = latestQuality({
+      sessionId,
+      videoId
+    });
+    const transfer = transferSize({ sessionId, videoId });
+    const { height: videoHeight } = resolution || {};
+    const { waiting } = timing || {};
+    const qoe = latestQoE({ sessionId, videoId });
+    const realThroughput = latestThroughput(throughput);
+
+    if (this.historyHolder.videoId !== videoId) {
+      this.historyHolder.videoId = videoId;
+      this.historyHolder.bitrate = blankHistory();
+      this.historyHolder.throughput = blankHistory();
+      this.historyHolder.transfer = blankHistory();
+      this.historyHolder.resolution = blankHistory();
+      this.historyHolder.framerate = blankHistory();
+      this.historyHolder.droppedVideoFrames = blankHistory();
+      this.historyHolder.waiting = blankHistory();
+      this.historyHolder.qoe = blankHistory();
+    }
+    if (this.historyHolder.date !== date) {
+      this.historyHolder.date = date
+      this.historyHolder.bitrate.push(bitrate >= 0 ? bitrate : NaN);
+      this.historyHolder.bitrate.shift();
+      this.historyHolder.throughput.push(realThroughput);
+      this.historyHolder.throughput.shift();
+      this.historyHolder.transfer.push(transfer);
+      this.historyHolder.transfer.shift();
+      this.historyHolder.resolution.push(videoHeight);
+      this.historyHolder.resolution.shift();
+      this.historyHolder.framerate.push(framerate >= 0 ? framerate : NaN);
+      this.historyHolder.framerate.shift();
+      this.historyHolder.droppedVideoFrames.push(droppedVideoFrames);
+      this.historyHolder.droppedVideoFrames.shift();
+      this.historyHolder.waiting.push(waiting);
+      this.historyHolder.waiting.shift();
+      this.historyHolder.qoe.push(qoe);
+      this.historyHolder.qoe.shift();
+    }
+  }
+
+  drawChart() {
+    const { bitrate, throughput, transfer, resolution, framerate, droppedVideoFrames, waiting, qoe } = this.historyHolder;
+    sparkline(this.root.getElementById('bitrate_chart'), bitrate);
+    sparkline(this.root.getElementById('thruput_chart'), throughput);
+    sparkline(this.root.getElementById('transfer_chart'), transfer);
+    sparkline(this.root.getElementById('resolution_chart'), resolution);
+    sparkline(this.root.getElementById('framerate_chart'), framerate);
+    sparkline(this.root.getElementById('droprate_chart'), droppedVideoFrames);
+    sparkline(this.root.getElementById('waiting_chart'), waiting);
+    sparkline(this.root.getElementById('qoe_chart'), qoe, {min:1.0, max:5.0});
   }
 }

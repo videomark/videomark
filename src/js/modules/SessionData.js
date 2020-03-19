@@ -124,7 +124,8 @@ export default class SessionData {
         try {
           // eslint-disable-next-line camelcase
           const new_video = new VideoData(elm, video_id);
-          /* eslint-disable no-console, camelcase */
+          new_video.read_settings();
+          /* eslint-disable no-console */
           console.log(`VIDEOMARK: new video found uuid[${video_id}]`);
           set_max_bitrate(new_video);
           this.video.push(new_video);
