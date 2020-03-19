@@ -118,17 +118,15 @@ export default class Status {
       throughput,
       resolution,
       framerate,
-      speed,
       droppedVideoFrames,
-      totalVideoFrames,
       timing
     } = latestQuality({
       sessionId,
       videoId
     });
     const transfer = transferSize({ sessionId, videoId });
-    const { width: videoWidth, height: videoHeight } = resolution || {};
-    const { waiting, pause } = timing || {};
+    const { height: videoHeight } = resolution || {};
+    const { waiting } = timing || {};
     const qoe = latestQoE({ sessionId, videoId });
     const realThroughput = latestThroughput(throughput);
 
