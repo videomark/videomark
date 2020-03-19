@@ -191,6 +191,11 @@ export default class VideoData {
   }
 
   // eslint-disable-next-line camelcase
+  get_service() {
+    return this.video_handler.get_service();
+  }
+
+  // eslint-disable-next-line camelcase
   set_quality(bitrate) {
     // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
