@@ -157,7 +157,8 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     control_by_traffic_volume: controlByTrafficVolume,
     control_by_browser_quota: controlByBrowserQuota,
     browser_quota: browserQuota,
-    browser_quota_bitrate: browserQuotaBitrate
+    browser_quota_bitrate: browserQuotaBitrate,
+    peak_time_limit_enabled: peakTimeLimitEnabled
   } = settings || {};
 
   const resolutionIndex = resolutionControl
@@ -247,6 +248,16 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     [settings, saveSettings]
   );
 
+  const onPeakTimeLimitSwitchChange = useCallback(
+    event => {
+      saveSettings({
+        ...settings,
+        peak_time_limit_enabled: event.target.checked
+      });
+    },
+    [settings, saveSettings]
+  );
+
   let resolutionSwitch;
   let bitrateSwitch;
   let resolutionSlider;
@@ -254,6 +265,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
   let browserQuotaSwitch;
   let browserQuotaSlider;
   let browserQuotaBitrateSlider;
+  let peakTimeLimitSwitch;
   if (settings !== undefined) {
     resolutionSwitch = (
       <Switch
@@ -327,6 +339,14 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         color="secondary"
       />
     );
+
+    peakTimeLimitSwitch = (
+      <Switch
+        checked={Boolean(peakTimeLimitEnabled)}
+        onChange={onPeakTimeLimitSwitchChange}
+        value="peak_time_limit_enabled"
+      />
+    );
   }
 
   return (
@@ -374,6 +394,10 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
               </ListItem>
             </>
           )}
+          <ListItem>
+            <ListItemText primary="ネットワークの混雑する時間帯には自動的にビットレートを制限する" />
+            {peakTimeLimitSwitch}
+          </ListItem>
         </List>
       </Paper>
     </Box>
