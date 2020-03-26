@@ -7,18 +7,24 @@ import Config from "./Config";
 import ResourceTiming from "./ResourceTiming";
 import VideoData from "./VideoData";
 import { useStorage } from "./Storage";
-import { saveTransferSize } from "./StatStorage";
+import { saveTransferSize, loadPeakTimeLimit } from "./StatStorage";
 import { version } from "../../../package.json";
 
-function set_max_bitrate(new_video) {
+async function set_max_bitrate(new_video) {
   const bitrate_control = Config.get_bitrate_control();
   const quota_bitrate = Config.get_quota_bitrate();
   let bitrate;
   if (bitrate_control && quota_bitrate) bitrate = Math.min(bitrate_control, quota_bitrate);
   else bitrate = bitrate_control || quota_bitrate;
-  const resolution = Config.get_resolution_control();
+  let resolution = Config.get_resolution_control();
 
-  if (bitrate_control || quota_bitrate || resolution) new_video.set_max_bitrate(bitrate, resolution);
+  const peak_time_limit = await loadPeakTimeLimit();
+  if (peak_time_limit) {
+    bitrate    = Math.min(bitrate,    peak_time_limit.bitrate);
+    resolution = Math.min(resolution, peak_time_limit.resolution);
+  }
+
+  if (bitrate_control || quota_bitrate || resolution || peak_time_limit) new_video.set_max_bitrate(bitrate, resolution);
 }
 
 class MainVideoChangeException extends Error {
