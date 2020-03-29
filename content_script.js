@@ -41,6 +41,15 @@ const save_transfer_size = async transfer_diff => {
   storage.set({ transfer_size });
 };
 
+// from sodium.js/src/js/modules/StatStorage.js
+const save_quota_limit_started = async limit_started => {
+  let { transfer_size } = await storage.get("transfer_size");
+  if (!transfer_size) transfer_size = {};
+
+  transfer_size.limit_started = limit_started;
+  storage.set({ transfer_size });
+};
+
 const save_peak_time_limit = async peak_time_limit => {
   if (!peak_time_limit) return;
   storage.set({ peak_time_limit });
@@ -131,6 +140,11 @@ const message_listener = async event => {
     case "save_transfer_size": {
       const { transfer_diff } = event.data;
       await save_transfer_size(transfer_diff);
+      break;
+    }
+    case "save_quota_limit_started": {
+      const { limit_started } = event.data;
+      await save_quota_limit_started(limit_started);
       break;
     }
     case "save_peak_time_limit": {
