@@ -720,6 +720,11 @@ class YouTubeTypeHandler {
         }
     }
 
+    // eslint-disable-next-line camelcase, class-methods-use-this
+    set_default_bitrate() {
+        this.player.setPlaybackQualityRange("default", "default");
+    }
+
     // eslint-disable-next-line camelcase
     add_cm_listener(listener) {
         this.cm_listeners.push(listener);
