@@ -13,7 +13,9 @@ export async function saveTransferSize(transfer_diff) {
   }
 
   const storage = window.sodium.storage.local;
-  let { transfer_size } = await storage.get("transfer_size");
+  let { transfer_size } = await new Promise(resolve =>
+    storage.get("transfer_size", resolve)
+  );
   if (!transfer_size) transfer_size = {};
 
   const now = new Date();
@@ -38,7 +40,9 @@ export async function saveQuotaLimitStarted(limit_started) {
   }
 
   const storage = window.sodium.storage.local;
-  let { transfer_size } = await storage.get("transfer_size");
+  let { transfer_size } = await new Promise(resolve =>
+    storage.get("transfer_size", resolve)
+  );
   if (!transfer_size) transfer_size = {};
 
   transfer_size.limit_started = limit_started;
@@ -64,7 +68,7 @@ export async function savePeakTimeLimit(new_peak_time_limit) {
   storage.set({ peak_time_limit });
 };
 
-export async function loadPeakTimeLimit() {
+export async function fetchAndStorePeakTimeLimit() {
   if (!Config.get_settings().peak_time_limit_enabled) return undefined;
 
   const now = new Date();

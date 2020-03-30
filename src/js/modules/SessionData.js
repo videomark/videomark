@@ -7,7 +7,7 @@ import Config from "./Config";
 import ResourceTiming from "./ResourceTiming";
 import VideoData from "./VideoData";
 import { useStorage } from "./Storage";
-import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, loadPeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
+import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, fetchAndStorePeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
 import { version } from "../../../package.json";
 
 async function set_max_bitrate(new_video) {
@@ -20,7 +20,7 @@ async function set_max_bitrate(new_video) {
   else bitrate = bitrate_control || quota_bitrate;
   let resolution = Config.get_resolution_control();
 
-  const peak_time_limit = await loadPeakTimeLimit();
+  const peak_time_limit = await fetchAndStorePeakTimeLimit();
   if (peak_time_limit) {
     bitrate    = Math.min(bitrate,    peak_time_limit.bitrate);
     resolution = Math.min(resolution, peak_time_limit.resolution);
