@@ -41,6 +41,20 @@ const save_transfer_size = async transfer_diff => {
   storage.set({ transfer_size });
 };
 
+// from sodium.js/src/js/modules/StatStorage.js
+const save_quota_limit_started = async limit_started => {
+  let { transfer_size } = await storage.get("transfer_size");
+  if (!transfer_size) transfer_size = {};
+
+  transfer_size.limit_started = limit_started;
+  storage.set({ transfer_size });
+};
+
+const save_peak_time_limit = async peak_time_limit => {
+  if (!peak_time_limit) return;
+  storage.set({ peak_time_limit });
+};
+
 const inject_script = async opt => {
   // --- inject script, to opt.target --- ///
   const target = document.getElementsByTagName(opt.target)[0];
@@ -49,12 +63,13 @@ const inject_script = async opt => {
   script.setAttribute("type", "text/javascript");
   script.setAttribute("src", opt.script);
 
-  const { session, settings, transfer_size } = await storage.get(["session", "settings", "transfer_size"]);
+  const { session, settings, transfer_size, peak_time_limit } = await storage.get(["session", "settings", "transfer_size", "peak_time_limit"]);
   if (session !== undefined) {
     script.dataset.session = new URLSearchParams({ ...session }).toString();
   }
   script.dataset.settings      = JSON.stringify(settings      || {});
   script.dataset.transfer_size = JSON.stringify(transfer_size || {});
+  script.dataset.peak_time_limit = JSON.stringify(peak_time_limit || {});
 
   return target.appendChild(script);
 };
@@ -125,6 +140,16 @@ const message_listener = async event => {
     case "save_transfer_size": {
       const { transfer_diff } = event.data;
       await save_transfer_size(transfer_diff);
+      break;
+    }
+    case "save_quota_limit_started": {
+      const { limit_started } = event.data;
+      await save_quota_limit_started(limit_started);
+      break;
+    }
+    case "save_peak_time_limit": {
+      const { peak_time_limit } = event.data;
+      await save_peak_time_limit(peak_time_limit);
       break;
     }
     case "get_ip": {
