@@ -471,7 +471,7 @@ Config.ui.iijtwilightconcert = {
 }`
 };
 
-// デフォルトResourceTimingAPIのバッファサイズ
+// デフォルトResourceTiminingAPIのバッファサイズ
 Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 
 // 状態監視インターバル(ミリ秒)
