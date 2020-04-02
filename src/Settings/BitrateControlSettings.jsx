@@ -394,6 +394,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
               </ListItem>
             </>
           )}
+          <Divider component="li" />
           <ListItem>
             <ListItemText primary="ネットワークの混雑する時間帯には自動的にビットレートを制限する" />
             {peakTimeLimitSwitch}
