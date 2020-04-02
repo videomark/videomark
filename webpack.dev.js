@@ -19,7 +19,9 @@ module.exports = merge(common, {
       // https://soar2.dhcp.acutus.co.jp:9889/api
       SODIUM_SERVER_URL: JSON.stringify(
         "https://dev-sodium.webdino.org:8443/api"
-      )
+      ),
+
+      PEAK_TIME_LIMIT_URL: JSON.stringify("https://vm.webdino.org/peak-time-limit.json")
     })
   ],
 

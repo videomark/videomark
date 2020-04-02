@@ -93,6 +93,14 @@ export default class Config {
     return this.transfer_size || {};
   }
 
+  static get_peak_time_limit() {
+    return this.peak_time_limit || {};
+  }
+
+  static get_peak_time_limit_url() {
+    return this.peak_time_limit_url;
+  }
+
   static is_quality_control() {
     return this.quality_control;
   }
@@ -176,6 +184,9 @@ Config.fluent_url = FLUENT_URL;
 
 // Sodium Server のエンドポイント
 Config.sodium_server_url = SODIUM_SERVER_URL;
+
+// ネットワークの混雑する時間帯には自動的にビットレートを制限する設定ファイル
+Config.peak_time_limit_url = PEAK_TIME_LIMIT_URL;
 
 // 暫定QoE値保持数
 Config.num_of_latest_qoe = 20;
@@ -505,6 +516,9 @@ if (window.sodium === undefined && document.currentScript != null) {
   Config.transfer_size = JSON.parse(
     document.currentScript.dataset.transfer_size
   );
+  Config.peak_time_limit = JSON.parse(
+    document.currentScript.dataset.peak_time_limit
+  );
 }
 if (window.sodium !== undefined) {
   window.sodium.storage.local.get("session", ({ session }) => {
@@ -515,6 +529,9 @@ if (window.sodium !== undefined) {
   });
   window.sodium.storage.local.get("transfer_size", ({ transfer_size }) => {
     Config.transfer_size = transfer_size || {};
+  });
+  window.sodium.storage.local.get("peak_time_limit", ({ peak_time_limit }) => {
+    Config.peak_time_limit = peak_time_limit || {};
   });
 }
 

@@ -12,3 +12,4 @@ globals:
   videojs: true
   FLUENT_URL: false
   SODIUM_SERVER_URL: false
+  PEAK_TIME_LIMIT_URL: false

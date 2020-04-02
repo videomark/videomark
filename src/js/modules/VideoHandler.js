@@ -312,6 +312,12 @@ export default class VideoHandler {
             this.handler.set_max_bitrate(bitrate, resolution);
     }
 
+    // eslint-disable-next-line camelcase
+    set_default_bitrate() {
+        if (this.handler.set_default_bitrate instanceof Function)
+            this.handler.set_default_bitrate();
+    }
+
 
     // eslint-disable-next-line camelcase
     add_cm_listener(listener) {
