@@ -34,6 +34,18 @@ async function set_max_bitrate(new_video) {
   }
 }
 
+class MainVideoChangeException extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, MainVideoChangeException);
+    }
+
+    this.name = "MainVideoChangeException";
+  }
+}
+
 export default class SessionData {
   constructor() {
     this.version = version;
@@ -88,7 +100,7 @@ export default class SessionData {
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
 
     this.locationIp();
-    this.alt_session_message();
+    this.altSessionMessage();
   }
 
   // eslint-disable-next-line camelcase
@@ -159,184 +171,218 @@ export default class SessionData {
   }
 
   async start() {
-    for (;;) {
-      // --- main video --- //
-      const main_video = this.get_main_video();
-      if (!main_video) {
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve =>
-          setTimeout(() => resolve(), Config.get_check_state_interval())
-        );
-        // eslint-disable-next-line no-continue
-        continue;
-      }
 
-      console.log(
-        `VIDEOMARK: STATE CHANGE found main video ${main_video.get_video_id()}`
-      );
+    let mainVideo;
+    let startTime;
 
-      // --- play start --- //
-      let start_time = -1;
-      for (; start_time === -1 && main_video === this.get_main_video(); ) {
-        // eslint-disable-next-line no-await-in-loop
-        await SessionData.event_wait(
-          main_video.video_elm,
-          "play",
-          Config.get_check_state_interval()
-        );
-        start_time = main_video.get_start_time();
-      }
+    for (; ;) {
 
-      // eslint-disable-next-line no-continue
-      if (main_video !== this.get_main_video()) continue;
+      // eslint-disable-next-line no-await-in-loop
+      mainVideo = await this.waitMainVideo();
 
-      console.log(`VIDEOMARK: STATE CHANGE play ${new Date(start_time)}`);
+      console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
 
       try {
-        // eslint-disable-next-line no-await-in-loop, no-underscore-dangle
-        await this._play_started(main_video);
-      } catch (err) {
-        console.log(`VIDEOMARK: ${err}`);
+
+        // eslint-disable-next-line no-await-in-loop
+        startTime = await this.waitPlay(mainVideo);
+
+        console.log(`VIDEOMARK: STATE CHANGE play ${new Date(startTime)}`);
+
+        // eslint-disable-next-line no-await-in-loop
+        await this.playing(mainVideo);
+
+      } catch (e) {
+        if (e instanceof MainVideoChangeException)
+          console.log(`VIDEOMARK: STATE CHANGE main video changed ${mainVideo.get_video_id()}`);
+        else
+          console.log(`VIDEOMARK: ${e}`);
       }
     }
   }
 
-  // eslint-disable-next-line camelcase
-  async _play_started(main_video) {
-    const qoe_request_start =
-      Config.get_trans_interval() * Config.get_send_data_count_for_qoe() -
-      Config.get_prev_count_for_qoe();
-    const qoe_request_timeout =
-      qoe_request_start + Config.get_max_count_for_qoe();
+  async waitMainVideo() {
 
-    let i = 0;
-    let qoe = null;
+    return new Promise(resolve => {
 
-    // --- latest qoe --- //
-    for (; !qoe && i < qoe_request_timeout; i += 1) {
-      let data = false;
-      let request = false;
+      const timer = setInterval(() => {
+        const mainVideo = this.get_main_video();
+        if (!mainVideo) return;
+        clearInterval(timer);
+        resolve(mainVideo)
+      }, Config.get_check_state_interval());
+    });
+  }
 
-      if (main_video.is_available()) {
-        data = i % Config.get_trans_interval() === 0;
-        request = i > qoe_request_start;
+  async waitPlay(mainVideo) {
+
+    return new Promise((resolve, reject) => {
+
+      const timer = setInterval(() => {
+        const startTime = mainVideo.get_start_time();
+        if (mainVideo !== this.get_main_video()) reject(new MainVideoChangeException());
+        if (startTime === -1) return;
+        clearInterval(timer);
+        resolve(startTime);
+      }, Config.get_check_state_interval());
+    });
+  }
+
+  async playing(mainVideo) {
+
+    const qoeRequestStart =
+      (Config.get_trans_interval() * Config.get_send_data_count_for_qoe() -
+        Config.get_prev_count_for_qoe()) * Config.get_check_state_interval();
+
+    let dataTimeoutId;
+    let requestTimeoutId;
+
+    try {
+
+      /* データ送信 */
+      dataTimeoutId = this.startDataTransaction(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
+
+      if (mainVideo.is_calculatable()) {
+
+        /* QoE計算に必要なデータが送信されるまで待機 (5 * 2 - 3) * 1000 = 7000 ms */
+        await new Promise(resolve => setTimeout(() => resolve(), qoeRequestStart))
+
+        /* 最初の最新QoE値を取得 */
+        const qoe = await this.waitFirstQoE(mainVideo, Config.get_max_count_for_qoe());
+        if (qoe)
+          console.log(`VIDEOMARK: STATE CHANGE latest qoe computed ${qoe}`);
+        else
+          console.log(`VIDEOMARK: STATE CHANGE latest qoe timeout`);
+
+        /* QoE値問い合わせ */
+        requestTimeoutId = this.startRequestTransaction(mainVideo,
+          Config.get_trans_interval() * Config.get_latest_qoe_update() * Config.get_check_state_interval());
       }
 
-      // eslint-disable-next-line no-await-in-loop, no-underscore-dangle
-      qoe = await this._transaction(
-        main_video,
-        data,
-        request,
-        Config.get_check_state_interval()
-      );
+      /* videoが切り替わるまで待機 */
+      await new Promise((resolve) => {
 
-      if (main_video !== this.get_main_video()) return;
-    }
+        const timer = setInterval(() => {
 
-    console.log(`VIDEOMARK: STATE CHANGE latest qoe computed ${qoe}`);
+          if (mainVideo !== this.get_main_video()) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, Config.get_check_state_interval())
+      })
+    } finally {
 
-    // --- 通常処理 --- //
-    for (; ; i += 1) {
-      let data = false;
-      let request = false;
-
-      if (main_video.is_available()) {
-        data = i % Config.get_trans_interval() === 0;
-        request =
-          i % (Config.get_trans_interval() * Config.get_latest_qoe_update()) ===
-          0;
-      }
-
-      // eslint-disable-next-line no-await-in-loop, no-underscore-dangle
-      qoe = await this._transaction(
-        main_video,
-        data,
-        request,
-        Config.get_check_state_interval()
-      );
-
-      if (main_video !== this.get_main_video()) return;
+      if (requestTimeoutId) clearTimeout(requestTimeoutId);
+      if (dataTimeoutId) clearTimeout(dataTimeoutId);
     }
   }
 
-  async _transaction(main_video, data, request, wait) {
+  async waitFirstQoE(mainVideo, timeoutCount) {
+
     let qoe = null;
+    let counter = 0;
 
-    const tasks = [];
-
-    if (main_video.is_available()) {
-      if (data) {
-        // --- send to fluent --- //
-        // eslint-disable-next-line no-underscore-dangle
-        this._send_data(main_video);
+    for (; !qoe && counter < timeoutCount; counter += 1) {
+      if (mainVideo !== this.get_main_video()) throw new MainVideoChangeException();
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        qoe = await this.requestQoE(mainVideo);
+      } catch (e) {
+        console.error(`VIDEOMARK: ${e}`);
       }
-      if (request && main_video.is_calculatable()) {
-        // --- request qoe --- //
-        // eslint-disable-next-line no-loop-func
-        tasks.push(
-          (async () => {
-            // eslint-disable-next-line no-underscore-dangle
-            qoe = await this._request_qoe(main_video);
-            if (qoe)
-              main_video.add_latest_qoe({
-                date: Date.now(),
-                qoe
-              });
-          })()
-        );
-        if (Config.is_quality_control()) {
-          tasks.push(
-            (async () => {
-              // eslint-disable-next-line no-underscore-dangle
-              const recommend_bitrate = await this._request_recommend_bitrate(
-                main_video
-              );
-              if (recommend_bitrate) main_video.set_quality(recommend_bitrate);
-            })()
-          );
-        }
+      if (qoe) {
+        mainVideo.add_latest_qoe({ date: Date.now(), qoe });
+        break;
       }
-      // --- save to storage --- //
-      // eslint-disable-next-line no-underscore-dangle
-      this._store_session(main_video);
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise(resolve => setTimeout(() => resolve(), Config.get_check_state_interval()))
     }
-
-    // --- wait next --- //
-    // eslint-disable-next-line no-loop-func
-    tasks.push(new Promise(resolve => setTimeout(() => resolve(), wait)));
-
-    // eslint-disable-next-line no-await-in-loop
-    await Promise.all(tasks);
 
     return qoe;
   }
 
-  // eslint-disable-next-line camelcase
-  async _send_data(video) {
-    try {
-      // eslint-disable-next-line no-underscore-dangle
-      const body = msgpack.encode(this._to_json(video));
-      if (body.length > Config.get_max_send_size())
-        console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
-      const ret = await fetch(Config.get_fluent_url(), {
-        method: "POST",
-        headers: {
-          "Content-type": "application/msgpack"
-        },
-        body
-      });
-      if (!ret.ok) {
-        throw new Error("fluent response was not ok.");
+  startDataTransaction(mainVideo, interval) {
+    return setTimeout(async () => {
+      for (; mainVideo === this.get_main_video();) {
+        if (mainVideo.is_available()) {
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            await this.sendData(mainVideo);
+          } catch (e) {
+            console.error(`VIDEOMARK: ${e}`);
+          }
+          // eslint-disable-next-line no-await-in-loop
+          await this.storeSession(mainVideo);
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(resolve => setTimeout(() => resolve(), interval))
       }
-    } catch (err) {
-      console.error(`VIDEOMARK: ${err}`);
+    });
+  }
+
+  startRequestTransaction(mainVideo, interval) {
+    return setTimeout(async () => {
+      for (; mainVideo === this.get_main_video();) {
+        if (mainVideo.is_available()) {
+          let qoe;
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            qoe = await this.requestQoE(mainVideo);
+          } catch (e) {
+            console.error(`VIDEOMARK: ${e}`);
+          }
+          if (qoe) mainVideo.add_latest_qoe({ date: Date.now(), qoe });
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(resolve => setTimeout(() => resolve(), interval));
+      }
+    });
+  }
+
+  async sendData(video) {
+
+    const body = msgpack.encode(this.toJson(video));
+    if (body.length > Config.get_max_send_size())
+      console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
+    const ret = await fetch(Config.get_fluent_url(), {
+      method: "POST",
+      headers: {
+        "Content-type": "application/msgpack"
+      },
+      body
+    });
+    if (!ret.ok) {
+      throw new Error("fluent response was not ok.");
     }
   }
 
-  // eslint-disable-next-line camelcase
-  async _request_qoe(video) {
-    try {
-      const ret = await fetch(`${Config.get_sodium_server_url()}/latest_qoe`, {
+  async requestQoE(video) {
+    const ret = await fetch(`${Config.get_sodium_server_url()}/latest_qoe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        ids: {
+          session_id: this.session_id,
+          video_id: video.get_video_id()
+        }
+      })
+    });
+    if (!ret.ok) {
+      throw new Error("SodiumServer(qoe) response was not ok.");
+    }
+    const json = await ret.json();
+    const qoe = Number.parseFloat(json.qoe);
+    return Number.isNaN(qoe) ? null : qoe;
+  }
+
+  // 未使用
+  /*
+  async requestRecommendBitrate(video) {
+    const ret = await fetch(
+      `${Config.get_sodium_server_url()}/recommend_bitrate`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -347,51 +393,18 @@ export default class SessionData {
             video_id: video.get_video_id()
           }
         })
-      });
-      if (!ret.ok) {
-        throw new Error("SodiumServer(qoe) response was not ok.");
       }
-      const json = await ret.json();
-      const qoe = Number.parseFloat(json.qoe);
-      return Number.isNaN(qoe) ? null : qoe;
-    } catch (err) {
-      console.error(`VIDEOMARK: ${err}`);
-      return null;
+    );
+    if (!ret.ok) {
+      throw new Error("SodiumServer(tqapi) response was not ok.");
     }
+    const json = await ret.json();
+    const recommendBitrate = Number.parseFloat(json.recommendBitrate);
+    return Number.isNaN(recommendBitrate) ? null : recommendBitrate;
   }
+  */
 
-  // eslint-disable-next-line camelcase
-  async _request_recommend_bitrate(video) {
-    try {
-      const ret = await fetch(
-        `${Config.get_sodium_server_url()}/recommend_bitrate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            ids: {
-              session_id: this.session_id,
-              video_id: video.get_video_id()
-            }
-          })
-        }
-      );
-      if (!ret.ok) {
-        throw new Error("SodiumServer(tqapi) response was not ok.");
-      }
-      const json = await ret.json();
-      const recommendBitrate = Number.parseFloat(json.recommendBitrate);
-      return Number.isNaN(recommendBitrate) ? null : recommendBitrate;
-    } catch (err) {
-      console.error(`VIDEOMARK: ${err}`);
-      return null;
-    }
-  }
-
-  // eslint-disable-next-line camelcase
-  async _store_session(video) {
+  async storeSession(video) {
     const storage = useStorage({
       sessionId: this.session_id,
       videoId: video.get_video_id()
@@ -431,8 +444,7 @@ export default class SessionData {
   /**
    * 送信データフォーマットに変換
    */
-  // eslint-disable-next-line camelcase
-  _to_json(video) {
+  toJson(video) {
     this.startTime = this.endTime;
     this.endTime = performance.now();
     this.sequence += 1;
@@ -499,22 +511,7 @@ export default class SessionData {
     this.hostToIp[url.host] = ip;
   }
 
-  // eslint-disable-next-line camelcase
-  static event_wait(elm, type, ms) {
-    let eventResolver;
-    const event = new Promise(resolve => {
-      eventResolver = resolve;
-      elm.addEventListener(type, resolve, false);
-    });
-    const timeout = new Promise(resolve => setTimeout(() => resolve(null), ms));
-    return new Promise(async resolve => {
-      const ret = await Promise.race([event, timeout]);
-      elm.removeEventListener(type, eventResolver, false);
-      resolve(ret);
-    });
-  }
-
-  alt_session_message() {
+  altSessionMessage() {
     const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
     const allowVideoHosts = ["i.fod.fujitv.co.jp"];
 
