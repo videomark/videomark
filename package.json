@@ -16,7 +16,7 @@
     "babel-loader": "^8.0.6",
     "babel-preset-react-app": "^9.1.1",
     "bfj": "^7.0.2",
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "classnames": "^2.2.6",
     "cross-env": "^7.0.0",
     "css-loader": "^3.4.2",
