@@ -235,12 +235,16 @@ export default class SessionData {
         Config.get_prev_count_for_qoe()) * Config.get_check_state_interval();
 
     let dataTimeoutId;
+    let storeTimeoutId;
     let requestTimeoutId;
 
     try {
 
       /* データ送信 */
       dataTimeoutId = this.startDataTransaction(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
+      
+      /* 保存 */ 
+      storeTimeoutId = this.startDataStore(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
 
       if (mainVideo.is_calculatable()) {
 
@@ -271,9 +275,10 @@ export default class SessionData {
         }, Config.get_check_state_interval())
       })
     } finally {
-
-      if (requestTimeoutId) clearTimeout(requestTimeoutId);
+      
       if (dataTimeoutId) clearTimeout(dataTimeoutId);
+      if (storeTimeoutId)clearTimeout(storeTimeoutId);
+      if (requestTimeoutId) clearTimeout(requestTimeoutId);
     }
   }
 
@@ -311,6 +316,17 @@ export default class SessionData {
           } catch (e) {
             console.error(`VIDEOMARK: ${e}`);
           }
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(resolve => setTimeout(() => resolve(), interval))
+      }
+    });
+  }
+
+  startDataStore(mainVideo, interval) {
+    return setTimeout(async () => {
+      for (; mainVideo === this.get_main_video();) {
+        if (mainVideo.is_available()) {
           // eslint-disable-next-line no-await-in-loop
           await this.storeSession(mainVideo);
         }
