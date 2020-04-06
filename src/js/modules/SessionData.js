@@ -244,7 +244,7 @@ export default class SessionData {
       dataTimeoutId = this.startDataTransaction(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
       
       /* 保存 */ 
-      storeTimeoutId = this.startDataStore(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
+      storeTimeoutId = this.startDataStore(mainVideo, Config.get_check_state_interval());
 
       if (mainVideo.is_calculatable()) {
 
