@@ -356,7 +356,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
           ビットレート制限 (ベータ版)
         </Typography>
         <Typography color="textSecondary">
-          実験的な機能です。現在、YouTubeにのみ対応しています。
+          実験的な機能です。現在、 YouTubeとニコニコ動画に対応しています。
         </Typography>
       </Box>
       <Paper>
