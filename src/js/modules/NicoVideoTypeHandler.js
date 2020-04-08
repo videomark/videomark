@@ -1,7 +1,36 @@
 import GeneralTypeHandler from "./GeneralTypeHandler";
 
-export default class NicoVideoTypeHandler extends GeneralTypeHandler {
+/**
+ * @typedef {{
+ *   id: string,
+ *   bitrate: number,
+ *   resolution: {
+ *     width: number,
+ *     height: number
+ *   },
+ *   ...others: any
+ * }} SelectedQuality
+ */
 
+/**
+ * 選択可能な動画の品質一覧を得る
+ * @return {Array<SelectedQuality>} 選択可能な動画の品質一覧 (得られない場合は [])
+ */
+function quality() {
+    const initDataElement = document.querySelector("#js-initial-watch-data");
+    if (initDataElement == null) return [];
+    const { apiData: apiDataJson } = initDataElement.dataset;
+    if (apiDataJson == null) return [];
+    try {
+        const apiData = JSON.parse(apiDataJson);
+        const { videos } = apiData.video.dmcInfo.quality;
+        return videos == null ? [] : videos;
+    } catch (error) {
+        return [];
+    }
+}
+
+export default class NicoVideoTypeHandler extends GeneralTypeHandler {
     constructor(elm) {
 
         super(elm);
@@ -82,6 +111,52 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
     // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
     is_cm(video) {
         return this.cm;
+    }
+
+    /**
+     * 指定したビットレート以下を選択する (指定しない場合や指定されたビットレートより小さい画質が存在しない場合、最低画質を選択する)
+     * @param {number} [bitrate] 最大ビットレート
+     * @param {number} [resolution] 最大解像度 (height)
+     */
+    set_max_bitrate(bitrate, resolution) {
+        // NOTE: ビットレート降順にソート
+        let videos = quality().sort(({ bitrate: a }, { bitrate: b }) => b - a);
+        // FIXME: [] の場合、何らかの不具合
+        if (videos.length === 0) return;
+
+        // NOTE: 自動か否か ('"manual"': 手動)
+        localStorage.setItem("DMCSource.qualitySelectType", '"manual"');
+
+        // NOTE: 最低画質をピックアップする
+        const lowestQuality = videos[videos.length - 1];
+
+        if (bitrate) {
+            videos = videos.filter(video => video.bitrate <= bitrate);
+        }
+        if (resolution) {
+            videos = videos.filter(video => video.resolution.height <= resolution);
+        }
+
+        // NOTE: 画質を選択する
+        const selected = videos.length === 0 ? lowestQuality : videos[0];
+        // NOTE: プロパティの snake_case を camelCase に変換
+        selected.levelIndex = selected.level_index;
+        delete selected.level_index;
+
+        localStorage.setItem(
+            "DMCSource.selectedQualityManually",
+            JSON.stringify(selected)
+        );
+    }
+
+    /**
+     * 画質 "自動" を選択する
+     */
+    set_default_bitrate() {
+        // NOTE: 自動か否か (デフォルト: 自動)
+        localStorage.removeItem("DMCSource.qualitySelectType");
+        // NOTE: 画質 ("null": 自動の場合)
+        localStorage.setItem("DMCSource.selectedQualityManually", "null");
     }
 
     // eslint-disable-next-line camelcase
