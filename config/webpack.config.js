@@ -37,6 +37,9 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"]
   },
+  performance: {
+    maxAssetSize: 1000000
+  },
   module: {
     rules: [
       {
