@@ -3,7 +3,7 @@ import React, {
   useReducer,
   useEffect,
   useContext,
-  useState
+  useState,
 } from "react";
 import PropTypes from "prop-types";
 import { Redirect } from "react-router";
@@ -39,7 +39,7 @@ class History extends Component {
       removed: [],
       sites: videoPlatforms.map(({ id }) => id),
       page: 0,
-      perPage: 60
+      perPage: 60,
     };
   }
 
@@ -55,9 +55,9 @@ class History extends Component {
       .filter(({ id }) => !removed.includes(id))
       .filter(({ location }) => sites.includes(urlToVideoPlatform(location).id))
       .reverse()
-      .map(viewing => ({
+      .map((viewing) => ({
         ...viewing,
-        disabled: DataErase.contains(viewing.id)
+        disabled: DataErase.contains(viewing.id),
       }))
       .map(({ id, disabled }) => (
         <Grid
@@ -116,27 +116,27 @@ class History extends Component {
 }
 History.propTypes = {
   indexes: PropTypes.arrayOf(PropTypes.instanceOf(Object)).isRequired,
-  viewingModels: PropTypes.instanceOf(Map).isRequired
+  viewingModels: PropTypes.instanceOf(Map).isRequired,
 };
 const initialState = {
   loading: true,
   indexes: [],
-  viewingModels: new Map()
+  viewingModels: new Map(),
 };
 const reducer = ({ indexes, viewingModels }, chunk) => {
-  chunk.viewingModels.forEach(viewingModel =>
+  chunk.viewingModels.forEach((viewingModel) =>
     viewingModels.set(viewingModel.id, viewingModel)
   );
 
   return {
     loading: false,
     indexes: [...chunk.indexes, ...indexes],
-    viewingModels
+    viewingModels,
   };
 };
-const dispatcher = dispatch =>
+const dispatcher = (dispatch) =>
   new WritableStream({
-    write: async viewingModels => {
+    write: async (viewingModels) => {
       const active = viewingModels.filter(({ cache }) => cache !== undefined);
       const indexes = active.map(({ id, cache }) => {
         const {
@@ -144,7 +144,7 @@ const dispatcher = dispatch =>
           video_id: videoId,
           location,
           start_time: startTime,
-          region
+          region,
         } = cache;
         return {
           id,
@@ -152,16 +152,16 @@ const dispatcher = dispatch =>
           videoId,
           location,
           startTime,
-          region
+          region,
         };
       });
 
       dispatch({ indexes, viewingModels: active });
-      await new Promise(resolve => setTimeout(resolve, 15e3));
-    }
+      await new Promise((resolve) => setTimeout(resolve, 15e3));
+    },
   });
 
-const getLastValue = map => Array.from(map)[map.size - 1][1];
+const getLastValue = (map) => Array.from(map)[map.size - 1][1];
 
 export default () => {
   const viewings = useContext(ViewingsContext);
