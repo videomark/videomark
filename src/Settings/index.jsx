@@ -31,6 +31,12 @@ const useOverwriteSessionId = ({
   )
     return;
 
+  // NOTE: サーバー側で "_" が使えない
+  if (/_/.test(sessionId)) {
+    console.error("Session ID is invalid");
+    return;
+  }
+
   // TODO: https://github.com/webdino/sodium/issues/233
   // NOTE: オーバーフロー無く十分に長い適当な期間
   const expiresIn = addYears(0, 10).getTime();
