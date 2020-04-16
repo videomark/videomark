@@ -161,7 +161,10 @@ const dispatcher = (dispatch) =>
     },
   });
 
-const getLastValue = (map) => Array.from(map)[map.size - 1][1];
+const getLastValue = (map) => {
+  if (map.size === 0) return async () => ({});
+  return Array.from(map)[map.size - 1][1];
+};
 
 export default () => {
   const viewings = useContext(ViewingsContext);
@@ -176,7 +179,7 @@ export default () => {
 
       // NOTE: 測定結果の中から最新の月をデフォルト値にする
       getLastValue(viewings)().then(({ start_time: latest }) =>
-        setDate(startOfMonth(latest))
+        setDate(startOfMonth(latest || new Date()))
       );
     }
   }, [viewings, addIndexes]);
