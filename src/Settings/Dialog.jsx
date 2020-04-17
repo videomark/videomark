@@ -14,7 +14,7 @@ const Dialog = ({
   agree,
   open,
   onClose,
-  onAgree
+  onAgree,
 }) => (
   <MuiDialog open={open} onClose={onClose}>
     <DialogTitle>{title}</DialogTitle>
@@ -45,6 +45,6 @@ Dialog.propTypes = {
   agree: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onAgree: PropTypes.func.isRequired
+  onAgree: PropTypes.func.isRequired,
 };
 export default Dialog;

@@ -21,8 +21,8 @@ class Viewing {
   }
 
   async load() {
-    return new Promise(resolve =>
-      ChromeExtensionWrapper.load(this.id, viewing => resolve(viewing))
+    return new Promise((resolve) =>
+      ChromeExtensionWrapper.load(this.id, (viewing) => resolve(viewing))
     );
   }
 
@@ -84,19 +84,19 @@ class Viewing {
   async fetchFixedQoeApi() {
     if (!window.navigator.onLine) return undefined;
 
-    const resHandler = response => {
+    const resHandler = (response) => {
       if (!response.ok) {
         return undefined;
       }
 
-      const find = res =>
-        res.find(v => v.viewing_id.startsWith(this.viewingId));
+      const find = (res) =>
+        res.find((v) => v.viewing_id.startsWith(this.viewingId));
       return response.json().then(find);
     };
 
     return Api.fixed([{ session_id: this.sessionId, video_id: this.videoId }])
       .then(resHandler)
-      .then(viewing => {
+      .then((viewing) => {
         if (viewing === undefined) return undefined;
         return this.save({ qoe: viewing.qoe });
       });
@@ -115,26 +115,28 @@ class Viewing {
       return undefined;
     }
 
-    const resHandler = response => {
+    const resHandler = (response) => {
       if (!response.ok) {
         return undefined;
       }
-      const find = res =>
-        res.find(i => i.session === this.sessionId && i.video === this.videoId);
+      const find = (res) =>
+        res.find(
+          (i) => i.session === this.sessionId && i.video === this.videoId
+        );
       return response.json().then(find);
     };
 
     return Api.statsInfo(this.videoId, this.sessionId)
       .then(resHandler)
-      .then(info => {
+      .then((info) => {
         if (info === undefined) return undefined;
         const { country, subdivision, isp } = info;
         return this.save({
           region: {
             country,
             subdivision,
-            isp
-          }
+            isp,
+          },
         });
       });
   }
@@ -154,7 +156,7 @@ class Viewing {
   get quality() {
     const log = this.cache.log || [];
     const { date, quality } =
-      log.filter(a => "quality" in a).slice(-1)[0] || {};
+      log.filter((a) => "quality" in a).slice(-1)[0] || {};
     return { date: new Date(date), ...quality };
   }
 }

@@ -17,7 +17,7 @@ import logo from "./images/logo.png";
 // ポップアップウィンドウのサイズを調整
 const CSS = () => <style>{`body{min-width:286px;}`}</style>;
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme) => {
   return {
     button: {
       justifyContent: "unset",
@@ -25,12 +25,12 @@ const useStyles = makeStyles(theme => {
       paddingLeft: theme.spacing(2),
       "& .MuiButton-startIcon > *:first-child": {
         color: theme.palette.text.secondary,
-        fontSize: theme.typography.h5.fontSize
+        fontSize: theme.typography.h5.fontSize,
       },
       "& .MuiButton-label": {
-        ...theme.typography.h6
-      }
-    }
+        ...theme.typography.h6,
+      },
+    },
   };
 });
 
@@ -51,7 +51,7 @@ const LabeledIconButton = ({ href, icon, label }) => {
 LabeledIconButton.propTypes = {
   href: PropTypes.string.isRequired,
   icon: PropTypes.instanceOf(Object).isRequired,
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
 };
 
 export default () => {

@@ -6,12 +6,12 @@ import style from "../../css/QoEValueGraph.module.css";
 const QoEValueGraph = ({ label, qoe, color }) => {
   if (qoe === undefined) return null;
   const valueBarStyle = {
-    width: `${Number.isFinite(qoe) ? (qoe / 5.0) * 100 : 0}%`
+    width: `${Number.isFinite(qoe) ? (qoe / 5.0) * 100 : 0}%`,
   };
   const palette = {
     qoeValueBar: {
-      bgcolor: color === "default" ? "#75c6ac" : color
-    }
+      bgcolor: color === "default" ? "#75c6ac" : color,
+    },
   };
   if (color !== "default") valueBarStyle.backgroudColor = color;
   return (
@@ -40,11 +40,11 @@ const QoEValueGraph = ({ label, qoe, color }) => {
 QoEValueGraph.propTypes = {
   label: PropTypes.string.isRequired,
   qoe: PropTypes.number,
-  color: PropTypes.string
+  color: PropTypes.string,
 };
 QoEValueGraph.defaultProps = {
   qoe: NaN,
-  color: "default"
+  color: "default",
 };
 
 export default QoEValueGraph;

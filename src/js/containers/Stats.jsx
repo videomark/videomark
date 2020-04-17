@@ -20,11 +20,11 @@ import videoPlatforms from "../utils/videoPlatforms";
 import { gigaSizeFormat } from "../utils/Utils";
 import LoadingProgress from "../components/LoadingProgress";
 
-const timeFormatFromMinutes = min =>
+const timeFormatFromMinutes = (min) =>
   `${
     min > 60 ? `${Math.floor(min / 60).toLocaleString()}時間` : ""
   }${Math.floor(min % 60)}分`;
-const timeFormat = msec => timeFormatFromMinutes(Math.floor(msec / 1e3 / 60));
+const timeFormat = (msec) => timeFormatFromMinutes(Math.floor(msec / 1e3 / 60));
 
 const PlayingTimeStats = () => {
   const { initialState, length, playingTime, transferSize } = useContext(
@@ -50,7 +50,7 @@ const PlayingTimeCalendar = () => {
   const { playingTime } = useContext(StatsDataContext);
   const data = (playingTime || []).map(({ day, value }) => ({
     day,
-    value: value / 1e3 / 60
+    value: value / 1e3 / 60,
   }));
   const today = format(new Date(), "yyyy-MM-dd");
   return (
@@ -85,7 +85,7 @@ const PlayingTimeCalendar = () => {
               "#75c6ac",
               "#64A993",
               "#538D7A",
-              "#427162"
+              "#427162",
             ]}
             emptyColor="#eeeeee"
             dayBorderColor="#ffffff"
@@ -95,8 +95,8 @@ const PlayingTimeCalendar = () => {
                 direction: "row",
                 itemCount: 3,
                 itemWidth: 64,
-                itemHeight: 32
-              }
+                itemHeight: 32,
+              },
             ]}
           />
         </Box>
@@ -111,10 +111,10 @@ const PlayingTimeCalendar = () => {
 };
 const QoEStats = () => {
   const {
-    qoeStats: { initialState, sum, count }
+    qoeStats: { initialState, sum, count },
   } = useContext(StatsDataContext);
   const average = sum / count;
-  const caption = text => (
+  const caption = (text) => (
     <Typography component="small" variant="caption">
       {text}
     </Typography>
@@ -153,7 +153,7 @@ const QoETimelineChart = () => {
                     .map(({ time, value }) => {
                       return {
                         x: new Date(time),
-                        y: value
+                        y: value,
                       };
                     })
                 : [];
@@ -161,34 +161,34 @@ const QoETimelineChart = () => {
             })}
             xScale={{
               type: "time",
-              min: "auto"
+              min: "auto",
             }}
             yScale={{
               type: "linear",
               min: 1,
-              max: 5
+              max: 5,
             }}
             margin={{ top: 16, bottom: 32, left: 40, right: 40 }}
             colors={({ serieId }) => `${brandcolors.get(serieId)}40`}
             axisBottom={{
               tickSize: 0,
-              format: date => format(date, "M/d")
+              format: (date) => format(date, "M/d"),
             }}
             axisLeft={{
               tickSize: 0,
-              format: value => value.toFixed(1),
+              format: (value) => value.toFixed(1),
               legend: "QoE",
               legendPosition: "middle",
-              legendOffset: -32
+              legendOffset: -32,
             }}
             tooltip={({
               node: {
-                data: { serieId, x, y }
-              }
+                data: { serieId, x, y },
+              },
             }) => (
               <Box bgcolor="background.default">
                 {`計測日時: ${x.toLocaleString(navigator.language, {
-                  timeZoneName: "short"
+                  timeZoneName: "short",
                 })}`}
                 <br />
                 {`QoE ${y.toFixed(2)} (${serviceNames.get(serieId)})`}
@@ -213,15 +213,15 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
     ...Object.fromEntries(
       Object.entries(stats).map(([service, value]) => [
         serviceNames.get(service),
-        value
+        value,
       ])
     ),
     ...Object.fromEntries(
       Object.entries(stats).map(([service]) => [
         `${serviceNames.get(service)}.brandcolor`,
-        brandcolors.get(service)
+        brandcolors.get(service),
       ])
-    )
+    ),
   }));
   const tooltip = ({ id, indexValue: qoe, value }) =>
     `QoE ${qoe}${
@@ -247,7 +247,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
               top: 16,
               bottom: 32 + (isWidthUp("md", width) ? 16 : 0),
               left: 40,
-              right: 24
+              right: 24,
             }}
             keys={videoPlatforms.map(({ name }) => name)}
             colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
@@ -255,7 +255,7 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             axisBottom={isWidthUp("md", width) ? { tickSize: 0 } : null}
             axisLeft={{
               tickSize: 0,
-              format: value => value.toLocaleString()
+              format: (value) => value.toLocaleString(),
             }}
             legends={[
               {
@@ -264,8 +264,8 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
                 translateX: 16,
                 direction: "column",
                 itemWidth: 80,
-                itemHeight: 24
-              }
+                itemHeight: 24,
+              },
             ]}
             tooltip={tooltip}
           />

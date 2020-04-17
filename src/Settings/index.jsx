@@ -17,7 +17,7 @@ const useOverwriteSessionId = ({
   saveSettings,
   session,
   saveSession,
-  searchParam
+  searchParam,
 }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -43,7 +43,7 @@ const useOverwriteSessionId = ({
 
   saveSettings({
     ...settings,
-    expires_in: expiresIn
+    expires_in: expiresIn,
   });
   saveSession({ id: sessionId, expires: Date.now() + expiresIn });
 };
@@ -62,7 +62,7 @@ export default () => {
     saveSettings,
     session,
     saveSession,
-    searchParam: "session_id"
+    searchParam: "session_id",
   });
 
   return (

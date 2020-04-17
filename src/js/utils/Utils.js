@@ -1,9 +1,9 @@
 import videoPlatforms from "./videoPlatforms";
 
-export const urlToVideoPlatform = url => {
+export const urlToVideoPlatform = (url) => {
   try {
     const { host } = new URL(url);
-    return videoPlatforms.find(platform => platform.host.test(host)) || {};
+    return videoPlatforms.find((platform) => platform.host.test(host)) || {};
   } catch (e) {
     if (e instanceof TypeError) return {};
     throw e;
@@ -24,9 +24,9 @@ export const sizeFormat = (bytes, exponent) => {
   const fraction = bytes >= divider * 1000 ? 0 : 2;
   return new Intl.NumberFormat("en-US", {
     maximumFractionDigits: fraction,
-    minimumFractionDigits: fraction
+    minimumFractionDigits: fraction,
   }).format(bytes / divider);
 };
 
-export const gigaSizeFormat = bytes => sizeFormat(bytes, 3);
-export const megaSizeFormat = bytes => sizeFormat(bytes, 2);
+export const gigaSizeFormat = (bytes) => sizeFormat(bytes, 3);
+export const megaSizeFormat = (bytes) => sizeFormat(bytes, 2);

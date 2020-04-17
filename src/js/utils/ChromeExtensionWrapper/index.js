@@ -35,19 +35,21 @@ export const storage = () => {
     set,
     get,
     remove,
-    clear
+    clear,
   };
 };
 
-const useStorage = key => {
+const useStorage = (key) => {
   const [state, setState] = useState(undefined);
 
   useEffect(() => {
-    storage().get(key, obj => setState(obj[key] === undefined ? {} : obj[key]));
+    storage().get(key, (obj) =>
+      setState(obj[key] === undefined ? {} : obj[key])
+    );
   }, [setState]);
 
   const save = useCallback(
-    attributes =>
+    (attributes) =>
       storage().set({ [key]: attributes }, () => setState(attributes)),
     [setState]
   );
@@ -58,7 +60,7 @@ export const useSession = () => useStorage("session");
 export const useSettings = () => useStorage("settings");
 
 export const isCurrentVersion = async () => {
-  const { version } = await new Promise(resolve =>
+  const { version } = await new Promise((resolve) =>
     storage().get("version", resolve)
   );
   return VERSION <= version;
@@ -66,20 +68,20 @@ export const isCurrentVersion = async () => {
 
 export const allViewings = async () => {
   if (await isCurrentVersion()) {
-    const { index } = await new Promise(resolve =>
+    const { index } = await new Promise((resolve) =>
       storage().get("index", resolve)
     );
     return new Map(
-      index.map(id => [
+      index.map((id) => [
         id,
         () =>
-          new Promise(resolve =>
+          new Promise((resolve) =>
             storage().get(id.toString(), ({ [id]: value }) => resolve(value))
-          )
+          ),
       ])
     );
   }
-  const obj = await new Promise(resolve => storage().get(resolve));
+  const obj = await new Promise((resolve) => storage().get(resolve));
   [
     "version",
     "index",
@@ -88,8 +90,8 @@ export const allViewings = async () => {
     "RemovedTargetKeys",
     "AgreedTerm",
     "transfer_size",
-    "peak_time_limit"
-  ].forEach(index => delete obj[index]);
+    "peak_time_limit",
+  ].forEach((index) => delete obj[index]);
   const entries = Object.entries(obj)
     .map(([id, { start_time: time }]) => [id, time])
     .sort(([, a], [, b]) => a - b)
@@ -102,15 +104,15 @@ export const clearViewings = async () => {
     { version },
     { session },
     { settings },
-    { AgreedTerm }
+    { AgreedTerm },
   ] = await Promise.all(
     ["version", "session", "settings", "AgreedTerm"].map(
-      key => new Promise(resolve => storage().get(key, resolve))
+      (key) => new Promise((resolve) => storage().get(key, resolve))
     )
   );
 
-  await new Promise(resolve => storage().clear(resolve));
-  await new Promise(resolve =>
+  await new Promise((resolve) => storage().clear(resolve));
+  await new Promise((resolve) =>
     storage().set(
       { version, index: [], session, settings, AgreedTerm },
       resolve
@@ -122,7 +124,7 @@ let migrationLock;
 export const migration = async () => {
   if (migrationLock instanceof Promise) return migrationLock;
   let unlock;
-  migrationLock = new Promise(resolve => {
+  migrationLock = new Promise((resolve) => {
     unlock = resolve;
   }).then(() => {
     migrationLock = undefined;
@@ -130,16 +132,16 @@ export const migration = async () => {
 
   if (await isCurrentVersion()) return unlock();
 
-  const { RemovedTargetKeys: remove } = await new Promise(resolve =>
+  const { RemovedTargetKeys: remove } = await new Promise((resolve) =>
     storage().get("RemovedTargetKeys", resolve)
   );
   if (Array.isArray(remove)) {
     await Promise.all([
-      new Promise(resolve => storage().remove("RemovedTargetKeys", resolve)),
+      new Promise((resolve) => storage().remove("RemovedTargetKeys", resolve)),
       ...remove.map(
-        async id =>
-          new Promise(resolve => storage().remove(id.toString(), resolve))
-      )
+        async (id) =>
+          new Promise((resolve) => storage().remove(id.toString(), resolve))
+      ),
     ]);
   }
   const viewings = await allViewings();
@@ -149,18 +151,18 @@ export const migration = async () => {
       const { latest_qoe: log, ...tmp } = obj;
       // eslint-disable-next-line prefer-object-spread
       Object.assign(tmp, { log });
-      await new Promise(resolve => storage().set({ [i]: tmp }, resolve));
+      await new Promise((resolve) => storage().set({ [i]: tmp }, resolve));
     } else {
-      await new Promise(resolve => storage().set({ [i]: obj }, resolve));
+      await new Promise((resolve) => storage().set({ [i]: obj }, resolve));
     }
-    await new Promise(resolve => storage().remove(id, resolve));
+    await new Promise((resolve) => storage().remove(id, resolve));
   });
 
-  await new Promise(resolve =>
+  await new Promise((resolve) =>
     storage().set(
       {
         index: [...Array(viewings.size).keys()],
-        version: VERSION
+        version: VERSION,
       },
       resolve
     )
@@ -170,15 +172,15 @@ export const migration = async () => {
 
 export const rollback = async () => {
   if (!(await isCurrentVersion())) return;
-  await new Promise(resolve => storage().remove("version", resolve));
-  await new Promise(resolve => storage().remove("index", resolve));
+  await new Promise((resolve) => storage().remove("version", resolve));
+  await new Promise((resolve) => storage().remove("index", resolve));
   const viewings = await allViewings();
   forEach([...viewings], async ([id, obj]) => {
     const { session_id: sessionId, video_id: videoId } = obj;
-    await new Promise(resolve =>
+    await new Promise((resolve) =>
       storage().set({ [`${sessionId}_${videoId}`]: obj }, resolve)
     );
-    await new Promise(resolve => storage().remove(id, resolve));
+    await new Promise((resolve) => storage().remove(id, resolve));
   });
 };
 
@@ -196,7 +198,7 @@ export default class ChromeExtensionWrapper {
   }
 
   static loadRemovedTarget(callback) {
-    this.load("RemovedTargetKeys", value =>
+    this.load("RemovedTargetKeys", (value) =>
       callback(Array.isArray(value) ? value : [])
     );
   }
@@ -211,7 +213,7 @@ export default class ChromeExtensionWrapper {
       return;
     }
 
-    this.load("AgreedTerm", value => {
+    this.load("AgreedTerm", (value) => {
       callback(value || false);
     });
   }

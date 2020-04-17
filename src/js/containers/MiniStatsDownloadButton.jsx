@@ -6,7 +6,7 @@ import MuiButton from "@material-ui/core/Button";
 import teal from "@material-ui/core/colors/teal";
 import { StatsDataContext } from "./StatsDataProvider";
 
-const Button = withStyles(theme => ({
+const Button = withStyles((theme) => ({
   root: {
     paddingLeft: theme.spacing(6),
     paddingRight: theme.spacing(6),
@@ -14,9 +14,9 @@ const Button = withStyles(theme => ({
     color: theme.palette.getContrastText(teal[500]),
     backgroundColor: teal[500],
     "&:hover": {
-      backgroundColor: teal[700]
-    }
-  }
+      backgroundColor: teal[700],
+    },
+  },
 }))(MuiButton);
 
 export const MiniStatsDownloadButton = ({ children }) => {
@@ -27,23 +27,23 @@ export const MiniStatsDownloadButton = ({ children }) => {
     totalWaitingTime,
     droppedVideoFrames,
     totalVideoFrames,
-    qoeStats
+    qoeStats,
   } = useContext(StatsDataContext);
   const miniStatsData = {
     count: length,
     playingTime,
     averageQoE: qoeStats.sum / qoeStats.count,
     averageWaitingRatio: totalWaitingTime / totalPlayingTime,
-    averageDroppedVideoFrameRatio: droppedVideoFrames / totalVideoFrames
+    averageDroppedVideoFrameRatio: droppedVideoFrames / totalVideoFrames,
   };
   const onClick = useCallback(() => shareOrDownload(miniStatsData), [length]);
 
   return <Button onClick={onClick}>{children}</Button>;
 };
 MiniStatsDownloadButton.propTypes = {
-  children: PropTypes.string
+  children: PropTypes.string,
 };
 MiniStatsDownloadButton.defaultProps = {
-  children: null
+  children: null,
 };
 export default MiniStatsDownloadButton;

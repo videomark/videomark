@@ -1,6 +1,6 @@
 import { isMobile, isExtension } from "./Utils";
 
-const helpURL = (base => {
+const helpURL = ((base) => {
   if (isMobile()) return new URL("android", base);
   if (isExtension()) return new URL("extension", base);
   return base;

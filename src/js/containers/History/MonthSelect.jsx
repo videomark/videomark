@@ -8,13 +8,13 @@ import IconButton from "@material-ui/core/IconButton";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   date: {
     ...theme.typography.subtitle1,
     margin: 0,
     lineHeight: 1,
-    display: "inline"
-  }
+    display: "inline",
+  },
 }));
 const MonthSelect = ({ date, setDate }) => {
   const classes = useStyles();
@@ -34,7 +34,7 @@ const MonthSelect = ({ date, setDate }) => {
       <Grid item>
         <h3 className={classes.date}>
           {format(date, "yyyy年MMM", {
-            locale: ja
+            locale: ja,
           })}
         </h3>
       </Grid>
@@ -52,6 +52,6 @@ const MonthSelect = ({ date, setDate }) => {
 };
 MonthSelect.propTypes = {
   date: PropTypes.instanceOf(Date).isRequired,
-  setDate: PropTypes.func.isRequired
+  setDate: PropTypes.func.isRequired,
 };
 export default MonthSelect;

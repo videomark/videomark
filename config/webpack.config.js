@@ -23,19 +23,19 @@ module.exports = {
     path: path.resolve("build"),
     filename: `static/js/[name]${isEnvProduction ? chunkhash : ""}.js`,
     chunkFilename: `static/js/[name]${chunkhash}.chunk.js`,
-    crossOriginLoading: "use-credentials"
+    crossOriginLoading: "use-credentials",
   },
   optimization: {
     minimize: isEnvProduction,
     minimizer: [new TerserPlugin(), new OptimizeCSSAssetsPlugin()],
     splitChunks: {
       chunks: "all",
-      name: false
+      name: false,
     },
-    runtimeChunk: !isAndroid
+    runtimeChunk: !isAndroid,
   },
   resolve: {
-    extensions: [".js", ".jsx"]
+    extensions: [".js", ".jsx"],
   },
   performance: {
     maxAssetSize: 1000000
@@ -47,7 +47,7 @@ module.exports = {
           {
             test: /\.(bmp|gif|jpe?g$|png)$/,
             loader: "url-loader",
-            options: urlLoaderOptions
+            options: urlLoaderOptions,
           },
           {
             test: /\.jsx?$/,
@@ -55,8 +55,8 @@ module.exports = {
             loader: "babel-loader",
             options: {
               cacheDirectory: true,
-              cacheCompression: false
-            }
+              cacheCompression: false,
+            },
           },
           {
             test: /\.svg$/,
@@ -65,10 +65,10 @@ module.exports = {
               {
                 loader: "file-loader",
                 options: {
-                  name: `static/media/[name]${mediahash}.[ext]`
-                }
-              }
-            ]
+                  name: `static/media/[name]${mediahash}.[ext]`,
+                },
+              },
+            ],
           },
           {
             test: /\.css$/,
@@ -79,43 +79,43 @@ module.exports = {
                 loader: "css-loader",
                 options: {
                   modules: {
-                    getLocalIdent: getCSSModuleLocalIdent
+                    getLocalIdent: getCSSModuleLocalIdent,
                   },
-                  importLoaders: 1
-                }
+                  importLoaders: 1,
+                },
               },
               {
                 loader: "postcss-loader",
                 options: {
                   ident: "postcss",
-                  plugins: [require("postcss-preset-env")()]
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                  plugins: [require("postcss-preset-env")()],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new SriPlugin({
       hashFuncNames: ["sha256", "sha384"],
-      enabled: isEnvProduction
+      enabled: isEnvProduction,
     }),
     new HtmlWebpackPlugin({
       template: path.resolve("public/index.html"),
-      minify: isEnvProduction
+      minify: isEnvProduction,
     }),
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
     !isEnvProduction && new webpack.HotModuleReplacementPlugin(),
     isEnvProduction &&
       new MiniCssExtractPlugin({
         filename: `static/css/[name]${contenthash}.css`,
-        chunkFilename: `static/css/[name]${contenthash}.chunk.css`
+        chunkFilename: `static/css/[name]${contenthash}.chunk.css`,
       }),
     isAndroid &&
       new webpack.optimize.LimitChunkCountPlugin({
-        maxChunks: 1
-      })
-  ].filter(Boolean)
+        maxChunks: 1,
+      }),
+  ].filter(Boolean),
 };

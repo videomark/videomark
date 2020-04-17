@@ -1,4 +1,4 @@
 export default {
   Modal: "Modal",
-  ViewingList: "ViewingList"
+  ViewingList: "ViewingList",
 };

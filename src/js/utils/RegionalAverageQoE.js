@@ -13,14 +13,14 @@ class RegionalAverageQoE {
     const json = await response.json();
     if (!Array.isArray(json)) return undefined;
     const regionalData = json.find(
-      r => r.country === country && r.subdivision === subdivision
+      (r) => r.country === country && r.subdivision === subdivision
     );
     if (regionalData === undefined) return undefined;
     const { average } = regionalData.data[0];
     Object.assign(this.cache, {
       [country]: Object.assign(this.cache[country] || {}, {
-        [subdivision]: average
-      })
+        [subdivision]: average,
+      }),
     });
     return this.cache;
   }

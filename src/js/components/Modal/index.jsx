@@ -35,11 +35,11 @@ class Modal extends React.Component {
 Modal.propTypes = {
   open: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
-  closeCallback: PropTypes.func
+  closeCallback: PropTypes.func,
 };
 
 Modal.defaultProps = {
-  closeCallback: null
+  closeCallback: null,
 };
 
 export default Modal;

@@ -9,20 +9,20 @@ import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";
 import videoPlatforms from "../../utils/videoPlatforms";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
   },
   formControl: {
     minWidth: 120,
     "& label": {
-      fontSize: theme.typography.caption.fontSize
-    }
+      fontSize: theme.typography.caption.fontSize,
+    },
   },
   select: {
-    fontSize: theme.typography.caption.fontSize
-  }
+    fontSize: theme.typography.caption.fontSize,
+  },
 });
 
 class SiteSelect extends Component {
@@ -30,7 +30,7 @@ class SiteSelect extends Component {
     super(props);
 
     this.state = {
-      site: ""
+      site: "",
     };
   }
 
@@ -38,11 +38,11 @@ class SiteSelect extends Component {
     this.setState({ site: value });
     const ids = videoPlatforms
       .map(({ id }) => id)
-      .filter(id => value === "" || value === id);
-    AppData.update(AppDataActions.ViewingList, state =>
+      .filter((id) => value === "" || value === id);
+    AppData.update(AppDataActions.ViewingList, (state) =>
       Object.assign(state, {
         sites: ids,
-        page: 0
+        page: 0,
       })
     );
   }
@@ -58,7 +58,7 @@ class SiteSelect extends Component {
           <Select
             className={classes.select}
             value={site}
-            onChange={event => {
+            onChange={(event) => {
               this.setSite(event.target.value);
             }}
             name="site"
@@ -79,7 +79,7 @@ class SiteSelect extends Component {
 }
 
 SiteSelect.propTypes = {
-  classes: PropTypes.instanceOf(Object).isRequired
+  classes: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default withStyles(styles)(SiteSelect);

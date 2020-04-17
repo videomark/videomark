@@ -12,7 +12,7 @@ const QoEValueGraphList = ({
   regionalAverage,
   hour,
   hourlyAverage,
-  isLowQuality
+  isLowQuality,
 }) => {
   switch (value) {
     case -1:
@@ -70,12 +70,12 @@ QoEValueGraphList.propTypes = {
   value: PropTypes.number,
   region: PropTypes.shape({
     country: PropTypes.string,
-    subdivision: PropTypes.string
+    subdivision: PropTypes.string,
   }),
   regionalAverage: PropTypes.number,
   hour: PropTypes.number,
   hourlyAverage: PropTypes.number,
-  isLowQuality: PropTypes.bool
+  isLowQuality: PropTypes.bool,
 };
 QoEValueGraphList.defaultProps = {
   value: undefined,
@@ -83,6 +83,6 @@ QoEValueGraphList.defaultProps = {
   regionalAverage: undefined,
   hour: undefined,
   hourlyAverage: undefined,
-  isLowQuality: false
+  isLowQuality: false,
 };
 export default QoEValueGraphList;

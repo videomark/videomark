@@ -10,8 +10,8 @@ import ArrowBack from "@material-ui/icons/ArrowBack";
 const useStyles = makeStyles({
   root: {
     width: "100vw",
-    height: "100vh"
-  }
+    height: "100vh",
+  },
 });
 export default () => {
   const classes = useStyles();

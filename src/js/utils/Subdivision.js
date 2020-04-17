@@ -45,7 +45,7 @@ const SubdivisionNames = {
   44: "大分県",
   45: "宮崎県",
   46: "鹿児島県",
-  47: "沖縄県"
+  47: "沖縄県",
 };
 
 export default class Subdivision {

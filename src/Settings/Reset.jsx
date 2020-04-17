@@ -25,7 +25,7 @@ const useDialog = () => {
               description={[
                 "設定を既定値にリセットします。",
                 "セッションIDと統計グラフのキャッシュを削除します。",
-                "ただし、計測結果とその履歴はそのまま残ります。"
+                "ただし、計測結果とその履歴はそのまま残ります。",
               ].join("")}
               disagree="キャンセル"
               agree="リセット"
@@ -74,10 +74,10 @@ const Reset = ({ settings, resetSettings }) => {
 };
 Reset.propTypes = {
   settings: PropTypes.shape({}),
-  resetSettings: PropTypes.instanceOf(Function)
+  resetSettings: PropTypes.instanceOf(Function),
 };
 Reset.defaultProps = {
   settings: undefined,
-  resetSettings: undefined
+  resetSettings: undefined,
 };
 export default Reset;

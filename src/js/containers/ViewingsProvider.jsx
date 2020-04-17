@@ -5,7 +5,7 @@ import ViewingModel from "../utils/Viewing";
 import waitForContentRendering from "../utils/waitForContentRendering";
 
 export const ViewingsContext = createContext();
-export const ViewingsProvider = props => {
+export const ViewingsProvider = (props) => {
   const [viewings, setViewings] = useState();
   const main = async () => {
     // FIXME: storage へのアクセスは他のプロセスをブロックするので開始前に一定時間待つ
@@ -24,22 +24,22 @@ export const ViewingsProvider = props => {
 export default ViewingsProvider;
 
 export const STREAM_BUFFER_SIZE = 60;
-export const viewingModelsStream = viewings => {
+export const viewingModelsStream = (viewings) => {
   const ids = [...viewings.keys()];
-  const pull = async controller => {
+  const pull = async (controller) => {
     if (ids.length === 0) {
       controller.close();
       return;
     }
 
     const buffer = await Promise.all(
-      ids.splice(-STREAM_BUFFER_SIZE).map(async id => {
+      ids.splice(-STREAM_BUFFER_SIZE).map(async (id) => {
         const viewing = viewings.get(id);
         const initialState =
           viewing instanceof Function ? await viewing() : viewing;
         return new ViewingModel({
           id,
-          ...initialState
+          ...initialState,
         }).init();
       })
     );
