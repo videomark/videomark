@@ -6,7 +6,7 @@ import AppData from "../../utils/AppData";
 
 const Pager = ({ page, perPage, maxPage }) => {
   const handleClick = (e, offset) => {
-    AppData.update(AppDataActions.ViewingList, state =>
+    AppData.update(AppDataActions.ViewingList, (state) =>
       Object.assign(state, { page: offset / perPage })
     );
     window.scrollTo(window.scrollX, 0);
@@ -26,7 +26,7 @@ const Pager = ({ page, perPage, maxPage }) => {
 Pager.propTypes = {
   page: PropTypes.number.isRequired,
   perPage: PropTypes.number.isRequired,
-  maxPage: PropTypes.number.isRequired
+  maxPage: PropTypes.number.isRequired,
 };
 
 export default Pager;

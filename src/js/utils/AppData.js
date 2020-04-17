@@ -11,7 +11,7 @@ class Data {
 
   update(data) {
     this.data = data;
-    this.callbacks.forEach(i => i.object[i.funcName](data));
+    this.callbacks.forEach((i) => i.object[i.funcName](data));
   }
 
   add(callbackObject) {
@@ -20,7 +20,7 @@ class Data {
 
   remove(callbackObject) {
     this.callbacks = this.callbacks.filter(
-      item => !callbackObject.equals(item)
+      (item) => !callbackObject.equals(item)
     );
   }
 }
@@ -30,18 +30,18 @@ const MakeActionCallback = (object, funcName) => {
     object,
     funcName,
 
-    equals: callbackObject => {
+    equals: (callbackObject) => {
       return (
         object === callbackObject.object && funcName === callbackObject.funcName
       );
-    }
+    },
   };
 };
 
 class AppData {
   constructor() {
     this.data = {};
-    Object.keys(AppDataActions).forEach(key => {
+    Object.keys(AppDataActions).forEach((key) => {
       if (key in this.data) {
         Error("duplicate key");
       }

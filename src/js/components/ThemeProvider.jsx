@@ -7,8 +7,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 const theme = createMuiTheme({
   palette: {
     primary: { main: "#1c2d69" },
-    secondary: { main: "#d1101b" }
-  }
+    secondary: { main: "#d1101b" },
+  },
 });
 
 const ThemeProvider = ({ children }) => (
@@ -18,7 +18,7 @@ const ThemeProvider = ({ children }) => (
   </MuiThemeProvider>
 );
 ThemeProvider.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default ThemeProvider;

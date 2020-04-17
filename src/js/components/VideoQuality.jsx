@@ -25,7 +25,7 @@ const DItem = ({ dt, dd, na }) => {
 DItem.propTypes = {
   dt: PropTypes.string.isRequired,
   dd: PropTypes.string.isRequired,
-  na: PropTypes.bool.isRequired
+  na: PropTypes.bool.isRequired,
 };
 
 export const VideoQuality = ({
@@ -38,33 +38,33 @@ export const VideoQuality = ({
   speed,
   droppedVideoFrames,
   totalVideoFrames,
-  timing
+  timing,
 }) => {
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
   const playing = date - startTime - pause;
   const classes = {
     bitrate: {
-      na: !(bitrate >= 0)
+      na: !(bitrate >= 0),
     },
     resolution: {
-      na: ![videoWidth, videoHeight].every(l => l >= 0)
+      na: ![videoWidth, videoHeight].every((l) => l >= 0),
     },
     framerate: {
-      na: !(framerate >= 0)
+      na: !(framerate >= 0),
     },
     dropped: {
-      na: !Number.isFinite(droppedVideoFrames / totalVideoFrames)
+      na: !Number.isFinite(droppedVideoFrames / totalVideoFrames),
     },
     waiting: {
-      na: !Number.isFinite(waiting / playing)
+      na: !Number.isFinite(waiting / playing),
     },
     playing: {
-      na: !Number.isFinite(playing)
+      na: !Number.isFinite(playing),
     },
     transferSize: {
-      na: !Number.isFinite(transferSize)
-    }
+      na: !Number.isFinite(transferSize),
+    },
   };
 
   return (
@@ -124,7 +124,7 @@ export const VideoQuality = ({
               ? "n/a"
               : `${formatDistanceStrict(0, playing, {
                   unit: "second",
-                  locale
+                  locale,
                 })}`
           }
           /* eslint-disable-next-line react/jsx-props-no-spreading */
@@ -154,7 +154,7 @@ VideoQuality.propTypes = {
   speed: PropTypes.number,
   droppedVideoFrames: PropTypes.number,
   totalVideoFrames: PropTypes.number,
-  timing: PropTypes.instanceOf(Object)
+  timing: PropTypes.instanceOf(Object),
 };
 VideoQuality.defaultProps = {
   startTime: undefined,
@@ -166,7 +166,7 @@ VideoQuality.defaultProps = {
   speed: undefined,
   droppedVideoFrames: undefined,
   totalVideoFrames: undefined,
-  timing: undefined
+  timing: undefined,
 };
 
 export default VideoQuality;

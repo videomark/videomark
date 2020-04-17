@@ -247,7 +247,7 @@ const countryNameTable = {
   AE: "United Arab Emirates",
   EH: "Western Sahara",
   AU: "Australia",
-  LC: "Saint Lucia"
+  LC: "Saint Lucia",
 };
 
 export default class Country {

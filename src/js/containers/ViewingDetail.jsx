@@ -28,10 +28,10 @@ const VideoLinkWithThumbnail = ({ location, title, thumbnail }) => (
 VideoLinkWithThumbnail.propTypes = {
   location: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  thumbnail: PropTypes.string
+  thumbnail: PropTypes.string,
 };
 VideoLinkWithThumbnail.defaultProps = {
-  thumbnail: null
+  thumbnail: null,
 };
 
 const VideoInfo = ({ location, startTime }) => (
@@ -42,7 +42,7 @@ const VideoInfo = ({ location, startTime }) => (
 );
 VideoInfo.propTypes = {
   location: PropTypes.string.isRequired,
-  startTime: PropTypes.instanceOf(Date).isRequired
+  startTime: PropTypes.instanceOf(Date).isRequired,
 };
 
 const QoE = ({ model, regionalStats, hourlyStats }) => {
@@ -81,14 +81,14 @@ const QoE = ({ model, regionalStats, hourlyStats }) => {
 QoE.propTypes = {
   model: PropTypes.instanceOf(ViewingModel).isRequired,
   regionalStats: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
-  hourlyStats: PropTypes.instanceOf(HourlyAverageQoE).isRequired
+  hourlyStats: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
 };
 
 const RemoveButton = ({ model }) => {
   const remove = useCallback(() => {
     DataErase.add(model.id);
     // FIXME: ViewingListをrender()しないと表示が変わらない
-    AppData.update(AppDataActions.ViewingList, state => state);
+    AppData.update(AppDataActions.ViewingList, (state) => state);
     AppData.update(AppDataActions.Modal, null);
   }, [model]);
 
@@ -101,7 +101,7 @@ const RemoveButton = ({ model }) => {
   );
 };
 RemoveButton.propTypes = {
-  model: PropTypes.instanceOf(ViewingModel).isRequired
+  model: PropTypes.instanceOf(ViewingModel).isRequired,
 };
 
 const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
@@ -114,7 +114,7 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
     startTime,
     transferSize,
     quality,
-    qoeCalculatable
+    qoeCalculatable,
   } = viewing;
 
   const Title = () => (
@@ -158,6 +158,6 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
 ViewingDetail.propTypes = {
   model: PropTypes.instanceOf(ViewingModel).isRequired,
   regionalAverageQoE: PropTypes.instanceOf(RegionalAverageQoE).isRequired,
-  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired
+  hourlyAverageQoE: PropTypes.instanceOf(HourlyAverageQoE).isRequired,
 };
 export default React.memo(ViewingDetail);

@@ -22,7 +22,7 @@ export const VideoThumbnail = ({ className, title, thumbnail }) => (
     className={className}
     src={thumbnail == null ? NoImage : thumbnail}
     alt={title}
-    onError={e => {
+    onError={(e) => {
       e.target.src = NoImage;
     }}
   />
@@ -30,15 +30,15 @@ export const VideoThumbnail = ({ className, title, thumbnail }) => (
 VideoThumbnail.propTypes = {
   className: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  thumbnail: PropTypes.string
+  thumbnail: PropTypes.string,
 };
 VideoThumbnail.defaultProps = {
-  thumbnail: null
+  thumbnail: null,
 };
 
-export const toTimeString = date => format(date, "yyyy/MM/dd HH:mm");
+export const toTimeString = (date) => format(date, "yyyy/MM/dd HH:mm");
 
-export const useViewing = model => {
+export const useViewing = (model) => {
   const [state, dispatch] = useState();
   useEffect(() => {
     model.init().then(dispatch);
@@ -50,14 +50,14 @@ const RecoverOrRemoveButton = ({ model }) => {
   const recover = useCallback(() => {
     DataErase.recover(model.id);
     // FIXME: ViewingListをrender()しないと表示が変わらない
-    AppData.update(AppDataActions.ViewingList, state => state);
+    AppData.update(AppDataActions.ViewingList, (state) => state);
   }, [model]);
 
   const remove = useCallback(() => {
     DataErase.remove(model.id);
-    AppData.update(AppDataActions.ViewingList, state => ({
+    AppData.update(AppDataActions.ViewingList, (state) => ({
       ...state,
-      removed: [...state.removed, model.id]
+      removed: [...state.removed, model.id],
     }));
   }, [model]);
 
@@ -89,7 +89,7 @@ const RecoverOrRemoveButton = ({ model }) => {
   );
 };
 RecoverOrRemoveButton.propTypes = {
-  model: PropTypes.instanceOf(ViewingModel).isRequired
+  model: PropTypes.instanceOf(ViewingModel).isRequired,
 };
 
 const Viewing = ({ model, disabled }) => {
@@ -122,7 +122,7 @@ const Viewing = ({ model, disabled }) => {
             <VideoThumbnail
               className={[
                 style.thumbnail,
-                disabled ? style.removedThumbnail : null
+                disabled ? style.removedThumbnail : null,
               ].join(" ")}
               title={title}
               thumbnail={thumbnail}
@@ -142,9 +142,9 @@ const Viewing = ({ model, disabled }) => {
 };
 Viewing.propTypes = {
   model: PropTypes.instanceOf(ViewingModel).isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
 };
 Viewing.defaultProps = {
-  disabled: false
+  disabled: false,
 };
 export default React.memo(Viewing);

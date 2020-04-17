@@ -12,14 +12,14 @@ class DataErase {
 
   async initialize(viewings) {
     const targets = [
-      ...(await new Promise(resolve =>
+      ...(await new Promise((resolve) =>
         ChromeExtensionWrapper.loadRemovedTarget(resolve)
       )),
-      ...[...viewings.keys()].slice(0, viewings.size - MaxSaveCount)
+      ...[...viewings.keys()].slice(0, viewings.size - MaxSaveCount),
     ];
     if (targets.length > 0) {
       await this.remove(targets);
-      targets.forEach(target => viewings.delete(target));
+      targets.forEach((target) => viewings.delete(target));
     }
     return viewings;
   }
@@ -30,7 +30,7 @@ class DataErase {
   }
 
   recover(targetId) {
-    this.removedIds = this.removedIds.filter(id => id !== targetId);
+    this.removedIds = this.removedIds.filter((id) => id !== targetId);
     ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
   }
 
@@ -42,25 +42,27 @@ class DataErase {
     const targetIds = Array.isArray(param) ? param : [param];
     try {
       // indexの更新
-      const { index } = await new Promise(resolve =>
+      const { index } = await new Promise((resolve) =>
         storage().get("index", resolve)
       );
       if (Array.isArray(index))
-        await new Promise(resolve =>
+        await new Promise((resolve) =>
           storage().set(
-            { index: index.filter(id => !targetIds.includes(id)) },
+            { index: index.filter((id) => !targetIds.includes(id)) },
             resolve
           )
         );
 
       // サーバーへ削除要求するid一覧
       const request = (
-        await Promise.all(targetIds.map(id => new ViewingModel({ id }).init()))
+        await Promise.all(
+          targetIds.map((id) => new ViewingModel({ id }).init())
+        )
       )
         .filter(({ valid }) => valid)
         .map(({ sessionId, videoId }) => ({
           session: sessionId,
-          video: videoId
+          video: videoId,
         }));
 
       if (request.length > 0) {
@@ -75,11 +77,11 @@ class DataErase {
       }
 
       // 削除処理の終えたものを取り除く
-      this.removedIds = this.removedIds.filter(id => !targetIds.includes(id));
+      this.removedIds = this.removedIds.filter((id) => !targetIds.includes(id));
       ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
 
       // ストレージにある実体を削除
-      targetIds.forEach(id => ChromeExtensionWrapper.remove(id));
+      targetIds.forEach((id) => ChromeExtensionWrapper.remove(id));
     } catch (error) {
       console.error(`VIDEOMARK: ${error}`);
     }

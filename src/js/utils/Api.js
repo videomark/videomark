@@ -3,9 +3,9 @@ class Api {
     const response = fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(params)
+      body: JSON.stringify(params),
     }).catch(() => Response.error());
 
     return response;
@@ -20,7 +20,7 @@ class Api {
   static statsInfo(video, session) {
     return Api.fetch("https://sodium.webdino.org:8443/stats/info", {
       session,
-      video
+      video,
     });
   }
 
@@ -32,7 +32,7 @@ class Api {
 
   static service() {
     return Api.fetch("https://sodium.webdino.org:8443/stats", {
-      group: "service"
+      group: "service",
     });
   }
 
@@ -41,7 +41,7 @@ class Api {
     return Api.fetch("https://sodium.webdino.org:8443/stats/subdivision", {
       country,
       subdivision,
-      limit
+      limit,
     });
   }
 

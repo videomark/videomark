@@ -27,7 +27,7 @@ const SimplePage = ({ title, ...props }) => (
   </Container>
 );
 SimplePage.propTypes = {
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
 };
 
 export default SimplePage;

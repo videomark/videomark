@@ -10,7 +10,7 @@ class OfflineNoticeSnackbar extends Component {
     this.state = {
       open: false,
       message:
-        "現在オフラインです。最新の計測結果を取得するには再接続してください。"
+        "現在オフラインです。最新の計測結果を取得するには再接続してください。",
     };
     this.open = this.open.bind(this);
     this.close = this.close.bind(this);
@@ -47,7 +47,7 @@ class OfflineNoticeSnackbar extends Component {
               onClick={() => window.location.reload()}
             >
               <Refresh />
-            </IconButton>
+            </IconButton>,
           ]}
         />
       </Snackbar>

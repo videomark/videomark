@@ -27,7 +27,7 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    const agreed = await new Promise(resolve =>
+    const agreed = await new Promise((resolve) =>
       ChromeExtensionWrapper.loadAgreedTerm(resolve)
     );
     if (!agreed) {
@@ -44,8 +44,8 @@ class App extends React.Component {
     this.setState({
       modal: {
         show: data !== null,
-        contents: data
-      }
+        contents: data,
+      },
     });
   }
 

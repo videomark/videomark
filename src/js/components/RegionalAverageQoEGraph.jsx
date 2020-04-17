@@ -24,13 +24,13 @@ const RegionalAverageQoEGraph = ({ region, regionalAverage }) => {
 RegionalAverageQoEGraph.propTypes = {
   region: PropTypes.shape({
     country: PropTypes.string,
-    subdivision: PropTypes.string
+    subdivision: PropTypes.string,
   }),
-  regionalAverage: PropTypes.number
+  regionalAverage: PropTypes.number,
 };
 RegionalAverageQoEGraph.defaultProps = {
   region: undefined,
-  regionalAverage: undefined
+  regionalAverage: undefined,
 };
 
 export default RegionalAverageQoEGraph;

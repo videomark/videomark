@@ -4,13 +4,13 @@ import SimplePage from "./js/components/SimplePage";
 import {
   storage,
   migration,
-  rollback
+  rollback,
 } from "./js/utils/ChromeExtensionWrapper";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [locked, lock] = useState(false);
-  const onChange = async e => {
+  const onChange = async (e) => {
     const { files } = e.currentTarget;
     if (files.length !== 1) return;
     setErrorMessage(null);
@@ -18,7 +18,7 @@ export default () => {
     const [file] = files;
     const result = await new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = rogressEvent => {
+      reader.onload = (rogressEvent) => {
         try {
           const json = JSON.parse(rogressEvent.target.result);
           if (!(json.AgreedTerm || json.RemovedTargetKeys))
@@ -29,9 +29,11 @@ export default () => {
         }
       };
       reader.readAsText(file);
-    }).catch(error => setErrorMessage(`インポートに失敗しました。 (${error})`));
+    }).catch((error) =>
+      setErrorMessage(`インポートに失敗しました。 (${error})`)
+    );
     await rollback();
-    await new Promise(resolve => storage().set(result, resolve));
+    await new Promise((resolve) => storage().set(result, resolve));
     await migration();
     lock(false);
   };

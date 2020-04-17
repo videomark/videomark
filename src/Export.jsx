@@ -8,10 +8,10 @@ export default () => {
   const onClick = async () => {
     lock(true);
     const entries = Object.entries(
-      await new Promise(resolve => storage().get(resolve))
+      await new Promise((resolve) => storage().get(resolve))
     ).map(([key, value]) => `${JSON.stringify(key)}:${JSON.stringify(value)}`);
     const blob = new Blob(["{", entries.join(), "}"], {
-      type: "data:application/json"
+      type: "data:application/json",
     });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);

@@ -11,25 +11,25 @@ import Help from "@material-ui/icons/Help";
 import Settings from "@material-ui/icons/Settings";
 import helpURL from "../utils/helpURL";
 
-const Tab = withStyles(theme => ({
+const Tab = withStyles((theme) => ({
   root: {
     [theme.breakpoints.up("sm")]: {
       paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4)
+      paddingRight: theme.spacing(4),
     },
-    fontSize: theme.typography.h6.fontSize
-  }
+    fontSize: theme.typography.h6.fontSize,
+  },
 }))(MuiTab);
 
 export default () => {
   const history = useHistory();
   const links = [
     { path: "/", label: "計測結果" },
-    { path: "/history", label: "履歴" }
+    { path: "/history", label: "履歴" },
   ];
   const value = (
     links.find(({ path }) => path === history.location.pathname) || {
-      path: "/"
+      path: "/",
     }
   ).path;
   return (

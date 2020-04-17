@@ -17,7 +17,7 @@ import List from "./List";
 import Dialog from "./Dialog";
 import {
   clearStore as clearStatsCache,
-  getStoredIndex as getStatsCacheIndex
+  getStoredIndex as getStatsCacheIndex,
 } from "../js/containers/StatsDataProvider";
 import { clearViewings } from "../js/utils/ChromeExtensionWrapper";
 
@@ -29,41 +29,41 @@ const sessionExpiresInMarks = [
   0,
   addDays(0, 1).getTime(),
   defaultSessionExpiresIn,
-  addDays(0, 365).getTime()
+  addDays(0, 365).getTime(),
 ].map((expiresIn, value) => ({
   value,
   label:
     expiresIn > 0
       ? formatDistanceStrict(0, expiresIn, {
           unit: "day",
-          locale
+          locale,
         })
       : "0",
-  expiresIn
+  expiresIn,
 }));
 
 /**
  * @param {number} expiresIn セッション保持期間
  * @returns {number}
  */
-const sessionExpiresInToValue = expiresIn =>
+const sessionExpiresInToValue = (expiresIn) =>
   (
-    sessionExpiresInMarks.find(mark => mark.expiresIn === expiresIn) ||
+    sessionExpiresInMarks.find((mark) => mark.expiresIn === expiresIn) ||
     sessionExpiresInMarks.find(
-      mark => mark.expiresIn === defaultSessionExpiresIn
+      (mark) => mark.expiresIn === defaultSessionExpiresIn
     )
   ).value;
 
-const useStyle = makeStyles(theme => ({
+const useStyle = makeStyles((theme) => ({
   sessionExpiresIn: {
     "& .MuiSlider-root": {
       marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(2)
+      marginRight: theme.spacing(2),
     },
     "& > *": {
-      flex: 1
-    }
-  }
+      flex: 1,
+    },
+  },
 }));
 
 const SessionExpiresIn = ({ expiresIn, onChange }) => {
@@ -92,10 +92,10 @@ const SessionExpiresIn = ({ expiresIn, onChange }) => {
 };
 SessionExpiresIn.propTypes = {
   expiresIn: PropTypes.number,
-  onChange: PropTypes.instanceOf(Function).isRequired
+  onChange: PropTypes.instanceOf(Function).isRequired,
 };
 SessionExpiresIn.defaultProps = {
-  expiresIn: defaultSessionExpiresIn
+  expiresIn: defaultSessionExpiresIn,
 };
 
 const useDialog = () => {
@@ -125,7 +125,7 @@ const useDialog = () => {
               title="計測履歴を削除します"
               description={[
                 "計測履歴と統計グラフのキャッシュを削除します。",
-                "ただし、サーバーに保存されているデータは残ります。"
+                "ただし、サーバーに保存されているデータは残ります。",
               ].join("")}
               disagree="キャンセル"
               agree="削除"
@@ -159,7 +159,7 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
   const { id: sessionId } = session || {};
   const { expires_in: expiresIn } = settings || {};
   const updateSessionExpiresIn = useCallback(
-    ms => {
+    (ms) => {
       saveSettings({ ...settings, expires_in: ms });
       saveSession({ ...session, expires: Date.now() + ms });
     },
@@ -174,7 +174,7 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
           id: uuidv4(),
           expires:
             Date.now() +
-            (Number.isFinite(expiresIn) ? expiresIn : defaultSessionExpiresIn)
+            (Number.isFinite(expiresIn) ? expiresIn : defaultSessionExpiresIn),
         })
       ),
     [openDialog, saveSession, expiresIn]
@@ -245,12 +245,12 @@ PrivacySettings.propTypes = {
   settings: PropTypes.shape({ expires_in: PropTypes.number }),
   saveSettings: PropTypes.instanceOf(Function),
   session: PropTypes.shape({ id: PropTypes.string, expires: PropTypes.number }),
-  saveSession: PropTypes.instanceOf(Function)
+  saveSession: PropTypes.instanceOf(Function),
 };
 PrivacySettings.defaultProps = {
   settings: undefined,
   saveSettings: undefined,
   session: undefined,
-  saveSession: undefined
+  saveSession: undefined,
 };
 export default PrivacySettings;

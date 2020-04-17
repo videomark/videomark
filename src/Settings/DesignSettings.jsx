@@ -10,7 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
 
 const List = styled(MuiList)({
-  padding: 0
+  padding: 0,
 });
 
 const DesignSettings = ({ settings, saveSettings }) => {
@@ -19,11 +19,11 @@ const DesignSettings = ({ settings, saveSettings }) => {
   const displayOnPlayer =
     uninitializedDisplayOnPlayer == null || uninitializedDisplayOnPlayer;
   const handleDisplaySettingChange = useCallback(
-    event => {
+    (event) => {
       setChanges(!changes);
       saveSettings({
         ...settings,
-        display_on_player: event.target.checked
+        display_on_player: event.target.checked,
       });
     },
     [changes, setChanges, settings, saveSettings]
@@ -59,10 +59,10 @@ const DesignSettings = ({ settings, saveSettings }) => {
 };
 DesignSettings.propTypes = {
   settings: PropTypes.shape({ display_on_player: PropTypes.bool }),
-  saveSettings: PropTypes.instanceOf(Function)
+  saveSettings: PropTypes.instanceOf(Function),
 };
 DesignSettings.defaultProps = {
   settings: undefined,
-  saveSettings: undefined
+  saveSettings: undefined,
 };
 export default DesignSettings;
