@@ -66,4 +66,45 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
 
         return false;
     }
+
+    /**
+     * 指定したビットレート以下を選択する (指定しない場合や指定されたビットレートより小さい画質が存在しない場合、最低画質を選択する)
+     * @param {number} [bitrate] 最大ビットレート
+     * @param {number} [resolution] 最大解像度 (height)
+     */
+    set_max_bitrate(bitrate, resolution) {
+        /** @type {Array<[number, number, string]>} ビットレートと解像度(height)と書き込む値 */
+        let videos = [
+            [3e6, 720, "super_high"],
+            [2e6, 450, "high"],
+            [1e6, 450, "normal"],
+            [384e3, 288, "low"],
+            [192e3, 288, "super_low"],
+        ];
+
+        if (bitrate) {
+            videos = videos.filter(([videoBitrate]) => videoBitrate <= bitrate);
+        }
+        if (resolution) {
+            videos = videos.filter(([, videoResolution]) => videoResolution <= resolution);
+        }
+
+        /** @type {string} 書き込む値 */
+        const selected = videos.length === 0 ? "super_low" : videos[0][2];
+        localStorage.setItem(
+            "LeoPlayer_EdgeStreamStore_LATEST_DMC_STREAM_QUALITY",
+            JSON.stringify(selected)
+        );
+    }
+
+    /**
+     * 画質 "自動" を選択する
+     */
+    set_default_bitrate() {
+        // NOTE: 画質 ('"abr"': 自動の場合)
+        localStorage.setItem(
+            "LeoPlayer_EdgeStreamStore_LATEST_DMC_STREAM_QUALITY",
+            '"abr"'
+        );
+    }
 }
