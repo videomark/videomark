@@ -7,6 +7,7 @@ plugins:
   - prettier
 rules:
   camelcase: "off"
+  no-underscore-dangle: "off"
 globals:
   sodium: true
   videojs: true
