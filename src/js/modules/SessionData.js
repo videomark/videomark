@@ -6,6 +6,7 @@ import msgpack from "msgpack-lite";
 import Config from "./Config";
 import ResourceTiming from "./ResourceTiming";
 import VideoData from "./VideoData";
+import MainVideoChangeException from "./MainVideoChangeException";
 import { useStorage } from "./Storage";
 import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, fetchAndStorePeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
 import { version } from "../../../package.json";
@@ -31,18 +32,6 @@ async function set_max_bitrate(new_video) {
       new_video.set_default_bitrate();
       saveQuotaLimitStarted(undefined);
       stopPeakTimeLimit();
-  }
-}
-
-class MainVideoChangeException extends Error {
-  constructor(...params) {
-    super(...params);
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, MainVideoChangeException);
-    }
-
-    this.name = "MainVideoChangeException";
   }
 }
 
@@ -242,8 +231,8 @@ export default class SessionData {
 
       /* データ送信 */
       dataTimeoutId = this.startDataTransaction(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
-      
-      /* 保存 */ 
+
+      /* 保存 */
       storeTimeoutId = this.startDataStore(mainVideo, Config.get_check_state_interval());
 
       if (mainVideo.is_calculatable()) {
@@ -275,7 +264,7 @@ export default class SessionData {
         }, Config.get_check_state_interval())
       })
     } finally {
-      
+
       if (dataTimeoutId) clearTimeout(dataTimeoutId);
       if (storeTimeoutId)clearTimeout(storeTimeoutId);
       if (requestTimeoutId) clearTimeout(requestTimeoutId);
