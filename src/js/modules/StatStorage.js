@@ -53,7 +53,7 @@ export async function savePeakTimeLimit(new_peak_time_limit) {
   if (!new_peak_time_limit) return;
 
   const now = new Date();
-  const peak_time_limit = Object.assign({last_updated:now.getTime()}, new_peak_time_limit);
+  const peak_time_limit = { last_updated: now.getTime(), ...new_peak_time_limit };
 
   if (!Config.is_mobile()) {
     window.postMessage({
