@@ -9,7 +9,7 @@
     "lit-html": "^1.0.0",
     "mpd-parser": "^0.10.0",
     "msgpack-lite": "^0.1.26",
-    "uuid": "^3.3.2"
+    "uuid": "^7.0.0"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
