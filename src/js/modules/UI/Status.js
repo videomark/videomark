@@ -1,7 +1,7 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import sparkline from '@videomark/sparkline';
-import { quality, latestQoE, latestQuality, isLowQuality, latestThroughput, transferSize } from "./Quality";
+import { quality, latestQoE, latestQuality, isLowQuality, getRealThroughput, transferSize } from "./Quality";
 
 const HISTORY_SIZE = 120;
 
@@ -95,7 +95,7 @@ export default class Status {
                 `
               : "計測中..."}
           </summary>
-          ${open ? quality({ sessionId, videoId }) : ""}
+          ${open ? quality({ sessionId, videoId, throughput: this.historyHolder.latestThroughput }) : ""}
         </details>
       </div>
     `;
@@ -104,9 +104,9 @@ export default class Status {
   update(state = {}) {
     if (this.root == null) return;
     Object.assign(this.state, state);
-    render(this.template, this.root);
-
     this.historyUpdate();
+
+    render(this.template, this.root);
     if (this.state.open) this.drawChart();
   }
 
@@ -128,7 +128,8 @@ export default class Status {
     const { height: videoHeight } = resolution || {};
     const { waiting } = timing || {};
     const qoe = latestQoE({ sessionId, videoId });
-    const realThroughput = latestThroughput(throughput);
+    const realThroughput = getRealThroughput(throughput) || this.historyHolder.latestThroughput || NaN;
+    this.historyHolder.latestThroughput = realThroughput;
 
     if (this.historyHolder.videoId !== videoId) {
       this.historyHolder.videoId = videoId;
