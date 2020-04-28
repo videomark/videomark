@@ -22,7 +22,7 @@ export const latestQuality = ({ sessionId, videoId }) => {
   return value == null ? {} : { date, ...value };
 };
 
-export const latestThroughput = (list) => {
+export const getRealThroughput = (list) => {
   if (!list) return NaN;
   if (!list.length) return NaN;
   return list[list.length-1].throughput;
@@ -59,11 +59,10 @@ const kiloSizeFormat = bytes => sizeFormat(bytes, 1);
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
-export const quality = ({ sessionId, videoId }) => {
+export const quality = ({ sessionId, videoId, throughput }) => {
   const {
     date,
     bitrate,
-    throughput,
     resolution,
     framerate,
     speed,
@@ -79,7 +78,6 @@ export const quality = ({ sessionId, videoId }) => {
   const { waiting, pause } = timing || {};
   const playing = date - startTime({ sessionId, videoId }) - pause;
   const qoe = latestQoE({ sessionId, videoId });
-  const realThroughput = latestThroughput(throughput);
   const alert =
     Number.isFinite(qoe) &&
     isLowQuality({ droppedVideoFrames, totalVideoFrames });
@@ -88,7 +86,7 @@ export const quality = ({ sessionId, videoId }) => {
       na: !(bitrate >= 0)
     },
     throughput: {
-      na: !(realThroughput >= 0)
+      na: !(throughput >= 0)
     },
     transfer: {
       na: !(transfer >= 0)
@@ -166,7 +164,7 @@ export const quality = ({ sessionId, videoId }) => {
       </dd>
       <dt class=${classMap(classes.throughput)}>スループット</dt>
       <dd class=${classMap(classes.throughput)}>
-        ${realThroughput >= 0 ? `${kiloSizeFormat(realThroughput)} kbps` : "n/a"}
+        ${throughput >= 0 ? `${kiloSizeFormat(throughput)} kbps` : "n/a"}
       </dd>
       <dd class=${classMap(classes.throughput)}>
         <svg class="chart" id="thruput_chart"></svg>
