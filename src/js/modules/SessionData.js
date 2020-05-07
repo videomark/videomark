@@ -454,9 +454,13 @@ export default class SessionData {
     this.endTime = performance.now();
     this.sequence += 1;
 
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+
     const param = {
       version: this.version,
-      date: new Date().toISOString(),
+      date: now.toISOString(),
+      dayOfWeek,
       startTime: this.startTime,
       endTime: this.endTime,
       session: this.session_id,
