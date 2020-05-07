@@ -125,7 +125,6 @@ ChromeExtension/sodium.js
 | --------------------- | ------------------------------------ |
 | version               | sodium.jsのバージョン(v1.3.0)               |
 | date                  | 送信日時(Date.now())                     |
-| holiday               | 日本の祝日フラグ                          |
 | startTime             | データ収集開始時間(DOMHighResTimeStamp, 初回は0) |
 | endTime               | データ収集終了時間(DOMHighResTimeStamp)       |
 | session               | セッションID(UUID)                        |

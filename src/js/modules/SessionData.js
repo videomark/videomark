@@ -2,8 +2,6 @@
 import { v4 as uuidv4 } from "uuid";
 // eslint-disable-next-line import/no-unresolved
 import msgpack from "msgpack-lite";
-// eslint-disable-next-line import/no-unresolved
-import holiday_jp from "@holiday-jp/holiday_jp";
 
 import Config from "./Config";
 import ResourceTiming from "./ResourceTiming";
@@ -457,12 +455,10 @@ export default class SessionData {
     this.sequence += 1;
 
     const now = new Date();
-    const holiday = holiday_jp.isHoliday(now);
 
     const param = {
       version: this.version,
       date: now.toISOString(),
-      holiday,
       startTime: this.startTime,
       endTime: this.endTime,
       session: this.session_id,

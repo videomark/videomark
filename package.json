@@ -5,7 +5,6 @@
   "author": "soar-vixen@acutus.co.jp",
   "license": "ISC",
   "dependencies": {
-    "@holiday-jp/holiday_jp": "^2.2.3",
     "@videomark/sparkline": "github:videomark/sparkline",
     "lit-html": "^1.0.0",
     "mpd-parser": "^0.10.0",
