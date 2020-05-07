@@ -9,7 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Slider from "@material-ui/core/Slider";
 import ArrowRight from "@material-ui/icons/ArrowRight";
 import Divider from "@material-ui/core/Divider";
-import uuidv4 from "uuid/v4";
+import { v4 as uuidv4 } from "uuid";
 import addDays from "date-fns/addDays";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
