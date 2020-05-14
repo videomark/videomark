@@ -2,10 +2,6 @@
  * 動作設定
  */
 export default class Config {
-  static is_mobile() {
-    return Boolean(window.sodium);
-  }
-
   static get_collect_interval() {
     return this.collect_interval;
   }
