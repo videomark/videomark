@@ -19,7 +19,7 @@
     "@types/react-dom": "~16",
     "parcel": "~1",
     "react-dom": "~16",
-    "typescript": "~3.8.0"
+    "typescript": "~3.9.0"
   },
   "scripts": {
     "build": "tsc",
