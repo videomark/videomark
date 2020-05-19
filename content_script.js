@@ -1,11 +1,9 @@
-const storage = {
-  get: keys => new Promise(resolve => chrome.storage.local.get(keys, resolve)),
-  set: items => new Promise(resolve => chrome.storage.local.set(items, resolve))
-};
+const isMobile = Boolean(window.sodium);
 
-const port = chrome.runtime.connect({
-  name: "sodium-extension-communication-port"
-});
+const storage = {
+  get: keys => new Promise(resolve => (isMobile ? sodium : chrome).storage.local.get(keys, resolve)),
+  set: items => new Promise(resolve => (isMobile ? sodium : chrome).storage.local.set(items, resolve))
+};
 
 const state = {};
 const useId = async viewingId => {
@@ -25,7 +23,6 @@ const useId = async viewingId => {
   return state[viewingId];
 };
 
-// from sodium.js/src/js/modules/StatStorage.js
 const save_transfer_size = async transfer_diff => {
   if (!transfer_diff) return;
 
@@ -41,7 +38,6 @@ const save_transfer_size = async transfer_diff => {
   storage.set({ transfer_size });
 };
 
-// from sodium.js/src/js/modules/StatStorage.js
 const save_quota_limit_started = async limit_started => {
   let { transfer_size } = await storage.get("transfer_size");
   if (!transfer_size) transfer_size = {};
@@ -95,6 +91,8 @@ class AlivePort {
    * 実行後ある時間経過すると計測していないものとみなす
    */
   alive() {
+    if (isMobile) return;
+
     if (this.timeout != null) clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       if (this.port == null) return;
@@ -110,6 +108,55 @@ class AlivePort {
   }
 }
 const alivePort = new AlivePort();
+
+/** @class background で記録したホスト名に対するipアドレスを取得するクラス */
+class LocationIpPort {
+  constructor() {
+    this.port = null;
+    this.portName = "sodium-extension-communication-port";
+  }
+
+  getIp(host) {
+    if (isMobile) return Promise.resolve(sodium.locationIp);
+
+    if (this.port == null) {
+      this.port = chrome.runtime.connect({
+        name: this.portName
+      });
+    }
+
+    const requestId = getRandomToken();
+    return new Promise((resolve, reject) => {
+      const listener = value => {
+        try {
+          if (value.requestId === requestId) resolve(value.ip);
+        } catch (e) {
+          reject(e);
+        } finally {
+          this.port.onMessage.removeListener(listener);
+        }
+        return true;
+      };
+      this.port.onMessage.addListener(listener);
+      this.port.postMessage({
+        requestId,
+        method: "getIp",
+        args: [host]
+      });
+    });
+  }
+}
+const locationIpPort = new LocationIpPort();
+
+function getRandomToken() {
+  const randomPool = new Uint8Array(16);
+  crypto.getRandomValues(randomPool);
+  let hex = "";
+  for (var i = 0; i < randomPool.length; ++i) {
+    hex += randomPool[i].toString(16);
+  }
+  return hex;
+}
 
 const message_listener = async event => {
   if (
@@ -153,7 +200,7 @@ const message_listener = async event => {
       break;
     }
     case "get_ip": {
-      const ip = await getIp(event.data.host);
+      const ip = await locationIpPort.getIp(event.data.host);
       event.source.postMessage({
         ip,
         host: event.data.host,
@@ -164,51 +211,18 @@ const message_listener = async event => {
   }
 };
 
-storage.get("AgreedTerm").then(value => {
-  if (!("AgreedTerm" in value)) {
-    return;
-  }
-
-  if (!value["AgreedTerm"]) {
-    return;
-  }
-
+if (isMobile) {
   window.addEventListener("message", message_listener);
+} else {
+  storage.get("AgreedTerm").then(value => {
+    if (!("AgreedTerm" in value)) return;
+    if (!value["AgreedTerm"]) return;
 
-  inject_script({
-    script: chrome.runtime.getURL("sodium.js"),
-    target: "body"
-  });
-});
+    window.addEventListener("message", message_listener);
 
-function getIp(host) {
-  const requestId = getRandomToken();
-  return new Promise((resolve, reject) => {
-    const listener = value => {
-      try {
-        if (value.requestId === requestId) resolve(value.ip);
-      } catch (e) {
-        reject(e);
-      } finally {
-        port.onMessage.removeListener(listener);
-      }
-      return true;
-    };
-    port.onMessage.addListener(listener);
-    port.postMessage({
-      requestId,
-      method: "getIp",
-      args: [host]
+    inject_script({
+      script: chrome.runtime.getURL("sodium.js"),
+      target: "body"
     });
   });
-}
-
-function getRandomToken() {
-  const randomPool = new Uint8Array(16);
-  crypto.getRandomValues(randomPool);
-  let hex = "";
-  for (var i = 0; i < randomPool.length; ++i) {
-    hex += randomPool[i].toString(16);
-  }
-  return hex;
 }
