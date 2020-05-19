@@ -3,26 +3,11 @@ import Config from "./Config";
 export async function saveTransferSize(transfer_diff) {
   if (!transfer_diff) return;
 
-  if (!Config.is_mobile()) {
-    window.postMessage({
-      type: "FROM_SODIUM_JS",
-      method: "save_transfer_size",
-      transfer_diff
-    }, "*");
-    return;
-  }
-
-  const storage = window.sodium.storage.local;
-  let { transfer_size } = await new Promise(resolve =>
-    storage.get("transfer_size", resolve)
-  );
-  if (!transfer_size) transfer_size = {};
-
-  const now = new Date();
-  const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", {minimumIntegerDigits: 2}).format(now.getMonth()+1)}`;
-  const size = (transfer_size[month] || 0) + transfer_diff;
-  transfer_size[month] = size;
-  storage.set({ transfer_size });
+  window.postMessage({
+    type: "FROM_SODIUM_JS",
+    method: "save_transfer_size",
+    transfer_diff
+  }, "*");
 };
 
 export function underQuotaLimit() {
@@ -30,23 +15,11 @@ export function underQuotaLimit() {
 };
 
 export async function saveQuotaLimitStarted(limit_started) {
-  if (!Config.is_mobile()) {
-    window.postMessage({
-      type: "FROM_SODIUM_JS",
-      method: "save_quota_limit_started",
-      limit_started
-    }, "*");
-    return;
-  }
-
-  const storage = window.sodium.storage.local;
-  let { transfer_size } = await new Promise(resolve =>
-    storage.get("transfer_size", resolve)
-  );
-  if (!transfer_size) transfer_size = {};
-
-  transfer_size.limit_started = limit_started;
-  storage.set({ transfer_size });
+  window.postMessage({
+    type: "FROM_SODIUM_JS",
+    method: "save_quota_limit_started",
+    limit_started
+  }, "*");
 };
 
 export async function savePeakTimeLimit(new_peak_time_limit) {
@@ -55,17 +28,11 @@ export async function savePeakTimeLimit(new_peak_time_limit) {
   const now = new Date();
   const peak_time_limit = { last_updated: now.getTime(), ...new_peak_time_limit };
 
-  if (!Config.is_mobile()) {
-    window.postMessage({
-      type: "FROM_SODIUM_JS",
-      method: "save_peak_time_limit",
-      peak_time_limit
-    }, "*");
-    return;
-  }
-
-  const storage = window.sodium.storage.local;
-  storage.set({ peak_time_limit });
+  window.postMessage({
+    type: "FROM_SODIUM_JS",
+    method: "save_peak_time_limit",
+    peak_time_limit
+  }, "*");
 };
 
 export async function fetchAndStorePeakTimeLimit() {

@@ -70,18 +70,11 @@ export default class SessionData {
             ? expiresIn
             : Config.get_default_session_expires_in())
       };
-      if (Config.is_mobile()) {
-        window.sodium.storage.local.set({ session });
-      } else {
-        window.postMessage(
-          {
-            type: "FROM_SODIUM_JS",
-            method: "set_session",
-            ...session
-          },
-          "*"
-        );
-      }
+      window.postMessage({
+        type: "FROM_SODIUM_JS",
+        method: "set_session",
+        ...session
+      }, "*");
     }
 
     this.session_id = session.id;
