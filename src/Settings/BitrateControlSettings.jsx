@@ -11,6 +11,7 @@ import Switch from "@material-ui/core/Switch";
 import Slider from "@material-ui/core/Slider";
 import Link from "@material-ui/core/Link";
 import List from "./List";
+import { isMobile } from "../js/utils/Utils";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -359,6 +360,9 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         <Typography color="textSecondary">
           {[
             "実験的な機能です。",
+            isMobile()
+              ? "現在、YouTubeとニコニコ動画のPC版サイトに対応しています。"
+              : null,
             "設定変更後の動画再生開始時の制限値に応じてビットレート選択が行われます。",
           ].join("")}
           <Link href="https://vm.webdino.org/spec">
