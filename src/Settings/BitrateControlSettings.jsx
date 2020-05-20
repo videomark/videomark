@@ -9,6 +9,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
 import Slider from "@material-ui/core/Slider";
+import Link from "@material-ui/core/Link";
 import List from "./List";
 
 const useStyles = makeStyles((theme) => ({
@@ -357,9 +358,13 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         </Typography>
         <Typography color="textSecondary">
           {[
-            "実験的な機能です。現在、YouTubeとニコニコ動画に対応しています。",
+            "実験的な機能です。",
             "設定変更後の動画再生開始時の制限値に応じてビットレート選択が行われます。",
           ].join("")}
+          <Link href="https://vm.webdino.org/spec">
+            ビットレート制限に対応しているサイト
+          </Link>
+          をご確認下さい。
         </Typography>
       </Box>
       <Paper>
