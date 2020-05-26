@@ -1,3 +1,3 @@
 /node_modules/
-/.netlify/
 /dist/
+.netlify/

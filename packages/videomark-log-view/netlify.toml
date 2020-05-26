@@ -1,0 +1,7 @@
+[build]
+  publish = "build"
+  command = "yarn build-android"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "private, no-store, no-cache, must-revalidate"
