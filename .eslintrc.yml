@@ -1,0 +1,47 @@
+extends:
+  - "eslint:recommended"
+  - "plugin:jsx-a11y/recommended"
+  - "plugin:react/recommended"
+env:
+  browser: true
+  es6: true
+globals:
+  Atomics: readonly
+  SharedArrayBuffer: readonly
+parserOptions:
+  ecmaVersion: 2020
+  sourceType: module
+settings:
+  react:
+    version: detect
+overrides:
+  - files: "packages/sodium/**"
+    rules:
+      no-extra-semi: "off"
+      no-unexpected-multiline: "off"
+    globals:
+      sodium: readonly
+      videojs: readonly
+      FLUENT_URL: readonly
+      SODIUM_SERVER_URL: readonly
+      PEAK_TIME_LIMIT_URL: readonly
+  - files: "packages/videomark-extension/**"
+    globals:
+      sodium: readonly
+      chrome: readonly
+  - files: "packages/videomark-log-view/**"
+    rules:
+      jsx-a11y/no-autofocus: "off"
+      react/display-name: "off"
+    globals:
+      process: readonly
+  - files: "packages/videomark-log-view/packages/videomark-mini-stats/**"
+    rules:
+      react/prop-types: "off"
+  - files:
+      - "packages/sodium/webpack.*.js"
+      - "packages/sodium/Gruntfile.js"
+      - "packages/videomark-log-view/config/**"
+      - "packages/videomark-log-view/scripts/**"
+    env:
+      node: true

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { parse } from 'mpd-parser';
 
 import Config from "./Config";

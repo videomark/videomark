@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";

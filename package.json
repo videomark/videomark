@@ -1,0 +1,21 @@
+{
+  "name": "videomark",
+  "version": "1.0.0",
+  "repository": "git@github.com:videomark/videomark.git",
+  "license": "Apache-2.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "eslint": "7.1.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.20.0",
+    "lerna": "^3.22.0"
+  },
+  "scripts": {
+    "build": "yarn workspaces run build",
+    "lint": "eslint --ext .js,.jsx .",
+    "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
+  }
+}
