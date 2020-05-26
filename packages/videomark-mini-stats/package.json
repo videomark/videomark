@@ -1,12 +1,12 @@
 {
-  "name": "videomark-mini-stats",
+  "name": "@videomark/videomark-mini-stats",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "module": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/videomark/videomark-log-view.git",
+    "url": "git+https://github.com/videomark/videomark.git",
     "directory": "packages/videomark-mini-stats"
   },
   "license": "MIT",

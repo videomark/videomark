@@ -21,10 +21,7 @@ export interface StatsData {
     averageDroppedVideoFrameRatio: number;
 }
 /** 再生時間の統計値 (データのソート、視聴時間の合計、1日あたりの平均視聴時間) */
-export declare const playingTimeStats: (data: {
-    day: string;
-    value: number;
-}[]) => {
+export declare const playingTimeStats: (data: StatsData["playingTime"]) => {
     playingTimeWithDate: PlayingTimeWithDate;
     total: number;
     daily: number;

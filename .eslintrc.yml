@@ -35,7 +35,7 @@ overrides:
       react/display-name: "off"
     globals:
       process: readonly
-  - files: "packages/videomark-log-view/packages/videomark-mini-stats/**"
+  - files: "packages/videomark-mini-stats/**"
     rules:
       react/prop-types: "off"
   - files:

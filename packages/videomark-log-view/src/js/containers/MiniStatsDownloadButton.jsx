@@ -1,6 +1,6 @@
 import React, { useContext, useCallback } from "react";
 import PropTypes from "prop-types";
-import { shareOrDownload } from "videomark-mini-stats";
+import { shareOrDownload } from "@videomark/videomark-mini-stats";
 import { withStyles } from "@material-ui/core/styles";
 import MuiButton from "@material-ui/core/Button";
 import teal from "@material-ui/core/colors/teal";

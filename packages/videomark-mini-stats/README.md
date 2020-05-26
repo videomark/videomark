@@ -1,4 +1,4 @@
-# videomark-mini-stats
+# @videomark/videomark-mini-stat
 
 ![Design](docs/images/design.png)
 

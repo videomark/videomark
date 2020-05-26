@@ -1,5 +1,5 @@
 {
-  "name": "qoe-log-view",
+  "name": "@videomark/videomark-log-view",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -54,7 +54,7 @@
     "terser-webpack-plugin": "^3.0.0",
     "url-loader": "^4.0.0",
     "uuid": "^8.0.0",
-    "videomark-mini-stats": "file:packages/videomark-mini-stats",
+    "@videomark/videomark-mini-stats": "file:../videomark-mini-stats",
     "webpack": "^4.41.6",
     "webpack-dev-server": "^3.10.3",
     "webpack-subresource-integrity": "^1.4.0"
@@ -113,8 +113,5 @@
       "jsx",
       "node"
     ]
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }

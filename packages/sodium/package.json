@@ -1,6 +1,7 @@
 {
-  "name": "qoe_ext_bundle",
+  "name": "@videomark/sodium",
   "version": "v1.3.0",
+  "private": true,
   "description": "QoE Extension",
   "author": "soar-vixen@acutus.co.jp",
   "license": "ISC",
