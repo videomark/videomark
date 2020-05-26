@@ -16,5 +16,6 @@ jobs:
           restore-keys: yarn-
       - run: yarn
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
+      - run: yarn build
       - run: sudo apt-get install xvfb
       - run: xvfb-run yarn e2e
