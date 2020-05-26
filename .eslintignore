@@ -2,3 +2,4 @@
 /packages/sodium/dist/
 /packages/sodium/dist-dev/
 /packages/videomark-log-view/build/
+/test/e2e/

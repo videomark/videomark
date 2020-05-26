@@ -5,7 +5,8 @@
   "license": "Apache-2.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "test/*"
   ],
   "devDependencies": {
     "eslint": "7.1.0",
@@ -15,6 +16,8 @@
   },
   "scripts": {
     "build": "bin/build",
+    "test": "yarn e2e",
+    "e2e": "yarn workspace @videomark/e2e-test test",
     "lint": "eslint --ext .js,.jsx .",
     "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
   }

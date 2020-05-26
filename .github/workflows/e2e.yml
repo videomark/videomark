@@ -1,0 +1,20 @@
+name: e2e
+on: push
+jobs:
+  main:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with: { node-version: 12 }
+      - id: yarn_cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn_cache.outputs.dir }}
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: yarn-
+      - run: yarn
+        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
+      - run: sudo apt-get install xvfb
+      - run: xvfb-run yarn e2e

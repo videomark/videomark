@@ -1,4 +1,14 @@
+const fs = require("fs");
 const puppeteer = require("puppeteer");
+
+const fileExists = (path) => {
+  try {
+    fs.statSync(path);
+    return path;
+  } catch (e) {
+    return null;
+  }
+};
 
 const downloadExtension = async () => {
   const url = "https://sodium-extension.netlify.com/";
@@ -18,12 +28,13 @@ module.exports = async () => {
   const extensionPath = await downloadExtension();
   process.env.LANG = "C";
   const browser = await puppeteer.launch({
-    executablePath: "/usr/bin/chromium-browser",
+    executablePath:
+      fileExists("/usr/bin/google-chrome") || "/usr/bin/chromium-browser",
     args: [
       `--disable-extensions-except=${extensionPath}`,
-      `--load-extension=${extensionPath}`
+      `--load-extension=${extensionPath}`,
     ],
-    headless: false
+    headless: false,
   });
   process.env.PUPPETEER_WS_ENDPOINT =
     process.env.PUPPETEER_WS_ENDPOINT || browser.wsEndpoint();
