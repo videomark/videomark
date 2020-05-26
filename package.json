@@ -14,7 +14,7 @@
     "lerna": "^3.22.0"
   },
   "scripts": {
-    "build": "yarn workspaces run build",
+    "build": "bin/build",
     "lint": "eslint --ext .js,.jsx .",
     "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
   }

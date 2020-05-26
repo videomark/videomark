@@ -1,0 +1,39 @@
+#!/bin/bash
+set -euo pipefail
+
+PUBLISH_DIR=dist
+PROD_DIR=${PUBLISH_DIR}/production
+DEV_DIR=${PUBLISH_DIR}/development
+
+log() {
+  echo "$0:" "$@"
+}
+
+cd -- "$(dirname -- "$0")/.."
+
+log "Working directory is: $(pwd)"
+log "BUILD START: videomark-extension"
+
+yarn workspaces run build
+
+log cleanup
+rm -vrf -- "${PUBLISH_DIR}"
+mkdir -vp -- "${PUBLISH_DIR}"
+
+log sodium.js
+cp -va packages/sodium/dist "${PROD_DIR}"
+cp -va packages/sodium/dist-dev "${DEV_DIR}"
+
+log videomark-log-view
+cp -va packages/videomark-log-view/build "${PROD_DIR}/qoelog"
+cp -va packages/videomark-log-view/build "${DEV_DIR}/qoelog"
+rm -v -- "${PROD_DIR}/qoelog/manifest.json" "${DEV_DIR}/qoelog/manifest.json"
+
+log videomark-extension
+cp -vr packages/videomark-extension/* "${PROD_DIR}"
+cp -vr packages/videomark-extension/* "${DEV_DIR}"
+rm -v -- "${PROD_DIR}/README.md" "${DEV_DIR}/README.md"
+(cd -- "${PROD_DIR}" && zip -r webvideomark.zip .)
+(cd -- "${DEV_DIR}" && zip -r webvideomark-dev.zip .)
+
+log "BUILD END: videomark-extension"

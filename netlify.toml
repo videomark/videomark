@@ -1,0 +1,12 @@
+[build]
+  publish = "dist"
+  command = "bin/build"
+[[redirects]]
+  from = "/"
+  to = "/production/webvideomark.zip"
+[[redirects]]
+  from = "/prod"
+  to = "/production/webvideomark.zip"
+[[redirects]]
+  from = "/dev"
+  to = "/development/webvideomark-dev.zip"
