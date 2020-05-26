@@ -1,0 +1,64 @@
+.qoeValueGraph {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  flex-wrap: wrap;
+  text-align: start;
+}
+
+.label {
+  margin: 0;
+  position: relative;
+  vertical-align: middle;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  height: auto;
+  width: 100%;
+  font-size: 1em;
+}
+
+.qoeValue {
+  margin: 0;
+  white-space: nowrap;
+  position: relative;
+  z-index: 2;
+  font-size: 1em;
+}
+
+.qoeBarGraph {
+  position: relative;
+  height: 0.5em;
+  width: calc(100% - 2.5em);
+  border-radius: 1em;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+.qoeBarGraphBaseRoot {
+  display: flex;
+  height: 100%;
+}
+
+.qoeBarGraphBase {
+  background-color: rgba(255, 255, 0, 0);
+  outline-style: solid;
+  outline-color: rgba(0, 0, 0, 0.5);
+  width: 20%;
+  z-index: 1;
+  border: none;
+  border-right: 1px solid #fff;
+  outline-width: 0;
+}
+
+.qoeValueBar {
+  position: absolute;
+  height: 100%;
+  width: 2.5em;
+  text-align: end;
+}

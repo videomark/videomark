@@ -1,0 +1,10 @@
+.item {
+  cursor: pointer;
+}
+.item:hover {
+  filter: drop-shadow(0 2px 12px #ccc);
+  transition: 0.2s;
+}
+.item:focus {
+  outline: 0;
+}

@@ -1,0 +1,68 @@
+.thumbnail {
+  width: 100%;
+  object-fit: cover;
+  min-height: 100%;
+  max-height: calc(200px * 9 / 16);
+  vertical-align: top;
+}
+
+.title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* autoprefixer: ignore next */
+  -webkit-box-orient: vertical;
+  line-height: 1.5;
+
+  font-size: 18px;
+}
+
+.movieInfo {
+  background-color: rgba(192, 192, 192, 0.5);
+  font-size: 0.625rem;
+  color: #444444;
+  padding: 0.2em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  height: auto;
+}
+
+.removedStateButtons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.removedStateButton {
+  margin: auto !important;
+  width: 100%;
+}
+
+.removedStateButton img {
+  width: 18px;
+  height: 18px;
+}
+
+.removedThumbnail {
+  filter: grayscale(1);
+}
+
+/* modal state */
+.modalMain {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modalThumbnail {
+  width: 100%;
+  max-width: 500px;
+  max-height: calc(500px * 9 / 16);
+  object-fit: cover;
+  vertical-align: top;
+}
+
+.modalMain .movieInfo {
+  font-size: 1rem;
+}
