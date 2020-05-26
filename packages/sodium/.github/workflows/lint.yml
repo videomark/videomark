@@ -1,0 +1,19 @@
+name: lint
+on: pull_request
+jobs:
+  main:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with: { node-version: 12 }
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-
+      - run: npm ci
+      - run: npm run lint-report
+        continue-on-error: true
+      - uses: ataylorme/eslint-annotate-action@1.0.4
+        with: { repo-token: "${{ secrets.GITHUB_TOKEN }}" }
