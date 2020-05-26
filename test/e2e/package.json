@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "build": "echo dummy",
     "test": "jest"
   },
   "dependencies": {
