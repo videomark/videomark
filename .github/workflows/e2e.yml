@@ -18,4 +18,17 @@ jobs:
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
       - run: yarn build
       - run: sudo apt-get install xvfb
-      - run: xvfb-run yarn e2e
+      - id: test
+        run: xvfb-run yarn e2e
+        continue-on-error: true
+      - uses: actions/upload-artifact@v2
+        with:
+          name: screenshots
+          path: test/e2e/screenshots
+      - name: Upload to Slack
+        run: test/e2e/bin/upload-screenshots
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+      - if: steps.test.outcome == 'failure'
+        run: exit 1
