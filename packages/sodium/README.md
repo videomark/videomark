@@ -108,7 +108,7 @@ ChromeExtension/sodium.js
     // デフォルトResourceTiminingAPIのバッファサイズ
     Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 
-ステータス表示は、次のコードでdivタグを作成しDOMに追加し値を表示しています。
+ステータス表示は、次のコードで div タグを作成し DOM に追加し値を表示しています。
 
         status_elm = document.createElement("div");
         Object.assign(status_elm.style, status_style);
@@ -119,218 +119,219 @@ ChromeExtension/sodium.js
 
 ### 共通部分
 
-1送信毎のデータ
+1 送信毎のデータ
 
-| 項目                    | 値                                    |
-| --------------------- | ------------------------------------ |
-| version               | sodium.jsのバージョン(v1.3.0)               |
-| date                  | 送信日時(Date.now())                     |
-| startTime             | データ収集開始時間(DOMHighResTimeStamp, 初回は0) |
-| endTime               | データ収集終了時間(DOMHighResTimeStamp)       |
-| session               | セッションID(UUID)                        |
-| location              | window.location.href                 |
-| locationIp            | locationのIPアドレス                      |
-| userAgent             | ユーザーエージェント                           |
-| sequence              | 同一セッション内のシーケンス番号(0から連番)              |
-| calc                  | QoE計算可能フラグ              |
-| resource_timing       | -                                    |
+| 項目            | 値                                                |
+| --------------- | ------------------------------------------------- |
+| version         | sodium.js のバージョン(v1.3.0)                    |
+| date            | 送信日時(Date.now())                              |
+| startTime       | データ収集開始時間(DOMHighResTimeStamp, 初回は 0) |
+| endTime         | データ収集終了時間(DOMHighResTimeStamp)           |
+| session         | セッション ID(UUID)                               |
+| location        | window.location.href                              |
+| locationIp      | location の IP アドレス                           |
+| userAgent       | ユーザーエージェント                              |
+| sequence        | 同一セッション内のシーケンス番号(0 から連番)      |
+| calc            | QoE 計算可能フラグ                                |
+| resource_timing | -                                                 |
 
 ### netinfo
+
 Network Information API より取得した情報を送信する
 http://wicg.github.io/netinfo/#networkinformation-interface
 
-| 項目                    | 値                                    |
-| --------------------- | ------------------------------------ |
-| downlink      | 下り速度(Mbps)<br>※ Videomark Browser または隠しオプション enable-experimental-web-platform-features 有効時                           |
-| downlinkMax   | 最大下り速度(Mbps)                         |
-| effectiveType | 有効なタイプ                               |
-| rtt           | RTT                                  |
-| type          | デバイスがネットワーク通信に使用している接続の種類<br>※ Videomark Browser または隠しオプション enable-experimental-web-platform-features 有効時            |
-| apn           | アクセスポイント<br>※ Videomark Browser 独自拡張                            |
-| plmn          | ルーティングエリア<br>※ Videomark Browser 独自拡張                           |
-| sim           | SIM<br>※ Videomark Browser 独自拡張                                 |
+| 項目          | 値                                                                                                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| downlink      | 下り速度(Mbps)<br>※ Videomark Browser または隠しオプション enable-experimental-web-platform-features 有効時                                     |
+| downlinkMax   | 最大下り速度(Mbps)                                                                                                                              |
+| effectiveType | 有効なタイプ                                                                                                                                    |
+| rtt           | RTT                                                                                                                                             |
+| type          | デバイスがネットワーク通信に使用している接続の種類<br>※ Videomark Browser または隠しオプション enable-experimental-web-platform-features 有効時 |
+| apn           | アクセスポイント<br>※ Videomark Browser 独自拡張                                                                                                |
+| plmn          | ルーティングエリア<br>※ Videomark Browser 独自拡張                                                                                              |
+| sim           | SIM<br>※ Videomark Browser 独自拡張                                                                                                             |
 
 ### video
 
-video単位のデータ
+video 単位のデータ
 
 #### property
 
-videoの属性情報
+video の属性情報
 
-| 項目                  | 値                                                 |
-| ------------------- | ------------------------------------------------- |
-| uuid                | videoを識別するためのUUID                                 |
-| viewCount           | 対象のvideoがYouTubeの場合、videoの再生回数　他のサイトや取得ができない場合 -1 |
-| src                 | videoタグのsrc属性<br>※ blob URL の場合は除外                                    |
-| domainName          | videoのセグメント配布ドメイン                                 |
-| holderId            | サービスが付加したID                                       |
-| width               | videoタグの表示幅                                       |
-| height              | videoタグの表示高さ                                      |
-| videoWidth          | videoの幅                                           |
-| videoHeight         | videoの高さ                                          |
-| mediaSize           | videoの再生時間                                        |
-| defaultPlaybackRate | デフォルト再生速度                                         |
-| playbackRate        | 再生速度                                              |
-| playStartTime       | 視聴開始時刻(Date.now()) 未視聴の場合 -1                      |
-| playEndTime         | 視聴終了時刻(Date.now()) 終了していない場合 -1                   |
-| currentPlayPos      | 現在再生位置の秒                                          |
-| currentPlayTime     | 再生開始からの経過時間                                       |
+| 項目                | 値                                                                                  |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| uuid                | video を識別するための UUID                                                         |
+| viewCount           | 対象の video が YouTube の場合、video の再生回数　他のサイトや取得ができない場合 -1 |
+| src                 | video タグの src 属性<br>※ blob URL の場合は除外                                    |
+| domainName          | video のセグメント配布ドメイン                                                      |
+| holderId            | サービスが付加した ID                                                               |
+| width               | video タグの表示幅                                                                  |
+| height              | video タグの表示高さ                                                                |
+| videoWidth          | video の幅                                                                          |
+| videoHeight         | video の高さ                                                                        |
+| mediaSize           | video の再生時間                                                                    |
+| defaultPlaybackRate | デフォルト再生速度                                                                  |
+| playbackRate        | 再生速度                                                                            |
+| playStartTime       | 視聴開始時刻(Date.now()) 未視聴の場合 -1                                            |
+| playEndTime         | 視聴終了時刻(Date.now()) 終了していない場合 -1                                      |
+| currentPlayPos      | 現在再生位置の秒                                                                    |
+| currentPlayTime     | 再生開始からの経過時間                                                              |
 
 #### playback_quality
 
 再生品質情報
 
-定期的に収集したvideoの再生品質の情報video毎に複数の品質情報を送信する
+定期的に収集した video の再生品質の情報 video 毎に複数の品質情報を送信する
 
-| 項目                      | 値                         |
-| ----------------------- | ------------------------- |
-| totalVideoFrames        | 総フレーム数                    |
-| droppedVideoFrames      | 損失フレーム数                   |
-| creationTime            | 計測時刻(DOMHighResTimeStamp) |
-| creationDate            | 計測時刻(Date.nwo())          |
-| representation          | representationID          |
+| 項目                    | 値                                       |
+| ----------------------- | ---------------------------------------- |
+| totalVideoFrames        | 総フレーム数                             |
+| droppedVideoFrames      | 損失フレーム数                           |
+| creationTime            | 計測時刻(DOMHighResTimeStamp)            |
+| creationDate            | 計測時刻(Date.nwo())                     |
+| representation          | representationID                         |
 | bitrate                 | 音声、ビデオの合計ビットレート           |
-| videoBitrate            | ビデオのビットレート                |
-| receiveBuffer           | 受信済み動画再生時間 取得不可能の場合 -1    |
-| framerate               | フレームレート                   |
-| speed                   | 再生速度                      |
-| deltaTotalVideoFrames   | 総フレーム数のデルタ値               |
-| deltaDroppedVideoFrames | 損失フレーム数のデルタ値              |
-| deltaTime               | 計測時間のデルタ値                 |
+| videoBitrate            | ビデオのビットレート                     |
+| receiveBuffer           | 受信済み動画再生時間 取得不可能の場合 -1 |
+| framerate               | フレームレート                           |
+| speed                   | 再生速度                                 |
+| deltaTotalVideoFrames   | 総フレーム数のデルタ値                   |
+| deltaDroppedVideoFrames | 損失フレーム数のデルタ値                 |
+| deltaTime               | 計測時間のデルタ値                       |
 
 #### throughput_info
 
-| 項目                      | 値                   |
-| ----------------------- | ------------------- |
-| downloadTime            | チャンクダウンロードにかかった時間   |
-| throughput              | ダウンロード時のスループット(bps) |
-| downloadSize            | チャンクのサイズ            |
-| start                   | ダウンロード開始時刻          |
-| end                     | ダウンロード終了時刻          |
-| startUnplayedBufferSize | ダウンロード開始時未再生バッファ    |
-| endUnplayedBufferSize   | ダウンロード終了時未再生バッファ    |
-| bitrate                 | ビットレート              |
-| representationId        | Representation ID   |
+| 項目                    | 値                                 |
+| ----------------------- | ---------------------------------- |
+| downloadTime            | チャンクダウンロードにかかった時間 |
+| throughput              | ダウンロード時のスループット(bps)  |
+| downloadSize            | チャンクのサイズ                   |
+| start                   | ダウンロード開始時刻               |
+| end                     | ダウンロード終了時刻               |
+| startUnplayedBufferSize | ダウンロード開始時未再生バッファ   |
+| endUnplayedBufferSize   | ダウンロード終了時未再生バッファ   |
+| bitrate                 | ビットレート                       |
+| representationId        | Representation ID                  |
 
 #### play_list_info
 
-| 項目               | 値             |
-| ---------------- | ------------- |
-| representationId | ストリームID       |
-| bps              | ビットレート        |
-| videoWidth       | videoの幅       |
-| videoHeight      | videoの高さ      |
+| 項目             | 値                   |
+| ---------------- | -------------------- |
+| representationId | ストリーム ID        |
+| bps              | ビットレート         |
+| videoWidth       | video の幅           |
+| videoHeight      | video の高さ         |
 | fps              | フレームレート       |
-| chunkDuration    | チャンクの再生時間     |
-| container        | コンテナ          |
-| codec            | コーデック         |
+| chunkDuration    | チャンクの再生時間   |
+| container        | コンテナ             |
+| codec            | コーデック           |
 | serverIp         | チャック配布元(FQDN) |
 
 #### Event
 
-再生時のEvent情報
+再生時の Event 情報
 
-| 項目       | 値                              |
-| -------- | ------------------------------ |
-| time     | 発生時間(DOMHighResTimeStamp)      |
-| dateTime | 発生時間(Date.now())               |
+| 項目     | 値                                      |
+| -------- | --------------------------------------- |
+| time     | 発生時間(DOMHighResTimeStamp)           |
+| dateTime | 発生時間(Date.now())                    |
 | delta    | 発生時間(DOMHighResTimeStamp)のデルタ値 |
 | dateTime | 発生時間(Date.now())のデルタ値          |
-| playPos  | 現在再生位置の秒                       |
-| playTime | 再生開始からの経過時間                    |
+| playPos  | 現在再生位置の秒                        |
+| playTime | 再生開始からの経過時間                  |
 
-##### Eventの種類
+##### Event の種類
 
-Eventは、以下の種類ものと前回発生時との差分のdelta値を含む
+Event は、以下の種類ものと前回発生時との差分の delta 値を含む
 
-| 種類       | 発生タイミング |
-| -------- | ------- |
-| play     | 再生開始    |
-| pause    | 停止      |
-| seeking  | シーク開始   |
-| seeked   | シーク終了   |
-| ended    | 再生終了    |
-| stalled  | 再生失敗    |
-| progress | ロード     |
-| waiting  | ロード待ち   |
-| canplay  | 再生開始可能  |
+| 種類     | 発生タイミング |
+| -------- | -------------- |
+| play     | 再生開始       |
+| pause    | 停止           |
+| seeking  | シーク開始     |
+| seeked   | シーク終了     |
+| ended    | 再生終了       |
+| stalled  | 再生失敗       |
+| progress | ロード         |
+| waiting  | ロード待ち     |
+| canplay  | 再生開始可能   |
 
 ##### cmHistory
 
-| 項目   | 値                                                               |
-| ---- | --------------------------------------------------------------- |
-| type | CMまたは、Mainに切り替わったことを示す文字列。CMに切り替わった場合、"cm"　Mainに切り替わった場合、"main" |
-| time | 発生時間(Date.now())                                                |
+| 項目 | 値                                                                                                            |
+| ---- | ------------------------------------------------------------------------------------------------------------- |
+| type | CM または、Main に切り替わったことを示す文字列。CM に切り替わった場合、"cm"　 Main に切り替わった場合、"main" |
+| time | 発生時間(Date.now())                                                                                          |
 
-### QoEサーバー対応
+### QoE サーバー対応
 
-QoEサーバーに対応するために以下のデータを追加した。
+QoE サーバーに対応するために以下のデータを追加した。
 
-| filed                                | QoE                                                 | detail                       |
-| ------------------------------------ | --------------------------------------------------- | ---------------------------- |
-| userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                   |
-| video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | videoの再生時間(秒)                |
-| video.property.domainName            | requestNotificationViewingInformation.domainName    | videoのセグメント配布ドメイン            |
-| video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                       |
-| video.playback_quality.receiveBuffer | requestNotificationQoeInformation.receiveBuffer     | \*取得済み動画サイズ(秒)               |
-| video.playback_quality.framerate     | requestNotificationQoeInformation.framerateHistory  | フレームレート                      |
+| filed                                | QoE                                                 | detail                                   |
+| ------------------------------------ | --------------------------------------------------- | ---------------------------------------- |
+| userAgent                            | requestNotificationBasicInformation.osInfo          | ユーザーエージェント                     |
+| video.property.mediaSize             | requestNotificationBasicInformation.mediaSize       | video の再生時間(秒)                     |
+| video.property.domainName            | requestNotificationViewingInformation.domainName    | video のセグメント配布ドメイン           |
+| video.playback_quality.bitrate       | requestNotificationQoeInformation.bitrateHistory    | ビットレート                             |
+| video.playback_quality.receiveBuffer | requestNotificationQoeInformation.receiveBuffer     | \*取得済み動画サイズ(秒)                 |
+| video.playback_quality.framerate     | requestNotificationQoeInformation.framerateHistory  | フレームレート                           |
 | video.property.playStartTime         | requestNotificationViewingInformation.eventType Str | 視聴開始時刻(Date.now()) 未視聴の場合 -1 |
-| video.event\_\*.datetime             | requestNotificationViewingInformation.eventType     | イベント1発生時間(Date.now())        |
-| video.event\_\*.playPos              | requestNotificationViewingInformation.eventType     | 現在再生位置の秒                     |
-| video.event\_\*.playTime             | requestNotificationViewingInformation.eventType     | 再生開始からの経過時間                  |
+| video.event\_\*.datetime             | requestNotificationViewingInformation.eventType     | イベント 1 発生時間(Date.now())          |
+| video.event\_\*.playPos              | requestNotificationViewingInformation.eventType     | 現在再生位置の秒                         |
+| video.event\_\*.playTime             | requestNotificationViewingInformation.eventType     | 再生開始からの経過時間                   |
 
 #### Paravi 固有の対応
 
-Paraviは、Video.js + Shaka Player で実装されている。上記のフィールドの値は以下の API を使用し取得している
+Paravi は、Video.js + Shaka Player で実装されている。上記のフィールドの値は以下の API を使用し取得している
 
--   userAgent
-    -   window.navigator.userAgentの値
--   video.property.mediaSize
-    -   Class: videojs.Player duration()
--   video.property.domainName
-    -   document.domainの値
--   video.playback_quality.bitrate
-    -   Class: shaka.Player getStats(), getVariantTracks()
--   video.playback_quality.receiveBuffer
-    -   videojs.Player bufferedEnd()
--   video.playback_quality.framerate
-    -   Class: shaka.Player getStats(), getVariantTracks()
--   video.property.playStartTime
-    -   Class: shaka.Player getStats() もしくは、video tagの play event
--   video.event\_\*.datetime
-    -   Date.nwo()の値
--   video.event\_\*.playPos
-    -   videojs.Player currentTime()
--   video.event\_\*.playTime
-    -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
+- userAgent
+  - window.navigator.userAgent の値
+- video.property.mediaSize
+  - Class: videojs.Player duration()
+- video.property.domainName
+  - document.domain の値
+- video.playback_quality.bitrate
+  - Class: shaka.Player getStats(), getVariantTracks()
+- video.playback_quality.receiveBuffer
+  - videojs.Player bufferedEnd()
+- video.playback_quality.framerate
+  - Class: shaka.Player getStats(), getVariantTracks()
+- video.property.playStartTime
+  - Class: shaka.Player getStats() もしくは、video tag の play event
+- video.event\_\*.datetime
+  - Date.nwo()の値
+- video.event\_\*.playPos
+  - videojs.Player currentTime()
+- video.event\_\*.playTime
+  - イベント発生時の Date.now()の値から playStartTime を引いた値
 
 プレイヤー依存実装と互換性確認のコードは [ParaviTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/ParaviTypeHandler.js) にて定義されている。
 
 #### TVer 固有の対応 (フジテレビ(CX)以外)
 
-TVerは、Video.jsで実装されている。上記のフィールドの値は以下の API を使用し取得している
+TVer は、Video.js で実装されている。上記のフィールドの値は以下の API を使用し取得している
 
--   userAgent
-    -   window.navigator.userAgentの値
--   video.property.mediaSize
-    -   Class: videojs.Player duration()
--   video.property.domainName
-    -   Class: videojs.Player selectPlaylist()
--   video.playback_quality.bitrate
-    -   Class: videojs.Player selectPlaylist()
--   video.playback_quality.receiveBuffer
-    -   videojs.Player bufferedEnd()
--   video.playback_quality.framerate
-    -   TVerの場合M3U8ファイルにフレームレートが含まれていないため-1固定
--   video.property.playStartTime
-    -   video tagの play event
--   video.event\_\*.datetime
-    -   Date.nwo()の値
--   video.event\_\*.playPos
-    -   videojs.Player currentTime()
--   video.event\_\*.playTime
-    -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
+- userAgent
+  - window.navigator.userAgent の値
+- video.property.mediaSize
+  - Class: videojs.Player duration()
+- video.property.domainName
+  - Class: videojs.Player selectPlaylist()
+- video.playback_quality.bitrate
+  - Class: videojs.Player selectPlaylist()
+- video.playback_quality.receiveBuffer
+  - videojs.Player bufferedEnd()
+- video.playback_quality.framerate
+  - TVer の場合 M3U8 ファイルにフレームレートが含まれていないため-1 固定
+- video.property.playStartTime
+  - video tag の play event
+- video.event\_\*.datetime
+  - Date.nwo()の値
+- video.event\_\*.playPos
+  - videojs.Player currentTime()
+- video.event\_\*.playTime
+  - イベント発生時の Date.now()の値から playStartTime を引いた値
 
 プレイヤー依存実装と互換性確認のコードは [TVerTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/TVerTypeHandler.js) にて定義されている。
 
@@ -338,41 +339,41 @@ TVerは、Video.jsで実装されている。上記のフィールドの値は�
 
 #### YouTube 固有の対応
 
-YouTubeのiFrameAPIを使用して上記のフィールドの値を取得している
+YouTube の iFrameAPI を使用して上記のフィールドの値を取得している
 
--   userAgent
-    -   window.navigator.userAgentの値
--   video.property.mediaSize
-    -   getDuration()
--   video.property.domainName
-    -   getVideoStats() getPlayerResponse()
--   video.playback_quality.bitrate
-    -   getVideoStats() getPlayerResponse()
--   video.playback_quality.receiveBuffer
-    -   getVideoLoadedFraction() getDuration()
--   video.playback_quality.framerate
-    -   getVideoStats() getPlayerResponse()
--   video.property.playStartTime
-    -   video tagの play event
--   video.event\_\*.datetime
-    -   Date.nwo()の値
--   video.event\_\*.playPos
-    -   videojs.Player currentTime()
--   video.event\_\*.playTime
-    -   イベント発生時の Date.now()の値からplayStartTimeを引いた値
+- userAgent
+  - window.navigator.userAgent の値
+- video.property.mediaSize
+  - getDuration()
+- video.property.domainName
+  - getVideoStats() getPlayerResponse()
+- video.playback_quality.bitrate
+  - getVideoStats() getPlayerResponse()
+- video.playback_quality.receiveBuffer
+  - getVideoLoadedFraction() getDuration()
+- video.playback_quality.framerate
+  - getVideoStats() getPlayerResponse()
+- video.property.playStartTime
+  - video tag の play event
+- video.event\_\*.datetime
+  - Date.nwo()の値
+- video.event\_\*.playPos
+  - videojs.Player currentTime()
+- video.event\_\*.playTime
+  - イベント発生時の Date.now()の値から playStartTime を引いた値
 
 プレイヤー依存実装と互換性確認のコードは [YouTubeTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/YouTubeTypeHandler.js) にて定義されている。
 
 ##### YouTube (モバイル) 固有の対応
 
-モバイル版YouTubeは、PC版のYouTubeとiFrameAPIの仕様が違うため、以下の部分が違います。
+モバイル版 YouTube は、PC 版の YouTube と iFrameAPI の仕様が違うため、以下の部分が違います。
 
--   video.property.domainName
-    -   getVideoStats()
--   video.playback_quality.bitrate
-    -   getPlaybackQuality() getVideoStats()
--   video.playback_quality.framerate
-    -   getVideoStats()
+- video.property.domainName
+  - getVideoStats()
+- video.playback_quality.bitrate
+  - getPlaybackQuality() getVideoStats()
+- video.playback_quality.framerate
+  - getVideoStats()
 
 ## 保存データ構造
 
