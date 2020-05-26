@@ -11,7 +11,7 @@ const fileExists = (path) => {
 };
 
 const downloadExtension = async () => {
-  const url = "https://sodium-extension.netlify.com/";
+  const url = "https://sodium-extension.netlify.app/";
   const path = require("path").join(
     require("os").tmpdir(),
     "videomark-extension"

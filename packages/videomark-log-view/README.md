@@ -1,5 +1,5 @@
 ![build](https://github.com/videomark/videomark-log-view/workflows/build/badge.svg?branch=master)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/381b781f-df6b-451a-829e-d15634b9b72f/deploy-status)](https://app.netlify.com/sites/videomark-log-view/deploys)
+[![Netlify Status](https://api.netlify.app/api/v1/badges/381b781f-df6b-451a-829e-d15634b9b72f/deploy-status)](https://app.netlify.app/sites/videomark-log-view/deploys)
 
 # 開発環境
 
