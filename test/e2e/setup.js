@@ -25,7 +25,9 @@ const downloadExtension = async () => {
 };
 
 module.exports = async () => {
-  const extensionPath = await downloadExtension();
+  // NOTE: ローカルディレクトリにビルドが存在する場合、それを使う
+  const extensionPath =
+    fileExists("../../dist/production") || (await downloadExtension());
   process.env.LANG = "C";
   const browser = await puppeteer.launch({
     executablePath:
