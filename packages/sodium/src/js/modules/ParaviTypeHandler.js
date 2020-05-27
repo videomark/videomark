@@ -326,6 +326,35 @@ export default class ParaviTypeHandler {
     static get_current_time(video) {    // TVerのインターフェースと合わせる
         return videojs.getAllPlayers()[0].currentTime();
     }
+
+    static set_max_bitrate(bitrate, resolution) {
+        if (!Number.isFinite(resolution)) return;
+
+        const settings = JSON.parse(localStorage.getItem("settings") || '{"playbackRate":1,"quality":0}');
+        const current = settings.quality;
+
+        const selectedQuality = ParaviTypeHandler.qualityLabelTable.find(quality => quality.resolution <= resolution);
+        const selected = selectedQuality ? selectedQuality.quality : 4; // さくさく
+
+        if (current === 0 || current < selected) {
+            console.log(`change quality to ${selected}`);
+            settings.quality = selected;
+            localStorage.setItem("settings", JSON.stringify(settings));
+        }
+    }
+
+    static set_default_bitrate() {
+        const settings = JSON.parse(localStorage.getItem("settings") || '{"playbackRate":1,"quality":0}');
+        settings.quality = 0;
+        localStorage.setItem("settings", JSON.stringify(settings));
+    }
 }
+
+ParaviTypeHandler.qualityLabelTable = [
+    {"resolution":1080, "quality":1},
+    {"resolution":720, "quality":2},
+    {"resolution":480, "quality":3},
+    {"resolution":360, "quality":4},
+];
 ParaviTypeHandler.sodiumAdaptiveFmts = null;
 ParaviTypeHandler.throughputHistories = [];
