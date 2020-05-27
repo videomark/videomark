@@ -50,6 +50,10 @@ export default class VideoData {
       waiting: () => 0,
       pause: () => 0
     };
+    this.throughput_control = {
+      bitrate: -1,
+      resolution: -1
+    };
     // --- set event listener --- //
     Config.get_event_type_names().forEach(s => {
       this.last_events[s] = 0;
@@ -204,6 +208,7 @@ export default class VideoData {
 
   // eslint-disable-next-line camelcase
   set_max_bitrate(bitrate, resolution) {
+    this.throughput_control = {bitrate, resolution};
     this.video_handler.set_max_bitrate(bitrate, resolution);
   }
 
@@ -333,7 +338,12 @@ export default class VideoData {
         playStartTime: this.play_start_time,
         playEndTime: this.play_end_time,
         currentPlayPos: this.current_play_pos,
-        currentPlayTime: this.current_play_pos_date
+        currentPlayTime: this.current_play_pos_date,
+        throughputControl: { 
+          bitrate: this.throughput_control.bitrate,
+          resolution: this.throughput_control.resolution,
+          limited: this.video_handler.is_limited()
+        }
       },
       playback_quality: this.playback_quality.splice(
         0,

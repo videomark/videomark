@@ -296,6 +296,13 @@ export default class VideoHandler {
     }
 
     // eslint-disable-next-line camelcase
+    is_limited() {
+        if (this.handler.is_limited instanceof Function)
+            return this.handler.is_limited();
+        return false;
+    }
+
+    // eslint-disable-next-line camelcase
     is_calculatable() {
         return this.calQoeFlg;
     }

@@ -6,6 +6,8 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
 
         super(elm);
 
+        this.limited = false;
+
         if (!this.is_main_video(elm)) throw new Error("video is not main");
     }
 
@@ -67,6 +69,12 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
         return false;
     }
 
+    // eslint-disable-next-line camelcase, no-unused-vars
+    is_limited() {
+        return this.limited;
+    }
+
+
     /**
      * 指定したビットレート以下を選択する (指定しない場合や指定されたビットレートより小さい画質が存在しない場合、最低画質を選択する)
      * @param {number} [bitrate] 最大ビットレート
@@ -88,6 +96,8 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
         if (resolution) {
             videos = videos.filter(([, videoResolution]) => videoResolution <= resolution);
         }
+
+        this.limited = true;
 
         /** @type {string} 書き込む値 */
         const selected = videos.length === 0 ? "super_low" : videos[0][2];
