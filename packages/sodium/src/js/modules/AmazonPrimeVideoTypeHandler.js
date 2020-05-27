@@ -118,7 +118,7 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
 }
 
 AmazonPrimeVideoTypeHandler.qualityLabelTable = [
-    {"resolution":1080, "quality":"best", "label":"最高画質"},
-    {"resolution":720, "quality":"better", "label":"高画質"},
-    {"resolution":480, "quality":"good", "label":"標準画質"},
+    {"resolution":1080, "quality":"best"}, // 最高画質
+    {"resolution":720, "quality":"better"}, // 高画質
+    {"resolution":480, "quality":"good"}, // 標準画質
 ];
