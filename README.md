@@ -1,6 +1,19 @@
+![build](https://github.com/videomark/videomark/workflows/build/badge.svg?branch=master)
+![e2e](https://github.com/videomark/videomark/workflows/e2e/badge.svg?branch=master)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.com/sites/sodium-extension/deploys)
+
 # Web VideoMark Project
 
 Web VideoMark プロジェクトの紹介、ツールのダウンロード、使用法などの説明は [Web VideoMark の Web サイト](https://vm.webdino.org/) をご覧ください。
+
+## Directories
+
+- [sodium](packages/sodium) [![Netlify Status](https://api.netlify.app/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.app/sites/sodium-js/deploys)
+  - 動画配信サービス利用時に計測を行うためのコンテンツスクリプト
+- [videomark-extension](packages/videomark-extension)
+  - Google Chrome 拡張機能のベースとなるファイル群
+- [videomark-log-view](packages/videomark-log-view) [![Netlify Status](https://api.netlify.app/api/v1/badges/381b781f-df6b-451a-829e-d15634b9b72f/deploy-status)](https://app.netlify.app/sites/videomark-log-view/deploys)
+  - 計測結果の表示を行うページ
 
 ## Repositories
 
@@ -12,16 +25,9 @@ Web VideoMark プロジェクトの紹介、ツールのダウンロード、使
   - fluentd の設定ファイルなど
 - [sodium-bot](https://github.com/videomark/sodium-bot)
   - 動画配信サービスの視聴品質の自動計測のためのスクリプト
-- [sodium.js](https://github.com/videomark/sodium.js) [![Netlify Status](https://api.netlify.app/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.app/sites/sodium-js/deploys)
-  - 動画配信サービス利用時に計測を行うためのコンテンツスクリプト
 - [videomark-browser](https://github.com/videomark/videomark-browser)
   - Android 向けカスタムブラウザ作成のためのパッチファイル
   - Chromium のソースツリーに適用してビルドするためのパッチ集です
-- [videomark-extension](https://github.com/videomark/videomark-extension)
-  - Google Chrome 拡張機能
-  - sodium.js や videomark-log-view と合わせてビルドして利用する
-- [videomark-log-view](https://github.com/videomark/videomark-log-view) [![Netlify Status](https://api.netlify.app/api/v1/badges/381b781f-df6b-451a-829e-d15634b9b72f/deploy-status)](https://app.netlify.app/sites/videomark-log-view/deploys)
-  - QoE 値の表示を行うページ
 
 ## Wiki
 
