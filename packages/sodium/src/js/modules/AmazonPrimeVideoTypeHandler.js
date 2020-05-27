@@ -97,4 +97,28 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
     clear() {
         this.observer.disconnect();
     }
+
+    set_max_bitrate(bitrate, resolution) {
+        if (!Number.isFinite(resolution)) return;
+
+        const setting = localStorage.getItem("atvwebplayersdk_data_saver_setting") || "best";
+        const current = AmazonPrimeVideoTypeHandler.qualityLabelTable.find(row => row.quality === setting);
+
+        const selectedQuality = AmazonPrimeVideoTypeHandler.qualityLabelTable.find(row => row.resolution <= resolution);
+        const selected = selectedQuality || AmazonPrimeVideoTypeHandler.qualityLabelTable[AmazonPrimeVideoTypeHandler.qualityLabelTable.length - 1]; // 標準画質
+
+        if (!current || current.resolution > selected.resolution) {
+            localStorage.setItem("atvwebplayersdk_data_saver_setting", selected.quality);
+        }
+    }
+
+    set_default_bitrate() {
+        localStorage.setItem("atvwebplayersdk_data_saver_setting", "best");
+    }
 }
+
+AmazonPrimeVideoTypeHandler.qualityLabelTable = [
+    {"resolution":1080, "quality":"best", "label":"最高画質"},
+    {"resolution":720, "quality":"better", "label":"高画質"},
+    {"resolution":480, "quality":"good", "label":"標準画質"},
+];
