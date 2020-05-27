@@ -395,6 +395,7 @@ class YouTubeTypeHandler {
 
         this.cm = false;
         this.cm_listeners = [];
+        this.limited = false;
 
         this.observer = new MutationObserver(ms => {
             ms.forEach(() => {
@@ -651,6 +652,11 @@ class YouTubeTypeHandler {
         return this.cm;
     }
 
+    // eslint-disable-next-line camelcase, no-unused-vars
+    is_limited() {
+        return this.limited;
+    }
+
     // eslint-disable-next-line camelcase
     set_quality(bitrate) {
         if (!YouTubeTypeHandler.can_get_streaming_info()) {
@@ -709,9 +715,10 @@ class YouTubeTypeHandler {
             else select = resolutionSelect || bitrateSelect || video[video.length - 1];
             console.log(`VIDEOMARK: set_max_bitrate(): select: quality=${select.quality} bitrate=${(select.bitrate + select.audio.bitrate) / 1024}`);
 
-            if (select.bitrate < current.bitrate) // 再生中のbitrateより小さい値が設定された場合変更する
+            if (select.bitrate < current.bitrate) { // 再生中のbitrateより小さい値が設定された場合変更する
                 this.player.setPlaybackQualityRange(select.quality, select.quality);
-            else
+                this.limited = true;
+            } else
                 // eslint-disable-next-line no-console
                 console.log(`VIDEOMARK: too small or does not need a change bitrate:${bitrate} not changed`);
         } catch (e) {
