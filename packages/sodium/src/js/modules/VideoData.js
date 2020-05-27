@@ -50,7 +50,7 @@ export default class VideoData {
       waiting: () => 0,
       pause: () => 0
     };
-    this.throughput_control = {
+    this.bitrate_control_data = {
       bitrate: -1,
       resolution: -1
     };
@@ -208,7 +208,7 @@ export default class VideoData {
 
   // eslint-disable-next-line camelcase
   set_max_bitrate(bitrate, resolution) {
-    this.throughput_control = {bitrate, resolution};
+    this.bitrate_control_data = {bitrate, resolution};
     this.video_handler.set_max_bitrate(bitrate, resolution);
   }
 
@@ -339,9 +339,9 @@ export default class VideoData {
         playEndTime: this.play_end_time,
         currentPlayPos: this.current_play_pos,
         currentPlayTime: this.current_play_pos_date,
-        throughputControl: { 
-          bitrate: this.throughput_control.bitrate,
-          resolution: this.throughput_control.resolution,
+        bitrateControlData: { 
+          bitrate: this.bitrate_control_data.bitrate,
+          resolution: this.bitrate_control_data.resolution,
           limited: this.video_handler.is_limited()
         }
       },
