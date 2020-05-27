@@ -333,11 +333,10 @@ export default class ParaviTypeHandler {
         const settings = JSON.parse(localStorage.getItem("settings") || '{"playbackRate":1,"quality":0}');
         const current = settings.quality;
 
-        const selectedQuality = ParaviTypeHandler.qualityLabelTable.find(quality => quality.resolution <= resolution);
+        const selectedQuality = ParaviTypeHandler.qualityLabelTable.find(row => row.resolution <= resolution);
         const selected = selectedQuality ? selectedQuality.quality : 4; // さくさく
 
         if (current === 0 || current < selected) {
-            console.log(`change quality to ${selected}`);
             settings.quality = selected;
             localStorage.setItem("settings", JSON.stringify(settings));
         }
