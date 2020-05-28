@@ -17,6 +17,7 @@
   "scripts": {
     "build": "bin/build",
     "build-android": "bin/build-android",
+    "start": "yarn workspace @videomark/videomark-log-view start",
     "test": "yarn e2e",
     "e2e": "yarn workspace @videomark/e2e-test test",
     "lint": "eslint --ext .js,.jsx .",
