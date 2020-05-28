@@ -17,8 +17,10 @@ log "BUILD START: videomark-extension"
 yarn workspaces run build
 
 log cleanup
-rm -vrf -- "${PUBLISH_DIR}"
-mkdir -vp -- "${PUBLISH_DIR}"
+rm -vrf -- "${PROD_DIR}"
+mkdir -vp -- "${PROD_DIR}"
+rm -vrf -- "${DEV_DIR}"
+mkdir -vp -- "${DEV_DIR}"
 
 log sodium.js
 cp -va packages/sodium/dist "${PROD_DIR}"

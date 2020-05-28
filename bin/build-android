@@ -2,6 +2,8 @@
 set -euo pipefail
 
 PUBLISH_DIR=dist
+ANDROID_DIR=${PUBLISH_DIR}/android
+RESOURCES_DIR=${ANDROID_DIR}/chrome/browser/resources
 
 log() {
   echo "$0:" "$@"
@@ -16,16 +18,16 @@ yarn workspace @videomark/sodium run build
 yarn workspace @videomark/videomark-log-view run build-android
 
 log cleanup
-rm -vrf -- "${PUBLISH_DIR}"
-mkdir -vp -- "${PUBLISH_DIR}"
+rm -vrf -- "${ANDROID_DIR}"
+mkdir -vp -- "${RESOURCES_DIR}"
 
 log sodium.js
-cp -va packages/sodium/dist/sodium.js "${PUBLISH_DIR}/sodium.js"
+cp -va packages/sodium/dist/sodium.js "${RESOURCES_DIR}/sodium.js"
 
 log videomark-log-view
-cp -va packages/videomark-log-view/build "${PUBLISH_DIR}/sodium_result"
+cp -va packages/videomark-log-view/build "${RESOURCES_DIR}/sodium_result"
 
 log videomark-extension
-cp -va packages/videomark-extension/content_script.js "${PUBLISH_DIR}/content_script.js"
+cp -va packages/videomark-extension/content_script.js "${RESOURCES_DIR}/content_script.js"
 
 log "BUILD END: videomark-browser"
