@@ -1,0 +1,31 @@
+#!/bin/bash
+set -euo pipefail
+
+PUBLISH_DIR=dist
+
+log() {
+  echo "$0:" "$@"
+}
+
+cd -- "$(dirname -- "$0")/.."
+
+log "Working directory is: $(pwd)"
+log "BUILD START: videomark-browser"
+
+yarn workspace @videomark/sodium run build
+yarn workspace @videomark/videomark-log-view run build-android
+
+log cleanup
+rm -vrf -- "${PUBLISH_DIR}"
+mkdir -vp -- "${PUBLISH_DIR}"
+
+log sodium.js
+cp -va packages/sodium/dist/sodium.js "${PUBLISH_DIR}/sodium.js"
+
+log videomark-log-view
+cp -va packages/videomark-log-view/build "${PUBLISH_DIR}/sodium_result"
+
+log videomark-extension
+cp -vr packages/videomark-extension/content_script.js "${PUBLISH_DIR}/content_script.js"
+
+log "BUILD END: videomark-browser"

@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "bin/build",
+    "build-android": "bin/build-android",
     "test": "yarn e2e",
     "e2e": "yarn workspace @videomark/e2e-test test",
     "lint": "eslint --ext .js,.jsx .",
