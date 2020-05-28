@@ -30,8 +30,8 @@ cp -va packages/videomark-log-view/build "${DEV_DIR}/qoelog"
 rm -v -- "${PROD_DIR}/qoelog/manifest.json" "${DEV_DIR}/qoelog/manifest.json"
 
 log videomark-extension
-cp -vr packages/videomark-extension/* "${PROD_DIR}"
-cp -vr packages/videomark-extension/* "${DEV_DIR}"
+cp -va packages/videomark-extension/* "${PROD_DIR}"
+cp -va packages/videomark-extension/* "${DEV_DIR}"
 rm -v -- "${PROD_DIR}/README.md" "${DEV_DIR}/README.md"
 (cd -- "${PROD_DIR}" && zip -r webvideomark.zip .)
 (cd -- "${DEV_DIR}" && zip -r webvideomark-dev.zip .)

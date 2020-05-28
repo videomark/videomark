@@ -26,6 +26,6 @@ log videomark-log-view
 cp -va packages/videomark-log-view/build "${PUBLISH_DIR}/sodium_result"
 
 log videomark-extension
-cp -vr packages/videomark-extension/content_script.js "${PUBLISH_DIR}/content_script.js"
+cp -va packages/videomark-extension/content_script.js "${PUBLISH_DIR}/content_script.js"
 
 log "BUILD END: videomark-browser"
