@@ -23,8 +23,8 @@ rm -vrf -- "${DEV_DIR}"
 mkdir -vp -- "${DEV_DIR}"
 
 log sodium.js
-cp -va packages/sodium/dist "${PROD_DIR}"
-cp -va packages/sodium/dist-dev "${DEV_DIR}"
+cp -va packages/sodium/dist/* "${PROD_DIR}"
+cp -va packages/sodium/dist-dev/* "${DEV_DIR}"
 
 log videomark-log-view
 cp -va packages/videomark-log-view/build "${PROD_DIR}/qoelog"
