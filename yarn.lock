@@ -2361,14 +2361,14 @@
     react-motion "^0.5.2"
     recompose "^0.30.0"
 
-"@nivo/calendar@^0.61.1":
-  version "0.61.1"
-  resolved "https://registry.yarnpkg.com/@nivo/calendar/-/calendar-0.61.1.tgz#0dec45588fdf0e07392efaf2951fd5e68516da67"
-  integrity sha512-64ejWok6T1Que2V7FYfzZUF0FWiCck6vmwpfFtw+7abhdufzMk6W2b0yCowcRshJYbjU8JwWplf1OfanAax3Eg==
+"@nivo/calendar@^0.62.0":
+  version "0.62.0"
+  resolved "https://registry.yarnpkg.com/@nivo/calendar/-/calendar-0.62.0.tgz#a60869cac6723229fef0842ea710e38a550e3eea"
+  integrity sha512-fxzGjYwWmhCpFcyncs7ShGZYp2USzjFIafOKpuY1PzGQgZ6nsRHUWNRj9fXngLXA/sDZ9RGWAGJybjkETaC5Cw==
   dependencies:
-    "@nivo/core" "0.61.0"
-    "@nivo/legends" "0.61.1"
-    "@nivo/tooltip" "0.61.0"
+    "@nivo/core" "0.62.0"
+    "@nivo/legends" "0.62.0"
+    "@nivo/tooltip" "0.62.0"
     d3-scale "^3.0.0"
     d3-time "^1.0.10"
     d3-time-format "^2.1.3"
