@@ -7,7 +7,7 @@
     "@material-ui/core": "^4.9.4",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/styles": "^4.9.0",
-    "@nivo/bar": "^0.61.1",
+    "@nivo/bar": "^0.62.0",
     "@nivo/calendar": "^0.61.1",
     "@nivo/scatterplot": "^0.61.1",
     "@svgr/webpack": "^5.2.0",
