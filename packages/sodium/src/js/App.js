@@ -35,6 +35,22 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
   // --- IIJ Hook --- //
   await IIJTypeHandler.hook_iij();
 
+  window.addEventListener("message", event => {
+    if (event.data.type !== "FROM_WEB_CONTENT") return;
+
+    if (event.data.method == "display_ui") {
+      Config.ui_enabled = event.data.enabled;
+      Config.save_settings({ display_on_player: event.data.enabled });
+      if (session.get_video_availability()) {
+        if (Config.ui_enabled) {
+          ui.update_status({});
+        } else {
+          ui.remove_element();
+        }
+      }
+    }
+  });
+
   // --- update video list --- //
   window.setInterval(() => {
     // video の検索と保持しているvideoの更新

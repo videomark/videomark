@@ -37,6 +37,7 @@ export default class UI {
 
   insert_element() {
     const target =
+      Config.isMobile() ? document.querySelector("body") :
       this.target == null /* デフォルト: videoタグの親 */
         ? (document.querySelector("video") || {}).parentNode
         : document.querySelector(this.target);
@@ -52,7 +53,12 @@ export default class UI {
       childlen.forEach(c => element.append(c));
       return element;
     };
-    const style = e("style")([this.style]);
+    const style = e("style")([Config.isMobile() ? `#${Config.get_ui_id()} {
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  z-index: 1000001;
+}` : this.style]);
     document.head.appendChild(style);
 
     this.element = e("div")();

@@ -2,6 +2,10 @@
  * 動作設定
  */
 export default class Config {
+  static isMobile() {
+    return Boolean(window.sodium);
+  }
+
   static get_collect_interval() {
     return this.collect_interval;
   }
@@ -83,6 +87,16 @@ export default class Config {
 
   static get_settings() {
     return this.settings || {};
+  }
+
+  static save_settings(new_settings) {
+    if (!new_settings || !Object.keys(new_settings).length) return;
+    this.settings = { ...this.settings, ...new_settings };
+    window.postMessage({
+      type: "FROM_SODIUM_JS",
+      method: "save_settings",
+      new_settings
+    }, "*");
   }
 
   static get_transfer_size() {
