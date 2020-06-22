@@ -2,4 +2,5 @@
 /packages/sodium/dist/
 /packages/sodium/dist-dev/
 /packages/videomark-log-view/build/
+/packages/videomark-mini-stats/dist/
 /test/e2e/
