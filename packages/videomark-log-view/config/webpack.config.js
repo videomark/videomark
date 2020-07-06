@@ -14,6 +14,9 @@ const contenthash = isAndroid ? "" : ".[contenthash:8]";
 const urlLoaderOptions = isAndroid
   ? {}
   : { name: `static/media/[name]${mediahash}.[ext]`, limit: 10000 };
+const performance = isAndroid
+  ? {}
+  : { maxAssetSize : 1000000 }
 
 module.exports = {
   mode: isEnvProduction ? "production" : "development",
@@ -37,9 +40,7 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"],
   },
-  performance: {
-    maxAssetSize: 1000000,
-  },
+  performance: performance,
   module: {
     rules: [
       {
