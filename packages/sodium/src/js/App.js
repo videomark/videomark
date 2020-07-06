@@ -36,13 +36,13 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
   await IIJTypeHandler.hook_iij();
 
   window.addEventListener("message", event => {
-    if (event.data.type !== "FROM_WEB_CONTENT") return;
+    const data = (typeof event.data === "string") ? JSON.parse(event.data) : event.data;
+    if (data.type !== "FROM_WEB_CONTENT" && data.type !== "FROM_ANDROID_UI") return;
 
-    if (event.data.method == "display_ui") {
-      Config.ui_enabled = event.data.enabled;
-      Config.save_settings({ display_on_player: event.data.enabled });
+    if (data.method == "display_ui") {
+      Config.set_ui_enabled(data.enabled);
       if (session.get_video_availability()) {
-        if (Config.ui_enabled) {
+        if (data.enabled) {
           ui.update_status({});
         } else {
           ui.remove_element();
@@ -57,7 +57,9 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
     const elms = document.getElementsByTagName("video");
     session.set_video_elms(elms);
     // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-    if (!session.get_video_availability()) {
+    const available = session.get_video_availability();
+    Config.set_mobile_alive(available);
+    if (!available) {
       ui.remove_element();
     }
   }, Config.get_search_video_interval());

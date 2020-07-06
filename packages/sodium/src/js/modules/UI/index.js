@@ -56,7 +56,7 @@ export default class UI {
     const style = e("style")([Config.isMobile() ? `#${Config.get_ui_id()} {
   position: fixed;
   width: 100%;
-  top: 0px;
+  bottom: 0px;
   z-index: 1000001;
 }` : this.style]);
     document.head.appendChild(style);

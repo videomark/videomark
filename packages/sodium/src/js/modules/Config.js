@@ -156,7 +156,22 @@ export default class Config {
       : undefined;
   }
 
+  static set_mobile_alive(alive) {
+    if (!Config.isMobile()) return;
+    sodium.currentTab.alive = alive;
+  }
+
+  static set_ui_enabled(enabled) {
+    if (Config.isMobile()) {
+      sodium.currentTab.displayOnPlayer = enabled;
+    } else {
+      this.ui_enabled = enabled;
+    }
+  }
+
   static get_ui_enabled() {
+    if (Config.isMobile()) return sodium.currentTab.displayOnPlayer;
+
     if (this.ui_enabled == null) {
       const settings = this.get_settings();
       this.ui_enabled =
