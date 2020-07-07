@@ -12,7 +12,9 @@ module.exports = merge(common, {
     new webpack.DefinePlugin({
       FLUENT_URL: JSON.stringify("https://sodium.webdino.org/sodium"),
       SODIUM_SERVER_URL: JSON.stringify("https://sodium.webdino.org:8443/api"),
-      PEAK_TIME_LIMIT_URL: JSON.stringify("https://vm.webdino.org/peak-time-limit.json")
-    })
-  ]
+      PEAK_TIME_LIMIT_URL: JSON.stringify(
+        "https://vm.webdino.org/peak-time-limit.json"
+      ),
+    }),
+  ],
 });

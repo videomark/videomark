@@ -21,11 +21,13 @@ module.exports = merge(common, {
         "https://dev-sodium.webdino.org:8443/api"
       ),
 
-      PEAK_TIME_LIMIT_URL: JSON.stringify("https://vm.webdino.org/peak-time-limit.json")
-    })
+      PEAK_TIME_LIMIT_URL: JSON.stringify(
+        "https://vm.webdino.org/peak-time-limit.json"
+      ),
+    }),
   ],
 
   output: {
-    path: path.join(__dirname, "dist-dev")
-  }
+    path: path.join(__dirname, "dist-dev"),
+  },
 });
