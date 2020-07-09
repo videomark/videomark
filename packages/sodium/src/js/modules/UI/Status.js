@@ -58,20 +58,20 @@ export default class Status {
       <style>
         .root {
           background: rgba(28, 28, 28, 0.8);
-          padding: 8px 16px;
+          padding: 1vw 1vw;
           color: white;
         }
         :focus {
           outline: 0;
         }
-        .root dt, .root dd {
-          font-size: 20px;
+        .root dt, .root dd, .root dl.alert::after {
+          font-size: 3vw;
         }
         .close {
           position: absolute;
-          top: 1em;
-          right: 1em;
-          font-size: 32px;
+          top: 1vh;
+          right: 1vw;
+          font-size: 6vw;
         }
       </style>
       <div class="root" >
