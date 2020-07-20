@@ -83,7 +83,7 @@ export default class UI {
         e.preventDefault();
         this.element.style.top = Math.max(getPageY(e) - Number.parseInt(this.element.getAttribute("inittop")), minTop) + "px";
       };
-      const mouseup = () => {
+      const mouseup = e => {
         e.preventDefault();
         document.body.removeEventListener("mousemove", mousemove, false);
         document.body.removeEventListener("touchmove", mousemove, false);
