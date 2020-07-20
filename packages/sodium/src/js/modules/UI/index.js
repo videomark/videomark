@@ -53,10 +53,11 @@ export default class UI {
       return element;
     };
     const bound = target.getBoundingClientRect();
+    const minTop = bound.top + bound.height;
     const style = e("style")([Config.isMobile() ? `#${Config.get_ui_id()} {
   position: absolute;
   width: 100%;
-  top: ${bound.top + bound.height}px;
+  top: ${minTop}px;
   z-index: 1000001;
 }` : this.style]);
     document.head.appendChild(style);
@@ -68,6 +69,7 @@ export default class UI {
         return e.changedTouches ? e.changedTouches[0].pageY : e.pageY;
       };
       const mousedown = e => {
+        e.preventDefault();
         this.element.setAttribute("inittop", getPageY(e) - this.element.offsetTop);
         document.body.addEventListener("mousemove", mousemove, false);
         document.body.addEventListener("touchmove", mousemove, false);
@@ -79,9 +81,10 @@ export default class UI {
       };
       const mousemove = e => {
         e.preventDefault();
-        this.element.style.top = getPageY(e) - Number.parseInt(this.element.getAttribute("inittop")) + "px";
+        this.element.style.top = Math.max(getPageY(e) - Number.parseInt(this.element.getAttribute("inittop")), minTop) + "px";
       };
       const mouseup = () => {
+        e.preventDefault();
         document.body.removeEventListener("mousemove", mousemove, false);
         document.body.removeEventListener("touchmove", mousemove, false);
 
