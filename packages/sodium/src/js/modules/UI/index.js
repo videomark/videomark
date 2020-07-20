@@ -55,7 +55,7 @@ export default class UI {
     const bound = target.getBoundingClientRect();
     const minTop = bound.top + bound.height;
     const style = e("style")([Config.isMobile() ? `#${Config.get_ui_id()} {
-  position: absolute;
+  position: fixed;
   width: 100%;
   top: ${minTop}px;
   z-index: 1000001;
