@@ -1,5 +1,5 @@
 const {
-  pages: { terms, logView }
+  pages: { terms, logView },
 } = require("./");
 const sampleVideos = require("./sample-videos.json");
 const sample = () =>
@@ -8,21 +8,21 @@ const sample = () =>
 beforeAll(async () => {
   page = await terms.page(browser);
   await Promise.all(
-    (await browser.pages()).filter(p => p !== page).map(p => p.close())
+    (await browser.pages()).filter((p) => p !== page).map((p) => p.close())
   );
   await Promise.all(
-    ["#terms", "#privacy"].map(selector => page.click(selector))
+    ["#terms", "#privacy"].map((selector) => page.click(selector))
   );
   await Promise.all([
     page.waitForNavigation({ waitUntil: "domcontentloaded" }),
-    page.click("#submit")
+    page.click("#submit"),
   ]);
 });
 
 const path = require("path");
 afterEach(async () => {
   await page.screenshot({
-    path: path.join("screenshots", `${Date.now()}.png`)
+    path: path.join("screenshots", `${Date.now()}.png`),
   });
 });
 
@@ -39,24 +39,23 @@ test("YouTube動画に埋め込み", async () => {
   await page.goto(sample());
   await page.waitFor(videomark);
 }, 90e3);
-
-// FIXME: 得られないことが多い
-test.skip("YouTube動画に埋め込み後、しばらく経つとQoE値が得られる", async () => {
+test("YouTube動画に埋め込み後、しばらく経つとQoE値が得られる", async () => {
   const videomark = "#__videomark_ui";
   await page.goto(sample());
   await page.waitFor(videomark);
   const summary = await page.evaluateHandle(
-    selector =>
+    (selector) =>
       document
         .querySelector(selector)
         .shadowRoot.querySelector(".root > details > summary"),
     videomark
   );
-  const summaryText = () => page.evaluate(el => el.textContent.trim(), summary);
+  const summaryText = () =>
+    page.evaluate((el) => el.textContent.trim(), summary);
   expect(await summaryText()).toBe("計測中...");
   await page.click(videomark);
   await page.waitFor(
-    el => el.textContent.trim() !== "計測中...",
+    (el) => el.textContent.trim() !== "計測中...",
     { timeout: 60e3 },
     summary
   );
