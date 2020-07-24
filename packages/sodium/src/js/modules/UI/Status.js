@@ -79,6 +79,9 @@ export default class Status {
           @click=${() => {
             window.postMessage({ type: "FROM_WEB_CONTENT", method: "display_ui", enabled: false }, "*");
           }}
+          @touchstart=${() => {
+            window.postMessage({ type: "FROM_WEB_CONTENT", method: "display_ui", enabled: false }, "*");
+          }}
         >×</div>
         ${quality({ sessionId, videoId, throughput })}
       </div>

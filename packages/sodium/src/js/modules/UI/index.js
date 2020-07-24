@@ -81,7 +81,9 @@ export default class UI {
       };
       const mousemove = e => {
         e.preventDefault();
-        this.element.style.top = Math.max(getPageY(e) - Number.parseInt(this.element.getAttribute("inittop")), minTop) + "px";
+        let top = Math.max(getPageY(e) - Number.parseInt(this.element.getAttribute("inittop")), minTop);
+        top = Math.min(window.innerHeight - this.element.clientHeight, top);
+        this.element.style.top = top + "px";
       };
       const mouseup = e => {
         e.preventDefault();

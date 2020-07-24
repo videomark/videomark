@@ -1,6 +1,7 @@
 import { html } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
 import { useStorage } from "../Storage";
+import Config from "../Config";
 
 const latest = (log, key) => {
   const { date, [key]: value } =
@@ -109,6 +110,16 @@ export const quality = ({ sessionId, videoId, throughput }) => {
     }
   };
 
+  const dropRate = (droppedVideoFrames / totalVideoFrames) || 0;
+  const dropRateView = Config.isMobile()
+    ? `${droppedVideoFrames}/${totalVideoFrames} (${(dropRate * 100).toFixed(2)}%)`
+    : `${droppedVideoFrames} / ${totalVideoFrames} ( ${(dropRate * 100).toFixed(2)} % )`;
+
+  const waitingTime = (waiting / playing) || 0;
+  const waitingTimeView = Config.isMobile()
+    ? `${(waiting / 1e3).toFixed(2)}/${(playing / 1e3).toFixed(2)}s (${(waitingTime * 100).toFixed(2)}%)`
+    : `${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s ( ${(waitingTime * 100).toFixed(2)} % )`;
+
   return html`
     <style>
       dl,
@@ -195,18 +206,12 @@ export const quality = ({ sessionId, videoId, throughput }) => {
         <svg class="chart" id="framerate_chart"></svg>
       </dd>
       <dt class=${classMap(classes.dropped)}>フレームドロップ率</dt>
-      <dd class=${classMap(classes.dropped)}>
-        ${droppedVideoFrames} / ${totalVideoFrames} (
-        ${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(2)} % )
-      </dd>
+      <dd class=${classMap(classes.dropped)}>${dropRateView}</dd>
       <dd class=${classMap(classes.dropped)}>
         <svg class="chart" id="droprate_chart"></svg>
       </dd>
       <dt class=${classMap(classes.waiting)}>待機時間</dt>
-      <dd class=${classMap(classes.waiting)}>
-        ${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s (
-        ${((waiting / playing) * 100).toFixed(2)} % )
-      </dd>
+      <dd class=${classMap(classes.waiting)}>${waitingTimeView}</dd>
       <dd class=${classMap(classes.waiting)}>
         <svg class="chart" id="waiting_chart"></svg>
       </dd>
