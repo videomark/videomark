@@ -441,7 +441,7 @@ Config.ui.abematv = {
 
 // Amazon Prime Video
 Config.ui.amazonprimevideo = {
-  target: ".scalingUiContainerBottom",
+  target: ".scalingVideoContainerBottom",
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;

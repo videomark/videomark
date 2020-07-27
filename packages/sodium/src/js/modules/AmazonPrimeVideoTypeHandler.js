@@ -80,7 +80,7 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
             const main = Array
                 .from(document.querySelectorAll('video'))
                 .find(e => /^blob:http\S?:\/\//.test(e.src));
-            return main.style.visibility !== "visible";
+            return main.style.visibility !== "visible" && main.style.visibility !== "";
         } catch (e) {
 
             return false;
