@@ -1,5 +1,7 @@
 name: e2e
-on: push
+on:
+  - push
+  - workflow_dispatch
 jobs:
   main:
     runs-on: ubuntu-18.04
