@@ -1,6 +1,9 @@
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 
+// NOTE: Paravi で再生できないので日本のタイムゾーンに強制
+process.env.TZ = "Asia/Tokyo";
+
 const fileExists = (path) => {
   try {
     fs.statSync(path);
