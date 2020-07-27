@@ -19,7 +19,6 @@ jobs:
       - run: yarn
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
       - run: yarn build
-      - run: sudo apt-get install xvfb
       - id: test
         run: xvfb-run yarn e2e
       - if: success() || failure()
