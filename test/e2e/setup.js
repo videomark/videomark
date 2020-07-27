@@ -1,9 +1,6 @@
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 
-// NOTE: Paravi で再生できないので日本のタイムゾーンに強制
-process.env.TZ = "Asia/Tokyo";
-
 const fileExists = (path) => {
   try {
     fs.statSync(path);
@@ -31,6 +28,8 @@ module.exports = async () => {
   // NOTE: ローカルディレクトリにビルドが存在する場合、それを使う
   const extensionPath =
     fileExists("../../dist/production") || (await downloadExtension());
+  // NOTE: Paravi で再生できないので日本のタイムゾーンに強制
+  process.env.TZ = "Asia/Tokyo";
   process.env.LANG = "C";
   const browser = await puppeteer.launch({
     executablePath:
