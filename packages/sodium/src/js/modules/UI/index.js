@@ -77,7 +77,6 @@ export default class UI {
         document.body.addEventListener("mouseup", mouseup, false);
         document.body.addEventListener("mouseleave", mouseup, false);
         document.body.addEventListener("touchend", mouseup, false);
-        document.body.addEventListener("touchleave", mouseup, false);
       };
       const mousemove = e => {
         e.preventDefault();
