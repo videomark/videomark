@@ -93,14 +93,13 @@ export default class UI {
         document.body.removeEventListener("mouseup", mouseup, false);
         document.body.removeEventListener("mouseleave", mouseup, false);
         document.body.removeEventListener("touchend", mouseup, false);
-        document.body.removeEventListener("touchleave", mouseup, false);
       };
       this.element.addEventListener("mousedown", mousedown, false);
       this.element.addEventListener("touchstart", mousedown, false);
     }
     this.element.attachShadow({ mode: "open" });
     this.status.attach(this.element.shadowRoot);
-    (Config.isMobile() ? document.querySelector("body") : target).appendChild(this.element);
+    (Config.isMobile() ? document.body : target).appendChild(this.element);
 
     if (this.ovserve != null) {
       this.ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
