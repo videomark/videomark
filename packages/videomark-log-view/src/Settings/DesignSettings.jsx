@@ -8,6 +8,7 @@ import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
+import { isMobile } from "../js/utils/Utils";
 
 const List = styled(MuiList)({
   padding: 0,
@@ -40,7 +41,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
         <List>
           <ListItem>
             <ListItemText
-              primary="計測値を対象の動画の左上に重ねて表示する"
+              primary={isMobile() ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
               secondary={changes ? "新しいページを読み込むと反映されます" : ""}
             />
             {settings && (

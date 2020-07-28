@@ -51,6 +51,13 @@ const save_peak_time_limit = async peak_time_limit => {
   storage.set({ peak_time_limit });
 };
 
+const save_settings = async new_settings => {
+  if (!new_settings || !Object.keys(new_settings).length) return;
+  let { settings } = await storage.get("settings");
+  settings = { ...settings, ...new_settings };
+  storage.set({ settings });
+};
+
 const inject_script = async opt => {
   // --- inject script, to opt.target --- ///
   const target = document.getElementsByTagName(opt.target)[0];
@@ -197,6 +204,11 @@ const message_listener = async event => {
     case "save_peak_time_limit": {
       const { peak_time_limit } = event.data;
       await save_peak_time_limit(peak_time_limit);
+      break;
+    }
+    case "save_settings": {
+      const { new_settings } = event.data;
+      await save_settings(new_settings);
       break;
     }
     case "get_ip": {

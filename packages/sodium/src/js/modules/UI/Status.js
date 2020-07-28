@@ -2,6 +2,7 @@ import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import sparkline from '@videomark/sparkline';
 import { quality, latestQoE, latestQuality, isLowQuality, getRealThroughput, transferSize } from "./Quality";
+import Config from "../Config";
 
 const HISTORY_SIZE = 120;
 
@@ -21,9 +22,7 @@ export default class Status {
 
   detach() {
     this.root = null;
-    this.state = {
-      open: false
-    };
+    this.state = { open: false };
   }
 
   get template() {
@@ -50,6 +49,46 @@ export default class Status {
       }
     };
 
+    return Config.isMobile() ? this.mobileTemplate({ sessionId, videoId, throughput: this.historyHolder.latestThroughput })
+      : this.dekstopTemplate({ open, qoe, qoeStyles, sessionId, videoId, throughput: this.historyHolder.latestThroughput });
+  }
+
+  mobileTemplate({ sessionId, videoId, throughput }) {
+    return html`
+      <style>
+        .root {
+          background: rgba(28, 28, 28, 0.8);
+          padding: 1vw 1vw;
+          color: white;
+        }
+        :focus {
+          outline: 0;
+        }
+        .root dt, .root dd, .root dl.alert::after {
+          font-size: 3vw;
+        }
+        .close {
+          position: absolute;
+          top: 1vh;
+          right: 1vw;
+          font-size: 6vw;
+        }
+      </style>
+      <div class="root" >
+        <div class="close"
+          @click=${() => {
+            window.postMessage({ type: "FROM_WEB_CONTENT", method: "display_ui", enabled: false }, "*");
+          }}
+          @touchstart=${() => {
+            window.postMessage({ type: "FROM_WEB_CONTENT", method: "display_ui", enabled: false }, "*");
+          }}
+        >×</div>
+        ${quality({ sessionId, videoId, throughput })}
+      </div>
+    `;
+  }
+
+  dekstopTemplate({ open, qoe, qoeStyles, sessionId, videoId, throughput }) {
     return html`
       <style>
         .root {
@@ -95,7 +134,7 @@ export default class Status {
                 `
               : "計測中..."}
           </summary>
-          ${open ? quality({ sessionId, videoId, throughput: this.historyHolder.latestThroughput }) : ""}
+          ${open ? quality({ sessionId, videoId, throughput }) : ""}
         </details>
       </div>
     `;
@@ -107,7 +146,7 @@ export default class Status {
     this.historyUpdate();
 
     render(this.template, this.root);
-    if (this.state.open) this.drawChart();
+    if (this.state.open || Config.isMobile()) this.drawChart();
   }
 
   historyUpdate() {

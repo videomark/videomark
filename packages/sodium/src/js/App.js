@@ -35,13 +35,31 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
   // --- IIJ Hook --- //
   await IIJTypeHandler.hook_iij();
 
+  window.addEventListener("message", event => {
+    const data = (typeof event.data === "string") ? JSON.parse(event.data) : event.data;
+    if (data.type !== "FROM_WEB_CONTENT" && data.type !== "FROM_ANDROID_UI") return;
+
+    if (data.method == "display_ui") {
+      Config.set_ui_enabled(data.enabled);
+      if (session.get_video_availability()) {
+        if (data.enabled) {
+          ui.update_status({});
+        } else {
+          ui.remove_element();
+        }
+      }
+    }
+  });
+
   // --- update video list --- //
   window.setInterval(() => {
     // video の検索と保持しているvideoの更新
     const elms = document.getElementsByTagName("video");
     session.set_video_elms(elms);
     // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-    if (!session.get_video_availability()) {
+    const available = session.get_video_availability();
+    Config.set_mobile_alive(available);
+    if (!available) {
       ui.remove_element();
     }
   }, Config.get_search_video_interval());
