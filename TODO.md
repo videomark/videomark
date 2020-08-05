@@ -2,11 +2,6 @@
 
 ## CodeClimate Analyze
 
-### [packages/sodium/src/js/modules/AbemaTVVideoTypeHandler.js](packages/sodium/src/js/modules/AbemaTVVideoTypeHandler.js) (2 issues)
-
-- 7-43: Function `constructor` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
-- 7-43: Function `constructor` has 27 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-
 ### [packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js](packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js) (4 issues)
 
 - 5-37: Function `constructor` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
