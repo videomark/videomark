@@ -175,10 +175,10 @@
 - 285-289: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 292-296: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### [packages/sodium/src/js/modules/YouTubeTypeHandler.js](packages/sodium/src/js/modules/YouTubeTypeHandler.js) (31 issues)
+### [packages/sodium/src/js/modules/YouTubeTypeHandler.js](packages/sodium/src/js/modules/YouTubeTypeHandler.js) (26 issues)
 
-- 1-763: File `YouTubeTypeHandler.js` has 605 lines of code (exceeds 250 allowed). Consider refactoring. [structure]
-- 3-743: `YouTubeTypeHandler` has 41 functions (exceeds 20 allowed). Consider refactoring. [structure]
+- 1-755: File `YouTubeTypeHandler.js` has 597 lines of code (exceeds 250 allowed). Consider refactoring. [structure]
+- 3-735: `YouTubeTypeHandler` has 41 functions (exceeds 20 allowed). Consider refactoring. [structure]
 - 5-41: Function `is_youtube_type` has 29 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 - 5-41: Function `is_youtube_type` has a Cognitive Complexity of 10 (exceeds 5 allowed). Consider refactoring. [structure]
 - 10-16: Consider simplifying this complex logical expression. [structure]
@@ -192,22 +192,17 @@
 - 97-135: Consider simplifying this complex logical expression. [structure]
 - 155-182: Function `hook_youtube_player` has a Cognitive Complexity of 10 (exceeds 5 allowed). Consider refactoring. [structure]
 - 202-216: Function `check_formats` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
-- 219-222: Similar blocks of code found in 3 locations. Consider refactoring. [duplication]
 - 298-357: Function `get_throughput_info` has 55 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 316-326: Identical blocks of code found in 3 locations. Consider refactoring. [duplication]
-- 388-421: Function `constructor` has 28 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 403-417: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 410-417: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 470-482: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 485-497: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 590-614: Function `get_id_by_video_holder` has a Cognitive Complexity of 6 (exceeds 5 allowed). Consider refactoring. [structure]
-- 611: Avoid too many `return` statements within this function. [structure]
-- 613: Avoid too many `return` statements within this function. [structure]
-- 617-634: Function `get_view_count` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
-- 682-728: Function `set_max_bitrate` has 37 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 682-728: Function `set_max_bitrate` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
-- 710: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 711: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 462-474: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 477-489: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 582-606: Function `get_id_by_video_holder` has a Cognitive Complexity of 6 (exceeds 5 allowed). Consider refactoring. [structure]
+- 603: Avoid too many `return` statements within this function. [structure]
+- 605: Avoid too many `return` statements within this function. [structure]
+- 609-626: Function `get_view_count` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
+- 674-720: Function `set_max_bitrate` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
+- 674-720: Function `set_max_bitrate` has 37 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
+- 702: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 703: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
 ### [packages/videomark-extension/content_script.js](packages/videomark-extension/content_script.js) (6 issues)
 

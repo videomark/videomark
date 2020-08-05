@@ -327,7 +327,7 @@ class YouTubeTypeHandler {
                 return acc;
             }, []);
 
-        // separate by duration 
+        // separate by duration
         return histories.reduce((acc, cur) => {
             // plInfo duration に合わせた形に throughput を変更する
             const downloadDuration = cur.downloadSize / (cur.bitrate / 8);
@@ -399,22 +399,14 @@ class YouTubeTypeHandler {
 
         this.observer = new MutationObserver(ms => {
             ms.forEach(() => {
-                const find = this.player.classList.contains('ad-showing');
-                if (this.cm && !find) {
-                    this.cm = false;
-                    this.cm_listeners.forEach(e => e.call(null, {
-                        cm: this.cm,
-                        pos: this.get_current_time(null),
-                        time: Date.now()
-                    }));
-                } else if (!this.cm && find) {
-                    this.cm = true;
-                    this.cm_listeners.forEach(e => e.call(null, {
-                        cm: this.cm,
-                        pos: this.get_current_time(null),
-                        time: Date.now()
-                    }));
-                }
+                const adShowing = this.player.classList.contains('ad-showing');
+                if (this.cm === adShowing) return;
+                this.cm = adShowing;
+                this.cm_listeners.forEach(e => e.call(null, {
+                    cm: this.cm,
+                    pos: this.get_current_time(null),
+                    time: Date.now()
+                }));
             });
         });
         this.observer.observe(this.player, { attributes: true, attributeFilter: ['class'] });
@@ -674,7 +666,7 @@ class YouTubeTypeHandler {
                 this.player.setPlaybackQualityRange(quality, quality);
             }
         } catch (e) {
-            // 
+            //
         }
     }
 
