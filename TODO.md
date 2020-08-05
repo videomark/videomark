@@ -2,12 +2,13 @@
 
 ## CodeClimate Analyze
 
-### [packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js](packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js) (4 issues)
+262 issues.
 
-- 5-37: Function `constructor` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
-- 5-37: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 65-67: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 80-82: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
+### [packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js](packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js) (3 issues)
+
+- 7-11: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 37-39: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 49-51: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
 ### [packages/sodium/src/js/modules/Config.js](packages/sodium/src/js/modules/Config.js) (17 issues)
 
@@ -29,14 +30,13 @@
 - 555-557: Similar blocks of code found in 4 locations. Consider refactoring. [duplication]
 - 558-560: Similar blocks of code found in 4 locations. Consider refactoring. [duplication]
 
-### [packages/sodium/src/js/modules/FodTypeHandler.js](packages/sodium/src/js/modules/FodTypeHandler.js) (2 issues)
+### [packages/sodium/src/js/modules/FodTypeHandler.js](packages/sodium/src/js/modules/FodTypeHandler.js) (1 issue)
 
-- 5-37: Function `constructor` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
-- 5-37: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 7-11: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/sodium/src/js/modules/GeneralTypeHandler.js (1 issue)
+### [packages/sodium/src/js/modules/GeneralTypeHandler.js](packages/sodium/src/js/modules/GeneralTypeHandler.js) (1 issue)
 
-- 2-125: `GeneralTypeHandler` has 23 functions (exceeds 20 allowed). Consider refactoring. [structure]
+- 2-111: `GeneralTypeHandler` has 23 functions (exceeds 20 allowed). Consider refactoring. [structure]
 
 ### [packages/sodium/src/js/modules/IIJTypeHandler.js](packages/sodium/src/js/modules/IIJTypeHandler.js) (14 issues)
 
@@ -46,7 +46,7 @@
 - 51-67: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 70-76: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 81-87: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 91-94: Similar blocks of code found in 3 locations. Consider refactoring. [duplication]
+- 91-94: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 97-110: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 145-212: Function `play_list_form_adaptive_fmts` has 64 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 - 151-179: Function `videoRepArry` has 27 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
@@ -55,11 +55,11 @@
 - 278-288: Identical blocks of code found in 3 locations. Consider refactoring. [duplication]
 - 298-305: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/sodium/src/js/modules/NicoLiveTypeHandler.js (1 issue)
+### [packages/sodium/src/js/modules/NicoLiveTypeHandler.js](packages/sodium/src/js/modules/NicoLiveTypeHandler.js) (1 issue)
 
 - 36-50: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/sodium/src/js/modules/NicoVideoTypeHandler.js (1 issue)
+### [packages/sodium/src/js/modules/NicoVideoTypeHandler.js](packages/sodium/src/js/modules/NicoVideoTypeHandler.js) (1 issue)
 
 - 62-76: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
@@ -74,7 +74,7 @@
 - 75-81: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 86-92: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 94-151: Function `hookFunc` has 43 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 157-160: Similar blocks of code found in 3 locations. Consider refactoring. [duplication]
+- 157-160: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 163-176: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 192-222: Function `get_play_list_info` has 29 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 - 225-265: Function `get_throughput_info` has 37 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
@@ -100,7 +100,7 @@
 - 512-549: Function `altSessionMessage` has 32 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 - 512-549: Function `altSessionMessage` has a Cognitive Complexity of 12 (exceeds 5 allowed). Consider refactoring. [structure]
 
-### packages/sodium/src/js/modules/StatStorage.js (1 issue)
+### [packages/sodium/src/js/modules/StatStorage.js](packages/sodium/src/js/modules/StatStorage.js) (1 issue)
 
 - 38-62: Function `fetchAndStorePeakTimeLimit` has a Cognitive Complexity of 7 (exceeds 5 allowed). Consider refactoring. [structure]
 
@@ -175,34 +175,35 @@
 - 285-289: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 292-296: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### [packages/sodium/src/js/modules/YouTubeTypeHandler.js](packages/sodium/src/js/modules/YouTubeTypeHandler.js) (26 issues)
+### [packages/sodium/src/js/modules/YouTubeTypeHandler.js](packages/sodium/src/js/modules/YouTubeTypeHandler.js) (27 issues)
 
-- 1-755: File `YouTubeTypeHandler.js` has 597 lines of code (exceeds 250 allowed). Consider refactoring. [structure]
-- 3-735: `YouTubeTypeHandler` has 41 functions (exceeds 20 allowed). Consider refactoring. [structure]
-- 5-41: Function `is_youtube_type` has 29 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 5-41: Function `is_youtube_type` has a Cognitive Complexity of 10 (exceeds 5 allowed). Consider refactoring. [structure]
-- 10-16: Consider simplifying this complex logical expression. [structure]
-- 24: Avoid too many `return` statements within this function. [structure]
-- 29-35: Consider simplifying this complex logical expression. [structure]
-- 35: Avoid too many `return` statements within this function. [structure]
-- 37: Avoid too many `return` statements within this function. [structure]
-- 39: Avoid too many `return` statements within this function. [structure]
-- 86-148: Function `hook_youtube_xhr` has 53 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 90-138: Function `open` has 43 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 97-135: Consider simplifying this complex logical expression. [structure]
-- 155-182: Function `hook_youtube_player` has a Cognitive Complexity of 10 (exceeds 5 allowed). Consider refactoring. [structure]
-- 202-216: Function `check_formats` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
-- 298-357: Function `get_throughput_info` has 55 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 462-474: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 477-489: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 582-606: Function `get_id_by_video_holder` has a Cognitive Complexity of 6 (exceeds 5 allowed). Consider refactoring. [structure]
-- 603: Avoid too many `return` statements within this function. [structure]
-- 605: Avoid too many `return` statements within this function. [structure]
-- 609-626: Function `get_view_count` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
-- 674-720: Function `set_max_bitrate` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
-- 674-720: Function `set_max_bitrate` has 37 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
-- 702: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 703: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 1-706: File `YouTubeTypeHandler.js` has 580 lines of code (exceeds 250 allowed). Consider refactoring. [structure]
+- 6-686: `YouTubeTypeHandler` has 39 functions (exceeds 20 allowed). Consider refactoring. [structure]
+- 7-44: Function `is_youtube_type` has 29 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
+- 7-44: Function `is_youtube_type` has a Cognitive Complexity of 10 (exceeds 5 allowed). Consider refactoring. [structure]
+- 13-19: Consider simplifying this complex logical expression. [structure]
+- 27: Avoid too many `return` statements within this function. [structure]
+- 32-38: Consider simplifying this complex logical expression. [structure]
+- 38: Avoid too many `return` statements within this function. [structure]
+- 40: Avoid too many `return` statements within this function. [structure]
+- 42: Avoid too many `return` statements within this function. [structure]
+- 82-159: Function `hook_youtube_xhr` has 53 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
+- 85-148: Function `open` has 43 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
+- 96-145: Consider simplifying this complex logical expression. [structure]
+- 165-191: Function `hook_youtube_player` has a Cognitive Complexity of 10 (exceeds 5 allowed). Consider refactoring. [structure]
+- 208-222: Function `check_formats` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
+- 300-359: Function `get_throughput_info` has 55 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
+- 318-328: Identical blocks of code found in 3 locations. Consider refactoring. [duplication]
+- 444-456: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 458-470: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 555-579: Function `get_id_by_video_holder` has a Cognitive Complexity of 6 (exceeds 5 allowed). Consider refactoring. [structure]
+- 576: Avoid too many `return` statements within this function. [structure]
+- 578: Avoid too many `return` statements within this function. [structure]
+- 581-598: Function `get_view_count` has a Cognitive Complexity of 9 (exceeds 5 allowed). Consider refactoring. [structure]
+- 638-681: Function `set_max_bitrate` has a Cognitive Complexity of 8 (exceeds 5 allowed). Consider refactoring. [structure]
+- 638-681: Function `set_max_bitrate` has 37 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
+- 665: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
+- 666: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
 ### [packages/videomark-extension/content_script.js](packages/videomark-extension/content_script.js) (6 issues)
 
@@ -220,7 +221,7 @@
 - 23-27: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 29-33: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/config/webpackDevServer.config.js (1 issue)
+### [packages/videomark-log-view/config/webpackDevServer.config.js](packages/videomark-log-view/config/webpackDevServer.config.js) (1 issue)
 
 - 14-105: Function `exports` has 30 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 
@@ -230,7 +231,7 @@
 - 119-177: Function `build` has 52 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 - 174: Avoid too many `return` statements within this function. [structure]
 
-### packages/videomark-log-view/scripts/start.js (1 issue)
+### [packages/videomark-log-view/scripts/start.js](packages/videomark-log-view/scripts/start.js) (1 issue)
 
 - 63-118: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
@@ -260,11 +261,11 @@
 - 332-343: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 419-422: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/src/Settings/DesignSettings.jsx (1 issue)
+### [packages/videomark-log-view/src/Settings/DesignSettings.jsx](packages/videomark-log-view/src/Settings/DesignSettings.jsx) (1 issue)
 
 - 61-64: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/src/Settings/Header.jsx (1 issue)
+### [packages/videomark-log-view/src/Settings/Header.jsx](packages/videomark-log-view/src/Settings/Header.jsx) (1 issue)
 
 - 10-40: Function `Header` has 28 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 
@@ -304,15 +305,15 @@
 - 31-42: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 159-170: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/src/js/containers/History/Pager.jsx (1 issue)
+### [packages/videomark-log-view/src/js/containers/History/Pager.jsx](packages/videomark-log-view/src/js/containers/History/Pager.jsx) (1 issue)
 
 - 26-30: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/src/js/containers/History/SiteSelect.jsx (1 issue)
+### [packages/videomark-log-view/src/js/containers/History/SiteSelect.jsx](packages/videomark-log-view/src/js/containers/History/SiteSelect.jsx) (1 issue)
 
 - 50-78: Function `render` has 26 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 
-### packages/videomark-log-view/src/js/containers/History/index.jsx (1 issue)
+### [packages/videomark-log-view/src/js/containers/History/index.jsx](packages/videomark-log-view/src/js/containers/History/index.jsx) (1 issue)
 
 - 50-115: Function `render` has 60 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 
@@ -352,7 +353,7 @@
 - 81-85: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 - 158-162: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/src/js/containers/ViewingsProvider.jsx (1 issue)
+### [packages/videomark-log-view/src/js/containers/ViewingsProvider.jsx](packages/videomark-log-view/src/js/containers/ViewingsProvider.jsx) (1 issue)
 
 - 27-53: Function `viewingModelsStream` has a Cognitive Complexity of 7 (exceeds 5 allowed). Consider refactoring. [structure]
 
@@ -363,7 +364,7 @@
 - 69-100: Function `allViewings` has 30 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 - 124-171: Function `migration` has 42 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 
-### packages/videomark-log-view/src/js/utils/Country.js (1 issue)
+### [packages/videomark-log-view/src/js/utils/Country.js](packages/videomark-log-view/src/js/utils/Country.js) (1 issue)
 
 - 1-266: File `Country.js` has 262 lines of code (exceeds 250 allowed). Consider refactoring. [structure]
 
@@ -377,27 +378,27 @@
 - 9-26: Function `fetchSubbdivisionQoEAPI` has a Cognitive Complexity of 6 (exceeds 5 allowed). Consider refactoring. [structure]
 - 25: Avoid too many `return` statements within this function. [structure]
 
-### packages/videomark-log-view/src/js/utils/Utils.js (1 issue)
+### [packages/videomark-log-view/src/js/utils/Utils.js](packages/videomark-log-view/src/js/utils/Utils.js) (1 issue)
 
 - 21-29: Similar blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-log-view/src/js/utils/Viewing.js (1 issue)
+### [packages/videomark-log-view/src/js/utils/Viewing.js](packages/videomark-log-view/src/js/utils/Viewing.js) (1 issue)
 
 - 113-142: Function `fetchStatsInfoApi` has 26 lines of code (exceeds 25 allowed). Consider refactoring. [structure]
 
-### packages/videomark-mini-stats/components/Badge.js (1 issue)
+### [packages/videomark-mini-stats/components/Badge.js](packages/videomark-mini-stats/components/Badge.js) (1 issue)
 
 - 8: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-mini-stats/components/Badge.tsx (1 issue)
+### [packages/videomark-mini-stats/components/Badge.tsx](packages/videomark-mini-stats/components/Badge.tsx) (1 issue)
 
 - 16-25: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-mini-stats/components/QualityBadge.js (1 issue)
+### [packages/videomark-mini-stats/components/QualityBadge.js](packages/videomark-mini-stats/components/QualityBadge.js) (1 issue)
 
 - 11: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
-### packages/videomark-mini-stats/components/QualityBadge.tsx (1 issue)
+### [packages/videomark-mini-stats/components/QualityBadge.tsx](packages/videomark-mini-stats/components/QualityBadge.tsx) (1 issue)
 
 - 24-33: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
