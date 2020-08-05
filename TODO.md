@@ -2,13 +2,11 @@
 
 ## CodeClimate Analyze
 
-262 issues.
+260 issues.
 
-### [packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js](packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js) (3 issues)
+### [packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js](packages/sodium/src/js/modules/AmazonPrimeVideoTypeHandler.js) (1 issues)
 
 - 7-11: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 37-39: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
-- 49-51: Identical blocks of code found in 2 locations. Consider refactoring. [duplication]
 
 ### [packages/sodium/src/js/modules/Config.js](packages/sodium/src/js/modules/Config.js) (17 issues)
 

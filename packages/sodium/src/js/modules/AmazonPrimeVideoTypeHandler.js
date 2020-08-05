@@ -30,28 +30,19 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
         }
     }
 
+    /** @param {HTMLVideoElement} video */
     is_main_video(video) {
-
         try {
-
-            const main = Array
-                .from(document.querySelectorAll('video'))
-                .find(e => /^blob:http\S?:\/\//.test(e.src));
-            return main === video;
-        } catch (e) {
-
+            return /^blob:http\S?:\/\//.test(video.src);
+        } catch {
             return false;
         }
     }
 
     is_cm() {
         try {
-            const main = Array
-                .from(document.querySelectorAll('video'))
-                .find(e => /^blob:http\S?:\/\//.test(e.src));
-            return getComputedStyle(main).visibility !== "visible";
-        } catch (e) {
-
+            return getComputedStyle(this.elm).visibility !== "visible";
+        } catch {
             return false;
         }
     }
