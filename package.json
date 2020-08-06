@@ -12,14 +12,17 @@
     "eslint": "^7.3.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.20.0",
-    "lerna": "^3.22.0"
+    "lerna": "^3.22.0",
+    "npm-run-all": "^4.1.5"
   },
   "scripts": {
     "build": "bin/build",
     "build-android": "bin/build-android",
     "start": "yarn workspace @videomark/videomark-log-view start",
     "test": "yarn e2e",
-    "e2e": "yarn workspace @videomark/e2e-test test",
+    "e2e": "run-s e2e:*",
+    "e2e:extension": "yarn workspace @videomark/e2e-test test",
+    "e2e:mini-stats": "yarn workspace @videomark/videomark-mini-stats test",
     "lint": "eslint --ext .js,.jsx .",
     "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
   }

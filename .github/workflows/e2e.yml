@@ -32,3 +32,8 @@ jobs:
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+      - if: success() || failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: videomark-mini-stats-screenshots
+          path: packages/videomark-mini-stats/screenshots
