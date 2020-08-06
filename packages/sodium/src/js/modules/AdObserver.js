@@ -14,10 +14,7 @@ export class AdEvent extends Event {
 
 export class AdObserver extends EventTarget {
   /**
-   * @param {(
-   *  | import("./GeneralTypeHandler").default
-   *  | import("./YouTubeTypeHandler").default
-   * )} handler
+   * @param {import("./GeneralTypeHandler").default} handler
    * @param {Node} target
    * @param {string[]} attributeFilter
    */
