@@ -28,6 +28,10 @@ afterEach(async () => {
   await page.screenshot({
     path: path.join("screenshots", `${Date.now()}.png`),
   });
+  if (page.url().match(/^https?:\/\//)) {
+    await page.close();
+    page = await browser.newPage();
+  }
 });
 
 test("利用規約とプライバシーポリシーに同意後、Welcome画面が表示", async () => {
