@@ -1,9 +1,12 @@
+// @ts-check
 import Config from "./Config";
+import GeneralTypeHandler from "./GeneralTypeHandler";
+import { AdObserver } from "./AdObserver";
 
-class YouTubeTypeHandler {
-    // eslint-disable-next-line camelcase
+class YouTubeTypeHandler extends GeneralTypeHandler {
     static is_youtube_type() {
         try {
+            /** @type {any} */
             const player = document.querySelector('#movie_player');
             if (!player) return false;
 
@@ -40,7 +43,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     static can_get_streaming_info() {
         if (YouTubeTypeHandler.is_mobile()) return false;
         //  YouTube for TV
@@ -48,13 +50,10 @@ class YouTubeTypeHandler {
         return true;
     }
 
-    // eslint-disable-next-line camelcase
     static is_mobile() {
-        // eslint-disable-next-line no-restricted-globals
         return new URL(location.href).host === "m.youtube.com";
     }
 
-    // eslint-disable-next-line camelcase
     static bitrate_table() {
         return {
             tiny: { l: 666666, h: 1000000 },
@@ -69,9 +68,7 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     static async hook_youtube() {
-        // eslint-disable-next-line no-restricted-globals
         const { host } = new URL(location.href)
         if (!(host === "www.youtube.com" || host === "m.youtube.com")) return;
 
@@ -82,17 +79,19 @@ class YouTubeTypeHandler {
         YouTubeTypeHandler.hook_youtube_player();
     }
 
-    // eslint-disable-next-line camelcase
     static async hook_youtube_xhr() {
         const origOpen = XMLHttpRequest.prototype.open
         const origSend = XMLHttpRequest.prototype.send
-        // eslint-disable-next-line func-names, prefer-arrow-callback
         XMLHttpRequest.prototype.open = function (...args) {
+            // @ts-expect-error
             ([, this.sodiumURL] = args);
             this.addEventListener(`load`, (event) => {
+                // @ts-expect-error
                 this.sodiumEnd = performance.now();
+                // @ts-expect-error
                 this.sodiumEndDate = Date.now();
                 let url;
+                // @ts-expect-error
                 try { url = new URL(this.sodiumURL); } catch (e) { return };
                 if (
                     // --- 動画ページ --- //
@@ -110,23 +109,34 @@ class YouTubeTypeHandler {
                     if (!YouTubeTypeHandler.trackingId && id) YouTubeTypeHandler.trackingId = id;
                     if (YouTubeTypeHandler.trackingId === id) {
                         setTimeout(() => {  //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
+                            // @ts-expect-error
                             this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
                             YouTubeTypeHandler.add_throughput_history({
+                                // @ts-expect-error
                                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
+                                // @ts-expect-error
                                 throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
-                                downloadSize: Number.parseFloat(event.loaded),
+                                downloadSize: Number.parseFloat(event.loaded.toString()),
+                                // @ts-expect-error
                                 start: this.sodiumStartDate,
+                                // @ts-expect-error
                                 startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                                // @ts-expect-error
                                 end: this.sodiumEndDate,
+                                // @ts-expect-error
                                 endUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
                                 itag: url.searchParams.get('itag')
                             });
-                            // eslint-disable-next-line no-console
+                            // @ts-expect-error
                             console.log(`VIDEOMARK: load [URL: ${this.sodiumURL
                                 }, contents: ${event.loaded
+                                // @ts-expect-error
                                 }, duration(ms): ${this.sodiumEnd - this.sodiumStart
+                                // @ts-expect-error
                                 }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
+                                // @ts-expect-error
                                 }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
+                                // @ts-expect-error
                                 }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
                                 }, itag: ${JSON.stringify(url.searchParams.get('itag'))
                                 }, id: ${url.searchParams.get('id')}]`);
@@ -136,12 +146,13 @@ class YouTubeTypeHandler {
             });
             return origOpen.apply(this, args);
         }
-        // eslint-disable-next-line func-names, prefer-arrow-callback
         XMLHttpRequest.prototype.send = function (...args) {
+            // @ts-expect-error
             this.sodiumStart = performance.now();
+            // @ts-expect-error
             this.sodiumStartDate = Date.now();
+            // @ts-expect-error
             this.sodiumStartUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
-            // eslint-disable-next-line no-empty
             // try { this.sodiumItag = document.querySelector('#movie_player').getVideoStats().fmt } catch (e) { };
             return origSend.apply(this, args);
         }
@@ -151,28 +162,26 @@ class YouTubeTypeHandler {
      * ytd-playerにsodium用のフィールド追加
      * 初期化が終わっていない段階で値にアクセスした場合エラー値を返す
      */
-    // eslint-disable-next-line camelcase
     static async hook_youtube_player() {
         let elm;
         for (; ;) {
             elm = document.querySelector('#ytd-player');
             if (elm) break;
-            // eslint-disable-next-line no-await-in-loop
             await new Promise(resolve => setTimeout(() => resolve(), 100));
         }
+        // @ts-expect-error
         const player = await elm.getPlayerPromise();
         if (!player.sodiumLoadVideoByPlayerVars && !player.sodiumUpdateVideoData && !player.sodiumGetAvailableQualityLevels) {
-            // eslint-disable-next-line no-undef
+            // @ts-expect-error
+            const ytplayer = window.ytplayer;
             if (ytplayer.config && ytplayer.config.args) YouTubeTypeHandler.set_adaptive_formats(ytplayer.config.args.player_response)
             player.sodiumLoadVideoByPlayerVars = player.loadVideoByPlayerVars;
             player.sodiumUpdateVideoData = player.updateVideoData;
             player.sodiumGetAvailableQualityLevels = player.getAvailableQualityLevels;
-            // eslint-disable-next-line func-names, prefer-arrow-callback
             player.loadVideoByPlayerVars = function (arg) { // thisを変えられないためアロー演算子は使わない
                 YouTubeTypeHandler.set_adaptive_formats(arg.player_response);
                 return this.sodiumLoadVideoByPlayerVars(arg);
             };
-            // eslint-disable-next-line func-names, prefer-arrow-callback
             player.updateVideoData = function (arg) {
                 if (arg.adaptive_fmts && arg.adaptive_fmts.length > 0)
                     YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
@@ -181,7 +190,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     static set_adaptive_formats(response) {
         if (!response) return;
         if (YouTubeTypeHandler.sodiumAdaptiveFmts) return;
@@ -193,12 +201,10 @@ class YouTubeTypeHandler {
         try {
             YouTubeTypeHandler.check_formats();
         } catch (e) {
-            // eslint-disable-next-line no-console
             console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
         }
     }
 
-    // eslint-disable-next-line camelcase
     static check_formats() {
         let message;
         const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
@@ -215,16 +221,15 @@ class YouTubeTypeHandler {
         if (ret) throw new Error(message);
     }
 
-    // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
         YouTubeTypeHandler.throughputHistories.push(throughput);
         YouTubeTypeHandler.throughputHistories = YouTubeTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
 
-    // eslint-disable-next-line camelcase
     static get_unplayed_buffer_size() {
         let unplayedBufferSize;
         try {
+            /** @type {any} */
             const player = document.querySelector('#movie_player');
             const received = Number.parseFloat(player.getVideoLoadedFraction());
             const duration = Number.parseFloat(player.getDuration());
@@ -236,7 +241,6 @@ class YouTubeTypeHandler {
         return Math.floor(unplayedBufferSize);
     }
 
-    // eslint-disable-next-line camelcase
     static convert_adaptive_formats(formats) {
         return formats
             .reduce((acc, cur) => {
@@ -256,7 +260,6 @@ class YouTubeTypeHandler {
             }, []);
     }
 
-    // eslint-disable-next-line camelcase
     static get_play_list_info() {
         try {
             const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
@@ -279,10 +282,10 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     static get_playable_video_format_list() {
         try {
             const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+            // @ts-expect-error
             const { fmt } = document.querySelector('#movie_player').getVideoStats();
             if (!fmt || !formats) throw new Error('not found');
             const { type } = formats.find(e => e.itag === fmt);
@@ -294,7 +297,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     static get_throughput_info() {
         const itagCache = {};
         const formats = YouTubeTypeHandler.get_playable_video_format_list();
@@ -327,7 +329,7 @@ class YouTubeTypeHandler {
                 return acc;
             }, []);
 
-        // separate by duration 
+        // separate by duration
         return histories.reduce((acc, cur) => {
             // plInfo duration に合わせた形に throughput を変更する
             const downloadDuration = cur.downloadSize / (cur.bitrate / 8);
@@ -356,8 +358,8 @@ class YouTubeTypeHandler {
         }, []);
     }
 
-    // eslint-disable-next-line camelcase
     static get_codec_info() {
+        /** @type {any} */
         const player = document.querySelector('#movie_player');
         const stats = player.getVideoStats();
         const list = YouTubeTypeHandler.get_play_list_info();
@@ -375,8 +377,8 @@ class YouTubeTypeHandler {
         };
     }
 
-    // eslint-disable-next-line camelcase
     static get_representation() {
+        /** @type {any} */
         const player = document.querySelector('#movie_player');
         const stats = player.getVideoStats();
         return {
@@ -385,42 +387,18 @@ class YouTubeTypeHandler {
         };
     }
 
+    /** @param {HTMLVideoElement} elm */
     constructor(elm) {
-
+        super(elm);
         YouTubeTypeHandler.throughputHistories = [];
         YouTubeTypeHandler.trackingId = null;
 
         this.elm = elm;
+        /** @type {any} */
         this.player = document.querySelector('#movie_player');
-
-        this.cm = false;
-        this.cm_listeners = [];
-        this.limited = false;
-
-        this.observer = new MutationObserver(ms => {
-            ms.forEach(() => {
-                const find = this.player.classList.contains('ad-showing');
-                if (this.cm && !find) {
-                    this.cm = false;
-                    this.cm_listeners.forEach(e => e.call(null, {
-                        cm: this.cm,
-                        pos: this.get_current_time(null),
-                        time: Date.now()
-                    }));
-                } else if (!this.cm && find) {
-                    this.cm = true;
-                    this.cm_listeners.forEach(e => e.call(null, {
-                        cm: this.cm,
-                        pos: this.get_current_time(null),
-                        time: Date.now()
-                    }));
-                }
-            });
-        });
-        this.observer.observe(this.player, { attributes: true, attributeFilter: ['class'] });
+        this.adObserver = new AdObserver(this, this.player);
     }
 
-    // eslint-disable-next-line camelcase
     get_duration() {
         try {
             const duration = this.player.getDuration();
@@ -431,7 +409,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_video_width() {
         try {
             return this.elm.videoWidth;
@@ -440,7 +417,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_video_height() {
         try {
             return this.elm.videoHeight;
@@ -449,7 +425,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_bitrate() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
@@ -466,7 +441,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_video_bitrate() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
@@ -481,7 +455,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_audio_bitrate() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
@@ -496,7 +469,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_receive_buffer() {
         try {
             const received = Number.parseFloat(this.player.getVideoLoadedFraction());
@@ -511,24 +483,21 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_framerate() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
-                // eslint-disable-next-line camelcase
                 const { optimal_format } = this.player.getVideoStats();
                 return optimal_format.endsWith('60') ? 60 : 30;
             }
 
             const { video } = this.get_streaming_info();
 
-            return Number.parseFloat(video.fps, 10);
+            return Number.parseFloat(video.fps);
         } catch (e) {
             return -1;
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_segment_domain() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
@@ -544,8 +513,7 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars
-    get_current_time(video) {   // TVerのインターフェースと合わせる
+    get_current_time() {   // TVerのインターフェースと合わせる
         try {
             return this.player.getCurrentTime();
         } catch (e) {
@@ -553,7 +521,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_video_title() {
         let title;
 
@@ -566,7 +533,6 @@ class YouTubeTypeHandler {
         return title;
     }
 
-    // eslint-disable-next-line camelcase
     get_video_thumbnail() {
         let url;
 
@@ -586,7 +552,6 @@ class YouTubeTypeHandler {
         return url;
     }
 
-    // eslint-disable-next-line camelcase
     get_id_by_video_holder() {
         let videoId;
 
@@ -613,7 +578,6 @@ class YouTubeTypeHandler {
         return videoId;
     }
 
-    // eslint-disable-next-line camelcase
     get_view_count() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
@@ -633,7 +597,6 @@ class YouTubeTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     get_streaming_info() {
         const stats = this.player.getVideoStats();
         const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
@@ -642,43 +605,36 @@ class YouTubeTypeHandler {
         return { video, audio };
     }
 
-    // eslint-disable-next-line camelcase
     is_main_video(video) {
         return this.player.contains(video)
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars
-    is_cm(video) {
-        return this.cm;
+    is_cm() {
+        return this.player.classList.contains('ad-showing');
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars
     is_limited() {
         return this.limited;
     }
 
-    // eslint-disable-next-line camelcase
     set_quality(bitrate) {
         if (!YouTubeTypeHandler.can_get_streaming_info()) {
             return;
         }
         try {
-            // eslint-disable-next-line camelcase
             const { quality_label, itag, type, size } = YouTubeTypeHandler.get_playable_video_format_list()
                 .find(e => Number.parseInt(e.bitrate, 10) === bitrate);
             // const quality = YouTubeTypeHandler.qualityLabelTable[quality_label.replace(/[^0-9^\\.]/g, "")];
             const quality = YouTubeTypeHandler.qualityLabelTable[/\d+/.exec(quality_label)[0]];
             if (quality) {
-                // eslint-disable-next-line camelcase, no-console
                 console.log(`VIDEOMARK: Playback quality [quality:${quality_label}(${quality}), bitrate:${bitrate}, itag:${itag}, type:${type}, size:${size}]`);
                 this.player.setPlaybackQualityRange(quality, quality);
             }
         } catch (e) {
-            // 
+            //
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
     set_max_bitrate(bitrate, resolution) {
         try {
             const { fmt } = this.player.getVideoStats();
@@ -697,7 +653,6 @@ class YouTubeTypeHandler {
               const [audio, audio2] = formats
                   .filter(e => e.type === "audio" && e.container === v.container)
                   .sort(({ bitrate: a }, { bitrate: b }) => b - a);
-              // eslint-disable-next-line no-param-reassign
               v.audio = v.container === "webm" && v.quality === "tiny" && audio2 ? audio2 : audio;
               console.log(`VIDEOMARK: set_max_bitrate(): itag=${v.itag} quality=${v.quality} bitrate=${(v.bitrate+v.audio.bitrate)/1024} fps=${v.fps} container=${v.container} codec=${v.codec}/${v.audio.codec}`);
             });
@@ -719,26 +674,14 @@ class YouTubeTypeHandler {
                 this.player.setPlaybackQualityRange(select.quality, select.quality);
                 this.limited = true;
             } else
-                // eslint-disable-next-line no-console
                 console.log(`VIDEOMARK: too small or does not need a change bitrate:${bitrate} not changed`);
         } catch (e) {
-            // eslint-disable-next-line no-console
             console.warn(`VIDEOMARK: failed to find quality label`);
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
     set_default_bitrate() {
         this.player.setPlaybackQualityRange("default", "default");
-    }
-
-    // eslint-disable-next-line camelcase
-    add_cm_listener(listener) {
-        this.cm_listeners.push(listener);
-    }
-
-    clear() {
-        this.observer.disconnect();
     }
 }
 
