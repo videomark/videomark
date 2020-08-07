@@ -34,11 +34,6 @@ export default class Config {
     return this.ui.id;
   }
 
-  static get_ui_observer(platform) {
-    if (platform in this.ui) return this.ui[platform].observe;
-    return null;
-  }
-
   static get_ui_target(platform) {
     if (platform in this.ui) return this.ui[platform].target;
     return this.ui.general.target;
@@ -321,40 +316,10 @@ Config.ui.general = {
 }`
 };
 
-// m.youtube.com では #player-control-overlay のclassを監視して表示/非表示を切り替える
-// see https://github.com/webdino/sodium/issues/295
+// m.youtube.com
 Config.ui.m_youtube_com = {
-  /** @param {Function} callback 監視対象が変更されたとき呼ばれる関数。引数trueならフェードイン、それ以外フェードアウト。 */
-  observe(callback) {
-    const target = document.querySelector("#player-control-overlay");
-    if (target == null) {
-      callback(null);
-      return;
-    }
-
-    // NOTE: 停止時やタップしたとき.fadeinが存在する
-    const hasFadein = () => target.classList.contains("fadein");
-    const observer = new MutationObserver(() => {
-      callback(hasFadein());
-    });
-
-    observer.observe(target, {
-      // NOTE: classが変更されたとき
-      attributeFilter: ["class"]
-    });
-
-    callback(hasFadein());
-  },
+  ...Config.ui.general,
   target: "#player-container-id",
-  style: `#${Config.ui.id} {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  transition: 200ms;
-}
-:not(.fadein)#${Config.ui.id} {
-  opacity: 0;
-}`
 };
 
 // YouTube

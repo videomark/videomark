@@ -8,12 +8,10 @@ export default class UI {
   /**
    * @param {string} target CSS selector string
    * @param {string} style CSS
-   * @param {(fadein: boolean) => void} ovserve コントローラーを監視して表示/非表示を切り替える
    */
-  constructor(target, style, ovserve) {
+  constructor(target, style) {
     this.target = target;
     this.style = style;
-    this.ovserve = ovserve;
 
     // Inserted element
     this.element = null;
@@ -99,12 +97,5 @@ export default class UI {
     this.element.attachShadow({ mode: "open" });
     this.status.attach(this.element.shadowRoot);
     (Config.isMobile() ? document.body : target).appendChild(this.element);
-
-    if (this.ovserve != null) {
-      this.ovserve((fadein) /* 引数を.fadeinの有無として反映 */ => {
-        if (fadein) this.element.classList.add("fadein");
-        else this.element.classList.remove("fadein");
-      });
-    }
   }
 }
