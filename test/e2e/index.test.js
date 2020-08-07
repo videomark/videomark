@@ -28,6 +28,10 @@ afterEach(async () => {
   await page.screenshot({
     path: path.join("screenshots", `${Date.now()}.png`),
   });
+  if (page.url().match(/^https?:\/\//)) {
+    await page.close();
+    page = await browser.newPage();
+  }
 });
 
 test("利用規約とプライバシーポリシーに同意後、Welcome画面が表示", async () => {
@@ -42,6 +46,15 @@ test("YouTube動画に埋め込み", async () => {
   const videomark = "#__videomark_ui";
   await page.goto(sample("youtube"));
   await page.waitFor(videomark);
+}, 90e3);
+
+test("YouTube動画に埋め込み (モバイル)", async () => {
+  const videomark = "#__videomark_ui";
+  const pixel2 = require("puppeteer").devices["Pixel 2"];
+  await page.emulate(pixel2);
+  await page.goto(sample("youtube").replace("//www.", "//m."));
+  await page.waitFor(videomark);
+  await page.click(videomark);
 }, 90e3);
 
 // FIXME: GitHub Actions runner ホストが Paravi 視聴に対応していない地域なのでスキップ
