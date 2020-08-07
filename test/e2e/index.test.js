@@ -44,6 +44,15 @@ test("YouTube動画に埋め込み", async () => {
   await page.waitFor(videomark);
 }, 90e3);
 
+test("YouTube動画に埋め込み (モバイル)", async () => {
+  const videomark = "#__videomark_ui";
+  const pixel2 = require("puppeteer").devices["Pixel 2"];
+  await page.emulate(pixel2);
+  await page.goto(sample("youtube").replace("//www.", "//m."));
+  await page.waitFor(videomark);
+  await page.click(videomark);
+}, 90e3);
+
 // FIXME: GitHub Actions runner ホストが Paravi 視聴に対応していない地域なのでスキップ
 test.each(["youtube" /*, "paravi"*/])(
   "%s: 動画に埋め込み後、しばらく経つとQoE値が得られる",
