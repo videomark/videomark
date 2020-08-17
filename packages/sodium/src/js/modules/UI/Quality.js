@@ -82,41 +82,55 @@ export const quality = ({ sessionId, videoId, throughput }) => {
   const alert =
     Number.isFinite(qoe) &&
     isLowQuality({ droppedVideoFrames, totalVideoFrames });
+
+  const naBitrate = !Number.isFinite(bitrate);
+  const naThroughput = !Number.isFinite(throughput);
+  const naTransfer = !Number.isFinite(transfer);
+  const naResolution = ![videoWidth, videoHeight].every(l => l >= 0);
+  const naFramerate = !Number.isFinite(framerate);
+  const naDropped = !Number.isFinite(droppedVideoFrames) || !Number.isFinite(totalVideoFrames);
+  const naWaiting = !Number.isFinite(waiting) || !Number.isFinite(playing);
+  const naQoe = !Number.isFinite(qoe);
+
   const classes = {
     bitrate: {
-      na: !(bitrate >= 0)
+      na: naBitrate
     },
     throughput: {
-      na: !(throughput >= 0)
+      na: naThroughput
     },
     transfer: {
-      na: !(transfer >= 0)
+      na: naTransfer
     },
     resolution: {
-      na: ![videoWidth, videoHeight].every(l => l >= 0)
+      na: naResolution
     },
     framerate: {
-      na: !(framerate >= 0)
+      na: naFramerate
     },
     dropped: {
-      na: !Number.isFinite(droppedVideoFrames / totalVideoFrames)
+      na: naDropped
     },
     waiting: {
-      na: !Number.isFinite(waiting / playing)
+      na: naWaiting
     },
     qoe: {
       alert,
-      na: !Number.isFinite(qoe)
+      na: naQoe
     }
   };
 
   const dropRate = (droppedVideoFrames / totalVideoFrames) || 0;
-  const dropRateView = Config.isMobile()
+  const dropRateView = naDropped
+    ? "n/a"
+    : Config.isMobile()
     ? `${droppedVideoFrames}/${totalVideoFrames} (${(dropRate * 100).toFixed(2)}%)`
     : `${droppedVideoFrames} / ${totalVideoFrames} ( ${(dropRate * 100).toFixed(2)} % )`;
 
   const waitingTime = (waiting / playing) || 0;
-  const waitingTimeView = Config.isMobile()
+  const waitingTimeView = naWaiting
+    ? "n/a"
+    : Config.isMobile()
     ? `${(waiting / 1e3).toFixed(2)}/${(playing / 1e3).toFixed(2)}s (${(waitingTime * 100).toFixed(2)}%)`
     : `${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s ( ${(waitingTime * 100).toFixed(2)} % )`;
 
@@ -168,39 +182,35 @@ export const quality = ({ sessionId, videoId, throughput }) => {
     <dl class=${classMap({ alert })}>
       <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
       <dd class=${classMap(classes.bitrate)}>
-        ${bitrate >= 0 ? `${kiloSizeFormat(bitrate)} kbps` : "n/a"}
+        ${naBitrate ? "n/a" : `${kiloSizeFormat(bitrate)} kbps`}
       </dd>
       <dd class=${classMap(classes.bitrate)}>
         <svg class="chart" id="bitrate_chart"></svg>
       </dd>
       <dt class=${classMap(classes.throughput)}>スループット</dt>
       <dd class=${classMap(classes.throughput)}>
-        ${throughput >= 0 ? `${kiloSizeFormat(throughput)} kbps` : "n/a"}
+        ${naThroughput ? "n/a" : `${kiloSizeFormat(throughput)} kbps`}
       </dd>
       <dd class=${classMap(classes.throughput)}>
         <svg class="chart" id="thruput_chart"></svg>
       </dd>
       <dt class=${classMap(classes.transfer)}>通信量</dt>
       <dd class=${classMap(classes.transfer)}>
-        ${transfer >= 0 ? `${megaSizeFormat(transfer)} MB` : "n/a"}
+        ${naTransfer ? "n/a" : `${megaSizeFormat(transfer)} MB`}
       </dd>
       <dd class=${classMap(classes.transfer)}>
         <svg class="chart" id="transfer_chart"></svg>
       </dd>
       <dt class=${classMap(classes.resolution)}>解像度</dt>
       <dd class=${classMap(classes.resolution)}>
-        ${[videoWidth, videoHeight].every(l => l >= 0)
-          ? `${videoWidth} × ${videoHeight}`
-          : "n/a"}
+        ${naResolution ? "n/a" : `${videoWidth} × ${videoHeight}`}
       </dd>
       <dd class=${classMap(classes.resolution)}>
         <svg class="chart" id="resolution_chart"></svg>
       </dd>
       <dt class=${classMap(classes.framerate)}>フレームレート</dt>
       <dd class=${classMap(classes.framerate)}>
-        ${framerate >= 0
-          ? `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`
-          : "n/a"}
+        ${naFramerate ? "n/a" : `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`}
       </dd>
       <dd class=${classMap(classes.framerate)}>
         <svg class="chart" id="framerate_chart"></svg>
@@ -217,7 +227,7 @@ export const quality = ({ sessionId, videoId, throughput }) => {
       </dd>
       <dt class=${classMap(classes.qoe)}>体感品質 (QoE)</dt>
       <dd class=${classMap(classes.qoe)}>
-        ${Number.isFinite(qoe) ? qoe.toFixed(2) : "n/a"}
+        ${naQoe ? "n/a" : qoe.toFixed(2)}
       </dd>
       <dd class=${classMap(classes.qoe)}>
         <svg class="chart" id="qoe_chart"></svg>
