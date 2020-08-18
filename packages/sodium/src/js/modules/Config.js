@@ -6,6 +6,10 @@ export default class Config {
     return Boolean(window.sodium);
   }
 
+  static isMobileScreen() {
+    return this.isMobile() && screen.orientation.type.startsWith("portrait");
+  }
+
   static get_collect_interval() {
     return this.collect_interval;
   }

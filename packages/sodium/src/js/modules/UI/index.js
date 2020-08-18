@@ -45,16 +45,20 @@ export default class UI {
       return;
     }
 
-    Config.isMobile() ? this.insert_element_mobile(target) : this.insert_element_desktop(target);
+    Config.isMobileScreen() ? this.insert_element_mobile(target) : this.insert_element_desktop(target);
   }
 
   insert_element_desktop(target) {
+    const prevstyle = document.head.querySelector(`style[name=${Config.get_ui_id()}]`)
+    if (prevstyle) document.head.removeChild(prevstyle);
+
     const e = name => (childlen = []) => {
       const element = document.createElement(name);
       childlen.forEach(c => element.append(c));
       return element;
     };
     const style = e("style")([this.style]);
+    style.setAttribute("name", Config.get_ui_id());
     document.head.appendChild(style);
 
     this.element = e("div")();
@@ -65,6 +69,9 @@ export default class UI {
   }
 
   insert_element_mobile(target) {
+    const prevstyle = document.head.querySelector(`style[name=${Config.get_ui_id()}]`)
+    if (prevstyle) document.head.removeChild(prevstyle);
+
     const e = name => (childlen = []) => {
       const element = document.createElement(name);
       childlen.forEach(c => element.append(c));
@@ -78,6 +85,7 @@ export default class UI {
   top: ${minTop}px;
   z-index: 1000001;
 }`]);
+    style.setAttribute("name", Config.get_ui_id());
     document.head.appendChild(style);
 
     this.element = e("div")();

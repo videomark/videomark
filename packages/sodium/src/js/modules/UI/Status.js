@@ -49,7 +49,7 @@ export default class Status {
       }
     };
 
-    return Config.isMobile() ? this.mobileTemplate({ sessionId, videoId, throughput: this.historyHolder.latestThroughput })
+    return Config.isMobileScreen() ? this.mobileTemplate({ sessionId, videoId, throughput: this.historyHolder.latestThroughput })
       : this.dekstopTemplate({ open, qoe, qoeStyles, sessionId, videoId, throughput: this.historyHolder.latestThroughput });
   }
 
@@ -146,7 +146,7 @@ export default class Status {
     this.historyUpdate();
 
     render(this.template, this.root);
-    if (this.state.open || Config.isMobile()) this.drawChart();
+    if (this.state.open || Config.isMobileScreen()) this.drawChart();
   }
 
   historyUpdate() {

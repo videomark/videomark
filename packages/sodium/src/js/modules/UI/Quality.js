@@ -123,14 +123,14 @@ export const quality = ({ sessionId, videoId, throughput }) => {
   const dropRate = (droppedVideoFrames / totalVideoFrames) || 0;
   const dropRateView = naDropped
     ? "n/a"
-    : Config.isMobile()
+    : Config.isMobileScreen()
     ? `${droppedVideoFrames}/${totalVideoFrames} (${(dropRate * 100).toFixed(2)}%)`
     : `${droppedVideoFrames} / ${totalVideoFrames} ( ${(dropRate * 100).toFixed(2)} % )`;
 
   const waitingTime = (waiting / playing) || 0;
   const waitingTimeView = naWaiting
     ? "n/a"
-    : Config.isMobile()
+    : Config.isMobileScreen()
     ? `${(waiting / 1e3).toFixed(2)}/${(playing / 1e3).toFixed(2)}s (${(waitingTime * 100).toFixed(2)}%)`
     : `${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s ( ${(waitingTime * 100).toFixed(2)} % )`;
 
