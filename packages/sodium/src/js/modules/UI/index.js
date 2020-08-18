@@ -77,8 +77,17 @@ export default class UI {
       childlen.forEach(c => element.append(c));
       return element;
     };
-    const bound = target.getBoundingClientRect();
-    const minTop = bound.top + bound.height;
+
+    const getMinTop = target => {
+      if (target.clientHeight > target.clientWidth) {
+        return target.clientHeight * 2 / 3; // 画面下1/3の範囲でスライド可能。主にamazonをandroid縦向きで見るとき
+      } else {
+        const bound = target.getBoundingClientRect();
+        return bound.top + bound.height;
+      }
+    };
+    const minTop = getMinTop(target);
+
     const style = e("style")([`#${Config.get_ui_id()} {
   position: fixed;
   width: 100%;
