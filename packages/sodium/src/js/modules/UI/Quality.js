@@ -83,13 +83,13 @@ export const quality = ({ sessionId, videoId, throughput }) => {
     Number.isFinite(qoe) &&
     isLowQuality({ droppedVideoFrames, totalVideoFrames });
 
-  const naBitrate = !Number.isFinite(bitrate);
-  const naThroughput = !Number.isFinite(throughput);
-  const naTransfer = !Number.isFinite(transfer);
+  const naBitrate = !Number.isFinite(bitrate) || !(bitrate >= 0);
+  const naThroughput = !Number.isFinite(throughput) || !(throughput >= 0);
+  const naTransfer = !Number.isFinite(transfer) || !(transfer >= 0);
   const naResolution = ![videoWidth, videoHeight].every(l => l >= 0);
-  const naFramerate = !Number.isFinite(framerate);
-  const naDropped = !Number.isFinite(droppedVideoFrames) || !Number.isFinite(totalVideoFrames);
-  const naWaiting = !Number.isFinite(waiting) || !Number.isFinite(playing);
+  const naFramerate = !Number.isFinite(framerate) || !(framerate >= 0);
+  const naDropped = !Number.isFinite(droppedVideoFrames) || !Number.isFinite(totalVideoFrames) || !Number.isFinite(droppedVideoFrames / totalVideoFrames);
+  const naWaiting = !Number.isFinite(waiting) || !Number.isFinite(playing) || !Number.isFinite(waiting / playing);
   const naQoe = !Number.isFinite(qoe);
 
   const classes = {
