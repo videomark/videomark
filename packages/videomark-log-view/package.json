@@ -36,7 +36,7 @@
     "jest": "^26.0.0",
     "jest-pnp-resolver": "^1.2.1",
     "jest-resolve": "^26.0.0",
-    "material-table": "^1.57.2",
+    "material-table": "1.68.0",
     "material-ui-flat-pagination": "^4.1.0",
     "mini-css-extract-plugin": "^0.10.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
