@@ -29,8 +29,7 @@ afterEach(async () => {
     path: path.join("screenshots", `${Date.now()}.png`),
   });
   if (page.url().match(/^https?:\/\//)) {
-    await page.close();
-    page = await browser.newPage();
+    [page] = await Promise.all([browser.newPage(), page.close()]);
   }
 });
 
