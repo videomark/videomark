@@ -9,7 +9,7 @@
     "@material-ui/styles": "^4.10.0",
     "@nivo/bar": "^0.62.0",
     "@nivo/calendar": "^0.62.0",
-    "@nivo/scatterplot": "^0.62.0",
+    "@nivo/scatterplot": "0.61.1",
     "@svgr/webpack": "^5.4.0",
     "@videomark/videomark-mini-stats": "file:../videomark-mini-stats",
     "babel-eslint": "^10.1.0",
