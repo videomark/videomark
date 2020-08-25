@@ -38,6 +38,10 @@ export default class Config {
     return this.ui.id;
   }
 
+  static get_ui_style_id() {
+    return this.ui.style_id;
+  }
+
   static get_ui_target(platform) {
     if (platform in this.ui) return this.ui[platform].target;
     return this.ui.general.target;
@@ -301,7 +305,8 @@ Config.video_platform_matcher = ({ host }) => platform => {
 
 // 表示用
 Config.ui = {
-  id: "__videomark_ui"
+  id: "__videomark_ui",
+  style_id: "__videomark_ui_style",
 };
 
 // デフォルトではvideoタグの親に挿入

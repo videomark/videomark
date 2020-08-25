@@ -48,8 +48,8 @@ export default class UI {
     Config.isMobileScreen() ? this.insert_element_mobile(target) : this.insert_element_desktop(target);
   }
 
-  insert_element_desktop(target) {
-    const prevstyle = document.head.querySelector(`style[name=${Config.get_ui_id()}]`)
+  init_element(style) {
+    const prevstyle = document.head.querySelector(`#${Config.get_ui_style_id()}`)
     if (prevstyle) document.head.removeChild(prevstyle);
 
     const e = name => (childlen = []) => {
@@ -57,27 +57,23 @@ export default class UI {
       childlen.forEach(c => element.append(c));
       return element;
     };
-    const style = e("style")([this.style]);
-    style.setAttribute("name", Config.get_ui_id());
-    document.head.appendChild(style);
+
+    const style_tag = e("style")([style]);
+    style_tag.id = Config.get_ui_style_id();
+    document.head.appendChild(style_tag);
 
     this.element = e("div")();
     this.element.id = Config.get_ui_id();
     this.element.attachShadow({ mode: "open" });
     this.status.attach(this.element.shadowRoot);
+  }
+
+  insert_element_desktop(target) {
+    this.init_element(this.style);
     target.appendChild(this.element);
   }
 
   insert_element_mobile(target) {
-    const prevstyle = document.head.querySelector(`style[name=${Config.get_ui_id()}]`)
-    if (prevstyle) document.head.removeChild(prevstyle);
-
-    const e = name => (childlen = []) => {
-      const element = document.createElement(name);
-      childlen.forEach(c => element.append(c));
-      return element;
-    };
-
     const getMinTop = target => {
       if (target.clientHeight > target.clientWidth) {
         return target.clientHeight * 2 / 3; // 画面下1/3の範囲でスライド可能。主にamazonをandroid縦向きで見るとき
@@ -88,17 +84,12 @@ export default class UI {
     };
     const minTop = getMinTop(target);
 
-    const style = e("style")([`#${Config.get_ui_id()} {
+    this.init_element(`#${Config.get_ui_id()} {
   position: fixed;
   width: 100%;
   top: ${minTop}px;
   z-index: 1000001;
-}`]);
-    style.setAttribute("name", Config.get_ui_id());
-    document.head.appendChild(style);
-
-    this.element = e("div")();
-    this.element.id = Config.get_ui_id();
+}`);
 
     const getPageY = e => {
       return e.changedTouches ? e.changedTouches[0].pageY : e.pageY;
@@ -131,8 +122,6 @@ export default class UI {
     this.element.addEventListener("mousedown", mousedown, false);
     this.element.addEventListener("touchstart", mousedown, false);
 
-    this.element.attachShadow({ mode: "open" });
-    this.status.attach(this.element.shadowRoot);
     document.body.appendChild(this.element);
   }
 }
