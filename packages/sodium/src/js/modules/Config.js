@@ -260,7 +260,7 @@ Config.video_platforms = [
   {
     // FOD
     id: "fod",
-    host: /^i\.fod\.fujitv\.co\.jp$/
+    host: /^(i\.)?fod\.fujitv\.co\.jp$/
   },
   {
     // ニコニコ動画
@@ -384,8 +384,10 @@ Config.ui.paravi = {
 }`
 };
 
-// TODO: FOD
-// Config.ui.fod = {};
+Config.ui.fod = {
+  ...Config.ui.general,
+  target: "#fod_player, #video_container",
+};
 
 // ニコニコ動画ではコメントより前面になるよう配置
 Config.ui.nicovideo = {
