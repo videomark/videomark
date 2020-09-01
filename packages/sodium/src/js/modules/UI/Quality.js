@@ -60,28 +60,26 @@ const kiloSizeFormat = bytes => sizeFormat(bytes, 1);
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
-export const quality = ({ sessionId, videoId, throughput }) => {
+export const quality = (state) => {
   const {
     date,
     bitrate,
+    throughput,
+    transfer,
     resolution,
     framerate,
     speed,
     droppedVideoFrames,
     totalVideoFrames,
-    timing
-  } = latestQuality({
-    sessionId,
-    videoId
-  });
-  const transfer = transferSize({ sessionId, videoId });
+    timing,
+    startTime,
+    qoe,
+    alert
+  } = state;
+
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
-  const playing = date - startTime({ sessionId, videoId }) - pause;
-  const qoe = latestQoE({ sessionId, videoId });
-  const alert =
-    Number.isFinite(qoe) &&
-    isLowQuality({ droppedVideoFrames, totalVideoFrames });
+  const playing = date - startTime - pause;
 
   const bitrateView = !Number.isFinite(bitrate) || !(bitrate >= 0)
     ? null

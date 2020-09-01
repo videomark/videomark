@@ -124,11 +124,7 @@ const remove_ui = () => {
     const video = session.get_main_video();
     if (!(video instanceof VideoData)) return;
 
-    update_ui({
-      maxBitrate: video.max_bitrate,
-      sessionId: session.get_session_id(),
-      videoId: video.get_video_id()
-    });
+    update_ui(session.updateStatus());
   }, Config.get_collect_interval());
 
   // --- main loop --- //

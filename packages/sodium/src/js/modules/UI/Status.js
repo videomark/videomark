@@ -1,7 +1,7 @@
 import { html, render } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import sparkline from '@videomark/sparkline';
-import { quality, latestQoE, latestQuality, isLowQuality, getRealThroughput, transferSize } from "./Quality";
+import { quality } from "./Quality";
 import Config from "../Config";
 
 const HISTORY_SIZE = 120;
@@ -26,13 +26,15 @@ export default class Status {
   }
 
   get template() {
-    const { open, sessionId, videoId } = this.state;
+    const {
+      open,
+      qoe,
+      alert
+    } = this.state;
+
     const { style } = this.root.host;
     if (open) style.setProperty("opacity", 1);
     else style.removeProperty("opacity");
-    const latest = latestQuality({ sessionId, videoId });
-    const alert = isLowQuality(latest);
-    const qoe = latestQoE({ sessionId, videoId });
     const qoeStyles = {
       value: {
         color: alert ? "inherit" : "white"
@@ -49,11 +51,11 @@ export default class Status {
       }
     };
 
-    return Config.isMobileScreen() ? this.mobileTemplate({ sessionId, videoId, throughput: this.historyHolder.latestThroughput })
-      : this.dekstopTemplate({ open, qoe, qoeStyles, sessionId, videoId, throughput: this.historyHolder.latestThroughput });
+    return Config.isMobileScreen() ? this.mobileTemplate()
+      : this.dekstopTemplate({ open, qoe, qoeStyles });
   }
 
-  mobileTemplate({ sessionId, videoId, throughput }) {
+  mobileTemplate() {
     return html`
       <style>
         .root {
@@ -83,12 +85,12 @@ export default class Status {
             window.postMessage({ type: "FROM_WEB_CONTENT", method: "display_ui", enabled: false }, "*");
           }}
         >×</div>
-        ${quality({ sessionId, videoId, throughput })}
+        ${quality({ ...this.state, throughput: this.historyHolder.latestThroughput })}
       </div>
     `;
   }
 
-  dekstopTemplate({ open, qoe, qoeStyles, sessionId, videoId, throughput }) {
+  dekstopTemplate({ open, qoe, qoeStyles }) {
     return html`
       <style>
         .root {
@@ -134,7 +136,7 @@ export default class Status {
                 `
               : "計測中..."}
           </summary>
-          ${open ? quality({ sessionId, videoId, throughput }) : ""}
+          ${open ? quality({ ...this.state, throughput: this.historyHolder.latestThroughput }) : ""}
         </details>
       </div>
     `;
@@ -150,25 +152,21 @@ export default class Status {
   }
 
   historyUpdate() {
-    const { sessionId, videoId } = this.state;
     const {
+      videoId,
       date,
       bitrate,
       throughput,
+      transfer,
       resolution,
       framerate,
       droppedVideoFrames,
-      timing
-    } = latestQuality({
-      sessionId,
-      videoId
-    });
-    const transfer = transferSize({ sessionId, videoId });
+      timing,
+      qoe
+    } = this.state;
     const { height: videoHeight } = resolution || {};
     const { waiting } = timing || {};
-    const qoe = latestQoE({ sessionId, videoId });
-    const realThroughput = getRealThroughput(throughput) || this.historyHolder.latestThroughput || NaN;
-    this.historyHolder.latestThroughput = realThroughput;
+    this.historyHolder.latestThroughput = throughput || this.historyHolder.latestThroughput || NaN;
 
     if (this.historyHolder.videoId !== videoId) {
       this.historyHolder.videoId = videoId;
@@ -185,7 +183,7 @@ export default class Status {
       this.historyHolder.date = date
       this.historyHolder.bitrate.push(bitrate >= 0 ? bitrate : NaN);
       this.historyHolder.bitrate.shift();
-      this.historyHolder.throughput.push(realThroughput);
+      this.historyHolder.throughput.push(this.historyHolder.latestThroughput);
       this.historyHolder.throughput.shift();
       this.historyHolder.transfer.push(transfer);
       this.historyHolder.transfer.shift();
