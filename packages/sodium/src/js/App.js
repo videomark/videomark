@@ -18,6 +18,11 @@ const remove_ui = () => {
   get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_url: window.location.href }, "*");
 };
 
+const remove_ui_all = () => {
+  window.postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_url: window.location.href }, "*");
+  window.top.postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_url: window.location.href }, "*");
+};
+
 (async () => {
   // --- support --- //
   if (!document || !window) {
@@ -75,13 +80,13 @@ const remove_ui = () => {
     if (data.method === "clear_interval") {
       window.clearInterval(search_video_interval_id);
       window.clearInterval(collect_interval_id);
-      if (Config.isMobile()) screen.orientation.removeEventListener("change", remove_ui);
+      if (Config.isMobile()) screen.orientation.removeEventListener("change", remove_ui_all);
     }
   });
 
   if (Config.isMobile()) {
     // 再表示は次回更新時を待つ
-    screen.orientation.addEventListener("change", remove_ui);
+    screen.orientation.addEventListener("change", remove_ui_all);
   }
 
   // --- New Session --- //

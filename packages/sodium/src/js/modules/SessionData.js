@@ -7,7 +7,7 @@ import VideoData from "./VideoData";
 import MainVideoChangeException from "./MainVideoChangeException";
 import { useStorage } from "./Storage";
 import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, fetchAndStorePeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
-import { quality, latestQoE, latestQuality, isLowQuality, getRealThroughput, transferSize, startTime } from "./UI/Quality";
+import { latestQoE, latestQuality, isLowQuality, getRealThroughput, transferSize, startTime } from "./UI/Quality";
 import { version } from "../../../package.json";
 
 async function set_max_bitrate(new_video) {
