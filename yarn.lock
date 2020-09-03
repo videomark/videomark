@@ -10702,10 +10702,10 @@ move-concurrently@^1.0.1:
     rimraf "^2.5.4"
     run-queue "^1.0.3"
 
-mpd-parser@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/mpd-parser/-/mpd-parser-0.11.0.tgz#7d32aaa2c9368a550f5b099fd642a68dfc67a468"
-  integrity sha512-z9DIs++G+dRopPT5ROQgNdnDbby+j/9dkGoCC20Hd/3swyR8YxTxM8jOtl3zO9cnhjoikVFJuMbH+V8SE0/f5Q==
+mpd-parser@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/mpd-parser/-/mpd-parser-0.12.0.tgz#b866c39288ddd3ad0e95bf3abb75f99e17300871"
+  integrity sha512-Ov5Oz9bw5X/G8V/6PlO+rHuqKywYYjQ6USyv8fqFMs413HkrzlpDjgUKSBD7C+/J19ID5mWtxzrpMf4Yp++iZg==
   dependencies:
     "@babel/runtime" "^7.5.5"
     "@videojs/vhs-utils" "^1.1.0"
