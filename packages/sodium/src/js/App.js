@@ -2,6 +2,7 @@ import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
+import { qualityStatus } from "./modules/UI/Quality";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 import IIJTypeHandler from "./modules/IIJTypeHandler";
@@ -10,8 +11,8 @@ const get_ui_target = () => {
   return Config.isMobileScreen() ? window.top : window;
 };
 
-const update_ui = status => {
-  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_ui", frame_url: window.location.href, status: status }, "*");
+const update_ui = state => {
+  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_ui", frame_url: window.location.href, state: state, qualityStatus: qualityStatus(state) }, "*");
 };
 
 const remove_ui = () => {
@@ -44,7 +45,7 @@ const remove_ui_all = () => {
     // ページ表示直後では、どのフレームに計測対象の動画があるかわからないので、計測結果の更新を待つことになる
     if (data.method === "update_ui") {
       active_frame_url = data.frame_url;
-      ui.update_status(data.status);
+      ui.update_status(data.state, data.qualityStatus);
     }
 
     // 計測対象の動画があるフレームからのメッセージの場合だけ計測uiを消去する
@@ -129,7 +130,11 @@ const remove_ui_all = () => {
     const video = session.get_main_video();
     if (!(video instanceof VideoData)) return;
 
-    update_ui(session.updateStatus());
+    update_ui({
+      maxBitrate: video.max_bitrate,
+      sessionId: session.get_session_id(),
+      videoId: video.get_video_id()
+    });
   }, Config.get_collect_interval());
 
   // --- main loop --- //

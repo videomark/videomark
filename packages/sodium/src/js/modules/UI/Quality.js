@@ -3,6 +3,40 @@ import { classMap } from "lit-html/directives/class-map";
 import { useStorage } from "../Storage";
 import Config from "../Config";
 
+export const qualityStatus = ({ sessionId, videoId }) => {
+  const {
+    date,
+    bitrate,
+    throughput,
+    resolution,
+    framerate,
+    speed,
+    droppedVideoFrames,
+    totalVideoFrames,
+    timing
+  } = latestQuality({
+    sessionId,
+    videoId
+  });
+  const qoe = latestQoE({ sessionId, videoId });
+
+  return {
+    date,
+    bitrate,
+    throughput: getRealThroughput(throughput),
+    transfer: transferSize({ sessionId, videoId }),
+    resolution,
+    framerate,
+    speed,
+    droppedVideoFrames,
+    totalVideoFrames,
+    timing,
+    startTime: startTime({ sessionId, videoId }),
+    qoe,
+    alert: Number.isFinite(qoe) && isLowQuality({ droppedVideoFrames, totalVideoFrames }),
+  }
+};
+
 const latest = (log, key) => {
   const { date, [key]: value } =
     (log || []).filter(a => key in a).slice(-1)[0] || {};

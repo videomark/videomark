@@ -26,11 +26,11 @@ export default class Status {
   }
 
   get template() {
+    const open = this.state.open;
     const {
-      open,
       qoe,
       alert
-    } = this.state;
+    } = this.qualityStatus;
 
     const { style } = this.root.host;
     if (open) style.setProperty("opacity", 1);
@@ -85,7 +85,7 @@ export default class Status {
             window.postMessage({ type: "FROM_WEB_CONTENT", method: "display_ui", enabled: false }, "*");
           }}
         >×</div>
-        ${quality({ ...this.state, throughput: this.historyHolder.latestThroughput })}
+        ${quality({ ...this.qualityStatus, throughput: this.historyHolder.latestThroughput })}
       </div>
     `;
   }
@@ -136,15 +136,16 @@ export default class Status {
                 `
               : "計測中..."}
           </summary>
-          ${open ? quality({ ...this.state, throughput: this.historyHolder.latestThroughput }) : ""}
+          ${open ? quality({ ...this.qualityStatus, throughput: this.historyHolder.latestThroughput }) : ""}
         </details>
       </div>
     `;
   }
 
-  update(state = {}) {
+  update(state = {}, qualityStatus = {}) {
     if (this.root == null) return;
     Object.assign(this.state, state);
+    this.qualityStatus = qualityStatus;
     this.historyUpdate();
 
     render(this.template, this.root);
@@ -152,8 +153,8 @@ export default class Status {
   }
 
   historyUpdate() {
+    const videoId = this.state.videoId;
     const {
-      videoId,
       date,
       bitrate,
       throughput,
@@ -163,7 +164,7 @@ export default class Status {
       droppedVideoFrames,
       timing,
       qoe
-    } = this.state;
+    } = this.qualityStatus;
     const { height: videoHeight } = resolution || {};
     const { waiting } = timing || {};
     this.historyHolder.latestThroughput = throughput || this.historyHolder.latestThroughput || NaN;

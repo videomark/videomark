@@ -7,7 +7,6 @@ import VideoData from "./VideoData";
 import MainVideoChangeException from "./MainVideoChangeException";
 import { useStorage } from "./Storage";
 import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, fetchAndStorePeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
-import { latestQoE, latestQuality, isLowQuality, getRealThroughput, transferSize, startTime } from "./UI/Quality";
 import { version } from "../../../package.json";
 
 async function set_max_bitrate(new_video) {
@@ -95,48 +94,6 @@ export default class SessionData {
   // eslint-disable-next-line camelcase
   get_main_video() {
     return this.video.find(e => e.is_main_video());
-  }
-
-  updateStatus() {
-    const video = this.get_main_video();
-    if (!(video instanceof VideoData)) return {};
-
-    const sessionId = this.get_session_id();
-    const videoId = video.get_video_id();
-    const {
-      date,
-      bitrate,
-      throughput,
-      resolution,
-      framerate,
-      speed,
-      droppedVideoFrames,
-      totalVideoFrames,
-      timing
-    } = latestQuality({
-      sessionId,
-      videoId
-    });
-    const qoe = latestQoE({ sessionId, videoId });
-
-    return {
-      maxBitrate: video.max_bitrate,
-      sessionId,
-      videoId,
-      date,
-      bitrate,
-      throughput: getRealThroughput(throughput),
-      transfer: transferSize({ sessionId, videoId }),
-      resolution,
-      framerate,
-      speed,
-      droppedVideoFrames,
-      totalVideoFrames,
-      timing,
-      startTime: startTime({ sessionId, videoId }),
-      qoe,
-      alert: Number.isFinite(qoe) && isLowQuality({ droppedVideoFrames, totalVideoFrames }),
-    }
   }
 
   /**
