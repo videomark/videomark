@@ -2,7 +2,7 @@ import Config from "./modules/Config";
 import UI from "./modules/UI";
 import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
-import { qualityStatus } from "./modules/UI/Quality";
+import { qualityStatus } from "./modules/Quality";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 import IIJTypeHandler from "./modules/IIJTypeHandler";
