@@ -19,7 +19,8 @@ const get_frame_id = () => {
 };
 
 const update_ui = state => {
-  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_ui", frame_id: get_frame_id(), state: state, qualityStatus: qualityStatus(state) }, "*");
+  const status = state && state.sessionId && state.videoId ? qualityStatus(state) : {};
+  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_ui", frame_id: get_frame_id(), state: state, qualityStatus: status }, "*");
 };
 
 const remove_ui = () => {
@@ -134,6 +135,9 @@ const remove_ui_all = () => {
     session.set_video_elms(elms);
     // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
     const available = session.get_video_availability();
+
+    // 計測中のフレームは計測uiの表示制御を行う
+    // それ以外のフレームはこの監視ループは停止させられる
     if (active_frame_id !== undefined) Config.set_mobile_alive(available);
     if (!available) remove_ui();
   }, Config.get_search_video_interval());
