@@ -54,12 +54,7 @@ const remove_ui_all = () => {
     const data = (typeof event.data === "string") ? JSON.parse(event.data) : event.data;
     if (data.type !== "FROM_WEB_CONTENT" && data.type !== "FROM_ANDROID_UI") return;
 
-    // 計測結果の更新がきたフレームを記録する
-    // ページ表示直後では、どのフレームに計測対象の動画があるかわからないので、計測結果の更新を待つことになる
     if (data.method === "update_ui") {
-      if (active_frame_id !== data.frame_id) {
-        window.top.postMessage({ type: "FROM_WEB_CONTENT", method: "notice_active_frame", frame_id: data.frame_id }, "*");
-      }
       ui.update_status(data.state, data.qualityStatus);
     }
 
@@ -158,13 +153,19 @@ const remove_ui_all = () => {
     // --- update quality info --- //
     session.update_quality_info();
 
-    if (!Config.get_ui_enabled()) return;
     if (!session.get_video_availability()) return;
 
     // --- show status  --- //
     const video = session.get_main_video();
     if (!(video instanceof VideoData)) return;
 
+    // 計測結果の更新があるフレームを記録する
+    // ページ表示直後では、どのフレームに計測対象の動画があるかわからないので、計測結果の更新を待つことになる
+    const frame_id = get_frame_id();
+    if (active_frame_id !== frame_id)
+      window.top.postMessage({ type: "FROM_WEB_CONTENT", method: "notice_active_frame", frame_id: frame_id }, "*");
+
+    if (!Config.get_ui_enabled()) return;
     update_ui({
       maxBitrate: video.max_bitrate,
       sessionId: session.get_session_id(),
