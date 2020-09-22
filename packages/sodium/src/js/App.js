@@ -27,6 +27,10 @@ const remove_ui = () => {
   get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() }, "*");
 };
 
+const update_alive = (alive) => {
+  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_alive", frame_id: get_frame_id(), alive: alive }, "*");
+};
+
 const remove_ui_all = () => {
   window.postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() }, "*");
   window.top.postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() }, "*");
@@ -43,6 +47,7 @@ const remove_ui_all = () => {
   let active_frame_id;
   let search_video_interval_id;
   let collect_interval_id;
+  Config.set_mobile_alive(false);
 
   // --- UI event --- //
   window.addEventListener("message", event => {
@@ -98,6 +103,18 @@ const remove_ui_all = () => {
       }
     }
 
+    // 計測中のフレームは計測uiの表示制御を行う
+    // それ以外のフレームは監視ループは停止させられる
+    if (data.method === "update_alive") {
+      if (active_frame_id === data.frame_id) {
+        Config.set_mobile_alive(data.alive);
+        // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
+        if(!data.alive) ui.remove_element();
+      } else if (active_frame_id !== undefined) {
+        event.source.postMessage({ type: data.type, method: "clear_interval" }, "*");
+      }
+    }
+
     // 状態監視を停止する
     if (data.method === "clear_interval") {
       window.clearInterval(search_video_interval_id);
@@ -133,13 +150,7 @@ const remove_ui_all = () => {
     // video の検索と保持しているvideoの更新
     const elms = document.getElementsByTagName("video");
     session.set_video_elms(elms);
-    // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-    const available = session.get_video_availability();
-
-    // 計測中のフレームは計測uiの表示制御を行う
-    // それ以外のフレームはこの監視ループは停止させられる
-    if (active_frame_id !== undefined) Config.set_mobile_alive(available);
-    if (!available) remove_ui();
+    update_alive(session.get_video_availability());
   }, Config.get_search_video_interval());
 
   // --- update latest qoe view element --- //
