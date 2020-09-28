@@ -166,6 +166,8 @@ export default class Status {
       timing,
       qoe
     } = this.qualityStatus;
+    if (!date) return;
+
     const { height: videoHeight } = resolution || {};
     const { waiting } = timing || {};
     this.historyHolder.latestThroughput = throughput || this.historyHolder.latestThroughput || NaN;
