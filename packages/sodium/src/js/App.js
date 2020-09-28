@@ -47,7 +47,6 @@ const remove_ui_all = () => {
   let active_frame_id;
   let search_video_interval_id;
   let collect_interval_id;
-  Config.set_mobile_alive(false);
 
   // --- UI event --- //
   window.addEventListener("message", event => {
@@ -102,7 +101,7 @@ const remove_ui_all = () => {
     // それ以外のフレームは監視ループは停止させられる
     if (data.method === "update_alive") {
       if (active_frame_id === data.frame_id) {
-        Config.set_mobile_alive(data.alive);
+        Config.set_alive(data.alive);
         // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
         if(!data.alive) ui.remove_element();
       } else if (active_frame_id !== undefined) {
@@ -139,6 +138,10 @@ const remove_ui_all = () => {
 
   // --- IIJ Hook --- //
   await IIJTypeHandler.hook_iij();
+
+  // 前回までの計測uiの表示状態をタブ単位で保持しているため
+  // 表示設定をあらかじめ読み込んでおく
+  await Config.readDisplayOnPlayerSetting();
 
   // --- update video list --- //
   search_video_interval_id = window.setInterval(() => {
