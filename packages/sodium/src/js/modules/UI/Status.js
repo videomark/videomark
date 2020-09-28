@@ -258,16 +258,12 @@ export default class Status {
     const dropRate = (droppedVideoFrames / totalVideoFrames) || 0;
     const dropRateView = !Number.isFinite(droppedVideoFrames) || !Number.isFinite(totalVideoFrames) || !Number.isFinite(droppedVideoFrames / totalVideoFrames)
       ? null
-      : Config.isMobileScreen()
-      ? `${droppedVideoFrames}/${totalVideoFrames} (${(dropRate * 100).toFixed(2)}%)`
-      : `${droppedVideoFrames} / ${totalVideoFrames} ( ${(dropRate * 100).toFixed(2)} % )`;
+      : `${droppedVideoFrames}/${totalVideoFrames} (${(dropRate * 100).toFixed(2)}%)`;
 
     const waitingTime = (waiting / playing) || 0;
     const waitingTimeView = !Number.isFinite(waiting) || !Number.isFinite(playing) || !Number.isFinite(waiting / playing)
       ? null
-      : Config.isMobileScreen()
-      ? `${(waiting / 1e3).toFixed(2)}/${(playing / 1e3).toFixed(2)}s (${(waitingTime * 100).toFixed(2)}%)`
-      : `${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s ( ${(waitingTime * 100).toFixed(2)} % )`;
+      : `${(waiting / 1e3).toFixed(2)}/${(playing / 1e3).toFixed(2)}s (${(waitingTime * 100).toFixed(2)}%)`;
 
     const qoeView = !Number.isFinite(qoe)
       ? null
