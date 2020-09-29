@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from "react";
-import PropTypes from "prop-types";
 import { styled } from "@material-ui/styles";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -8,7 +7,6 @@ import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
-import { isMobile } from "./js/utils/Utils";
 
 const getRandomToken = () => {
   const randomPool = new Uint8Array(16);
@@ -67,7 +65,7 @@ const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = getTabStatus();
 
   const handleDisplaySettingChange = useCallback(
-    (event) => {
+    () => {
       chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
         const tab = tabs[0];
         chrome.tabs.sendMessage(tab.id, { type: "FROM_EXTENSION_POPUP", method: "display_ui", enabled: !displayOnPlayer }, () => {

@@ -247,6 +247,6 @@ if (isMobile) {
   });
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request /*, sender, sendResponse*/) => {
   window.postMessage(request, "*");
 });
