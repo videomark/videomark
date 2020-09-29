@@ -18,7 +18,7 @@ const getRandomToken = () => {
   return hex;
 };
 
-const getTabStatus = () => {
+const useTabStatus = () => {
   const [alive, setAlive] = useState(false);
   const [displayOnPlayer, setDisplayOnPlayer] = useState(false);
 
@@ -62,7 +62,7 @@ const List = styled(MuiList)({
 });
 
 const QualityUiSetting = () => {
-  const { alive, displayOnPlayer, setDisplayOnPlayer } = getTabStatus();
+  const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
 
   const handleDisplaySettingChange = useCallback(
     () => {
