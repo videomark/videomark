@@ -80,6 +80,13 @@ const storage = {
   set: items => new Promise(resolve => chrome.storage.local.set(items, resolve))
 };
 
+const getMasterDisplayOnPlayer = async () => {
+  const { settings } = await storage.get("settings");
+  return settings == null ||
+    settings.display_on_player == null ||
+    settings.display_on_player;
+};
+
 const tabStatus = {};
 
 const hostToIp = {};
@@ -97,6 +104,16 @@ chrome.runtime.onConnect.addListener(port => {
     });
     port.onDisconnect.addListener(() => updateIcon(tabId, false));
   }
+
+  if (port.name === "sodium-popup-communication-port") {
+    port.onMessage.addListener(async value => {
+      if (!value.requestId || !value.method) return;
+      const args = Array.from(value.args || []);
+      const ret = await popupCommunicator[value.method].apply(null, args) || {};
+      ret.requestId = value.requestId;
+      port.postMessage(ret);
+    });
+  }
 });
 
 const communicator = {
@@ -111,15 +128,21 @@ const communicator = {
   getDisplayOnPlayer: async (tab) => {
     let { displayOnPlayer } = tabStatus[tab.id] || {};
     if (displayOnPlayer === undefined) {
-      const { settings } = await storage.get("settings");
-      displayOnPlayer =
-        settings == null ||
-        settings.display_on_player == null ||
-        settings.display_on_player;
+      displayOnPlayer = await getMasterDisplayOnPlayer();
     }
     return { displayOnPlayer };
   },
   getIp: async (tab, host) => ({ ip: hostToIp[host] })
+};
+
+const popupCommunicator = {
+  getTabStatus: async (tabId) => {
+    const status = tabStatus[tabId] || {};
+    if (status.displayOnPlayer === undefined) {
+      status.displayOnPlayer = await getMasterDisplayOnPlayer();
+    }
+    return status;
+  }
 };
 
 /** 計測中であることをツールバーのアイコンで通知する */

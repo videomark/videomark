@@ -51,7 +51,7 @@ const remove_ui_all = () => {
   // --- UI event --- //
   window.addEventListener("message", event => {
     const data = (typeof event.data === "string") ? JSON.parse(event.data) : event.data;
-    if (data.type !== "FROM_WEB_CONTENT" && data.type !== "FROM_ANDROID_UI") return;
+    if (!["FROM_WEB_CONTENT", "FROM_ANDROID_UI", "FROM_EXTENSION_POPUP"].includes(data.type)) return;
 
     if (data.method === "update_ui") {
       ui.update_status(data.state, data.qualityStatus);
