@@ -18,11 +18,11 @@ export default class UI {
     this.status = new Status();
   }
 
-  update_status(status) {
+  update_status(state, qualityStatus) {
     if (!this.element) {
       this.insert_element();
     }
-    this.status.update(status);
+    this.status.update(state, qualityStatus);
   }
 
   remove_element() {
