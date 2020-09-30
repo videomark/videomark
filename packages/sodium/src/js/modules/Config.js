@@ -96,8 +96,8 @@ export default class Config {
     if (!new_settings || !Object.keys(new_settings).length) return;
     this.settings = { ...this.settings, ...new_settings };
     window.postMessage({
-      type: "FROM_SODIUM_JS",
       method: "save_settings",
+      type: "FROM_SODIUM_JS",
       new_settings
     }, "*");
   }
@@ -159,30 +159,44 @@ export default class Config {
       : undefined;
   }
 
-  static set_mobile_alive(alive) {
-    if (!Config.isMobile()) return;
-    sodium.currentTab.alive = alive;
+  static set_alive(alive) {
+    this.alive = alive;
+    window.postMessage({
+      method: "set_alive",
+      type: "FROM_SODIUM_JS",
+      alive
+    }, "*");
+  }
+
+  static get_alive() {
+    return this.alive;
+  }
+
+  static async readDisplayOnPlayerSetting() {
+    this.ui_enabled = await new Promise(resolve => {
+      const listener = event => {
+        if (event.data.type !== "CONTENT_SCRIPT_JS" || event.data.method !== "get_display_on_player") return;
+        window.removeEventListener("message", listener);
+        resolve(event.data.displayOnPlayer);
+      };
+      window.addEventListener("message", listener);
+      window.postMessage({
+        method: "get_display_on_player",
+        type: "FROM_SODIUM_JS"
+      });
+    });
   }
 
   static set_ui_enabled(enabled) {
-    if (Config.isMobile()) {
-      sodium.currentTab.displayOnPlayer = enabled;
-    } else {
-      this.ui_enabled = enabled;
-    }
+    this.ui_enabled = enabled;
+    window.postMessage({
+      method: "set_display_on_player",
+      type: "FROM_SODIUM_JS",
+      enabled
+    }, "*");
   }
 
   static get_ui_enabled() {
-    if (Config.isMobile()) return sodium.currentTab.displayOnPlayer;
-
-    if (this.ui_enabled == null) {
-      const settings = this.get_settings();
-      this.ui_enabled =
-        settings == null ||
-        settings.display_on_player == null ||
-        settings.display_on_player;
-    }
-
     return this.ui_enabled;
   }
 

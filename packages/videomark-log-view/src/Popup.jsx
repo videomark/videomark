@@ -8,10 +8,9 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import HistoryIcon from "@material-ui/icons/History";
 import HelpIcon from "@material-ui/icons/Help";
 import SettingsIcon from "@material-ui/icons/Settings";
-import { useSettings } from "./js/utils/ChromeExtensionWrapper";
 import ThemeProvider from "./js/components/ThemeProvider";
 import helpURL from "./js/utils/helpURL";
-import DesignSettings from "./Settings/DesignSettings";
+import QualityUiSetting from "./QualityUiSetting";
 import logo from "./images/logo.png";
 
 // ポップアップウィンドウのサイズを調整
@@ -55,8 +54,6 @@ LabeledIconButton.propTypes = {
 };
 
 export default () => {
-  const [settings, saveSettings] = useSettings();
-
   return (
     <ThemeProvider>
       <CSS />
@@ -72,7 +69,7 @@ export default () => {
             label="設定"
           />
         </Box>
-        <DesignSettings settings={settings} saveSettings={saveSettings} />
+        <QualityUiSetting />
       </Box>
     </ThemeProvider>
   );

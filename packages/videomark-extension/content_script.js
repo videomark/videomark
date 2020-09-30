@@ -77,55 +77,14 @@ const inject_script = async opt => {
   return target.appendChild(script);
 };
 
-/** @class background のプロセスに計測中であることを伝えるためのクラス */
-class AlivePort {
-  constructor() {
-    this.timeout = null;
-    this.port = null;
-
-    /** 計測中であることを伝えるためのPort名 */
-    this.portName = "sodium-extension-alive";
-
-    /**
-     * 計測していないものとしてみなす経過時間
-     * sodium.js の Config.collect_interval に+200ms余裕をもたせる
-     */
-    this.timeoutIn = 1200;
-  }
-
-  /**
-   * 計測中であることを伝える
-   * 実行後ある時間経過すると計測していないものとみなす
-   */
-  alive() {
-    if (isMobile) return;
-
-    if (this.timeout != null) clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
-      if (this.port == null) return;
-      this.port.disconnect();
-      this.port = null;
-    }, this.timeoutIn);
-
-    if (this.port == null) {
-      this.port = chrome.runtime.connect({
-        name: this.portName
-      });
-    }
-  }
-}
-const alivePort = new AlivePort();
-
-/** @class background で記録したホスト名に対するipアドレスを取得するクラス */
-class LocationIpPort {
+/** @class background と通信するための汎用的なクラス */
+class BackgroundCommunicationPort {
   constructor() {
     this.port = null;
     this.portName = "sodium-extension-communication-port";
   }
 
-  getIp(host) {
-    if (isMobile) return Promise.resolve(sodium.locationIp);
-
+  postMessage(method, args) {
     if (this.port == null) {
       this.port = chrome.runtime.connect({
         name: this.portName
@@ -135,8 +94,10 @@ class LocationIpPort {
     const requestId = getRandomToken();
     return new Promise((resolve, reject) => {
       const listener = value => {
+        if (value.requestId !== requestId) return false;
+
         try {
-          if (value.requestId === requestId) resolve(value.ip);
+          resolve(value);
         } catch (e) {
           reject(e);
         } finally {
@@ -147,13 +108,45 @@ class LocationIpPort {
       this.port.onMessage.addListener(listener);
       this.port.postMessage({
         requestId,
-        method: "getIp",
-        args: [host]
+        method: method,
+        args: args
       });
     });
   }
+
+  setAlive(alive) {
+    if (isMobile) {
+      sodium.currentTab.alive = alive;
+    } else {
+      this.postMessage("setAlive", [alive]);
+    }
+  }
+
+  setDisplayOnPlayer(displayOnPlayer) {
+    if (isMobile) {
+      sodium.currentTab.displayOnPlayer = displayOnPlayer;
+    } else {
+      this.postMessage("setDisplayOnPlayer", [displayOnPlayer]);
+    }
+  }
+
+  async getDisplayOnPlayer() {
+    if (isMobile) {
+      return sodium.currentTab.displayOnPlayer;
+    } else {
+      return (await this.postMessage("getDisplayOnPlayer")).displayOnPlayer;
+    }
+  }
+
+  async getIp(host) {
+    if (isMobile) {
+      return sodium.locationIp;
+    } else {
+      return (await this.postMessage("getIp", [host])).ip;
+    }
+  }
 }
-const locationIpPort = new LocationIpPort();
+const communicationPort = new BackgroundCommunicationPort();
 
 function getRandomToken() {
   const randomPool = new Uint8Array(16);
@@ -182,8 +175,6 @@ const message_listener = async event => {
       break;
     }
     case "set_video": {
-      alivePort.alive();
-
       if (!event.data.id || !event.data.video) return;
       const id = await useId(event.data.id);
       await storage.set({
@@ -211,12 +202,29 @@ const message_listener = async event => {
       await save_settings(new_settings);
       break;
     }
-    case "get_ip": {
-      const ip = await locationIpPort.getIp(event.data.host);
+    case "set_alive": {
+      communicationPort.setAlive(event.data.alive);
+      break;
+    }
+    case "set_display_on_player": {
+      communicationPort.setDisplayOnPlayer(event.data.enabled);
+      break;
+    }
+    case "get_display_on_player": {
+      const displayOnPlayer = await communicationPort.getDisplayOnPlayer();
       event.source.postMessage({
-        ip,
+        method: "get_display_on_player",
+        type: "CONTENT_SCRIPT_JS",
+        displayOnPlayer
+      });
+      break;
+    }
+    case "get_ip": {
+      const ip = await communicationPort.getIp(event.data.host);
+      event.source.postMessage({
+        type: "CONTENT_SCRIPT_JS",
         host: event.data.host,
-        type: "CONTENT_SCRIPT_JS"
+        ip
       });
       break;
     }
@@ -238,3 +246,7 @@ if (isMobile) {
     });
   });
 }
+
+chrome.runtime.onMessage.addListener((request /*, sender, sendResponse*/) => {
+  window.postMessage(request, "*");
+});

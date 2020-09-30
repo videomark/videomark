@@ -3,6 +3,7 @@ extends:
   - "plugin:jsx-a11y/recommended"
   - "plugin:react/recommended"
 env:
+  webextensions: true
   browser: true
   es6: true
 globals:
