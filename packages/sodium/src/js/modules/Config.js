@@ -6,6 +6,10 @@ export default class Config {
     return Boolean(window.sodium);
   }
 
+  static isMobileScreen() {
+    return this.isMobile() && screen.orientation.type.startsWith("portrait");
+  }
+
   static get_collect_interval() {
     return this.collect_interval;
   }
@@ -32,6 +36,10 @@ export default class Config {
 
   static get_ui_id() {
     return this.ui.id;
+  }
+
+  static get_ui_style_id() {
+    return this.ui.style_id;
   }
 
   static get_ui_target(platform) {
@@ -297,7 +305,8 @@ Config.video_platform_matcher = ({ host }) => platform => {
 
 // 表示用
 Config.ui = {
-  id: "__videomark_ui"
+  id: "__videomark_ui",
+  style_id: "__videomark_ui_style",
 };
 
 // デフォルトではvideoタグの親に挿入
@@ -435,7 +444,7 @@ Config.ui.abematv = {
 
 // Amazon Prime Video
 Config.ui.amazonprimevideo = {
-  target: ".scalingUiContainerBottom",
+  target: Config.isMobile() ? "#dv-web-player" : ".scalingUiContainerBottom",
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;

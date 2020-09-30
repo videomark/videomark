@@ -78,6 +78,13 @@ import IIJTypeHandler from "./modules/IIJTypeHandler";
     });
   }, Config.get_collect_interval());
 
+  if (Config.isMobile()) {
+    screen.orientation.addEventListener("change", () => {
+      // 再表示は次回更新時を待つ
+      ui.remove_element();
+    });
+  }
+
   // --- main loop --- //
   session.start();
 })();

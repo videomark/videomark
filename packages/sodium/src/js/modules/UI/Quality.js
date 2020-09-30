@@ -82,43 +82,44 @@ export const quality = ({ sessionId, videoId, throughput }) => {
   const alert =
     Number.isFinite(qoe) &&
     isLowQuality({ droppedVideoFrames, totalVideoFrames });
-  const classes = {
-    bitrate: {
-      na: !(bitrate >= 0)
-    },
-    throughput: {
-      na: !(throughput >= 0)
-    },
-    transfer: {
-      na: !(transfer >= 0)
-    },
-    resolution: {
-      na: ![videoWidth, videoHeight].every(l => l >= 0)
-    },
-    framerate: {
-      na: !(framerate >= 0)
-    },
-    dropped: {
-      na: !Number.isFinite(droppedVideoFrames / totalVideoFrames)
-    },
-    waiting: {
-      na: !Number.isFinite(waiting / playing)
-    },
-    qoe: {
-      alert,
-      na: !Number.isFinite(qoe)
-    }
-  };
+
+  const bitrateView = !Number.isFinite(bitrate) || !(bitrate >= 0)
+    ? null
+    : `${kiloSizeFormat(bitrate)} kbps`;
+
+  const throughputView = !Number.isFinite(throughput) || !(throughput >= 0)
+    ? null
+    : `${kiloSizeFormat(throughput)} kbps`;
+
+  const transferView = !Number.isFinite(transfer) || !(transfer >= 0)
+    ? null
+    : `${megaSizeFormat(transfer)} MB`;
+
+  const resolutionView = ![videoWidth, videoHeight].every(l => l >= 0)
+    ? null
+    : `${videoWidth} × ${videoHeight}`;
+
+  const framerateView = !Number.isFinite(framerate) || !(framerate >= 0)
+    ? null
+    : `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`;
 
   const dropRate = (droppedVideoFrames / totalVideoFrames) || 0;
-  const dropRateView = Config.isMobile()
+  const dropRateView = !Number.isFinite(droppedVideoFrames) || !Number.isFinite(totalVideoFrames) || !Number.isFinite(droppedVideoFrames / totalVideoFrames)
+    ? null
+    : Config.isMobileScreen()
     ? `${droppedVideoFrames}/${totalVideoFrames} (${(dropRate * 100).toFixed(2)}%)`
     : `${droppedVideoFrames} / ${totalVideoFrames} ( ${(dropRate * 100).toFixed(2)} % )`;
 
   const waitingTime = (waiting / playing) || 0;
-  const waitingTimeView = Config.isMobile()
+  const waitingTimeView = !Number.isFinite(waiting) || !Number.isFinite(playing) || !Number.isFinite(waiting / playing)
+    ? null
+    : Config.isMobileScreen()
     ? `${(waiting / 1e3).toFixed(2)}/${(playing / 1e3).toFixed(2)}s (${(waitingTime * 100).toFixed(2)}%)`
     : `${(waiting / 1e3).toFixed(2)} / ${(playing / 1e3).toFixed(2)} s ( ${(waitingTime * 100).toFixed(2)} % )`;
+
+  const qoeView = !Number.isFinite(qoe)
+    ? null
+    : qoe.toFixed(2);
 
   return html`
     <style>
@@ -166,62 +167,23 @@ export const quality = ({ sessionId, videoId, throughput }) => {
       }
     </style>
     <dl class=${classMap({ alert })}>
-      <dt class=${classMap(classes.bitrate)}>ビットレート</dt>
-      <dd class=${classMap(classes.bitrate)}>
-        ${bitrate >= 0 ? `${kiloSizeFormat(bitrate)} kbps` : "n/a"}
-      </dd>
-      <dd class=${classMap(classes.bitrate)}>
-        <svg class="chart" id="bitrate_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.throughput)}>スループット</dt>
-      <dd class=${classMap(classes.throughput)}>
-        ${throughput >= 0 ? `${kiloSizeFormat(throughput)} kbps` : "n/a"}
-      </dd>
-      <dd class=${classMap(classes.throughput)}>
-        <svg class="chart" id="thruput_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.transfer)}>通信量</dt>
-      <dd class=${classMap(classes.transfer)}>
-        ${transfer >= 0 ? `${megaSizeFormat(transfer)} MB` : "n/a"}
-      </dd>
-      <dd class=${classMap(classes.transfer)}>
-        <svg class="chart" id="transfer_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.resolution)}>解像度</dt>
-      <dd class=${classMap(classes.resolution)}>
-        ${[videoWidth, videoHeight].every(l => l >= 0)
-          ? `${videoWidth} × ${videoHeight}`
-          : "n/a"}
-      </dd>
-      <dd class=${classMap(classes.resolution)}>
-        <svg class="chart" id="resolution_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.framerate)}>フレームレート</dt>
-      <dd class=${classMap(classes.framerate)}>
-        ${framerate >= 0
-          ? `${framerate} fps${speed === 1 ? "" : ` × ${speed}`}`
-          : "n/a"}
-      </dd>
-      <dd class=${classMap(classes.framerate)}>
-        <svg class="chart" id="framerate_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.dropped)}>フレームドロップ率</dt>
-      <dd class=${classMap(classes.dropped)}>${dropRateView}</dd>
-      <dd class=${classMap(classes.dropped)}>
-        <svg class="chart" id="droprate_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.waiting)}>待機時間</dt>
-      <dd class=${classMap(classes.waiting)}>${waitingTimeView}</dd>
-      <dd class=${classMap(classes.waiting)}>
-        <svg class="chart" id="waiting_chart"></svg>
-      </dd>
-      <dt class=${classMap(classes.qoe)}>体感品質 (QoE)</dt>
-      <dd class=${classMap(classes.qoe)}>
-        ${Number.isFinite(qoe) ? qoe.toFixed(2) : "n/a"}
-      </dd>
-      <dd class=${classMap(classes.qoe)}>
-        <svg class="chart" id="qoe_chart"></svg>
-      </dd>
+      ${qualityItem({ label: "ビットレート", value: bitrateView, chart_id: "bitrate_chart" })}
+      ${qualityItem({ label: "スループット", value: throughputView, chart_id: "thruput_chart" })}
+      ${qualityItem({ label: "通信量", value: transferView, chart_id: "transfer_chart" })}
+      ${qualityItem({ label: "解像度", value: resolutionView, chart_id: "resolution_chart" })}
+      ${qualityItem({ label: "フレームレート", value: framerateView, chart_id: "framerate_chart" })}
+      ${qualityItem({ label: "フレームドロップ率", value: dropRateView, chart_id: "droprate_chart" })}
+      ${qualityItem({ label: "待機時間", value: waitingTimeView, chart_id: "waiting_chart" })}
+      ${qualityItem({ label: "体感品質 (QoE)", value: qoeView, chart_id: "qoe_chart", style: { alert } })}
     </dl>
+  `;
+};
+
+const qualityItem = ({ label, value, chart_id, style }) => {
+  const clazz = classMap(Object.assign({ na: value == null }, style));
+  return html`
+    <dt class=${clazz}>${label}</dt>
+    <dd class=${clazz}>${value || "n/a"}</dd>
+    <dd class=${clazz}><svg class="chart" id="${chart_id}"></svg></dd>
   `;
 };
