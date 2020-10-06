@@ -1,5 +1,4 @@
 [![Netlify Status](https://api.netlify.app/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.app/sites/sodium-extension/deploys)
-[![Actions Status](https://github.com/videomark/videomark-extension/workflows/ubuntu/badge.svg)](https://github.com/videomark/videomark-extension/actions)
 
 # ビルド手順
 
