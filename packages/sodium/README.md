@@ -1,4 +1,3 @@
-![build](https://github.com/videomark/sodium.js/workflows/build/badge.svg?branch=master)
 [![Netlify Status](https://api.netlify.app/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.app/sites/sodium-js/deploys)
 
 # sodium.js
