@@ -251,15 +251,16 @@ const countryNameTable = {
 };
 
 export default class Country {
-  static isJapan(country) {
+  static isJapan(country: any) {
     return country === "JP";
   }
 
-  static codeToName(country) {
+  static codeToName(country: any) {
     if (!(country in countryNameTable)) {
       return undefined;
     }
 
+    // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return countryNameTable[country];
   }
 }

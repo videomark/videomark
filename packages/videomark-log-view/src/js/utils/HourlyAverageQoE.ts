@@ -1,6 +1,7 @@
 import Api from "./Api";
 
 class HourlyAverageQoE {
+  cache: any;
   constructor() {
     this.cache = {};
   }
@@ -19,7 +20,7 @@ class HourlyAverageQoE {
     return this.cache;
   }
 
-  async at(hour) {
+  async at(hour: any) {
     if (this.cache[hour] === undefined) await this.fetchHourlyQoEAPI();
     return this.cache[hour];
   }

@@ -1,45 +1,57 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
 import { megaSizeFormat } from "../utils/Utils";
 
-export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
+export const isLowQuality = ({
+  droppedVideoFrames,
+  totalVideoFrames
+}: any) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
-const DItem = ({ dt, dd, na }) => {
+type DItemProps = {
+    dt: string;
+    dd: string;
+    na: boolean;
+};
+
+const DItem = ({ dt, dd, na }: DItemProps) => {
   const color = na ? "textSecondary" : "inherit";
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Grid item xs={6} sm={4}>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Typography align="center" component="dt" variant="body2" color={color}>
         {dt}
       </Typography>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Typography align="center" component="dd" variant="body2" color={color}>
         {dd}
       </Typography>
     </Grid>
   );
 };
-DItem.propTypes = {
-  dt: PropTypes.string.isRequired,
-  dd: PropTypes.string.isRequired,
-  na: PropTypes.bool.isRequired,
+
+type OwnVideoQualityProps = {
+    startTime?: any; // TODO: PropTypes.instanceOf(Date)
+    transferSize?: number;
+    date?: any; // TODO: PropTypes.instanceOf(Date)
+    bitrate?: number;
+    resolution?: any; // TODO: PropTypes.instanceOf(Object)
+    framerate?: number;
+    speed?: number;
+    droppedVideoFrames?: number;
+    totalVideoFrames?: number;
+    timing?: any; // TODO: PropTypes.instanceOf(Object)
 };
 
-export const VideoQuality = ({
-  startTime,
-  transferSize,
-  date,
-  bitrate,
-  resolution,
-  framerate,
-  speed,
-  droppedVideoFrames,
-  totalVideoFrames,
-  timing,
-}) => {
+// @ts-expect-error ts-migrate(2456) FIXME: Type alias 'VideoQualityProps' circularly referenc... Remove this comment to see the full error message
+type VideoQualityProps = OwnVideoQualityProps & typeof VideoQuality.defaultProps;
+
+// @ts-expect-error ts-migrate(7022) FIXME: 'VideoQuality' implicitly has type 'any' because i... Remove this comment to see the full error message
+export const VideoQuality = ({ startTime, transferSize, date, bitrate, resolution, framerate, speed, droppedVideoFrames, totalVideoFrames, timing, }: VideoQualityProps) => {
   const { width: videoWidth, height: videoHeight } = resolution || {};
   const { waiting, pause } = timing || {};
   const playing = date - startTime - pause;
@@ -68,8 +80,11 @@ export const VideoQuality = ({
   };
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Grid container>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Grid item xs={12} component="dl" container spacing={1}>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="ビットレート"
           dd={
@@ -80,12 +95,14 @@ export const VideoQuality = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.bitrate}
         />
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="解像度"
           dd={classes.resolution.na ? "n/a" : `${videoWidth} × ${videoHeight}`}
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.resolution}
         />
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="フレームレート"
           dd={
@@ -96,6 +113,7 @@ export const VideoQuality = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.framerate}
         />
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="フレームドロップ率"
           dd={`${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(
@@ -104,6 +122,7 @@ export const VideoQuality = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.dropped}
         />
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="待機時間"
           dd={
@@ -117,6 +136,7 @@ export const VideoQuality = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.waiting}
         />
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="再生時間"
           dd={
@@ -130,6 +150,7 @@ export const VideoQuality = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.playing}
         />
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <DItem
           dt="通信量"
           dd={
@@ -143,18 +164,6 @@ export const VideoQuality = ({
       </Grid>
     </Grid>
   );
-};
-VideoQuality.propTypes = {
-  startTime: PropTypes.instanceOf(Date),
-  transferSize: PropTypes.number,
-  date: PropTypes.instanceOf(Date),
-  bitrate: PropTypes.number,
-  resolution: PropTypes.instanceOf(Object),
-  framerate: PropTypes.number,
-  speed: PropTypes.number,
-  droppedVideoFrames: PropTypes.number,
-  totalVideoFrames: PropTypes.number,
-  timing: PropTypes.instanceOf(Object),
 };
 VideoQuality.defaultProps = {
   startTime: undefined,

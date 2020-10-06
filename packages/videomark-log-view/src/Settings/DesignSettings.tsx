@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import PropTypes from "prop-types";
 import { styled } from "@material-ui/styles";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -14,7 +13,18 @@ const List = styled(MuiList)({
   padding: 0,
 });
 
-const DesignSettings = ({ settings, saveSettings }) => {
+type OwnProps = {
+    settings?: {
+        display_on_player?: boolean;
+    };
+    saveSettings?: any; // TODO: PropTypes.instanceOf(Function)
+};
+
+// @ts-expect-error ts-migrate(2456) FIXME: Type alias 'Props' circularly references itself.
+type Props = OwnProps & typeof DesignSettings.defaultProps;
+
+// @ts-expect-error ts-migrate(7022) FIXME: 'DesignSettings' implicitly has type 'any' because... Remove this comment to see the full error message
+const DesignSettings = ({ settings, saveSettings }: Props) => {
   const [changes, setChanges] = useState(false);
   const { display_on_player: uninitializedDisplayOnPlayer } = settings || {};
   const displayOnPlayer =
@@ -31,20 +41,28 @@ const DesignSettings = ({ settings, saveSettings }) => {
   );
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Box marginY={4}>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Box marginY={1}>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Typography component="h3" variant="body1">
           デザイン
         </Typography>
       </Box>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Paper>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <List>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText
               primary={isMobile() ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
               secondary={changes ? "新しいページを読み込むと反映されます" : ""}
             />
             {settings && (
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <Switch
                 checked={displayOnPlayer}
                 onChange={handleDisplaySettingChange}
@@ -57,10 +75,6 @@ const DesignSettings = ({ settings, saveSettings }) => {
       </Paper>
     </Box>
   );
-};
-DesignSettings.propTypes = {
-  settings: PropTypes.shape({ display_on_player: PropTypes.bool }),
-  saveSettings: PropTypes.instanceOf(Function),
 };
 DesignSettings.defaultProps = {
   settings: undefined,

@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
@@ -10,6 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
 import Slider from "@material-ui/core/Slider";
 import Link from "@material-ui/core/Link";
+// @ts-expect-error ts-migrate(6142) FIXME: Module './List' was resolved to '/home/kou029w/vid... Remove this comment to see the full error message
 import List from "./List";
 import { isMobile } from "../js/utils/Utils";
 
@@ -20,7 +20,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BitrateControlSettings = ({ settings, saveSettings }) => {
+type OwnProps = {
+    settings?: {
+        display_on_player?: boolean;
+    };
+    saveSettings?: any; // TODO: PropTypes.instanceOf(Function)
+};
+
+// @ts-expect-error ts-migrate(2456) FIXME: Type alias 'Props' circularly references itself.
+type Props = OwnProps & typeof BitrateControlSettings.defaultProps;
+
+// @ts-expect-error ts-migrate(7022) FIXME: 'BitrateControlSettings' implicitly has type 'any'... Remove this comment to see the full error message
+const BitrateControlSettings = ({ settings, saveSettings }: Props) => {
   const classes = useStyles();
   const resolutionMarks = [
     {
@@ -270,6 +281,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
   let peakTimeLimitSwitch;
   if (settings !== undefined) {
     resolutionSwitch = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Switch
         checked={Boolean(resolutionControlEnabled)}
         onChange={onResolutionSwitchChange}
@@ -277,6 +289,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       />
     );
     bitrateSwitch = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Switch
         checked={Boolean(bitrateControlEnabled)}
         onChange={onBitrateSwitchChange}
@@ -285,6 +298,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
 
     resolutionSlider = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Slider
         disabled={!resolutionControlEnabled}
         defaultValue={resolutionIndex}
@@ -297,6 +311,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       />
     );
     bitrateSlider = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Slider
         disabled={!bitrateControlEnabled}
         defaultValue={bitrateIndex}
@@ -310,6 +325,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
 
     browserQuotaSwitch = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Switch
         checked={Boolean(controlByBrowserQuota)}
         onChange={onBrowserQuotaSwitchChange}
@@ -318,6 +334,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
 
     browserQuotaSlider = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Slider
         disabled={!controlByTrafficVolume || !controlByBrowserQuota}
         defaultValue={browserQuotaIndex}
@@ -330,6 +347,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       />
     );
     browserQuotaBitrateSlider = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Slider
         disabled={!controlByTrafficVolume || !controlByBrowserQuota}
         defaultValue={browserQuotaBitrateIndex}
@@ -343,6 +361,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
 
     peakTimeLimitSwitch = (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Switch
         checked={Boolean(peakTimeLimitEnabled)}
         onChange={onPeakTimeLimitSwitchChange}
@@ -352,11 +371,15 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
   }
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Box marginY={4}>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Box marginY={1}>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Typography component="h3" variant="body1">
           ビットレート制限 (ベータ版)
         </Typography>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Typography color="textSecondary">
           {[
             "実験的な機能です。",
@@ -365,49 +388,70 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
               : null,
             "設定変更後の動画再生開始時の制限値に応じてビットレート選択が行われます。",
           ].join("")}
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Link href="https://vm.webdino.org/spec">
             ビットレート制限に対応しているサイト
           </Link>
           をご確認下さい。
         </Typography>
       </Box>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Paper>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <List>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="動画の解像度を制限する" />
             {resolutionSwitch}
           </ListItem>
           {resolutionControlEnabled && (
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <ListItem className={classes.slider}>{resolutionSlider}</ListItem>
           )}
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="動画のビットレートを制限する" />
             {bitrateSwitch}
           </ListItem>
           {bitrateControlEnabled && (
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           )}
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
             {browserQuotaSwitch}
           </ListItem>
           {controlByBrowserQuota && (
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <>
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <ListItem className={classes.slider}>
                 {browserQuotaSlider}
               </ListItem>
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <ListItem>
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <ListItemText primary="通信量超過時のビットレート制限" />
               </ListItem>
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <ListItem className={classes.slider}>
                 {browserQuotaBitrateSlider}
               </ListItem>
             </>
           )}
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="ネットワークの混雑する時間帯にはビットレートを制限する" />
             {peakTimeLimitSwitch}
           </ListItem>
@@ -415,10 +459,6 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
       </Paper>
     </Box>
   );
-};
-BitrateControlSettings.propTypes = {
-  settings: PropTypes.shape({ display_on_player: PropTypes.bool }),
-  saveSettings: PropTypes.instanceOf(Function),
 };
 BitrateControlSettings.defaultProps = {
   settings: undefined,

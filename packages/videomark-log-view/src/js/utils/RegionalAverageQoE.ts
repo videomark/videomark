@@ -1,12 +1,17 @@
 import Api from "./Api";
 
 class RegionalAverageQoE {
+  cache: any;
+  regions: any;
   constructor(regions = []) {
     this.regions = regions;
     this.cache = {};
   }
 
-  async fetchSubbdivisionQoEAPI({ country, subdivision }) {
+  async fetchSubbdivisionQoEAPI({
+    country,
+    subdivision
+  }: any) {
     if (!window.navigator.onLine) return undefined;
     const response = await Api.subdivision(country, subdivision);
     if (!response.ok) return undefined;
@@ -25,7 +30,10 @@ class RegionalAverageQoE {
     return this.cache;
   }
 
-  async at({ country, subdivision }) {
+  async at({
+    country,
+    subdivision
+  }: any) {
     if (
       this.cache[country] === undefined ||
       this.cache[country][subdivision] === undefined

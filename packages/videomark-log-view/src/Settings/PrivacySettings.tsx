@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import PropTypes from "prop-types";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
@@ -9,15 +8,19 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Slider from "@material-ui/core/Slider";
 import ArrowRight from "@material-ui/icons/ArrowRight";
 import Divider from "@material-ui/core/Divider";
+// @ts-expect-error ts-migrate(7016) FIXME: Try `npm install @types/uuid` if it exists or add ... Remove this comment to see the full error message
 import { v4 as uuidv4 } from "uuid";
 import addDays from "date-fns/addDays";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
+// @ts-expect-error ts-migrate(6142) FIXME: Module './List' was resolved to '/home/kou029w/vid... Remove this comment to see the full error message
 import List from "./List";
+// @ts-expect-error ts-migrate(6142) FIXME: Module './Dialog' was resolved to '/home/kou029w/v... Remove this comment to see the full error message
 import Dialog from "./Dialog";
 import {
   clearStore as clearStatsCache,
   getStoredIndex as getStatsCacheIndex,
+// @ts-expect-error ts-migrate(6142) FIXME: Module '../js/containers/StatsDataProvider' was re... Remove this comment to see the full error message
 } from "../js/containers/StatsDataProvider";
 import { clearViewings } from "../js/utils/ChromeExtensionWrapper";
 
@@ -46,13 +49,13 @@ const sessionExpiresInMarks = [
  * @param {number} expiresIn セッション保持期間
  * @returns {number}
  */
-const sessionExpiresInToValue = (expiresIn) =>
-  (
-    sessionExpiresInMarks.find((mark) => mark.expiresIn === expiresIn) ||
-    sessionExpiresInMarks.find(
-      (mark) => mark.expiresIn === defaultSessionExpiresIn
-    )
-  ).value;
+// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+const sessionExpiresInToValue = (expiresIn: any) => (
+  sessionExpiresInMarks.find((mark) => mark.expiresIn === expiresIn) ||
+  sessionExpiresInMarks.find(
+    (mark) => mark.expiresIn === defaultSessionExpiresIn
+  )
+).value;
 
 const useStyle = makeStyles((theme) => ({
   sessionExpiresIn: {
@@ -66,10 +69,21 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const SessionExpiresIn = ({ expiresIn, onChange }) => {
+type OwnSessionExpiresInProps = {
+    expiresIn?: number;
+    onChange: any; // TODO: PropTypes.instanceOf(Function)
+};
+
+// @ts-expect-error ts-migrate(2456) FIXME: Type alias 'SessionExpiresInProps' circularly refe... Remove this comment to see the full error message
+type SessionExpiresInProps = OwnSessionExpiresInProps & typeof SessionExpiresIn.defaultProps;
+
+// @ts-expect-error ts-migrate(7022) FIXME: 'SessionExpiresIn' implicitly has type 'any' becau... Remove this comment to see the full error message
+const SessionExpiresIn = ({ expiresIn, onChange }: SessionExpiresInProps) => {
   const classes = useStyle();
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <ListItem className={classes.sessionExpiresIn}>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <ListItemText
         primary="セッション保持期間"
         secondary={
@@ -78,21 +92,19 @@ const SessionExpiresIn = ({ expiresIn, onChange }) => {
             : "新しいページを読み込むまで"
         }
       />
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Slider
         color="secondary"
         marks={sessionExpiresInMarks}
         max={sessionExpiresInMarks.length - 1}
         value={sessionExpiresInToValue(expiresIn)}
         onChange={(_, value) => {
+          // @ts-expect-error ts-migrate(2538) FIXME: Type 'number[]' cannot be used as an index type.
           onChange(sessionExpiresInMarks[value].expiresIn);
         }}
       />
     </ListItem>
   );
-};
-SessionExpiresIn.propTypes = {
-  expiresIn: PropTypes.number,
-  onChange: PropTypes.instanceOf(Function).isRequired,
 };
 SessionExpiresIn.defaultProps = {
   expiresIn: defaultSessionExpiresIn,
@@ -108,6 +120,7 @@ const useDialog = () => {
       switch (type) {
         case "resetSession":
           return setDialog(
+            // @ts-expect-error ts-migrate(2345) FIXME: Type 'Element' provides no match for the signature... Remove this comment to see the full error message
             <Dialog
               open
               title="セッションIDをリセットします"
@@ -120,6 +133,7 @@ const useDialog = () => {
           );
         case "clearViewings":
           return setDialog(
+            // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
             <Dialog
               open
               title="計測履歴を削除します"
@@ -135,6 +149,7 @@ const useDialog = () => {
           );
         case "clearStatsCache":
           return setDialog(
+            // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
             <Dialog
               open
               title="統計グラフのキャッシュを削除します"
@@ -155,7 +170,23 @@ const useDialog = () => {
   return [dialog, openDialog];
 };
 
-const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
+type OwnPrivacySettingsProps = {
+    settings?: {
+        expires_in?: number;
+    };
+    saveSettings?: any; // TODO: PropTypes.instanceOf(Function)
+    session?: {
+        id?: string;
+        expires?: number;
+    };
+    saveSession?: any; // TODO: PropTypes.instanceOf(Function)
+};
+
+// @ts-expect-error ts-migrate(2456) FIXME: Type alias 'PrivacySettingsProps' circularly refer... Remove this comment to see the full error message
+type PrivacySettingsProps = OwnPrivacySettingsProps & typeof PrivacySettings.defaultProps;
+
+// @ts-expect-error ts-migrate(7022) FIXME: 'PrivacySettings' implicitly has type 'any' becaus... Remove this comment to see the full error message
+const PrivacySettings = ({ settings, saveSettings, session, saveSession }: PrivacySettingsProps) => {
   const { id: sessionId } = session || {};
   const { expires_in: expiresIn } = settings || {};
   const updateSessionExpiresIn = useCallback(
@@ -169,6 +200,7 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
   const [dialog, openDialog] = useDialog();
   const openResetSessionDialog = useCallback(
     () =>
+      // @ts-expect-error ts-migrate(2721) FIXME: Cannot invoke an object which is possibly 'null'.
       openDialog("resetSession", () =>
         saveSession({
           id: uuidv4(),
@@ -181,6 +213,7 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
   );
   const openClearViewingsDialog = useCallback(
     () =>
+      // @ts-expect-error ts-migrate(2721) FIXME: Cannot invoke an object which is possibly 'null'.
       openDialog("clearViewings", () => {
         clearStatsCache();
         clearViewings();
@@ -188,64 +221,80 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
     [openDialog]
   );
   const openStatsCacheDialog = useCallback(
+    // @ts-expect-error ts-migrate(2721) FIXME: Cannot invoke an object which is possibly 'null'.
     () => openDialog("clearStatsCache", () => clearStatsCache()),
     [openDialog]
   );
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Box marginY={4}>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Box marginY={1}>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Typography component="h3" variant="body1">
           プライバシー
         </Typography>
       </Box>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Paper>
         {dialog}
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <List>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText
               primary="セッションID"
               secondary={sessionId === undefined ? "未設定" : sessionId}
             />
           </ListItem>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <SessionExpiresIn
             expiresIn={expiresIn}
             onChange={updateSessionExpiresIn}
           />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem
             button
             onClick={openResetSessionDialog}
             disabled={sessionId === undefined}
           >
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="セッションIDのリセット" />
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ArrowRight />
           </ListItem>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem button onClick={openClearViewingsDialog}>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="計測履歴の削除" />
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ArrowRight />
           </ListItem>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Divider component="li" />
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <ListItem
             button
             onClick={openStatsCacheDialog}
             disabled={getStatsCacheIndex().size === 0}
           >
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ListItemText primary="統計グラフのキャッシュを削除" />
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <ArrowRight />
           </ListItem>
         </List>
       </Paper>
     </Box>
   );
-};
-PrivacySettings.propTypes = {
-  settings: PropTypes.shape({ expires_in: PropTypes.number }),
-  saveSettings: PropTypes.instanceOf(Function),
-  session: PropTypes.shape({ id: PropTypes.string, expires: PropTypes.number }),
-  saveSession: PropTypes.instanceOf(Function),
 };
 PrivacySettings.defaultProps = {
   settings: undefined,

@@ -17,6 +17,7 @@ require("../config/env");
 
 const jest = require("jest");
 const execSync = require("child_process").execSync;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'argv'.
 let argv = process.argv.slice(2);
 
 function isInGitRepository() {

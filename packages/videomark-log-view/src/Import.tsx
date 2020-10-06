@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Typography from "@material-ui/core/Typography";
+// @ts-expect-error ts-migrate(6142) FIXME: Module './js/components/SimplePage' was resolved t... Remove this comment to see the full error message
 import SimplePage from "./js/components/SimplePage";
 import {
   storage,
@@ -10,7 +11,7 @@ import {
 export default () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [locked, lock] = useState(false);
-  const onChange = async (e) => {
+  const onChange = async (e: any) => {
     const { files } = e.currentTarget;
     if (files.length !== 1) return;
     setErrorMessage(null);
@@ -20,6 +21,7 @@ export default () => {
       const reader = new FileReader();
       reader.onload = (rogressEvent) => {
         try {
+          // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
           const json = JSON.parse(rogressEvent.target.result);
           if (!(json.AgreedTerm || json.RemovedTargetKeys))
             throw new Error("invalid format");
@@ -30,6 +32,7 @@ export default () => {
       };
       reader.readAsText(file);
     }).catch((error) =>
+      // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
       setErrorMessage(`インポートに失敗しました。 (${error})`)
     );
     await rollback();
@@ -38,7 +41,9 @@ export default () => {
     lock(false);
   };
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <SimplePage title="計測結果のインポート">
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <input
         disabled={locked}
         type="file"
@@ -46,6 +51,7 @@ export default () => {
         onChange={onChange}
       />
       {errorMessage && (
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <Typography color="secondary">{errorMessage}</Typography>
       )}
     </SimplePage>

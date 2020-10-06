@@ -1,18 +1,23 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Pagination from "material-ui-flat-pagination";
 import AppDataActions from "../../utils/AppDataActions";
 import AppData from "../../utils/AppData";
 
-const Pager = ({ page, perPage, maxPage }) => {
-  const handleClick = (e, offset) => {
-    AppData.update(AppDataActions.ViewingList, (state) =>
-      Object.assign(state, { page: offset / perPage })
+type Props = {
+    page: number;
+    perPage: number;
+    maxPage: number;
+};
+
+const Pager = ({ page, perPage, maxPage }: Props) => {
+  const handleClick = (e: any, offset: any) => {
+    AppData.update(AppDataActions.ViewingList, (state: any) => Object.assign(state, { page: offset / perPage })
     );
     window.scrollTo(window.scrollX, 0);
   };
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Pagination
       limit={perPage}
       offset={page * perPage}
@@ -21,12 +26,6 @@ const Pager = ({ page, perPage, maxPage }) => {
       otherPageColor="default"
     />
   );
-};
-
-Pager.propTypes = {
-  page: PropTypes.number.isRequired,
-  perPage: PropTypes.number.isRequired,
-  maxPage: PropTypes.number.isRequired,
 };
 
 export default Pager;

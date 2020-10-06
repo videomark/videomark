@@ -1,5 +1,5 @@
 class Api {
-  static async fetch(url, params) {
+  static async fetch(url: any, params: any) {
     const response = fetch(url, {
       method: "POST",
       headers: {
@@ -12,12 +12,12 @@ class Api {
   }
 
   // 最終QOE
-  static fixed(ids) {
+  static fixed(ids: any) {
     return Api.fetch("https://sodium.webdino.org:8443/api/fixed_qoe", { ids });
   }
 
   // ISP 地域情報
-  static statsInfo(video, session) {
+  static statsInfo(video: any, session: any) {
     return Api.fetch("https://sodium.webdino.org:8443/stats/info", {
       session,
       video,
@@ -36,7 +36,7 @@ class Api {
     });
   }
 
-  static subdivision(country, subdivision) {
+  static subdivision(country: any, subdivision: any) {
     const limit = 24;
     return Api.fetch("https://sodium.webdino.org:8443/stats/subdivision", {
       country,
@@ -45,11 +45,11 @@ class Api {
     });
   }
 
-  static isp(isp) {
+  static isp(isp: any) {
     return Api.fetch("https://sodium.webdino.org:8443/stats/isp", { isp });
   }
 
-  static erasure(ids) {
+  static erasure(ids: any) {
     return Api.fetch("https://sodium.webdino.org:8443/ctrl/erasure", ids);
   }
 }

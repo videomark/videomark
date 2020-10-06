@@ -11,11 +11,15 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chalk'.
 const chalk = require("chalk");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'webpack'.
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const clearConsole = require("react-dev-utils/clearConsole");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'checkRequi... Remove this comment to see the full error message
 const checkRequiredFiles = require("react-dev-utils/checkRequiredFiles");
 const {
   choosePort,
@@ -24,11 +28,15 @@ const {
   prepareUrls,
 } = require("react-dev-utils/WebpackDevServerUtils");
 const openBrowser = require("react-dev-utils/openBrowser");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'paths'.
 const paths = require("../config/paths");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'config'.
 const config = require("../config/webpack.config");
 const createDevServerConfig = require("../config/webpackDevServer.config");
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'useYarn'.
 const useYarn = fs.existsSync(paths.yarnLockFile);
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'isInteract... Remove this comment to see the full error message
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
@@ -37,6 +45,7 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 }
 
 // Tools like Cloud9 rely on this.
+// @ts-expect-error ts-migrate(2345) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
 
@@ -59,6 +68,7 @@ if (process.env.HOST) {
 
 // We require that you explictly set browsers and do not fall back to
 // browserslist defaults.
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'checkBrows... Remove this comment to see the full error message
 const { checkBrowsers } = require("react-dev-utils/browsersHelper");
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
@@ -66,7 +76,7 @@ checkBrowsers(paths.appPath, isInteractive)
     // run on a different port. `choosePort()` Promise resolves to the next free port.
     return choosePort(HOST, DEFAULT_PORT);
   })
-  .then((port) => {
+  .then((port: any) => {
     if (port == null) {
       // We have not found a port.
       return;
@@ -92,7 +102,7 @@ checkBrowsers(paths.appPath, isInteractive)
     );
     const devServer = new WebpackDevServer(compiler, serverConfig);
     // Launch WebpackDevServer.
-    devServer.listen(port, HOST, (err) => {
+    devServer.listen(port, HOST, (err: any) => {
       if (err) {
         return console.log(err);
       }
@@ -110,7 +120,7 @@ checkBrowsers(paths.appPath, isInteractive)
       });
     });
   })
-  .catch((err) => {
+  .catch((err: any) => {
     if (err && err.message) {
       console.log(err.message);
     }

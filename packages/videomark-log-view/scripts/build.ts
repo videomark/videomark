@@ -11,13 +11,20 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require("path");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chalk'.
 const chalk = require("chalk");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs-extra");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'webpack'.
 const webpack = require("webpack");
 const bfj = require("bfj");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'config'.
 const config = require("../config/webpack.config");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'paths'.
 const paths = require("../config/paths");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'checkRequi... Remove this comment to see the full error message
 const checkRequiredFiles = require("react-dev-utils/checkRequiredFiles");
 const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
 const printHostingInstructions = require("react-dev-utils/printHostingInstructions");
@@ -27,12 +34,14 @@ const printBuildError = require("react-dev-utils/printBuildError");
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
 const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'useYarn'.
 const useYarn = fs.existsSync(paths.yarnLockFile);
 
 // These sizes are pretty large. We'll warn for bundles exceeding them.
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'isInteract... Remove this comment to see the full error message
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
@@ -41,11 +50,13 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 }
 
 // Process CLI arguments
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'argv'.
 const argv = process.argv.slice(2);
 const writeStatsJson = argv.indexOf("--stats") !== -1;
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'checkBrows... Remove this comment to see the full error message
 const { checkBrowsers } = require("react-dev-utils/browsersHelper");
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
@@ -53,7 +64,7 @@ checkBrowsers(paths.appPath, isInteractive)
     // This lets us display how much they changed later.
     return measureFileSizesBeforeBuild(paths.appBuild);
   })
-  .then((previousFileSizes) => {
+  .then((previousFileSizes: any) => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
     fs.emptyDirSync(paths.appBuild);
@@ -63,7 +74,11 @@ checkBrowsers(paths.appPath, isInteractive)
     return build(previousFileSizes);
   })
   .then(
-    ({ stats, previousFileSizes, warnings }) => {
+    ({
+      stats,
+      previousFileSizes,
+      warnings
+    }: any) => {
       if (warnings.length) {
         console.log(chalk.yellow("Compiled with warnings.\n"));
         console.log(warnings.join("\n\n"));
@@ -102,13 +117,13 @@ checkBrowsers(paths.appPath, isInteractive)
         useYarn
       );
     },
-    (err) => {
+    (err: any) => {
       console.log(chalk.red("Failed to compile.\n"));
       printBuildError(err);
       process.exit(1);
     }
   )
-  .catch((err) => {
+  .catch((err: any) => {
     if (err && err.message) {
       console.log(err.message);
     }
@@ -116,12 +131,12 @@ checkBrowsers(paths.appPath, isInteractive)
   });
 
 // Create the production build and print the deployment instructions.
-function build(previousFileSizes) {
+function build(previousFileSizes: any) {
   console.log("Creating an optimized production build...");
 
   let compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
+    compiler.run((err: any, stats: any) => {
       let messages;
       if (err) {
         if (!err.message) {
@@ -168,7 +183,7 @@ function build(previousFileSizes) {
         return bfj
           .write(paths.appBuild + "/bundle-stats.json", stats.toJson())
           .then(() => resolve(resolveArgs))
-          .catch((error) => reject(new Error(error)));
+          .catch((error: any) => reject(new Error(error)));
       }
 
       return resolve(resolveArgs);
@@ -179,6 +194,6 @@ function build(previousFileSizes) {
 function copyPublicFolder() {
   fs.copySync(paths.appPublic, paths.appBuild, {
     dereference: true,
-    filter: (file) => file !== paths.appHtml,
+    filter: (file: any) => file !== paths.appHtml,
   });
 }

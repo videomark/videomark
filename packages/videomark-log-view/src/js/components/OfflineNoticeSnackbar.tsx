@@ -4,8 +4,10 @@ import SnackbarContent from "@material-ui/core/SnackbarContent";
 import IconButton from "@material-ui/core/IconButton";
 import Refresh from "@material-ui/icons/Refresh";
 
-class OfflineNoticeSnackbar extends Component {
-  constructor(props) {
+type State = any;
+
+class OfflineNoticeSnackbar extends Component<{}, State> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       open: false,
@@ -36,16 +38,21 @@ class OfflineNoticeSnackbar extends Component {
   render() {
     const { open, message } = this.state;
     return (
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Snackbar open={open} onClose={this.close}>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <SnackbarContent
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           message={<span id="message-id">{message}</span>}
           action={[
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <IconButton
               key="refresh"
               aria-label="Refresh"
               color="inherit"
               onClick={() => window.location.reload()}
             >
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <Refresh />
             </IconButton>,
           ]}

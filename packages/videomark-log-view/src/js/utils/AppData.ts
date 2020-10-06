@@ -4,33 +4,35 @@
 import AppDataActions from "./AppDataActions";
 
 class Data {
+  callbacks: any;
+  data: any;
   constructor() {
     this.callbacks = [];
     this.data = null;
   }
 
-  update(data) {
+  update(data: any) {
     this.data = data;
-    this.callbacks.forEach((i) => i.object[i.funcName](data));
+    this.callbacks.forEach((i: any) => i.object[i.funcName](data));
   }
 
-  add(callbackObject) {
+  add(callbackObject: any) {
     this.callbacks.push(callbackObject);
   }
 
-  remove(callbackObject) {
+  remove(callbackObject: any) {
     this.callbacks = this.callbacks.filter(
-      (item) => !callbackObject.equals(item)
+      (item: any) => !callbackObject.equals(item)
     );
   }
 }
 
-const MakeActionCallback = (object, funcName) => {
+const MakeActionCallback = (object: any, funcName: any) => {
   return {
     object,
     funcName,
 
-    equals: (callbackObject) => {
+    equals: (callbackObject: any) => {
       return (
         object === callbackObject.object && funcName === callbackObject.funcName
       );
@@ -39,6 +41,7 @@ const MakeActionCallback = (object, funcName) => {
 };
 
 class AppData {
+  data: any;
   constructor() {
     this.data = {};
     Object.keys(AppDataActions).forEach((key) => {
@@ -46,24 +49,26 @@ class AppData {
         Error("duplicate key");
       }
 
+      // @ts-expect-error ts-migrate(7053) FIXME: No index signature with a parameter of type 'strin... Remove this comment to see the full error message
       this.data[AppDataActions[key]] = new Data();
     });
   }
 
-  get(key) {
+  get(key: any) {
     return this.data[key].data;
   }
 
-  update(key, ...data) {
+  // @ts-expect-error ts-migrate(7019) FIXME: Rest parameter 'data' implicitly has an 'any[]' ty... Remove this comment to see the full error message
+  update(key: any, ...data) {
     this.data[key].update(...data);
   }
 
-  add(key, object, funcName) {
+  add(key: any, object: any, funcName: any) {
     const callbackObject = MakeActionCallback(object, funcName);
     this.data[key].add(callbackObject);
   }
 
-  remove(key, object, funcName) {
+  remove(key: any, object: any, funcName: any) {
     const callbackObject = MakeActionCallback(object, funcName);
     this.data[key].remove(callbackObject);
   }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
@@ -24,6 +23,7 @@ import MaterialTable from "material-table";
 import Country from "./js/utils/Country";
 import Subdivision from "./js/utils/Subdivision";
 import videoPlatforms from "./js/utils/videoPlatforms";
+// @ts-expect-error ts-migrate(6142) FIXME: Module './js/components/OfflineNoticeSnackbar' was... Remove this comment to see the full error message
 import OfflineNoticeSnackbar from "./js/components/OfflineNoticeSnackbar";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,10 +34,16 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
   },
 }));
-const Stats = ({ title, type }) => {
+
+type Props = {
+    title: string;
+    type: "hour" | "day" | "country" | "jp-subdivision" | "service" | "service-hour" | "service-day" | "isp" | "isp-hour" | "isp-day";
+};
+const Stats = ({ title, type }: Props) => {
   const classes = useStyles();
   const baseUrl = new URL("https://sodium.webdino.org:8443/");
   const days = "日月火水木金土";
+  // @ts-expect-error ts-migrate(7031) FIXME: Binding element 'a' implicitly has an 'any' type.
   const daysOrder = ({ day: a }, { day: b }) =>
     days.indexOf(a) - days.indexOf(b);
   const column = {
@@ -68,11 +74,10 @@ const Stats = ({ title, type }) => {
         group: "day",
       },
       columns: [column.day],
-      mapper: (body) =>
-        body.map((a) => ({
-          ...a,
-          day: days[a.day],
-        })),
+      mapper: (body: any) => body.map((a: any) => ({
+        ...a,
+        day: days[a.day]
+      })),
     },
     {
       id: "country",
@@ -83,8 +88,10 @@ const Stats = ({ title, type }) => {
       },
       index: true,
       columns: [{ title: "国", field: "country" }],
-      mapper: (body) =>
-        body.map((a) => ({ ...a, country: Country.codeToName(a.country) })),
+      mapper: (body: any) => body.map((a: any) => ({
+        ...a,
+        country: Country.codeToName(a.country)
+      })),
     },
     {
       id: "jp-subdivision",
@@ -97,17 +104,15 @@ const Stats = ({ title, type }) => {
       },
       index: true,
       columns: [{ title: "地域 (日本)", field: "jp-subdivision" }],
-      mapper: (body) =>
-        body
-          .filter(
-            (a) =>
-              a.country === "JP" &&
-              Subdivision.codeToName(Number(a.subdivision)) !== undefined
-          )
-          .map((a) => ({
-            ...a,
-            "jp-subdivision": Subdivision.codeToName(Number(a.subdivision)),
-          })),
+      mapper: (body: any) => body
+        .filter(
+          (a: any) => a.country === "JP" &&
+          Subdivision.codeToName(Number(a.subdivision)) !== undefined
+        )
+        .map((a: any) => ({
+        ...a,
+        "jp-subdivision": Subdivision.codeToName(Number(a.subdivision))
+      })),
     },
     {
       id: "service",
@@ -119,13 +124,13 @@ const Stats = ({ title, type }) => {
       internal: true,
       index: true,
       columns: [column.service],
-      mapper: (body) =>
-        body
-          .filter((a) => videoPlatforms.some((vp) => vp.id === a.service))
-          .map((a) => ({
-            ...a,
-            service: videoPlatforms.find((vp) => vp.id === a.service).name,
-          })),
+      mapper: (body: any) => body
+        .filter((a: any) => videoPlatforms.some((vp) => vp.id === a.service))
+        .map((a: any) => ({
+        ...a,
+        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+        service: videoPlatforms.find((vp) => vp.id === a.service).name
+      })),
     },
     {
       id: "service-hour",
@@ -135,16 +140,16 @@ const Stats = ({ title, type }) => {
         group: "hour",
       },
       columns: [column.hour, column.service],
-      mapper: (body) =>
-        body
-          .filter((a) => videoPlatforms.some((vp) => vp.id === a.service))
-          .flatMap((a) =>
-            a.data.map((b) => ({
-              ...b,
-              service: videoPlatforms.find((vp) => vp.id === a.service).name,
-            }))
-          )
-          .sort(({ hour: a }, { hour: b }) => a - b),
+      mapper: (body: any) => body
+        .filter((a: any) => videoPlatforms.some((vp) => vp.id === a.service))
+        .flatMap((a: any) => a.data.map((b: any) => ({
+        ...b,
+        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+        service: videoPlatforms.find((vp) => vp.id === a.service).name
+      }))
+        )
+        // @ts-expect-error ts-migrate(7031) FIXME: Binding element 'a' implicitly has an 'any' type.
+        .sort(({ hour: a }, { hour: b }) => a - b),
     },
     {
       id: "service-day",
@@ -154,17 +159,16 @@ const Stats = ({ title, type }) => {
       },
       internal: true,
       columns: [column.day, column.service],
-      mapper: (body) =>
-        body
-          .filter((a) => videoPlatforms.some((vp) => vp.id === a.service))
-          .flatMap((a) =>
-            a.data.map((b) => ({
-              ...b,
-              service: videoPlatforms.find((vp) => vp.id === a.service).name,
-              day: days[b.day],
-            }))
-          )
-          .sort(daysOrder),
+      mapper: (body: any) => body
+        .filter((a: any) => videoPlatforms.some((vp) => vp.id === a.service))
+        .flatMap((a: any) => a.data.map((b: any) => ({
+        ...b,
+        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+        service: videoPlatforms.find((vp) => vp.id === a.service).name,
+        day: days[b.day]
+      }))
+        )
+        .sort(daysOrder),
     },
     {
       id: "isp",
@@ -188,10 +192,13 @@ const Stats = ({ title, type }) => {
       },
       internal: true,
       columns: [column.hour, column.isp],
-      mapper: (body) =>
-        body
-          .flatMap((a) => a.data.map((b) => ({ ...b, isp: a.isp })))
-          .sort(({ hour: a }, { hour: b }) => a - b),
+      mapper: (body: any) => body
+        .flatMap((a: any) => a.data.map((b: any) => ({
+        ...b,
+        isp: a.isp
+      })))
+        // @ts-expect-error ts-migrate(7031) FIXME: Binding element 'a' implicitly has an 'any' type.
+        .sort(({ hour: a }, { hour: b }) => a - b),
     },
     {
       id: "isp-day",
@@ -203,38 +210,44 @@ const Stats = ({ title, type }) => {
       },
       internal: true,
       columns: [column.day, column.isp],
-      mapper: (body) =>
-        body
-          .flatMap((a) =>
-            a.data.map((b) => ({
-              ...b,
-              isp: a.isp,
-              day: days[b.day],
-            }))
-          )
-          .sort(daysOrder),
+      mapper: (body: any) => body
+        .flatMap((a: any) => a.data.map((b: any) => ({
+        ...b,
+        isp: a.isp,
+        day: days[b.day]
+      }))
+        )
+        .sort(daysOrder),
     },
   ];
 
   const {
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'url' does not exist on type '{ id: strin... Remove this comment to see the full error message
     url,
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'body' does not exist on type '{ id: stri... Remove this comment to see the full error message
     body,
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'internal' does not exist on type '{ id: ... Remove this comment to see the full error message
     internal = false,
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'index' does not exist on type '{ id: str... Remove this comment to see the full error message
     index = false,
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'columns' does not exist on type '{ id: s... Remove this comment to see the full error message
     columns = [],
-    mapper = (a) => a,
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'mapper' does not exist on type '{ id: st... Remove this comment to see the full error message
+    mapper = (a: any) => a,
   } = types.find((g) => g.id === type);
   const [resBody, setResBody] = useState();
   const data = resBody === undefined ? [] : mapper(resBody);
   const [apiKey, setApiKey] = useState("");
-  const request = async (dispatch) => {
+  const request = async (dispatch: any) => {
     const reqUrl = new URL(url);
     if (internal && apiKey.length > 0) {
       const s = new URLSearchParams();
       s.set("pass", apiKey);
+      // @ts-expect-error ts-migrate(2322) FIXME: Type 'URLSearchParams' is not assignable to type '... Remove this comment to see the full error message
       reqUrl.search = s;
     }
     const reqBody = JSON.stringify(body);
+    // @ts-expect-error ts-migrate(2345) FIXME: Type 'URL' is not assignable to type 'string'.
     const res = await fetch(reqUrl, {
       method: "post",
       headers: {
@@ -258,22 +271,26 @@ const Stats = ({ title, type }) => {
     headerStyle: { padding: 0 },
     cellStyle: { padding: 0 },
   }));
-  const formattedData = data.map((a, i) => ({
+  const formattedData = data.map((a: any, i: any) => ({
     index: i + 1,
     ...a,
     average: Number(a.average).toFixed(2),
   }));
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Paper className={classes.root}>
       {resBody === undefined ? (
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <Typography component="h2" variant="h6">
           {title}
         </Typography>
       ) : (
+        // @ts-expect-error ts-migrate(2769) FIXME: Type 'OverridableComponent<SvgIconTypeMap<{}, "svg... Remove this comment to see the full error message
         <MaterialTable
           title={title}
           columns={styledColumns}
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           components={{ Container: (props) => <div {...props} /> }} // eslint-disable-line react/jsx-props-no-spreading
           data={formattedData}
           options={{
@@ -300,6 +317,7 @@ const Stats = ({ title, type }) => {
         />
       )}
       {internal ? (
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <form
           action=""
           onSubmit={async (e) => {
@@ -307,6 +325,7 @@ const Stats = ({ title, type }) => {
             await request(setResBody);
           }}
         >
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <TextField
             label="APIキー"
             type="password"
@@ -315,8 +334,11 @@ const Stats = ({ title, type }) => {
             required
             InputProps={{
               endAdornment: (
+                // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <InputAdornment position="end">
+                  {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                   <IconButton type="submit">
+                    {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                     <Send />
                   </IconButton>
                 </InputAdornment>
@@ -325,33 +347,46 @@ const Stats = ({ title, type }) => {
           />
         </form>
       ) : null}
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Grid container justify="space-between">
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Box component="details" mt={1.5}>
+            {/* @ts-expect-error ts-migrate(2769) FIXME: Property 'component' does not exist on type 'Intri... Remove this comment to see the full error message */}
             <Typography component="summary" varient="caption">
               リクエスト詳細
             </Typography>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <>
+              {/* @ts-expect-error ts-migrate(2769) FIXME: Property 'component' does not exist on type 'Intri... Remove this comment to see the full error message */}
               <Typography component="h5" varient="caption">
                 URL
               </Typography>
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <code className={classes.code}>{url.toString()}</code>
             </>
             {body === undefined ? null : (
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <>
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <Typography component="h5" variant="caption">
                   Body
                 </Typography>
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <pre className={classes.code}>
                   {JSON.stringify(body, null, "  ")}
                 </pre>
               </>
             )}
             {resBody === undefined ? null : (
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <>
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <Typography component="h5" variant="caption">
                   Response Body
                 </Typography>
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <pre className={classes.code}>
                   {JSON.stringify(resBody, null, "  ")}
                 </pre>
@@ -360,13 +395,17 @@ const Stats = ({ title, type }) => {
           </Box>
         </Grid>
         {resBody === undefined ? null : (
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <Grid item>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <IconButton
               onClick={async () => {
+                // @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
                 setResBody();
                 await request(setResBody);
               }}
             >
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <Refresh fontSize="small" />
             </IconButton>
           </Grid>
@@ -375,32 +414,23 @@ const Stats = ({ title, type }) => {
     </Paper>
   );
 };
-Stats.propTypes = {
-  title: PropTypes.string.isRequired,
-  type: PropTypes.oneOf([
-    "hour",
-    "day",
-    "country",
-    "jp-subdivision",
-    "service",
-    "service-hour",
-    "service-day",
-    "isp",
-    "isp-hour",
-    "isp-day",
-  ]).isRequired,
-};
 
 export default () => {
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Container>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <CssBaseline />
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <Grid container justify="center" spacing={2}>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Typography component="h1" variant="h5" align="center">
             統計API
           </Typography>
         </Grid>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item container spacing={1}>
           {[
             { type: "hour", title: "時間帯" },
@@ -408,47 +438,60 @@ export default () => {
             { type: "country", title: "国" },
             { type: "jp-subdivision", title: "地域" },
           ].map((stats) => (
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <Grid key={stats.type} item xs={12} sm={6}>
               {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <Stats {...stats} />
             </Grid>
           ))}
         </Grid>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Typography component="h2" variant="h6" align="center">
             動画配信サービス
           </Typography>
         </Grid>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item container spacing={1}>
           {[
             { type: "service-hour", title: "時間帯" },
             { type: "service-day", title: "曜日" },
             { type: "service", title: "全体" },
           ].map((stats) => (
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <Grid key={stats.type} item xs={12} sm>
               {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <Stats {...stats} />
             </Grid>
           ))}
         </Grid>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Typography component="h2" variant="h6" align="center">
             プロバイダ
           </Typography>
         </Grid>
+        {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
         <Grid item container spacing={1}>
           {[
             { type: "isp-hour", title: "時間帯" },
             { type: "isp-day", title: "曜日" },
             { type: "isp", title: "全体" },
           ].map((stats) => (
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <Grid key={stats.type} item xs={12} sm>
               {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <Stats {...stats} />
             </Grid>
           ))}
         </Grid>
       </Grid>
+      {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
       <OfflineNoticeSnackbar />
     </Container>
   );

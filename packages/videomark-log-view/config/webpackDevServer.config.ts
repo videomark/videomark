@@ -4,14 +4,17 @@ const errorOverlayMiddleware = require("react-dev-utils/errorOverlayMiddleware")
 const evalSourceMapMiddleware = require("react-dev-utils/evalSourceMapMiddleware");
 const noopServiceWorkerMiddleware = require("react-dev-utils/noopServiceWorkerMiddleware");
 const ignoredFiles = require("react-dev-utils/ignoredFiles");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'config'.
 const config = require("./webpack.config");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'paths'.
 const paths = require("./paths");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
 
 const protocol = process.env.HTTPS === "true" ? "https" : "http";
 const host = process.env.HOST || "0.0.0.0";
 
-module.exports = function (proxy, allowedHost) {
+module.exports = function (proxy: any, allowedHost: any) {
   return {
     // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
     // websites from potentially accessing local content through DNS rebinding:
@@ -83,7 +86,7 @@ module.exports = function (proxy, allowedHost) {
     },
     public: allowedHost,
     proxy,
-    before(app, server) {
+    before(app: any, server: any) {
       if (fs.existsSync(paths.proxySetup)) {
         // This registers user provided middleware for proxy reasons
         require(paths.proxySetup)(app);

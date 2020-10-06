@@ -50,10 +50,11 @@ const SubdivisionNames = {
 
 export default class Subdivision {
   // subdivision code から名称に変更する
-  static codeToName(code) {
+  static codeToName(code: any) {
     if (!(code in SubdivisionNames)) {
       return undefined;
     }
+    // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return SubdivisionNames[code];
   }
 }

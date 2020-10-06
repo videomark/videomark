@@ -2,7 +2,12 @@ import ChromeExtensionWrapper from "./ChromeExtensionWrapper";
 import Api from "./Api";
 
 class Viewing {
-  constructor({ id, ...initialState }) {
+  cache: any;
+  id: any;
+  constructor({
+    id,
+    ...initialState
+  }: any) {
     if (id === undefined) throw new Error("invalid id");
     this.id = id;
     this.cache = initialState;
@@ -22,7 +27,7 @@ class Viewing {
 
   async load() {
     return new Promise((resolve) =>
-      ChromeExtensionWrapper.load(this.id, (viewing) => resolve(viewing))
+      ChromeExtensionWrapper.load(this.id, (viewing: any) => resolve(viewing))
     );
   }
 
@@ -44,7 +49,7 @@ class Viewing {
     );
   }
 
-  async save(attributes) {
+  async save(attributes: any) {
     const tmp = await this.load();
     Object.assign(tmp, attributes);
     ChromeExtensionWrapper.save(this.id, tmp);
@@ -84,13 +89,12 @@ class Viewing {
   async fetchFixedQoeApi() {
     if (!window.navigator.onLine) return undefined;
 
-    const resHandler = (response) => {
+    const resHandler = (response: any) => {
       if (!response.ok) {
         return undefined;
       }
 
-      const find = (res) =>
-        res.find((v) => v.viewing_id.startsWith(this.viewingId));
+      const find = (res: any) => res.find((v: any) => v.viewing_id.startsWith(this.viewingId));
       return response.json().then(find);
     };
 
@@ -115,14 +119,13 @@ class Viewing {
       return undefined;
     }
 
-    const resHandler = (response) => {
+    const resHandler = (response: any) => {
       if (!response.ok) {
         return undefined;
       }
-      const find = (res) =>
-        res.find(
-          (i) => i.session === this.sessionId && i.video === this.videoId
-        );
+      const find = (res: any) => res.find(
+        (i: any) => i.session === this.sessionId && i.video === this.videoId
+      );
       return response.json().then(find);
     };
 
@@ -156,7 +159,7 @@ class Viewing {
   get quality() {
     const log = this.cache.log || [];
     const { date, quality } =
-      log.filter((a) => "quality" in a).slice(-1)[0] || {};
+      log.filter((a: any) => "quality" in a).slice(-1)[0] || {};
     return { date: new Date(date), ...quality };
   }
 }

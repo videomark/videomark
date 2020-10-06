@@ -6,12 +6,14 @@ import ViewingModel from "./Viewing";
 const MaxSaveCount = 1e4;
 
 class DataErase {
+  removedIds: any;
   constructor() {
     this.removedIds = [];
   }
 
-  async initialize(viewings) {
+  async initialize(viewings: any) {
     const targets = [
+      // @ts-expect-error ts-migrate(2461) FIXME: Type 'unknown' is not an array type.
       ...(await new Promise((resolve) =>
         ChromeExtensionWrapper.loadRemovedTarget(resolve)
       )),
@@ -24,21 +26,21 @@ class DataErase {
     return viewings;
   }
 
-  add(id) {
+  add(id: any) {
     this.removedIds.push(id);
     ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
   }
 
-  recover(targetId) {
-    this.removedIds = this.removedIds.filter((id) => id !== targetId);
+  recover(targetId: any) {
+    this.removedIds = this.removedIds.filter((id: any) => id !== targetId);
     ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
   }
 
-  contains(id) {
+  contains(id: any) {
     return this.removedIds.includes(id);
   }
 
-  async remove(param) {
+  async remove(param: any) {
     const targetIds = Array.isArray(param) ? param : [param];
     try {
       // indexの更新
@@ -68,6 +70,7 @@ class DataErase {
       if (request.length > 0) {
         const response = await Api.erasure(request);
         if (!response.ok) {
+          // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Response' is not assignable to p... Remove this comment to see the full error message
           throw new Error(response);
         }
         const body = await response.json();
@@ -77,7 +80,7 @@ class DataErase {
       }
 
       // 削除処理の終えたものを取り除く
-      this.removedIds = this.removedIds.filter((id) => !targetIds.includes(id));
+      this.removedIds = this.removedIds.filter((id: any) => !targetIds.includes(id));
       ChromeExtensionWrapper.saveRemoveTarget(this.removedIds);
 
       // ストレージにある実体を削除

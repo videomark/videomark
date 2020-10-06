@@ -23,15 +23,17 @@ const useTabStatus = () => {
   const [displayOnPlayer, setDisplayOnPlayer] = useState(false);
 
   useEffect(() => {
-    chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
+    // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'chrome'.
+    chrome.tabs.query( {active:true, currentWindow:true}, (tabs: any) => {
       const tab = tabs[0];
 
+      // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'chrome'.
       const port = chrome.runtime.connect({
         name: "sodium-popup-communication-port"
       });
       const requestId = getRandomToken();
 
-      const listener = value => {
+      const listener = (value: any) => {
         if (value.requestId !== requestId) return false;
 
         try {
@@ -66,8 +68,10 @@ const QualityUiSetting = () => {
 
   const handleDisplaySettingChange = useCallback(
     () => {
-      chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
+      // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'chrome'.
+      chrome.tabs.query( {active:true, currentWindow:true}, (tabs: any) => {
         const tab = tabs[0];
+        // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'chrome'.
         chrome.tabs.sendMessage(tab.id, { type: "FROM_EXTENSION_POPUP", method: "display_ui", enabled: !displayOnPlayer }, () => {
           setDisplayOnPlayer(!displayOnPlayer);
         });
@@ -77,20 +81,29 @@ const QualityUiSetting = () => {
   );
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <Box marginY={4}>
       { alive &&
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <Box>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Box marginY={1}>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <Typography component="h3" variant="body1">
               デザイン
             </Typography>
           </Box>
+          {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
           <Paper>
+            {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
             <List>
+              {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
               <ListItem>
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <ListItemText
                   primary="計測値を対象の動画の左上に重ねて表示する"
                 />
+                {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
                 <Switch
                   checked={displayOnPlayer}
                   onChange={handleDisplaySettingChange}

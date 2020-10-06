@@ -1,12 +1,14 @@
 "use strict";
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require("path");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath: any) => path.resolve(appDirectory, relativePath);
 
 const moduleFileExtensions = [
   "web.mjs",
@@ -23,7 +25,7 @@ const moduleFileExtensions = [
 ];
 
 // Resolve file paths in the same order as webpack
-const resolveModule = (resolveFn, filePath) => {
+const resolveModule = (resolveFn: any, filePath: any) => {
   const extension = moduleFileExtensions.find((extension) =>
     fs.existsSync(resolveFn(`${filePath}.${extension}`))
   );

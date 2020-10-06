@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,14 +10,17 @@ const theme = createMuiTheme({
   },
 });
 
-const ThemeProvider = ({ children }) => (
+type Props = {
+    children: React.ReactNode;
+};
+
+const ThemeProvider = ({ children }: Props) => (
+  // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
   <MuiThemeProvider theme={theme}>
+    {/* @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message */}
     <CssBaseline />
     {children}
   </MuiThemeProvider>
 );
-ThemeProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
 
 export default ThemeProvider;
