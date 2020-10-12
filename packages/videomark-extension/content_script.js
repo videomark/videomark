@@ -1,8 +1,8 @@
-const isMobile = Boolean(window.sodium);
+const isVMBrowser = Boolean(window.sodium);
 
 const storage = {
-  get: keys => new Promise(resolve => (isMobile ? sodium : chrome).storage.local.get(keys, resolve)),
-  set: items => new Promise(resolve => (isMobile ? sodium : chrome).storage.local.set(items, resolve))
+  get: keys => new Promise(resolve => (isVMBrowser ? sodium : chrome).storage.local.get(keys, resolve)),
+  set: items => new Promise(resolve => (isVMBrowser ? sodium : chrome).storage.local.set(items, resolve))
 };
 
 const state = {};
@@ -115,7 +115,7 @@ class BackgroundCommunicationPort {
   }
 
   setAlive(alive) {
-    if (isMobile) {
+    if (isVMBrowser) {
       sodium.currentTab.alive = alive;
     } else {
       this.postMessage("setAlive", [alive]);
@@ -123,7 +123,7 @@ class BackgroundCommunicationPort {
   }
 
   setDisplayOnPlayer(displayOnPlayer) {
-    if (isMobile) {
+    if (isVMBrowser) {
       sodium.currentTab.displayOnPlayer = displayOnPlayer;
     } else {
       this.postMessage("setDisplayOnPlayer", [displayOnPlayer]);
@@ -131,15 +131,23 @@ class BackgroundCommunicationPort {
   }
 
   async getDisplayOnPlayer() {
-    if (isMobile) {
+    if (isVMBrowser) {
       return sodium.currentTab.displayOnPlayer;
     } else {
       return (await this.postMessage("getDisplayOnPlayer")).displayOnPlayer;
     }
   }
 
+  async getPlatformInfo() {
+    if (isVMBrowser) {
+      return { os: "android" };
+    } else {
+      return (await this.postMessage("getPlatformInfo")).platformInfo;
+    }
+  }
+
   async getIp(host) {
-    if (isMobile) {
+    if (isVMBrowser) {
       return sodium.locationIp;
     } else {
       return (await this.postMessage("getIp", [host])).ip;
@@ -219,6 +227,15 @@ const message_listener = async event => {
       });
       break;
     }
+    case "get_platform_info": {
+      const platformInfo = await communicationPort.getPlatformInfo();
+      event.source.postMessage({
+        method: "get_platform_info",
+        type: "CONTENT_SCRIPT_JS",
+        platformInfo
+      });
+      break;
+    }
     case "get_ip": {
       const ip = await communicationPort.getIp(event.data.host);
       event.source.postMessage({
@@ -231,7 +248,7 @@ const message_listener = async event => {
   }
 };
 
-if (isMobile) {
+if (isVMBrowser) {
   window.addEventListener("message", message_listener);
 } else {
   storage.get("AgreedTerm").then(value => {

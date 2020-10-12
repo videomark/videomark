@@ -474,7 +474,9 @@ export default class SessionData {
       "plmn",
       "sim"
     ].forEach(e => {
-      if (navigator.connection[e] === Infinity) {
+      if (navigator.connection === undefined) {
+        netinfo[e] = undefined;
+      } else if (navigator.connection[e] === Infinity) {
         netinfo[e] = Number.MAX_VALUE;
       } else if (navigator.connection[e] === -Infinity) {
         netinfo[e] = Number.MIN_VALUE;

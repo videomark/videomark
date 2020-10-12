@@ -142,6 +142,7 @@ const remove_ui_all = () => {
   // 前回までの計測uiの表示状態をタブ単位で保持しているため
   // 表示設定をあらかじめ読み込んでおく
   await Config.readDisplayOnPlayerSetting();
+  await Config.readPlatformInfo();
 
   // --- update video list --- //
   search_video_interval_id = window.setInterval(() => {

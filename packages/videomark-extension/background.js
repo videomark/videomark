@@ -132,6 +132,10 @@ const communicator = {
     }
     return { displayOnPlayer };
   },
+  getPlatformInfo: async (tab) => {
+    const platformInfo = await new Promise(resolve => chrome.runtime.getPlatformInfo(resolve));
+    return { platformInfo };
+  },
   getIp: async (tab, host) => ({ ip: hostToIp[host] })
 };
 

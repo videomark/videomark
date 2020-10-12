@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import videoPlatforms from "./videoPlatforms";
 
 export const urlToVideoPlatform = (url) => {
@@ -11,7 +12,7 @@ export const urlToVideoPlatform = (url) => {
 };
 
 export const isDevelop = () => process.env.NODE_ENV === "development";
-export const isMobile = () =>
+export const isVMBrowser = () =>
   window.sodium !== undefined && window.chrome.storage === undefined;
 export const isExtension = () =>
   window.sodium === undefined && window.chrome.storage !== undefined;
@@ -30,3 +31,18 @@ export const sizeFormat = (bytes, exponent) => {
 
 export const gigaSizeFormat = (bytes) => sizeFormat(bytes, 3);
 export const megaSizeFormat = (bytes) => sizeFormat(bytes, 2);
+
+// 必ず変数に確保してから使うこと。条件式に直接使ってはいけない
+export const isMobile = () => {
+  const [platformInfo, setPlatformInfo] = useState(false);
+
+  useEffect(() => {
+    if (window.sodium !== undefined) {
+      setPlatformInfo({ os: "android" });
+    } else {
+      chrome.runtime.getPlatformInfo(info => setPlatformInfo(info))
+    }
+  });
+
+  return isVMBrowser() || platformInfo.os === "android";
+};

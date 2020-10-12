@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import { ReadableStream } from "web-streams-polyfill/ponyfill";
 import { allViewings, migration } from "../utils/ChromeExtensionWrapper";
 import dataErase from "../utils/DataErase";
 import ViewingModel from "../utils/Viewing";

@@ -351,6 +351,8 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
   }
 
+  const moile = isMobile();
+
   return (
     <Box marginY={4}>
       <Box marginY={1}>
@@ -360,7 +362,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
         <Typography color="textSecondary">
           {[
             "実験的な機能です。",
-            isMobile()
+            moile
               ? "現在、YouTubeとニコニコ動画のPC版サイトに対応しています。"
               : null,
             "設定変更後の動画再生開始時の制限値に応じてビットレート選択が行われます。",

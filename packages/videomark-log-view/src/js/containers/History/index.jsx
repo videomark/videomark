@@ -11,6 +11,7 @@ import startOfMonth from "date-fns/startOfMonth";
 import isSameMonth from "date-fns/isSameMonth";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
+import { WritableStream } from "web-streams-polyfill/ponyfill";
 import Viewing from "../Viewing";
 import AppData from "../../utils/AppData";
 import AppDataActions from "../../utils/AppDataActions";

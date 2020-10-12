@@ -6,6 +6,11 @@
   "author": "WebDINO Japan",
   "homepage_url": "http://vm.webdino.org/",
   "options_page": "qoelog/index.html#/settings",
+  "applications": {
+    "gecko": {
+      "id": "vm@webdino.org"
+    }
+  },
   "icons": {
     "32": "icons/videomark-32.png",
     "48": "icons/videomark-48.png",

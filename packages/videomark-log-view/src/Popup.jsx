@@ -42,6 +42,10 @@ const LabeledIconButton = ({ href, icon, label }) => {
       href={href}
       target="_blank"
       startIcon={React.createElement(icon)}
+      onClick={() => {
+        window.open(href);
+        window.close();
+      }}
     >
       {label}
     </Button>

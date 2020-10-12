@@ -298,8 +298,8 @@ export default class VideoData {
     this.domain_name =
       this.video_handler.get_segment_domain() || this.domain_name;
 
-    const total = this.video_elm.webkitDecodedFrameCount;
-    const dropped = this.video_elm.webkitDroppedFrameCount;
+    const total = this.totalFrames();
+    const dropped = this.droppedFrames();
     const now = performance.now();
     this.delta_total = total - this.total;
     this.total = total;
@@ -316,6 +316,18 @@ export default class VideoData {
 
     const quality = this.get_quality();
     this.playback_quality.push(quality);
+  }
+
+  totalFrames() {
+    if (this.video_elm.webkitDecodedFrameCount !== undefined) return this.video_elm.webkitDecodedFrameCount;
+
+    return this.video_elm.mozParsedFrames;
+  }
+
+  droppedFrames() {
+    if (this.video_elm.webkitDroppedFrameCount !== undefined) return this.video_elm.webkitDroppedFrameCount;
+
+    return this.totalFrames() - this.video_elm.mozPresentedFrames;
   }
 
   /**

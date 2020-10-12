@@ -7,6 +7,7 @@ import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
+import { isMobile } from "./js/utils/Utils.js";
 
 const getRandomToken = () => {
   const randomPool = new Uint8Array(16);
@@ -63,6 +64,7 @@ const List = styled(MuiList)({
 
 const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
+  const moile = isMobile();
 
   const handleDisplaySettingChange = useCallback(
     () => {
@@ -70,6 +72,7 @@ const QualityUiSetting = () => {
         const tab = tabs[0];
         chrome.tabs.sendMessage(tab.id, { type: "FROM_EXTENSION_POPUP", method: "display_ui", enabled: !displayOnPlayer }, () => {
           setDisplayOnPlayer(!displayOnPlayer);
+          window.close();
         });
       });
     },
@@ -89,7 +92,7 @@ const QualityUiSetting = () => {
             <List>
               <ListItem>
                 <ListItemText
-                  primary="計測値を対象の動画の左上に重ねて表示する"
+                  primary={moile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
                 />
                 <Switch
                   checked={displayOnPlayer}

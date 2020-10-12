@@ -2,8 +2,27 @@
  * 動作設定
  */
 export default class Config {
-  static isMobile() {
+  static isVMBrowser() {
     return Boolean(window.sodium);
+  }
+
+  static async readPlatformInfo() {
+    this.mobile = await new Promise(resolve => {
+      const listener = event => {
+        if (event.data.type !== "CONTENT_SCRIPT_JS" || event.data.method !== "get_platform_info") return;
+        window.removeEventListener("message", listener);
+        resolve(event.data.platformInfo.os === "android");
+      };
+      window.addEventListener("message", listener);
+      window.postMessage({
+        method: "get_platform_info",
+        type: "FROM_SODIUM_JS"
+      });
+    });
+  }
+
+  static isMobile() {
+    return this.isVMBrowser() || this.mobile;
   }
 
   static isMobileScreen() {
@@ -519,8 +538,21 @@ Config.max_count_for_qoe = 20; // 27000ms
 // QoE制御
 Config.quality_control = false;
 
-// content_scriptsによって書き込まれるオブジェクトのデシリアライズ
-if (window.sodium === undefined && document.currentScript != null) {
+if (Config.isVMBrowser()) {
+  window.sodium.storage.local.get("session", ({ session }) => {
+    Config.session = session || {};
+  });
+  window.sodium.storage.local.get("settings", ({ settings }) => {
+    Config.settings = settings || {};
+  });
+  window.sodium.storage.local.get("transfer_size", ({ transfer_size }) => {
+    Config.transfer_size = transfer_size || {};
+  });
+  window.sodium.storage.local.get("peak_time_limit", ({ peak_time_limit }) => {
+    Config.peak_time_limit = peak_time_limit || {};
+  });
+} else if (document.currentScript != null) {
+  // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
   const session = new URLSearchParams(document.currentScript.dataset.session);
   Config.session = {
     id: session.get("id"),
@@ -534,20 +566,6 @@ if (window.sodium === undefined && document.currentScript != null) {
   Config.peak_time_limit = JSON.parse(
     document.currentScript.dataset.peak_time_limit
   );
-}
-if (window.sodium !== undefined) {
-  window.sodium.storage.local.get("session", ({ session }) => {
-    Config.session = session || {};
-  });
-  window.sodium.storage.local.get("settings", ({ settings }) => {
-    Config.settings = settings || {};
-  });
-  window.sodium.storage.local.get("transfer_size", ({ transfer_size }) => {
-    Config.transfer_size = transfer_size || {};
-  });
-  window.sodium.storage.local.get("peak_time_limit", ({ peak_time_limit }) => {
-    Config.peak_time_limit = peak_time_limit || {};
-  });
 }
 
 // デフォルトのセッション保持期間
