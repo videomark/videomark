@@ -20,7 +20,7 @@
     "chalk": "^4.1.0",
     "classnames": "^2.2.6",
     "cross-env": "^7.0.2",
-    "css-loader": "^4.2.1",
+    "css-loader": "^5.0.0",
     "dataframe-js": "^1.4.3",
     "date-fns": "^2.15.0",
     "eslint": "^7.7.0",
