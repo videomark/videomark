@@ -132,7 +132,7 @@ const communicator = {
     }
     return { displayOnPlayer };
   },
-  getPlatformInfo: async (tab) => {
+  getPlatformInfo: async () => {
     const platformInfo = await new Promise(resolve => chrome.runtime.getPlatformInfo(resolve));
     return { platformInfo };
   },
