@@ -22,7 +22,7 @@ export default class Config {
   }
 
   static isMobile() {
-    return this.isVMBrowser() || this.mobile;
+    return this.mobile;
   }
 
   static isMobileScreen() {

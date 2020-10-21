@@ -8,7 +8,8 @@
   "options_page": "qoelog/index.html#/settings",
   "applications": {
     "gecko": {
-      "id": "vm@webdino.org"
+      "id": "videomark@webdino.org",
+      "strict_min_version": "78.0"
     }
   },
   "icons": {
