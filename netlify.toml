@@ -10,3 +10,9 @@
 [[redirects]]
   from = "/dev"
   to = "/development/webvideomark-dev.zip"
+[[redirects]]
+  from = "/prod-xpi"
+  to = "/production/webvideomark.xpi"
+[[redirects]]
+  from = "/dev-xpi"
+  to = "/development/webvideomark-dev.xpi"
