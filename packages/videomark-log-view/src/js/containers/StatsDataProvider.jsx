@@ -8,6 +8,7 @@ import React, {
 import DataFrame from "dataframe-js";
 import { format } from "date-fns";
 import { reduce } from "p-iteration";
+import { WritableStream } from "web-streams-polyfill/ponyfill";
 import {
   STREAM_BUFFER_SIZE,
   ViewingsContext,

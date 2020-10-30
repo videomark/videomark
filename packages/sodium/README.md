@@ -150,6 +150,8 @@ http://wicg.github.io/netinfo/#networkinformation-interface
 | plmn          | ルーティングエリア<br>※ Videomark Browser 独自拡張                                                                                              |
 | sim           | SIM<br>※ Videomark Browser 独自拡張                                                                                                             |
 
+※ firefox デスクトップ版では、Network Information API が無効となっているため、送信されない
+
 ### video
 
 video 単位のデータ
@@ -198,6 +200,17 @@ video の属性情報
 | deltaTotalVideoFrames   | 総フレーム数のデルタ値                   |
 | deltaDroppedVideoFrames | 損失フレーム数のデルタ値                 |
 | deltaTime               | 計測時間のデルタ値                       |
+
+##### 総フレーム数、損失フレーム数の取得方法について
+chrome と firefox では取得方法が異なる
+
+|項目|chrome|firefox|
+|-|-|-|
+|総フレーム数|webkitDecodedFrameCount|mozParsedFrames|
+|損失フレーム数|webkitDroppedFrameCount|mozParsedFrames - mozPresentedFrames|
+
+プロパティの仕様については、以下のサイトを参照のこと。  
+https://wiki.whatwg.org/wiki/Video_Metrics#Collection_of_Proposals.2FImplementations
 
 #### throughput_info
 

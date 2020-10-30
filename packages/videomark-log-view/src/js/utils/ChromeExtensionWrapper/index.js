@@ -1,13 +1,13 @@
 import { forEach } from "p-iteration";
 import { useState, useEffect, useCallback } from "react";
-import { isMobile, isExtension, isWeb } from "../Utils";
+import { isVMBrowser, isExtension, isWeb } from "../Utils";
 import EmbeddedData from "./EmbeddedData";
 
 export const VERSION = new Date("2019-07-18T00:00:00Z").getTime();
 
 let data = EmbeddedData;
 export const storage = () => {
-  if (isMobile()) {
+  if (isVMBrowser()) {
     return window.sodium.storage.local;
   }
   if (isExtension()) {
@@ -208,7 +208,7 @@ export default class ChromeExtensionWrapper {
   }
 
   static loadAgreedTerm(callback) {
-    if (isMobile() || isWeb()) {
+    if (isVMBrowser() || isWeb()) {
       callback(true);
       return;
     }

@@ -37,5 +37,7 @@ cp -va packages/videomark-extension/* "${DEV_DIR}"
 rm -v -- "${PROD_DIR}/README.md" "${DEV_DIR}/README.md"
 (cd -- "${PROD_DIR}" && zip -r webvideomark.zip .)
 (cd -- "${DEV_DIR}" && zip -r webvideomark-dev.zip .)
+cp ${PROD_DIR}/webvideomark.zip ${PROD_DIR}/webvideomark.xpi
+cp ${DEV_DIR}/webvideomark-dev.zip ${DEV_DIR}/webvideomark-dev.xpi
 
 log "BUILD END: videomark-extension"
