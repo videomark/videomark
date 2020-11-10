@@ -128,7 +128,7 @@ ChromeExtension/sodium.js
 | endTime         | データ収集終了時間(DOMHighResTimeStamp)           |
 | session         | セッション ID(UUID)                               |
 | location        | window.location.href                              |
-| locationIp      | location の IP アドレス                           |
+| locationIp      | location (配信サイト) の IPv4/v6 アドレス。但し Proxy 接続時は Proxy サーバの Ip |
 | userAgent       | ユーザーエージェント                              |
 | sequence        | 同一セッション内のシーケンス番号(0 から連番)      |
 | calc            | QoE 計算可能フラグ                                |
@@ -238,7 +238,7 @@ https://wiki.whatwg.org/wiki/Video_Metrics#Collection_of_Proposals.2FImplementat
 | chunkDuration    | チャンクの再生時間   |
 | container        | コンテナ             |
 | codec            | コーデック           |
-| serverIp         | チャック配布元(FQDN) |
+| serverIp         | 動画チャンクの配布元(FQDN) |
 
 #### Event
 
