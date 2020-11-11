@@ -2,21 +2,19 @@
 
 # ビルド手順
 
-この拡張機能固有のコードはビルドが必要なコードはありませんが、[sodium.js](https://github.com/videomark/sodium.js) および [videomark-log-view](https://github.com/videomark/videomark-log-view) のビルド済みファイルと一緒にした状態で利用するため、それぞれのビルドが必要です。
-
-このリポジトリがあるディレクトリに [sodium.js](https://github.com/videomark/sodium.js) と [videomark-log-view](https://github.com/videomark/videomark-log-view) を配置し、このリポジトリで以下のコマンドを実行してください。必要なファイルが自動的にビルド、配置されます。
-
-```
-make npm-install # 初回のみ実行
-make
+```sh
+git clone git@github.com:videomark/videomark.git
+cd videomark
+yarn
+yarn build
 ```
 
 # インストール手順
 
 1. Chrome のメニューで「その他のツール」から「拡張機能」を選択
-2. 「拡張機能」タブの「デベロッパーモード」を有効化する
+2. 「拡張機能」タブの「デベロッパーモード」を有効化
 3. 「パッケージ化されていない拡張機能を読み込む」をクリック
-4. このリポジトリにビルド済みの sodium.js, qoelog を含めたディレクトリを選択
+4. このリポジトリに配置される dist/production ディレクトリを選択
 
 # 拡張機能に保存されるデータ
 
