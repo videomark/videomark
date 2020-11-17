@@ -9,6 +9,7 @@
     "@material-ui/styles": "^4.10.0",
     "@nivo/bar": "^0.65.0",
     "@nivo/calendar": "^0.65.0",
+    "@nivo/core": "^0.65.0",
     "@nivo/scatterplot": "0.65.1",
     "@svgr/webpack": "^5.4.0",
     "@videomark/videomark-mini-stats": "file:../videomark-mini-stats",
