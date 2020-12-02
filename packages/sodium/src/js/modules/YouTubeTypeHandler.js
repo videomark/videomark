@@ -174,40 +174,53 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         if (!player.sodiumLoadVideoByPlayerVars && !player.sodiumUpdateVideoData && !player.sodiumGetAvailableQualityLevels) {
             // @ts-expect-error
             const ytplayer = window.ytplayer;
-            if (ytplayer.config && ytplayer.config.args) YouTubeTypeHandler.set_adaptive_formats(ytplayer.config.args.player_response)
+            if (ytplayer.config && ytplayer.config.args)
+                YouTubeTypeHandler.set_adaptive_formats_json(ytplayer.config.args.player_response);
+
             player.sodiumLoadVideoByPlayerVars = player.loadVideoByPlayerVars;
             player.sodiumUpdateVideoData = player.updateVideoData;
             player.sodiumGetAvailableQualityLevels = player.getAvailableQualityLevels;
             player.loadVideoByPlayerVars = function (arg) { // thisを変えられないためアロー演算子は使わない
-                YouTubeTypeHandler.set_adaptive_formats(arg.player_response);
+                if (!YouTubeTypeHandler.set_adaptive_formats(arg.player_response)) {
+                    if (arg.raw_player_response && arg.raw_player_response.streamingData)
+                        YouTubeTypeHandler.set_adaptive_formats(arg.raw_player_response.streamingData.adaptiveFormats);
+                }
                 return this.sodiumLoadVideoByPlayerVars(arg);
             };
             player.updateVideoData = function (arg) {
-                if (arg.adaptive_fmts && arg.adaptive_fmts.length > 0)
-                    YouTubeTypeHandler.sodiumAdaptiveFmts = arg.adaptive_fmts;
+                YouTubeTypeHandler.set_adaptive_formats(arg.adaptive_fmts);
                 return this.sodiumUpdateVideoData(arg);
             };
         }
     }
 
-    static set_adaptive_formats(response) {
-        if (!response) return;
-        if (YouTubeTypeHandler.sodiumAdaptiveFmts) return;
+    static set_adaptive_formats_json(response) {
+        if (!response) return false;
         try {
             const json = JSON.parse(response);
             if (json.streamingData)
-                YouTubeTypeHandler.sodiumAdaptiveFmts = json.streamingData.adaptiveFormats;
-        } catch (e) { /* do nothing */ }
-        try {
-            YouTubeTypeHandler.check_formats();
+                return YouTubeTypeHandler.set_adaptive_formats(json.streamingData.adaptiveFormats);
         } catch (e) {
             console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
         }
+        return false;
     }
 
-    static check_formats() {
+    static set_adaptive_formats(adaptiveFormats) {
+        if(!adaptiveFormats || !adaptiveFormats.length) return false;
+        try {
+            YouTubeTypeHandler.check_formats(adaptiveFormats);
+            YouTubeTypeHandler.sodiumAdaptiveFmts = adaptiveFormats;
+            return true;
+        } catch (e) {
+            console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
+        }
+        return false;
+    }
+
+    static check_formats(adaptiveFormats) {
         let message;
-        const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
+        const formats = YouTubeTypeHandler.convert_adaptive_formats(adaptiveFormats);
         const ret = formats.find(e => {
             let val = !e.itag || !e.bitrate || !e.type || !e.container || !e.codec;
             if (val) {
