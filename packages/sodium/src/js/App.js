@@ -1,5 +1,6 @@
 import Config from "./modules/Config";
 import UI from "./modules/UI";
+import { jsonParseSafe } from "./modules/Utils";
 import SessionData from "./modules/SessionData";
 import VideoData from "./modules/VideoData";
 import { qualityStatus } from "./modules/Quality";
@@ -55,7 +56,7 @@ const remove_ui_all = () => {
 
   // --- UI event --- //
   window.addEventListener("message", event => {
-    const data = (typeof event.data === "string") ? JSON.parse(event.data) : event.data;
+    const data = (typeof event.data === "string") ? jsonParseSafe(event.data) : event.data;
     if (!["FROM_WEB_CONTENT", "FROM_ANDROID_UI", "FROM_EXTENSION_POPUP"].includes(data.type)) return;
 
     if (data.method === "update_ui") {

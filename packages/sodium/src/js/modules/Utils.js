@@ -11,3 +11,11 @@ const sizeFormat = (bytes, exponent) => {
 export const megaSizeFormat = bytes => sizeFormat(bytes, 2);
 
 export const kiloSizeFormat = bytes => sizeFormat(bytes, 1);
+
+export const jsonParseSafe = (text, defaultValue = {}) => {
+  try {
+    return JSON.parse(text) || defaultValue;
+  } catch(e) {
+    return defaultValue;
+  }
+};
