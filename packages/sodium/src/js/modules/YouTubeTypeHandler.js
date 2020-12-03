@@ -7,6 +7,9 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     static is_youtube_type() {
         try {
             /** @type {any} */
+            const url = new URL(location.href);
+            if (url.pathname === '/embed/') return false;
+
             const player = document.querySelector('#movie_player');
             if (!player) return false;
 
