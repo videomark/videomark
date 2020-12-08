@@ -76,6 +76,7 @@ export default class SessionData {
     }
 
     this.session_id = session.id;
+    this.location = window.location.href;
     // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
 
@@ -161,6 +162,7 @@ export default class SessionData {
       mainVideo = await this.waitMainVideo();
 
       console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
+      this.location = window.location.href;
 
       try {
 
@@ -408,7 +410,7 @@ export default class SessionData {
     const [prevResource, resource] = this.resource.collect();
     await storage.save({
       user_agent: this.userAgent,
-      location: this.alt_location || window.location.href,
+      location: this.alt_location || this.location,
       transfer_size: resource.transferSize,
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
@@ -453,8 +455,8 @@ export default class SessionData {
       startTime: this.startTime,
       endTime: this.endTime,
       session: this.session_id,
-      location: this.alt_location || window.location.href,
-      locationIp: this.hostToIp[new URL(window.location.href).host],
+      location: this.alt_location || this.location,
+      locationIp: this.hostToIp[new URL(this.location).host],
       userAgent: this.userAgent,
       sequence: this.sequence,
       calc: video.is_calculatable(),
@@ -490,7 +492,7 @@ export default class SessionData {
   }
 
   async locationIp() {
-    const url = new URL(window.location.href);
+    const url = new URL(this.location);
     const ip = await new Promise(resolve => {
       const listener = event => {
         if (
@@ -514,15 +516,15 @@ export default class SessionData {
   altSessionMessage() {
     const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
     const allowVideoHosts = ["i.fod.fujitv.co.jp"];
+    const url = new URL(this.location);
 
     if (window.top === window) {
-      if (!allowHosts.includes(window.location.hostname)) return;
+      if (!allowHosts.includes(url.host)) return;
 
-      const location = window.location.href;
       const thumbnail = (
         document.querySelector("meta[property='og:image']") || {}
       ).content;
-      const session = { location, thumbnail };
+      const session = { location: this.location, thumbnail };
 
       window.addEventListener("message", event => {
         const { data, source, origin } = event;
@@ -534,7 +536,7 @@ export default class SessionData {
         );
       });
     } else {
-      if (!allowVideoHosts.includes(window.location.hostname)) return;
+      if (!allowVideoHosts.includes(url.host)) return;
 
       const eventResolver = event => {
         const { data, origin } = event;
