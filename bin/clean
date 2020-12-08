@@ -1,0 +1,37 @@
+#!/bin/bash
+set -euo pipefail
+
+PUBLISH_DIR=dist
+NODE_MODULES=node_modules
+SODIUM=packages/sodium
+LOGVIEW=packages/videomark-log-view
+MINISTATS=packages/videomark-mini-stats
+TEST_E2E=test/e2e
+
+log() {
+  echo "$0:" "$@"
+}
+
+cd -- "$(dirname -- "$0")/.."
+
+log "Working directory is: $(pwd)"
+
+log cleanup
+rm -rf -- ${PUBLISH_DIR}
+rm -rf -- ${NODE_MODULES}
+
+log ${SODIUM}
+rm -rf -- ${SODIUM}/dist
+rm -rf -- ${SODIUM}/dist-dev
+rm -rf -- ${SODIUM}/${NODE_MODULES}
+
+log ${LOGVIEW}
+rm -rf -- ${LOGVIEW}/build
+rm -rf -- ${LOGVIEW}/${NODE_MODULES}
+
+log ${MINISTATS}
+rm -rf -- ${MINISTATS}/dist
+rm -rf -- ${MINISTATS}/${NODE_MODULES}
+
+log ${TEST_E2E}
+rm -rf -- ${TEST_E2E}/${NODE_MODULES}
