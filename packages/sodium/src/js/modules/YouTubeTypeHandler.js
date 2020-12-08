@@ -6,10 +6,11 @@ import { AdObserver } from "./AdObserver";
 class YouTubeTypeHandler extends GeneralTypeHandler {
     static is_youtube_type() {
         try {
-            /** @type {any} */
+            // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
             const url = new URL(location.href);
             if (url.pathname === '/embed/') return false;
 
+            /** @type {any} */
             const player = document.querySelector('#movie_player');
             if (!player) return false;
 
