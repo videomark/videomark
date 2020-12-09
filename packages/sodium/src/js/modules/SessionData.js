@@ -76,7 +76,7 @@ export default class SessionData {
     }
 
     this.session_id = session.id;
-    this.location = window.location.href;
+    this.location = new URL(window.location.href);
     // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
 
@@ -162,7 +162,7 @@ export default class SessionData {
       mainVideo = await this.waitMainVideo();
 
       console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
-      this.location = window.location.href;
+      this.location = new URL(window.location.href);
 
       try {
 
@@ -410,7 +410,7 @@ export default class SessionData {
     const [prevResource, resource] = this.resource.collect();
     await storage.save({
       user_agent: this.userAgent,
-      location: this.alt_location || this.location,
+      location: this.alt_location || this.location.href,
       transfer_size: resource.transferSize,
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
@@ -455,8 +455,8 @@ export default class SessionData {
       startTime: this.startTime,
       endTime: this.endTime,
       session: this.session_id,
-      location: this.alt_location || this.location,
-      locationIp: this.hostToIp[new URL(this.location).host],
+      location: this.alt_location || this.location.href,
+      locationIp: this.hostToIp[this.location.host],
       userAgent: this.userAgent,
       sequence: this.sequence,
       calc: video.is_calculatable(),
@@ -492,11 +492,10 @@ export default class SessionData {
   }
 
   async locationIp() {
-    const url = new URL(this.location);
     const ip = await new Promise(resolve => {
       const listener = event => {
         if (
-          event.data.host !== url.host ||
+          event.data.host !== this.location.host ||
           event.data.type !== "CONTENT_SCRIPT_JS"
         )
           return;
@@ -505,26 +504,25 @@ export default class SessionData {
       };
       window.addEventListener("message", listener);
       window.postMessage({
-        host: url.host,
+        host: this.location.host,
         method: "get_ip",
         type: "FROM_SODIUM_JS"
       });
     });
-    this.hostToIp[url.host] = ip;
+    this.hostToIp[this.location.host] = ip;
   }
 
   altSessionMessage() {
     const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
     const allowVideoHosts = ["i.fod.fujitv.co.jp"];
-    const url = new URL(this.location);
 
     if (window.top === window) {
-      if (!allowHosts.includes(url.host)) return;
+      if (!allowHosts.includes(this.location.host)) return;
 
       const thumbnail = (
         document.querySelector("meta[property='og:image']") || {}
       ).content;
-      const session = { location: this.location, thumbnail };
+      const session = { location: this.location.href, thumbnail };
 
       window.addEventListener("message", event => {
         const { data, source, origin } = event;
@@ -536,7 +534,7 @@ export default class SessionData {
         );
       });
     } else {
-      if (!allowVideoHosts.includes(url.host)) return;
+      if (!allowVideoHosts.includes(this.location.host)) return;
 
       const eventResolver = event => {
         const { data, origin } = event;
