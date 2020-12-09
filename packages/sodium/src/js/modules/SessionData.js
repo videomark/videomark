@@ -517,7 +517,7 @@ export default class SessionData {
     const allowVideoHosts = ["i.fod.fujitv.co.jp"];
 
     if (window.top === window) {
-      if (!allowHosts.includes(this.location.host)) return;
+      if (!allowHosts.includes(this.location.hostname)) return;
 
       const thumbnail = (
         document.querySelector("meta[property='og:image']") || {}
@@ -534,7 +534,7 @@ export default class SessionData {
         );
       });
     } else {
-      if (!allowVideoHosts.includes(this.location.host)) return;
+      if (!allowVideoHosts.includes(this.location.hostname)) return;
 
       const eventResolver = event => {
         const { data, origin } = event;
