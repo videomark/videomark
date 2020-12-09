@@ -11,3 +11,16 @@ const sizeFormat = (bytes, exponent) => {
 export const megaSizeFormat = bytes => sizeFormat(bytes, 2);
 
 export const kiloSizeFormat = bytes => sizeFormat(bytes, 1);
+
+export const jsonParseSafe = (text, defaultValue = {}) => {
+  try {
+    const value = JSON.parse(text);
+    // undefinedとnullは存在しないプロパティにアクセスすると
+    // エラーを投げるので、代わりにdefaultValueを返す
+    return value === undefined || value === null
+      ? defaultValue
+      : value;
+  } catch(e) {
+    return defaultValue;
+  }
+};
