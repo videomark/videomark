@@ -178,8 +178,13 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         if (!player.sodiumLoadVideoByPlayerVars && !player.sodiumUpdateVideoData && !player.sodiumGetAvailableQualityLevels) {
             // @ts-expect-error
             const ytplayer = window.ytplayer;
-            if (ytplayer.config && ytplayer.config.args)
-                YouTubeTypeHandler.set_adaptive_formats_json(ytplayer.config.args.player_response);
+            if (ytplayer.config && ytplayer.config.args) {
+                const arg = ytplayer.config.args;
+                if (!YouTubeTypeHandler.set_adaptive_formats_json(arg.player_response)) {
+                    if (arg.raw_player_response && arg.raw_player_response.streamingData)
+                        YouTubeTypeHandler.set_adaptive_formats(arg.raw_player_response.streamingData.adaptiveFormats);
+                }
+            }
 
             player.sodiumLoadVideoByPlayerVars = player.loadVideoByPlayerVars;
             player.sodiumUpdateVideoData = player.updateVideoData;
