@@ -57,7 +57,7 @@ test("YouTube動画に埋め込み (モバイル)", async () => {
 }, 90e3);
 
 // FIXME: GitHub Actions runner ホストが Paravi 視聴に対応していない地域なのでスキップ
-test.skip.each(["youtube" /*, "paravi"*/])(
+test.each(["youtube" /*, "paravi"*/])(
   "%s: 動画に埋め込み後、しばらく経つとQoE値が得られる",
   async (platform) => {
     const videomark = "#__videomark_ui";
