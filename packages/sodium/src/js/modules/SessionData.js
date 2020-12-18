@@ -106,7 +106,7 @@ export default class SessionData {
     const main_video = this.get_main_video();
     // eslint-disable-next-line camelcase
     if (main_video === undefined) return false;
-    return main_video.is_available();
+    return this.location.href === window.location.href && main_video.is_available();
   }
 
   /**
@@ -308,7 +308,7 @@ export default class SessionData {
   startDataStore(mainVideo, interval) {
     return setTimeout(async () => {
       for (; mainVideo === this.get_main_video();) {
-        if (mainVideo.is_available()) {
+        if (this.get_video_availability()) {
           // eslint-disable-next-line no-await-in-loop
           await this.storeSession(mainVideo);
         }
