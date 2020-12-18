@@ -102,7 +102,7 @@ chrome.runtime.onConnect.addListener(port => {
       ret.requestId = value.requestId;
       port.postMessage(ret);
     });
-    port.onDisconnect.addListener(() => updateIcon(tabId, false));
+    port.onDisconnect.addListener(() => removeTab(tabId));
   }
 
   if (port.name === "sodium-popup-communication-port") {
@@ -111,7 +111,13 @@ chrome.runtime.onConnect.addListener(port => {
       const args = Array.from(value.args || []);
       const ret = await popupCommunicator[value.method].apply(null, args) || {};
       ret.requestId = value.requestId;
-      port.postMessage(ret);
+
+      // ポップアップを閉じる時もなぜか実行され、エラーになるので無視する
+      try {
+        port.postMessage(ret);
+      } catch (e) {
+        // nop
+      }
     });
   }
 });
@@ -161,4 +167,9 @@ const updateIcon = (tabId, enabled) => {
     tabId,
     path: enabled ? "icons/enabled.png" : "icons/disabled.png"
   });
+};
+
+const removeTab = (tabId) => {
+  delete tabStatus[tabId];
+  // chrome.browserAction.setIcon() は余計なエラーが出るの不要
 };
