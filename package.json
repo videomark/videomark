@@ -20,7 +20,7 @@
     "build-android": "bin/build-android",
     "start": "yarn workspace @videomark/videomark-log-view start",
     "test": "yarn e2e",
-    "e2e": "run-s e2e:*",
+    "e2e": "run-s build e2e:*",
     "e2e:extension": "yarn workspace @videomark/e2e-test test",
     "e2e:mini-stats": "yarn workspace @videomark/videomark-mini-stats test",
     "lint": "eslint --ext .js,.jsx .",
