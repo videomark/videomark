@@ -1,3 +1,4 @@
+const assert = require("assert");
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 
@@ -10,24 +11,12 @@ const fileExists = (path) => {
   }
 };
 
-const downloadExtension = async () => {
-  const url = "https://sodium-extension.netlify.app/";
-  const path = require("path").join(
-    require("os").tmpdir(),
-    "videomark-extension"
-  );
-  require("fs").mkdirSync(path);
-  require("child_process").execSync(
-    'curl -sL "${VIDEOMARK_EXTENSION_URL}" -o dist.zip && unzip dist.zip && rm dist.zip',
-    { cwd: path, env: { VIDEOMARK_EXTENSION_URL: url } }
-  );
-  return path;
-};
-
 module.exports = async () => {
-  // NOTE: ローカルディレクトリにビルドが存在する場合、それを使う
-  const extensionPath =
-    fileExists("../../dist/production") || (await downloadExtension());
+  const extensionPath = fileExists("../../dist/production");
+  assert(
+    extensionPath,
+    `拡張機能が存在しません。ビルド後に再実行してください。${extensionPath}`
+  );
   // NOTE: Paravi で再生できないので日本のタイムゾーンに強制
   process.env.TZ = "Asia/Tokyo";
   process.env.LANG = "C";
