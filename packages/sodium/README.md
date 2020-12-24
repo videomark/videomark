@@ -4,12 +4,6 @@
 
 計測用スクリプト (sodium.js) の設定方法、送信データ構造、サンプルデータについて説明します。
 
-## ビルド
-
-webpack. ビルド設定は `webpack.config.js` で変更するかコマンドラインで指定します。VideoMark 拡張機能用のディレクトリに直接書き込みたいときは `-o` オプションを指定します。
-
-    webpack -o path/to/videomark-extension/sodium.js
-
 ## 設定方法
 
 以下のファイルの変数に設定する値を入れてください。
