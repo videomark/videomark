@@ -21,6 +21,13 @@ yarn build
 ./bin/build
 ```
 
+## Install
+
+1. Chrome のメニューで「その他のツール」から「拡張機能」を選択
+2. 「拡張機能」タブの「デベロッパーモード」を有効化
+3. 「パッケージ化されていない拡張機能を読み込む」をクリック
+4. このリポジトリに配置される dist/production ディレクトリを選択
+
 ## Directories
 
 - [sodium](packages/sodium) [![Netlify Status](https://api.netlify.app/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.app/sites/sodium-js/deploys)
