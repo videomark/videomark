@@ -156,9 +156,8 @@ const remove_ui_all = () => {
   // --- update latest qoe view element --- //
   collect_interval_id = window.setInterval(() => {
     // --- update quality info --- //
-    session.update_quality_info();
-
     if (!session.get_video_availability()) return;
+    session.update_quality_info();
 
     // --- show status  --- //
     const video = session.get_main_video();

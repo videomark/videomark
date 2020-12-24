@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
-import { megaSizeFormat } from "../utils/Utils";
+import { megaSizeFormat, kiloSizeFormat } from "../utils/Utils";
 
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
@@ -75,7 +75,7 @@ export const VideoQuality = ({
           dd={
             classes.bitrate.na
               ? "n/a"
-              : `${(bitrate / 1e3).toLocaleString()} kbps`
+              : `${kiloSizeFormat(bitrate).toLocaleString()} kbps`
           }
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.bitrate}
