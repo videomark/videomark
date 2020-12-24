@@ -1,31 +1,5 @@
 [![Netlify Status](https://api.netlify.app/api/v1/badges/381b781f-df6b-451a-829e-d15634b9b72f/deploy-status)](https://app.netlify.app/sites/videomark-log-view/deploys)
 
-# 開発環境
-
-Node.js v10.6.0
-
-# ビルド方法
-
-公開用のビルドを行う。
-実行後に build ディレクトリが作られその中に成果物が入る。
-
-```sh
-npm run build
-```
-
-## Android Browser 同梱用ビルド
-
-```sh
-npm run build-android
-```
-
-# 更新方法
-
-## ChromeExtension
-
-1. ChromeExtension/qoelog ディレクトリの中身を全て削除
-2. ビルドしてできた build ディレクトリの中身を ChromeExtension/qoelog にコピー
-
 # コマンド
 
 ## `npm start`
