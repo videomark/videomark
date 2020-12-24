@@ -6,14 +6,38 @@
 
 Web VideoMark プロジェクトの紹介、ツールのダウンロード、使用法などの説明は [Web VideoMark の Web サイト](https://vm.webdino.org/) をご覧ください。
 
+## Develop Environment
+
+- bash: any
+- node: 12.* (or higher)
+- yarn: latest
+
+## Build Instructions
+
+```sh
+git clone git@github.com:videomark/videomark.git
+cd videomark
+yarn build
+./bin/build
+```
+
+## Install
+
+1. Chrome のメニューで「その他のツール」から「拡張機能」を選択
+2. 「拡張機能」タブの「デベロッパーモード」を有効化
+3. 「パッケージ化されていない拡張機能を読み込む」をクリック
+4. このリポジトリに配置される dist/production ディレクトリを選択
+
 ## Directories
 
 - [sodium](packages/sodium) [![Netlify Status](https://api.netlify.app/api/v1/badges/2557c75c-0b3c-450b-b4dc-0f7b9fda88dd/deploy-status)](https://app.netlify.app/sites/sodium-js/deploys)
   - 動画配信サービス利用時に計測を行うためのコンテンツスクリプト
-- [videomark-extension](packages/videomark-extension)
-  - Google Chrome 拡張機能のベースとなるファイル群
+- [videomark-extension](packages/videomark-extension) [![Netlify Status](https://api.netlify.app/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.app/sites/sodium-extension/deploys)
+  - Google Chrome / Mozilla Firefox 拡張機能のベースとなるファイル群
 - [videomark-log-view](packages/videomark-log-view) [![Netlify Status](https://api.netlify.app/api/v1/badges/381b781f-df6b-451a-829e-d15634b9b72f/deploy-status)](https://app.netlify.app/sites/videomark-log-view/deploys)
   - 計測結果の表示を行うページ
+- [videomark-mini-stats](packages/videomark-mini-stats)
+  - 計測結果を画像として保存する機能
 
 ## Repositories
 

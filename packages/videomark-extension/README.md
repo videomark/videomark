@@ -1,21 +1,5 @@
 [![Netlify Status](https://api.netlify.app/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.app/sites/sodium-extension/deploys)
 
-# ビルド手順
-
-```sh
-git clone git@github.com:videomark/videomark.git
-cd videomark
-yarn
-yarn build
-```
-
-# インストール手順
-
-1. Chrome のメニューで「その他のツール」から「拡張機能」を選択
-2. 「拡張機能」タブの「デベロッパーモード」を有効化
-3. 「パッケージ化されていない拡張機能を読み込む」をクリック
-4. このリポジトリに配置される dist/production ディレクトリを選択
-
 # 拡張機能に保存されるデータ
 
 Web VideoMark 拡張機能では以下のデータを Chrome に保存します。これらのデータは拡張機能をアンインストールするとすべて削除されます。削除されたデータの復元方法はありません。
