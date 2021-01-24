@@ -15,6 +15,14 @@ export default class Status {
   constructor() {
     this.detach();
     this.historyHolder = {};
+    this.historyHolder.bitrate = blankHistory();
+    this.historyHolder.throughput = blankHistory();
+    this.historyHolder.transfer = blankHistory();
+    this.historyHolder.resolution = blankHistory();
+    this.historyHolder.framerate = blankHistory();
+    this.historyHolder.droppedVideoFrames = blankHistory();
+    this.historyHolder.waiting = blankHistory();
+    this.historyHolder.qoe = blankHistory();
   }
 
   attach(root) {
