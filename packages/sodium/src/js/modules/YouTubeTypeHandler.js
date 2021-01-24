@@ -147,6 +147,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         }, 1000);
                     }
                 }
+                if (url.host === 'www.youtube.com' &&
+                        url.pathname.endsWith('watch') &&
+                        url.searchParams.get('v') &&
+                        url.searchParams.get('pbj')) {
+                    YouTubeTypeHandler.set_adaptive_formats_json2(event.target.responseText);
+                }
             });
             return origOpen.apply(this, args);
         }
@@ -207,6 +213,18 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         if (!response) return false;
         try {
             const json = JSON.parse(response);
+            if (json.streamingData)
+                return YouTubeTypeHandler.set_adaptive_formats(json.streamingData.adaptiveFormats);
+        } catch (e) {
+            console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
+        }
+        return false;
+    }
+
+    static set_adaptive_formats_json2(response) {
+        if (!response) return false;
+        try {
+            const json = JSON.parse(response).find(element => element.playerResponse).playerResponse;
             if (json.streamingData)
                 return YouTubeTypeHandler.set_adaptive_formats(json.streamingData.adaptiveFormats);
         } catch (e) {
