@@ -120,11 +120,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
                                 // @ts-expect-error
                                 throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
+                                rtt: Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000),
                                 downloadSize: Number.parseFloat(event.loaded.toString()),
                                 // @ts-expect-error
                                 start: this.sodiumStartDate,
                                 // @ts-expect-error
                                 startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                                loadStart: this.sodiumLoadStartDate,
+                                loadStartUnplayedBufferSize: this.sodiumLoadStartUnplayedBuffer,
                                 // @ts-expect-error
                                 end: this.sodiumEndDate,
                                 // @ts-expect-error
@@ -142,11 +145,17 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                                 }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                                 // @ts-expect-error
                                 }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
+                                }, rtt: ${Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000)
                                 }, itag: ${JSON.stringify(url.searchParams.get('itag'))
                                 }, id: ${url.searchParams.get('id')}]`);
                         }, 1000);
                     }
                 }
+            });
+            this.addEventListener(`loadstart`, (event) => {
+                this.sodiumLoadStart = performance.now();
+                this.sodiumLoadStartDate = Date.now();
+                this.sodiumLoadStartUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
             });
             return origOpen.apply(this, args);
         }
@@ -340,9 +349,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                 acc.push({
                     downloadTime: cur.downloadTime,
                     throughput: cur.throughput,
+                    rtt: cur.rtt,
                     downloadSize: cur.downloadSize,
                     start: cur.start,
                     startUnplayedBufferSize: cur.startUnplayedBufferSize,
+                    loadStart: cur.loadStart,
+                    loadStartUnplayedBufferSize: cur.loadStartUnplayedBufferSize,
                     end: cur.end,
                     endUnplayedBufferSize: cur.endUnplayedBufferSize,
                     bitrate,
@@ -364,9 +376,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     acc.push({
                         downloadTime: time,
                         throughput: th,
+                        rtt: cur.rtt,
                         downloadSize: size,
                         start: cur.start,
                         startUnplayedBufferSize: cur.startUnplayedBufferSize,
+                        loadStart: cur.loadStart,
+                        loadStartUnplayedBufferSize: cur.loadStartUnplayedBufferSize,
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate: cur.bitrate,
