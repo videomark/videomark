@@ -152,7 +152,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     }
                 }
             });
-            this.addEventListener(`loadstart`, (event) => {
+            this.addEventListener(`loadstart`, () => {
                 this.sodiumLoadStart = performance.now();
                 this.sodiumLoadStartDate = Date.now();
                 this.sodiumLoadStartUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();

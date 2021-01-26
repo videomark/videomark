@@ -60,9 +60,12 @@ export default class ParaviTypeHandler {
                                 url: this.sodiumURL,
                                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
                                 throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
+                                rtt: Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000),
                                 downloadSize: Number.parseFloat(event.loaded),
                                 start: this.sodiumStartDate,
                                 startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                                loadStart: this.sodiumLoadStartDate,
+                                loadStartUnplayedBufferSize: this.sodiumLoadStartUnplayedBuffer,
                                 end: this.sodiumEndDate,
                                 endUnplayedBufferSize: this.sodiumEndUnplayedBuffer,
                                 itag: this.sodiumItag
@@ -78,7 +81,13 @@ export default class ParaviTypeHandler {
                     }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
                     }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                     }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
+                    }, rtt: ${Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000)
                     }, itag: ${this.sodiumItag}]`);
+            });
+            this.addEventListener(`loadstart`, () => {
+                this.sodiumLoadStart = performance.now();
+                this.sodiumLoadStartDate = Date.now();
+                this.sodiumLoadStartUnplayedBuffer = ParaviTypeHandler.get_unplayed_buffer_size();
             });
             return origOpen.apply(this, args);
         }
@@ -251,9 +260,12 @@ export default class ParaviTypeHandler {
                     acc.push({
                         downloadTime: cur.downloadTime,
                         throughput: cur.throughput,
+                        rtt: cur.rtt,
                         downloadSize: cur.downloadSize,
                         start: cur.start,
                         startUnplayedBufferSize: cur.startUnplayedBufferSize,
+                        loadStart: cur.loadStart,
+                        loadStartUnplayedBufferSize: cur.loadStartUnplayedBufferSize,
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate,
