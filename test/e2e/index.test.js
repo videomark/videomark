@@ -83,3 +83,33 @@ test.each(["youtube" /*, "paravi"*/])(
   },
   90e3
 );
+
+test("YouTubeトップから動画ページに移動し、ビットレートを検知", async () => {
+  await page.goto("https://www.youtube.com/");
+  await page.type("#search", "red panda");
+  await page.click("#search-icon-legacy");
+
+  const thumbnail = "#thumbnail";
+  await page.waitFor(thumbnail);
+  await page.click(thumbnail);
+
+  const videomark = "#__videomark_ui";
+  await page.waitFor(videomark);
+  await page.click(videomark);
+  await page.waitFor(1000);
+
+  const bitrate = await page.evaluateHandle(
+    (selector) =>
+      document.querySelector(selector)
+        .shadowRoot.querySelector(".root > details > dl > dd"),
+    videomark
+  );
+  const bitrateText = () => page.evaluate((el) => el.textContent.trim(), bitrate);
+
+  await page.waitFor(
+    (el) => el.textContent.trim() !== "n/a",
+    { timeout: 60e3 },
+    bitrate
+  );
+  expect(await bitrateText()).toMatch(/^\d+(\.\d+)?\skbps/);
+}, 90e3);

@@ -147,6 +147,17 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         }, 1000);
                     }
                 }
+
+                // firefoxでは、トップページや検索結果から動画ページに移動すると
+                // https://www.youtube.com/watch?v=xxxxxxxxxxx&pbj=1 のようなjsonを要求し
+                // その中に streamingData.adaptiveFormats に入っているため
+                // #ytd-playerのイベントに頼らずにxhrをフックして取得する必要がある
+                if (url.host === 'www.youtube.com' &&
+                        url.pathname.endsWith('watch') &&
+                        url.searchParams.get('v') &&
+                        url.searchParams.get('pbj')) {
+                    YouTubeTypeHandler.set_adaptive_formats_json(event.target.responseText);
+                }
             });
             return origOpen.apply(this, args);
         }
@@ -206,7 +217,9 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     static set_adaptive_formats_json(response) {
         if (!response) return false;
         try {
-            const json = JSON.parse(response);
+            let json = JSON.parse(response);
+            if (Array.isArray(json))
+                json = json.find(element => element.playerResponse).playerResponse;
             if (json.streamingData)
                 return YouTubeTypeHandler.set_adaptive_formats(json.streamingData.adaptiveFormats);
         } catch (e) {
