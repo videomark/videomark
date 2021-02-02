@@ -212,10 +212,13 @@ https://wiki.whatwg.org/wiki/Video_Metrics#Collection_of_Proposals.2FImplementat
 | ----------------------- | ---------------------------------- |
 | downloadTime            | チャンクダウンロードにかかった時間 |
 | throughput              | ダウンロード時のスループット(bps)  |
+| rtt                     | ダウンロード時の RTT (bps)         |
 | downloadSize            | チャンクのサイズ                   |
 | start                   | ダウンロード開始時刻               |
+| loadStart               | ダウンロードの読み込み開始時刻     |
 | end                     | ダウンロード終了時刻               |
 | startUnplayedBufferSize | ダウンロード開始時未再生バッファ   |
+| loadStartUnplayedBufferSize | ダウンロードの読み込み開始時未再生バッファ |
 | endUnplayedBufferSize   | ダウンロード終了時未再生バッファ   |
 | bitrate                 | ビットレート                       |
 | representationId        | Representation ID                  |
