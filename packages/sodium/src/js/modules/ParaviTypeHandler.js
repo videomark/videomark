@@ -60,7 +60,6 @@ export default class ParaviTypeHandler {
                                 url: this.sodiumURL,
                                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
                                 throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
-                                rtt: Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000),
                                 downloadSize: Number.parseFloat(event.loaded),
                                 start: this.sodiumStartDate,
                                 startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
@@ -81,7 +80,6 @@ export default class ParaviTypeHandler {
                     }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
                     }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                     }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
-                    }, rtt: ${Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000)
                     }, itag: ${this.sodiumItag}]`);
             });
             this.addEventListener(`loadstart`, () => {
@@ -260,7 +258,6 @@ export default class ParaviTypeHandler {
                     acc.push({
                         downloadTime: cur.downloadTime,
                         throughput: cur.throughput,
-                        rtt: cur.rtt,
                         downloadSize: cur.downloadSize,
                         start: cur.start,
                         startUnplayedBufferSize: cur.startUnplayedBufferSize,

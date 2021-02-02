@@ -212,7 +212,6 @@ https://wiki.whatwg.org/wiki/Video_Metrics#Collection_of_Proposals.2FImplementat
 | ----------------------- | ---------------------------------- |
 | downloadTime            | チャンクダウンロードにかかった時間 |
 | throughput              | ダウンロード時のスループット(bps)  |
-| rtt                     | ダウンロード時の RTT (bps)         |
 | downloadSize            | チャンクのサイズ                   |
 | start                   | ダウンロード開始時刻               |
 | loadStart               | ダウンロードの読み込み開始時刻     |

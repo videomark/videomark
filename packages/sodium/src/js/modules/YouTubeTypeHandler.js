@@ -120,7 +120,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
                                 // @ts-expect-error
                                 throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
-                                rtt: Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000),
                                 downloadSize: Number.parseFloat(event.loaded.toString()),
                                 // @ts-expect-error
                                 start: this.sodiumStartDate,
@@ -145,7 +144,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                                 }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                                 // @ts-expect-error
                                 }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
-                                }, rtt: ${Math.floor(event.loaded * 8 / (this.sodiumLoadStart - this.sodiumStart) * 1000)
                                 }, itag: ${JSON.stringify(url.searchParams.get('itag'))
                                 }, id: ${url.searchParams.get('id')}]`);
                         }, 1000);
@@ -349,7 +347,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                 acc.push({
                     downloadTime: cur.downloadTime,
                     throughput: cur.throughput,
-                    rtt: cur.rtt,
                     downloadSize: cur.downloadSize,
                     start: cur.start,
                     startUnplayedBufferSize: cur.startUnplayedBufferSize,
@@ -376,7 +373,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     acc.push({
                         downloadTime: time,
                         throughput: th,
-                        rtt: cur.rtt,
                         downloadSize: size,
                         start: cur.start,
                         startUnplayedBufferSize: cur.startUnplayedBufferSize,
