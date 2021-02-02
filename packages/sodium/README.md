@@ -210,12 +210,12 @@ https://wiki.whatwg.org/wiki/Video_Metrics#Collection_of_Proposals.2FImplementat
 
 | 項目                    | 値                                 |
 | ----------------------- | ---------------------------------- |
-| downloadTime            | チャンクダウンロードにかかった時間 |
+| downloadTime            | チャンクダウンロードにかかった時間(ms)<br>後述のendとstartの時間差 |
 | throughput              | ダウンロード時のスループット(bps)  |
-| downloadSize            | チャンクのサイズ                   |
-| start                   | ダウンロード開始時刻               |
-| loadStart               | ダウンロードの読み込み開始時刻     |
-| end                     | ダウンロード終了時刻               |
+| downloadSize            | チャンクのサイズ(byte)                   |
+| start                   | ダウンロード開始時刻<br>XMLHttpRequest.send()の実行時刻 |
+| loadStart               | ダウンロードの読み込み開始時刻<br>XMLHttpRequest.loadstartが発火した実行時刻 |
+| end                     | ダウンロード終了時刻<br>XMLHttpRequest.loadが発火した実行時刻 |
 | startUnplayedBufferSize | ダウンロード開始時未再生バッファ   |
 | loadStartUnplayedBufferSize | ダウンロードの読み込み開始時未再生バッファ |
 | endUnplayedBufferSize   | ダウンロード終了時未再生バッファ   |
