@@ -47,7 +47,7 @@ export default class SessionData {
     this.video = [];
     this.latest_qoe_update_count = 0;
     this.hostToIp = {};
-    this.resource = new ResourceTiming();
+    this.resource = ResourceTiming;
   }
 
   async init() {
