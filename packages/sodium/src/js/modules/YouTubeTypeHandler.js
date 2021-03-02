@@ -88,7 +88,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         class SodiumXMLHttpRequest extends XMLHttpRequest {
           constructor(...args){
             super(args);
-            this.addEventListener("readystatechange", (event) => {
+            this.addEventListener("readystatechange", () => {
               switch(this.readyState){
                 case 1: // OPENED
                   this.downloadStartTime = performance.now();
@@ -120,7 +120,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     if (!YouTubeTypeHandler.trackingId && id) YouTubeTypeHandler.trackingId = id;
                     if (YouTubeTypeHandler.trackingId === id) {
                         const resource = ResourceTiming.find(event.target.responseURL);
-                        const duration = resource.duration;
+                        //const downloadTime = resource.duration; // ここでは DONE - OPENED を使う
                         const downloadTime = this.downloadEndTime - this.downloadStartTime;
                         const start = ResourceTiming.toDate(resource.startTime);
                         const end = ResourceTiming.toDate(resource.responseEnd);
@@ -174,10 +174,13 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         url.searchParams.get('pbj')) {
                     YouTubeTypeHandler.set_adaptive_formats_json(event.target.responseText);
                 }
-              } catch (e) {};
+              } catch (e) {
+                // nop
+              };
             });
           }
         }
+        // eslint-disable-next-line no-global-assign
         XMLHttpRequest = SodiumXMLHttpRequest;
     }
 
