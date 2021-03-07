@@ -343,6 +343,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         }
     }
 
+    // get_throughput_info()はバッファを破壊するため、VideoData.update()以外では実行してはならない
     static get_throughput_info() {
         const itagCache = {};
         const formats = YouTubeTypeHandler.get_playable_video_format_list();
@@ -370,6 +371,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     end: cur.end,
                     endUnplayedBufferSize: cur.endUnplayedBufferSize,
                     bitrate,
+                    timings: cur.timings,
                     representationId: cur.itag
                 });
                 return acc;
@@ -394,6 +396,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate: cur.bitrate,
+                        timings: cur.timings,
                         representationId: cur.representationId
                     });
                 }

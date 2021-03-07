@@ -89,7 +89,7 @@ test("YouTubeトップから動画ページに移動し、ビットレートを�
   await page.type("#search", "red panda");
   await page.click("#search-icon-legacy");
 
-  const thumbnail = "#thumbnail";
+  const thumbnail = ".ytd-video-renderer #thumbnail";
   await page.waitFor(thumbnail);
   await page.click(thumbnail);
 

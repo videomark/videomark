@@ -280,6 +280,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
         return IIJTypeHandler.play_list_form_adaptive_fmts();
     }
 
+    // get_throughput_info()はバッファを破壊するため、VideoData.update()以外では実行してはならない
     // eslint-disable-next-line camelcase, class-methods-use-this
     get_throughput_info() {
         try {
@@ -303,6 +304,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate,
+                        timings,
                         representationId: cur.itag
                     });
                     return acc;

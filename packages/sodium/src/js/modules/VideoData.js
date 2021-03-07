@@ -44,6 +44,7 @@ export default class VideoData {
       }
     };
     this.latest_qoe = [];
+    this.throughput = [];
     this.domain_name = null;
     this.listeners = [];
     this.timing = {
@@ -160,7 +161,7 @@ export default class VideoData {
     const videoBitrate = this.video_handler.get_video_bitrate();
     const receiveBuffer = this.video_handler.get_receive_buffer();
     const framerate = this.video_handler.get_framerate();
-    const throughput = this.video_handler.get_throughput_info()
+    const throughput = this.throughput;
     const speed = this.video_elm.playbackRate;
     const representation = this.video_handler.get_representation();
 
@@ -307,6 +308,8 @@ export default class VideoData {
     this.dropped = dropped;
     this.delta_creation_time = now - this.creation_time;
     this.creation_time = now;
+    // get_throughput_info()はバッファを破壊するため、このメソッド以外では実行してはならない
+    this.throughput = this.video_handler.get_throughput_info();
 
     if (this.delta_total === 0) return;
     if (this.delta_total < 0 || this.delta_dropped < 0) {
@@ -362,7 +365,7 @@ export default class VideoData {
         this.playback_quality.length
       ),
       play_list_info: this.video_handler.get_play_list_info(),
-      throughput_info: this.video_handler.get_throughput_info(),
+      throughput_info: this.throughput,
       cmHistory: this.cm_events.splice(0, this.cm_events.length)
     };
     if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
