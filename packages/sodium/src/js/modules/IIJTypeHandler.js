@@ -304,7 +304,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate,
-                        timings,
+                        timings: cur.timings,
                         representationId: cur.itag
                     });
                     return acc;
