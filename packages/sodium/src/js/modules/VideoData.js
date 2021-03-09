@@ -45,6 +45,7 @@ export default class VideoData {
     };
     this.latest_qoe = [];
     this.throughput = [];
+    this.throughput_send = [];
     this.domain_name = null;
     this.listeners = [];
     this.timing = {
@@ -155,6 +156,7 @@ export default class VideoData {
     };
   }
 
+  // SessionData.storeSession(video)でローカルに保存され、グラフの描画で使われる
   // eslint-disable-next-line camelcase
   get_quality() {
     const bitrate = this.video_handler.get_bitrate();
@@ -310,6 +312,7 @@ export default class VideoData {
     this.creation_time = now;
     // get_throughput_info()はバッファを破壊するため、このメソッド以外では実行してはならない
     this.throughput = this.video_handler.get_throughput_info();
+    this.throughput.forEach(element => this.throughput_send.push(element));
 
     if (this.delta_total === 0) return;
     if (this.delta_total < 0 || this.delta_dropped < 0) {
@@ -334,9 +337,9 @@ export default class VideoData {
   }
 
   /**
-   *
+   * SessionData.sendData(video)から呼び出される
    */
-  get() {
+  getSendData() {
     const val = {
       property: {
         uuid: this.uuid,
@@ -360,12 +363,9 @@ export default class VideoData {
           limited: this.video_handler.is_limited()
         }
       },
-      playback_quality: this.playback_quality.splice(
-        0,
-        this.playback_quality.length
-      ),
+      playback_quality: this.playback_quality.splice(0, this.playback_quality.length),
       play_list_info: this.video_handler.get_play_list_info(),
-      throughput_info: this.throughput,
+      throughput_info: this.throughput_send.splice(0, this.throughput_send.length),
       cmHistory: this.cm_events.splice(0, this.cm_events.length)
     };
     if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
