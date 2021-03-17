@@ -219,6 +219,7 @@ https://wiki.whatwg.org/wiki/Video_Metrics#Collection_of_Proposals.2FImplementat
 | endUnplayedBufferSize   | ダウンロード終了時未再生バッファ   |
 | bitrate                 | ビットレート                       |
 | representationId        | Representation ID                  |
+| timings                 | startからの各経過時間(ms)<br>[domainLookupStart, connectStart, requestStart, responseStart] |
 
 #### play_list_info
 
