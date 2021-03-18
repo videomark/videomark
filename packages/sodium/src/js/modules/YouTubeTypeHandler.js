@@ -155,7 +155,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                                 // @ts-expect-error
                                 }, throughput: ${throughput
                                 // @ts-expect-error
-                                }, timings: ${timings
+                                }, timings: ${JSON.stringify(timings)
                                 // @ts-expect-error
                                 }, itag: ${JSON.stringify(url.searchParams.get('itag'))
                                 // @ts-expect-error

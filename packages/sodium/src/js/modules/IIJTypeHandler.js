@@ -95,6 +95,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                         }, duration(Date): ${start} - ${end
                         }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                         }, throughput: ${throughput
+                        }, timings: ${JSON.stringify(timings)
                         }, itag: ${this.sodiumItag}]`);
                 } catch (e) {
                   //nop
