@@ -71,7 +71,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                     const connectStart = resource.connectStart - resource.startTime;
                     const requestStart = resource.requestStart - resource.startTime;
                     const responseStart = resource.responseStart - resource.startTime;
-                    const timings = [domainLookupStart, connectStart, requestStart, responseStart];
+                    const timings = { domainLookupStart, connectStart, requestStart, responseStart };
 
                     setTimeout(() => {  //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
                         IIJTypeHandler.add_throughput_history({
