@@ -45,6 +45,15 @@ const remove_ui_all = () => {
     return;
   }
 
+  // --- YouTube Hook --- //
+  await YouTubeTypeHandler.hook_youtube();
+
+  // --- Paravi Hook --- //
+  await ParaviTypeHandler.hook_paravi();
+
+  // --- IIJ Hook --- //
+  await IIJTypeHandler.hook_iij();
+
   // 前回までの計測uiの表示状態をタブ単位で保持しているため
   // 表示設定をあらかじめ読み込んでおく
   await Config.readDisplayOnPlayerSetting();
@@ -135,15 +144,6 @@ const remove_ui_all = () => {
   // --- UI --- //
   const platform = Config.get_video_platform();
   const ui = new UI(Config.get_ui_target(platform), Config.get_style(platform));
-
-  // --- YouTube Hook --- //
-  await YouTubeTypeHandler.hook_youtube();
-
-  // --- Paravi Hook --- //
-  await ParaviTypeHandler.hook_paravi();
-
-  // --- IIJ Hook --- //
-  await IIJTypeHandler.hook_iij();
 
   // --- update video list --- //
   search_video_interval_id = window.setInterval(() => {

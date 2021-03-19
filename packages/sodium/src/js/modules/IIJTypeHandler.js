@@ -4,6 +4,8 @@ import Config from "./Config";
 
 import GeneralTypeHandler from "./GeneralTypeHandler";
 
+import ResourceTiming from "./ResourceTiming";
+
 const IIJ_MPD_PATH = "http://edge.iijlive.ipcasting.jp/contents/live/ele/tw/index.mpd";
 
 export default class IIJTypeHandler extends GeneralTypeHandler {
@@ -39,52 +41,70 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
 
     // eslint-disable-next-line camelcase
     static hook_iij_request() {
-        const origOpen = XMLHttpRequest.prototype.open
-        const origSend = XMLHttpRequest.prototype.send
+        class SodiumXMLHttpRequest extends XMLHttpRequest {
+          constructor(...args){
+            super(args);
+            this.sodiumItag = IIJTypeHandler.get_video_representation_id();
+            this.addEventListener("readystatechange", () => {
+              switch(this.readyState){
+                case 1: // OPENED
+                  this.downloadStartTime = performance.now();
+                  this.sodiumStartUnplayedBuffer = IIJTypeHandler.get_unplayed_buffer_size();
+                break;
+                case 4: // DONE
+                  this.downloadEndTime = performance.now();
+                  this.sodiumEndUnplayedBuffer = IIJTypeHandler.get_unplayed_buffer_size();
+                break;
+              }
+            });
 
-        // eslint-disable-next-line func-names, prefer-arrow-callback
-        XMLHttpRequest.prototype.open = function (...args) {
-            ([, this.sodiumURL] = args);
-            this.addEventListener(`load`, (event) => {
-                this.sodiumEnd = performance.now();
-                this.sodiumEndDate = Date.now();
+            this.addEventListener("load", (event) => {
                 try {
-                    this.sodiumEndUnplayedBuffer = IIJTypeHandler.get_unplayed_buffer_size();
+                    const resource = ResourceTiming.find(event.target.responseURL);
+                    //const downloadTime = resource.duration; // ここでは DONE - OPENED を使う
+                    const downloadTime = this.downloadEndTime - this.downloadStartTime;
+                    const start = ResourceTiming.toDate(resource.startTime);
+                    const end = ResourceTiming.toDate(resource.responseEnd);
+                    const throughput = Math.floor(event.loaded * 8 / downloadTime * 1000);
+
+                    const domainLookupStart = resource.domainLookupStart - resource.startTime;
+                    const connectStart = resource.connectStart - resource.startTime;
+                    const requestStart = resource.requestStart - resource.startTime;
+                    const responseStart = resource.responseStart - resource.startTime;
+                    const timings = { domainLookupStart, connectStart, requestStart, responseStart };
+
                     setTimeout(() => {  //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
                         IIJTypeHandler.add_throughput_history({
-                            url: this.sodiumURL,
-                            downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
-                            throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
+                            url: event.target.responseURL,
+                            downloadTime,
+                            throughput,
                             downloadSize: Number.parseFloat(event.loaded),
-                            start: this.sodiumStartDate,
+                            start,
                             startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
-                            end: this.sodiumEndDate,
+                            end,
                             endUnplayedBufferSize: this.sodiumEndUnplayedBuffer,
+                            timings,
                             itag: this.sodiumItag
                         });
                     }, 1000);
 
-                } catch (e) { return };
-
-                // eslint-disable-next-line no-console
-                console.log(`VIDEOMARK: load [URL: ${this.sodiumURL
-                    }, contents: ${event.loaded
-                    }, duration(ms): ${this.sodiumEnd - this.sodiumStart
-                    }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
-                    }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
-                    }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
-                    }, itag: ${this.sodiumItag}]`);
+                    // eslint-disable-next-line no-console
+                    console.log(`VIDEOMARK: load [URL: ${event.target.responseURL
+                        }, contents: ${event.loaded
+                        }, duration(ms): ${downloadTime
+                        }, duration(Date): ${start} - ${end
+                        }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
+                        }, throughput: ${throughput
+                        }, timings: ${JSON.stringify(timings)
+                        }, itag: ${this.sodiumItag}]`);
+                } catch (e) {
+                  //nop
+                };
             });
-            return origOpen.apply(this, args);
+          }
         }
-        // eslint-disable-next-line func-names, prefer-arrow-callback
-        XMLHttpRequest.prototype.send = function (...args) {
-            this.sodiumStart = performance.now();
-            this.sodiumStartDate = Date.now();
-            this.sodiumStartUnplayedBuffer = IIJTypeHandler.get_unplayed_buffer_size();
-            this.sodiumItag = IIJTypeHandler.get_video_representation_id();
-            return origSend.apply(this, args);
-        }
+        // eslint-disable-next-line no-global-assign
+        XMLHttpRequest = SodiumXMLHttpRequest;
     }
 
     // eslint-disable-next-line camelcase
@@ -261,6 +281,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
         return IIJTypeHandler.play_list_form_adaptive_fmts();
     }
 
+    // get_throughput_info()はバッファを破壊するため、VideoData.update()以外では実行してはならない
     // eslint-disable-next-line camelcase, class-methods-use-this
     get_throughput_info() {
         try {
@@ -284,6 +305,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate,
+                        timings: cur.timings,
                         representationId: cur.itag
                     });
                     return acc;

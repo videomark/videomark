@@ -1,7 +1,9 @@
 import Config from "./Config";
 
-export default class ResourceTiming {
+class ResourceTiming {
   constructor() {
+    this.reversedHistories = [];
+
     this.transferSize = 0;
     this.bufferSize = Config.DEFAULT_RESOURCE_BUFFER_SIZE;
 
@@ -25,6 +27,23 @@ export default class ResourceTiming {
       (a, { transferSize }) => a + transferSize,
       0
     );
+
+    while (resources.length) {
+      const resource = resources.pop();
+      if (!resource.name.startsWith(Config.get_sodium_server_url()) && !resource.name.startsWith(Config.get_fluent_url()))
+        this.reversedHistories.unshift(resource);
+    }
     return [previousValue, { transferSize: this.transferSize }];
   }
+
+  find(url) {
+    return performance.getEntriesByType("resource").find(element => element.name === url) || this.reversedHistories.find(element => element.name === url);
+  }
+
+  toDate(hires) {
+    return new Date(performance.timeOrigin + hires);
+  }
 }
+
+const instance = new ResourceTiming();
+export default instance;

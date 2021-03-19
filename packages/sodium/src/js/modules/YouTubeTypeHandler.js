@@ -2,6 +2,7 @@
 import Config from "./Config";
 import GeneralTypeHandler from "./GeneralTypeHandler";
 import { AdObserver } from "./AdObserver";
+import ResourceTiming from "./ResourceTiming";
 
 class YouTubeTypeHandler extends GeneralTypeHandler {
     static is_youtube_type() {
@@ -84,19 +85,25 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     }
 
     static async hook_youtube_xhr() {
-        const origOpen = XMLHttpRequest.prototype.open
-        const origSend = XMLHttpRequest.prototype.send
-        XMLHttpRequest.prototype.open = function (...args) {
-            // @ts-expect-error
-            ([, this.sodiumURL] = args);
-            this.addEventListener(`load`, (event) => {
-                // @ts-expect-error
-                this.sodiumEnd = performance.now();
-                // @ts-expect-error
-                this.sodiumEndDate = Date.now();
-                let url;
-                // @ts-expect-error
-                try { url = new URL(this.sodiumURL); } catch (e) { return };
+        class SodiumXMLHttpRequest extends XMLHttpRequest {
+          constructor(...args){
+            super(args);
+            this.addEventListener("readystatechange", () => {
+              switch(this.readyState){
+                case 1: // OPENED
+                  this.downloadStartTime = performance.now();
+                  this.sodiumStartUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
+                break;
+                case 4: // DONE
+                  this.downloadEndTime = performance.now();
+                  this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
+                break;
+              }
+            });
+
+            this.addEventListener("load", (event) => {
+              try {
+                const url = new URL(event.target.responseURL);
                 if (
                     // --- 動画ページ --- //
                     (url.host === 'www.youtube.com' &&
@@ -112,37 +119,46 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     const id = url.searchParams.get('id');
                     if (!YouTubeTypeHandler.trackingId && id) YouTubeTypeHandler.trackingId = id;
                     if (YouTubeTypeHandler.trackingId === id) {
+                        const resource = ResourceTiming.find(event.target.responseURL);
+                        //const downloadTime = resource.duration; // ここでは DONE - OPENED を使う
+                        const downloadTime = this.downloadEndTime - this.downloadStartTime;
+                        const start = ResourceTiming.toDate(resource.startTime);
+                        const end = ResourceTiming.toDate(resource.responseEnd);
+                        const throughput = Math.floor(event.loaded * 8 / downloadTime * 1000);
+
+                        const domainLookupStart = resource.domainLookupStart - resource.startTime;
+                        const connectStart = resource.connectStart - resource.startTime;
+                        const requestStart = resource.requestStart - resource.startTime;
+                        const responseStart = resource.responseStart - resource.startTime;
+                        const timings = { domainLookupStart, connectStart, requestStart, responseStart };
+
                         setTimeout(() => {  //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
-                            // @ts-expect-error
-                            this.sodiumEndUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
                             YouTubeTypeHandler.add_throughput_history({
-                                // @ts-expect-error
-                                downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
-                                // @ts-expect-error
-                                throughput: Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000),
+                                downloadTime,
+                                throughput,
                                 downloadSize: Number.parseFloat(event.loaded.toString()),
-                                // @ts-expect-error
-                                start: this.sodiumStartDate,
-                                // @ts-expect-error
+                                start,
                                 startUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
+                                end,
+                                endUnplayedBufferSize: this.sodiumEndUnplayedBuffer,
+                                timings,
+                                itag: url.searchParams.get('itag')});
+                            console.log(`VIDEOMARK: load [URL: ${event.target.responseURL
                                 // @ts-expect-error
-                                end: this.sodiumEndDate,
-                                // @ts-expect-error
-                                endUnplayedBufferSize: this.sodiumStartUnplayedBuffer,
-                                itag: url.searchParams.get('itag')
-                            });
-                            // @ts-expect-error
-                            console.log(`VIDEOMARK: load [URL: ${this.sodiumURL
                                 }, contents: ${event.loaded
                                 // @ts-expect-error
-                                }, duration(ms): ${this.sodiumEnd - this.sodiumStart
+                                }, duration(ms): ${downloadTime
                                 // @ts-expect-error
-                                }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(this.sodiumEndDate)
+                                }, duration(Date): ${start} - ${end
                                 // @ts-expect-error
                                 }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                                 // @ts-expect-error
-                                }, throughput: ${Math.floor(event.loaded * 8 / (this.sodiumEnd - this.sodiumStart) * 1000)
+                                }, throughput: ${throughput
+                                // @ts-expect-error
+                                }, timings: ${JSON.stringify(timings)
+                                // @ts-expect-error
                                 }, itag: ${JSON.stringify(url.searchParams.get('itag'))
+                                // @ts-expect-error
                                 }, id: ${url.searchParams.get('id')}]`);
                         }, 1000);
                     }
@@ -158,19 +174,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         url.searchParams.get('pbj')) {
                     YouTubeTypeHandler.set_adaptive_formats_json(event.target.responseText);
                 }
+              } catch (e) {
+                // nop
+              };
             });
-            return origOpen.apply(this, args);
+          }
         }
-        XMLHttpRequest.prototype.send = function (...args) {
-            // @ts-expect-error
-            this.sodiumStart = performance.now();
-            // @ts-expect-error
-            this.sodiumStartDate = Date.now();
-            // @ts-expect-error
-            this.sodiumStartUnplayedBuffer = YouTubeTypeHandler.get_unplayed_buffer_size();
-            // try { this.sodiumItag = document.querySelector('#movie_player').getVideoStats().fmt } catch (e) { };
-            return origSend.apply(this, args);
-        }
+        // eslint-disable-next-line no-global-assign
+        XMLHttpRequest = SodiumXMLHttpRequest;
     }
 
     /*
@@ -332,6 +343,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         }
     }
 
+    // get_throughput_info()はバッファを破壊するため、VideoData.update()以外では実行してはならない
     static get_throughput_info() {
         const itagCache = {};
         const formats = YouTubeTypeHandler.get_playable_video_format_list();
@@ -359,6 +371,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     end: cur.end,
                     endUnplayedBufferSize: cur.endUnplayedBufferSize,
                     bitrate,
+                    timings: cur.timings,
                     representationId: cur.itag
                 });
                 return acc;
@@ -383,6 +396,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         end: cur.end,
                         endUnplayedBufferSize: cur.endUnplayedBufferSize,
                         bitrate: cur.bitrate,
+                        timings: cur.timings,
                         representationId: cur.representationId
                     });
                 }
