@@ -122,8 +122,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         const resource = ResourceTiming.find(event.target.responseURL);
                         //const downloadTime = resource.duration; // ここでは DONE - OPENED を使う
                         const downloadTime = this.downloadEndTime - this.downloadStartTime;
-                        const start = ResourceTiming.toDate(resource.startTime);
-                        const end = ResourceTiming.toDate(resource.responseEnd);
+                        const start = resource.startTime + performance.timeOrigin;
+                        const end = resource.responseEnd + performance.timeOrigin;
                         const throughput = Math.floor(event.loaded * 8 / downloadTime * 1000);
 
                         const domainLookupStart = resource.domainLookupStart - resource.startTime;
@@ -149,7 +149,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                                 // @ts-expect-error
                                 }, duration(ms): ${downloadTime
                                 // @ts-expect-error
-                                }, duration(Date): ${start} - ${end
+                                }, duration(Date): ${new Date(start)} - ${new Date(end)
                                 // @ts-expect-error
                                 }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                                 // @ts-expect-error
