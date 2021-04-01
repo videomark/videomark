@@ -63,8 +63,8 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                     const resource = ResourceTiming.find(event.target.responseURL);
                     //const downloadTime = resource.duration; // ここでは DONE - OPENED を使う
                     const downloadTime = this.downloadEndTime - this.downloadStartTime;
-                    const start = ResourceTiming.toDate(resource.startTime);
-                    const end = ResourceTiming.toDate(resource.responseEnd);
+                    const start = resource.startTime + performance.timeOrigin;
+                    const end = resource.responseEnd + performance.timeOrigin;
                     const throughput = Math.floor(event.loaded * 8 / downloadTime * 1000);
 
                     const domainLookupStart = resource.domainLookupStart - resource.startTime;
@@ -92,7 +92,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
                     console.log(`VIDEOMARK: load [URL: ${event.target.responseURL
                         }, contents: ${event.loaded
                         }, duration(ms): ${downloadTime
-                        }, duration(Date): ${start} - ${end
+                        }, duration(Date): ${new Date(start)} - ${new Date(end)
                         }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${this.sodiumEndUnplayedBuffer
                         }, throughput: ${throughput
                         }, timings: ${JSON.stringify(timings)
