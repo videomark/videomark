@@ -18,6 +18,8 @@ jobs:
           restore-keys: yarn-
       - run: yarn
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
+      - name: Install Japanese fonts.
+        run: sudo apt-get install fonts-noto-cjk
       - id: test
         run: xvfb-run yarn e2e
       - if: success() || failure()
