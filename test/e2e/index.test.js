@@ -44,7 +44,7 @@ jest.retryTimes(3);
 test("YouTube動画に埋め込み", async () => {
   const videomark = "#__videomark_ui";
   await page.goto(sample("youtube"));
-  await page.waitFor(videomark);
+  await page.waitForSelector(videomark);
 }, 90e3);
 
 test("YouTube動画に埋め込み (モバイル)", async () => {
@@ -52,7 +52,7 @@ test("YouTube動画に埋め込み (モバイル)", async () => {
   const pixel2 = require("puppeteer").devices["Pixel 2"];
   await page.emulate(pixel2);
   await page.goto(sample("youtube").replace("//www.", "//m."));
-  await page.waitFor(videomark);
+  await page.waitForSelector(videomark);
   await page.click(videomark);
 }, 90e3);
 
@@ -62,7 +62,7 @@ test.each(["youtube" /*, "paravi"*/])(
   async (platform) => {
     const videomark = "#__videomark_ui";
     await page.goto(sample(platform));
-    await page.waitFor(videomark);
+    await page.waitForSelector(videomark);
     const summary = await page.evaluateHandle(
       (selector) =>
         document
@@ -74,7 +74,7 @@ test.each(["youtube" /*, "paravi"*/])(
       page.evaluate((el) => el.textContent.trim(), summary);
     expect(await summaryText()).toBe("計測中...");
     await page.click(videomark);
-    await page.waitFor(
+    await page.waitForFunction(
       (el) => el.textContent.trim() !== "計測中...",
       { timeout: 60e3 },
       summary
@@ -86,30 +86,21 @@ test.each(["youtube" /*, "paravi"*/])(
 
 test("YouTubeトップから動画ページに移動し、ビットレートを検知", async () => {
   await page.goto("https://www.youtube.com/");
-  await page.type("#search", "red panda");
-  await page.click("#search-icon-legacy");
-
-  const thumbnail = ".ytd-video-renderer #thumbnail";
-  await page.waitFor(thumbnail);
-  await page.click(thumbnail);
-
+  await page.click(`a[href^="/watch?v="]`);
   const videomark = "#__videomark_ui";
-  await page.waitFor(videomark);
+  await page.waitForSelector(videomark);
   await page.click(videomark);
-  await page.waitFor(1000);
-
   const bitrate = await page.evaluateHandle(
     (selector) =>
-      document.querySelector(selector)
-        .shadowRoot.querySelector(".root > details > dl > dd"),
+      document.querySelector(selector).shadowRoot.querySelector("details dd"),
     videomark
   );
-  const bitrateText = () => page.evaluate((el) => el.textContent.trim(), bitrate);
-
-  await page.waitFor(
+  await page.waitForFunction(
     (el) => el.textContent.trim() !== "n/a",
-    { timeout: 60e3 },
+    {},
     bitrate
   );
-  expect(await bitrateText()).toMatch(/^\d+(\.\d+)?\skbps/);
+  expect(await page.evaluate((el) => el.textContent.trim(), bitrate)).toMatch(
+    /\d[\d,]+\s+kbps/
+  );
 }, 90e3);
