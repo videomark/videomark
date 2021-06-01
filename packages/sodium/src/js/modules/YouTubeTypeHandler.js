@@ -12,10 +12,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
             if (url.pathname === '/embed/') return false;
 
             /** @type {any} */
-            const player = document.querySelector('#movie_player');
+            const player = this.get_player();
             if (!player) return false;
 
-            if (!(player.getVideoStats instanceof Function) ||
+            if (!(player.getStatsForNerds instanceof Function) ||
                 !(player.getCurrentTime instanceof Function) ||
                 !(player.getDuration instanceof Function) ||
                 !(player.getVideoLoadedFraction instanceof Function) ||
@@ -31,11 +31,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
             if (!(player.getPlayerResponse instanceof Function)) return false;
 
-            const stats = player.getVideoStats();
+            const stats = player.getStatsForNerds();
             const response = player.getPlayerResponse();
 
-            if (!stats.fmt ||
-                !stats.afmt ||
+            if (!stats.codecs ||
                 !response.videoDetails ||
                 !response.videoDetails.title ||
                 !response.videoDetails.thumbnail ||
@@ -276,7 +275,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         let unplayedBufferSize;
         try {
             /** @type {any} */
-            const player = document.querySelector('#movie_player');
+            const player = this.get_player();
             const received = Number.parseFloat(player.getVideoLoadedFraction());
             const duration = Number.parseFloat(player.getDuration());
             if (Number.isNaN(received) || Number.isNaN(duration)) throw new Error(`NaN`);
@@ -332,9 +331,9 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         try {
             const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
             // @ts-expect-error
-            const { fmt } = document.querySelector('#movie_player').getVideoStats();
-            if (!fmt || !formats) throw new Error('not found');
-            const { type } = formats.find(e => e.itag === fmt);
+            const { video } = this.get_representation();
+            if (!video || !formats) throw new Error('not found');
+            const { type } = formats.find(e => e.itag === video);
             return formats
                 .filter(e => e.type === type)
                 .sort((a, b) => Number.parseInt(b.bitrate, 10) - Number.parseInt(a.bitrate, 10));
@@ -408,12 +407,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     }
 
     static get_codec_info() {
-        /** @type {any} */
-        const player = document.querySelector('#movie_player');
-        const stats = player.getVideoStats();
+        const { video: _video, audio: _audio } = this.get_representation();
         const list = YouTubeTypeHandler.get_play_list_info();
-        const video = list.find(e => e.representationId === stats.fmt);
-        const audio = list.find(e => e.representationId === stats.afmt);
+        const video = list.find(e => e.representationId === _video);
+        const audio = list.find(e => e.representationId === _audio);
         return {
             video: {
                 container: video ? video.container : null,
@@ -426,14 +423,23 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         };
     }
 
+    /**
+     * Get the Video player on the current page.
+     * @returns {HTMLElement} Player.
+     */
+    static get_player() {
+        return document.querySelector('#movie_player')();
+    }
+
     static get_representation() {
-        /** @type {any} */
-        const player = document.querySelector('#movie_player');
-        const stats = player.getVideoStats();
-        return {
-            video: stats.fmt,
-            audio: stats.afmt
-        };
+        /**
+         * @example "av01.0.08M.08 (399) / opus (251)"
+         * @type {String}
+         */
+        const codecs = this.get_player().getStatsForNerds().codecs;
+        const [video, audio] = codecs.match(/\d+(?=\))/g);
+
+        return { video, audio };
     }
 
     /** @param {HTMLVideoElement} elm */
@@ -647,10 +653,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     }
 
     get_streaming_info() {
-        const stats = this.player.getVideoStats();
+        const { video: _video, audio: _audio } = this.constructor.get_representation();
         const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
-        const video = formats.find(e => e.itag === stats.fmt);
-        const audio = formats.find(e => e.itag === stats.afmt);
+        const video = formats.find(e => e.itag === _video);
+        const audio = formats.find(e => e.itag === _audio);
         return { video, audio };
     }
 
@@ -686,10 +692,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
     set_max_bitrate(bitrate, resolution) {
         try {
-            const { fmt } = this.player.getVideoStats();
+            const { video: _video } = this.constructor.get_representation();
             const formats = YouTubeTypeHandler
                 .convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
-            const { container, codec } = formats.find(e => e.itag === fmt);
+            const { container, codec } = formats.find(e => e.itag === _video);
 
             const codecCond = new RegExp(`^${codec.split(".")[0]}`);
             const qualityMap = {};
@@ -706,7 +712,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
               console.log(`VIDEOMARK: set_max_bitrate(): itag=${v.itag} quality=${v.quality} bitrate=${(v.bitrate+v.audio.bitrate)/1024} fps=${v.fps} container=${v.container} codec=${v.codec}/${v.audio.codec}`);
             });
 
-            const current = video.find(e => e.itag === fmt);
+            const current = video.find(e => e.itag === _video);
             const resolutionSelect = video.find(e => e.height <= resolution);
             const bitrateSelect = video.find(e => e.bitrate + e.audio.bitrate < bitrate);
             console.log(`VIDEOMARK: set_max_bitrate(): bitrate=${bitrate/1024} resolution=${resolution} container=${container} codec=${codec}`);
