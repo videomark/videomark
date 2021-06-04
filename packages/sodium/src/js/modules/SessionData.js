@@ -551,8 +551,8 @@ export default class SessionData {
   }
 
   altSessionMessage() {
-    const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
-    const allowVideoHosts = ["i.fod.fujitv.co.jp"];
+    const allowHosts = ["tver.jp", "fod.fujitv.co.jp", "hamilton.britegrid.io"];
+    const allowVideoHosts = ["i.fod.fujitv.co.jp", "www.youtube.com"];
 
     if (window.top === window) {
       if (!allowHosts.includes(this.location.hostname)) return;

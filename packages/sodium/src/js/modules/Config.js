@@ -329,6 +329,11 @@ Config.video_platforms = [
     // IIJ TWILIGHT CONCERT
     id: "iijtwilightconcert",
     host: /^pr\.iij\.ad\.jp$/
+  },
+  {
+    // VideoMark Party
+    id: "videomarkparty",
+    host: /^hamilton\.britegrid\.io$/
   }
 ];
 
@@ -444,6 +449,10 @@ Config.ui.nhkondemand = {
 .player__controls[style="display: none;"] ~ #${Config.ui.id} {
   opacity: 0;
 }`
+};
+
+Config.ui.videomarkparty = {
+  ...Config.ui.youtube
 };
 
 // dTV

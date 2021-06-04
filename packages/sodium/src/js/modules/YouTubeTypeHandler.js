@@ -9,14 +9,17 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         try {
             // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
             const url = new URL(location.href);
-            if (url.pathname === '/embed/') return false;
+            if (url.pathname === '/embed/' && url.searchParams.get('origin') != 'https://hamilton.britegrid.io') return false;
 
             /** @type {any} */
             const player = document.querySelector('#movie_player');
             if (!player) return false;
 
-            if (!(player.getVideoStats instanceof Function) ||
-                !(player.getCurrentTime instanceof Function) ||
+            if (!(player.getVideoStats instanceof Function) && !(player.getStatsForNerds instanceof Function)) {
+                return false;
+            }
+
+            if (!(player.getCurrentTime instanceof Function) ||
                 !(player.getDuration instanceof Function) ||
                 !(player.getVideoLoadedFraction instanceof Function) ||
                 !(player.getAdState instanceof Function) ||
@@ -31,7 +34,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
             if (!(player.getPlayerResponse instanceof Function)) return false;
 
-            const stats = player.getVideoStats();
+            const stats = YouTubeTypeHandler.get_video_stats(player);
             const response = player.getPlayerResponse();
 
             if (!stats.fmt ||
@@ -172,6 +175,15 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                         url.pathname.endsWith('watch') &&
                         url.searchParams.get('v') &&
                         url.searchParams.get('pbj')) {
+                    YouTubeTypeHandler.set_adaptive_formats_json(event.target.responseText);
+                }
+
+                // embeddedモードでは https://www.youtube.com/youtubei/v1/player?key=xxxxxxxxxxxxxx のようなjsonを要求し
+                // その中に streamingData.adaptiveFormats に入っているため
+                // #ytd-playerのイベントに頼らずにxhrをフックして取得する必要がある
+                if (url.host === 'www.youtube.com' &&
+                        url.pathname.endsWith('youtubei/v1/player') &&
+                        url.searchParams.get('key')) {
                     YouTubeTypeHandler.set_adaptive_formats_json(event.target.responseText);
                 }
               } catch (e) {
@@ -334,7 +346,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         try {
             const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
             // @ts-expect-error
-            const { fmt } = document.querySelector('#movie_player').getVideoStats();
+            const { fmt } = YouTubeTypeHandler.get_video_stats(document.querySelector('#movie_player'));
             if (!fmt || !formats) throw new Error('not found');
             const { type } = formats.find(e => e.itag === fmt);
             return formats
@@ -412,7 +424,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     static get_codec_info() {
         /** @type {any} */
         const player = document.querySelector('#movie_player');
-        const stats = player.getVideoStats();
+        const stats = YouTubeTypeHandler.get_video_stats(player);
         const list = YouTubeTypeHandler.get_play_list_info();
         const video = list.find(e => e.representationId === stats.fmt);
         const audio = list.find(e => e.representationId === stats.afmt);
@@ -431,11 +443,27 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     static get_representation() {
         /** @type {any} */
         const player = document.querySelector('#movie_player');
-        const stats = player.getVideoStats();
+        const stats = YouTubeTypeHandler.get_video_stats(player);
         return {
             video: stats.fmt,
             audio: stats.afmt
         };
+    }
+
+    static get_video_stats(player) {
+        if (!player) {
+          player = document.querySelector('#movie_player');
+        }
+
+        if (player.getVideoStats instanceof Function) {
+          return player.getVideoStats();
+        }
+        if (player.getStatsForNerds instanceof Function) {
+          const { codecs } = player.getStatsForNerds();
+          const [ fmt, afmt ] = codecs.match(/\d+(?=\))/g);
+          return { fmt, afmt, optimal_format: "", lvh: "" };
+        }
+        return { fmt: "", afmt: "", optimal_format: "", lvh: "" };
     }
 
     /** @param {HTMLVideoElement} elm */
@@ -537,7 +565,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     get_framerate() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
-                const { optimal_format } = this.player.getVideoStats();
+                const { optimal_format } = YouTubeTypeHandler.get_video_stats(this.player);
                 return optimal_format.endsWith('60') ? 60 : 30;
             }
 
@@ -552,7 +580,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     get_segment_domain() {
         try {
             if (!YouTubeTypeHandler.can_get_streaming_info()) {
-                const { lvh } = this.player.getVideoStats();
+                const { lvh } = YouTubeTypeHandler.get_video_stats(this.player);
                 return lvh
             }
 
@@ -649,7 +677,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     }
 
     get_streaming_info() {
-        const stats = this.player.getVideoStats();
+        const stats = YouTubeTypeHandler.get_video_stats(this.player);
         const formats = YouTubeTypeHandler.convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
         const video = formats.find(e => e.itag === stats.fmt);
         const audio = formats.find(e => e.itag === stats.afmt);
@@ -688,7 +716,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
     set_max_bitrate(bitrate, resolution) {
         try {
-            const { fmt } = this.player.getVideoStats();
+            const { fmt } = YouTubeTypeHandler.get_video_stats(this.player);
             const formats = YouTubeTypeHandler
                 .convert_adaptive_formats(YouTubeTypeHandler.sodiumAdaptiveFmts);
             const { container, codec } = formats.find(e => e.itag === fmt);

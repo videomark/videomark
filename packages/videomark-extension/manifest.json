@@ -44,7 +44,8 @@
         "*://*.video.dmkt-sp.jp/*",
         "*://abema.tv/*",
         "*://*.amazon.co.jp/*",
-        "*://pr.iij.ad.jp/*"
+        "*://pr.iij.ad.jp/*",
+        "*://hamilton.britegrid.io/*"
       ],
       "js": ["content_script.js"],
       "all_frames": true
