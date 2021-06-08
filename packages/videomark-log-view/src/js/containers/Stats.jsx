@@ -19,6 +19,33 @@ import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
 import videoPlatforms from "../utils/videoPlatforms";
 import { gigaSizeFormat } from "../utils/Utils";
 import LoadingProgress from "../components/LoadingProgress";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(() => ({
+  chartLegend: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    margin: '16px 0',
+    padding: '0',
+    listStyle: 'none',
+    whiteSpace: 'nowrap',
+    '& li': {
+      display: 'flex',
+      alignItems: 'center',
+      margin: '4px 8px',
+      padding: '0',
+      '& span': {
+        display: 'block',
+        margin: '0 8px 0 0',
+        borderRadius: '8px',
+        width: '14px',
+        height: '14px',
+        content: '""',
+      },
+    },
+  },
+}));
 
 const timeFormatFromMinutes = (min) =>
   `${
@@ -257,16 +284,6 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
               tickSize: 0,
               format: (value) => value.toLocaleString(),
             }}
-            legends={[
-              {
-                dataFrom: "keys",
-                anchor: "top-left",
-                translateX: 16,
-                direction: "column",
-                itemWidth: 80,
-                itemHeight: 24,
-              },
-            ]}
             tooltip={tooltip}
           />
         </Box>
@@ -284,6 +301,24 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
     </Box>
   );
 });
+
+const QoEChartLegend = () => {
+  const classes = useStyles();
+
+  return (
+    <Box>
+      <ul className={classes.chartLegend} aria-label="グラフ凡例">
+        {videoPlatforms.map(({ id, name, brandcolor }) => (
+          <li key={id}>
+            <span style={{ backgroundColor: brandcolor }}></span>
+            {name}
+          </li>
+        ))}
+      </ul>
+    </Box>
+  );
+};
+
 const DeferLoadSnackbar = () => {
   const [open, setOpen] = useState(true);
   const { streamDefer } = useContext(StatsDataContext);
@@ -350,6 +385,9 @@ export default () => {
               </Grid>
               <Grid item xs={12}>
                 <QoETimelineChart />
+              </Grid>
+              <Grid item xs={12}>
+                <QoEChartLegend />
               </Grid>
             </Grid>
           </Grid>
