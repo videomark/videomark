@@ -76,4 +76,10 @@ export default [
     brandcolor: "#CCB42B",
     host: /^pr\.iij\.ad\.jp$/,
   },
+  {
+    id: "videomarkparty",
+    name: "VideoMark Party",
+    brandcolor: "#cc0000",
+    host: /^hamilton\.britegrid\.io$/,
+  },
 ];
