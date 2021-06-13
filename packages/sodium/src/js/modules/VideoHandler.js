@@ -155,6 +155,11 @@ export default class VideoHandler {
     }
 
     // eslint-disable-next-line camelcase
+    get_alt_location() {
+        return this.handler.get_alt_location();
+    }
+
+    // eslint-disable-next-line camelcase
     get_video_title() {
         let title;
 

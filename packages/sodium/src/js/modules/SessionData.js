@@ -578,13 +578,27 @@ export default class SessionData {
         const { data, origin } = event;
         if (data.type !== "ALT_SESSION_MESSAGE_RES") return;
         if (!allowHosts.includes(new URL(origin).hostname)) return;
+
         const { location, thumbnail } = data;
-        this.alt_location = location;
+        const main_video = this.get_main_video();
+        const alt_location = main_video ? main_video.get_alt_location() : null;
+        this.alt_location = alt_location || location;
         this.alt_thumbnail = thumbnail;
         window.removeEventListener("message", eventResolver);
       };
       window.addEventListener("message", eventResolver);
-      window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
+
+      if (this.location.hostname == "www.youtube.com") {
+        const interval_id = window.setInterval(() => {
+          const video = this.get_main_video();
+          if (!(video instanceof VideoData)) return;
+
+          window.clearInterval(interval_id);
+          window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
+        }, 500);
+      } else {
+        window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
+      }
     }
   }
 }

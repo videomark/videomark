@@ -109,6 +109,11 @@ export default class VideoData {
   }
 
   // eslint-disable-next-line camelcase
+  get_alt_location() {
+    return this.video_handler.get_alt_location();
+  }
+
+  // eslint-disable-next-line camelcase
   get_title() {
     return this.title;
   }

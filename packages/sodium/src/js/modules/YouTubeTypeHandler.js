@@ -600,6 +600,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         }
     }
 
+    get_alt_location() {
+        try {
+            return document.querySelector('#movie_player').getVideoUrl();
+        } catch (e) {
+            return null;
+        }
+    }
+
     get_video_title() {
         let title;
 
