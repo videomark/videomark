@@ -1,3 +1,5 @@
+@import './Theme.include.css';
+
 .modal:not(.open) {
   z-index: -1;
   opacity: 0;
@@ -33,7 +35,7 @@
   width: 100%;
   height: 100%;
   display: block;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--modal-background-color);
   left: 0;
   top: 0;
   position: absolute;
@@ -69,7 +71,7 @@
   content: "";
   width: 100%;
   height: 100%;
-  background-color: #eee;
+  background-color: var(--secondary-background-color);
   border-radius: 50%;
   display: block;
   position: absolute;
@@ -91,7 +93,7 @@
 
 .modal .modal_close svg {
   z-index: 1302;
-  opacity: 0.5;
+  filter: var(--modal-close-filter);
 }
 
 .modal .modal_inner {

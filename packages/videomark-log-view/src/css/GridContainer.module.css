@@ -1,8 +1,10 @@
+@import './Theme.include.css';
+
 .item {
   cursor: pointer;
 }
 .item:hover {
-  filter: drop-shadow(0 2px 12px #ccc);
+  filter: drop-shadow(0 2px 12px var(--secondary-background-color));
   transition: 0.2s;
 }
 .item:focus {
