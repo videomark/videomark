@@ -21,7 +21,10 @@ const get_frame_id = () => {
 
 const update_ui = state => {
   const status = state && state.sessionId && state.videoId ? qualityStatus(state) : {};
-  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_ui", frame_id: get_frame_id(), state: state, qualityStatus: status }, "*");
+  const ui_target = get_ui_target();
+  const message = { type: "FROM_WEB_CONTENT", method: "update_ui", frame_id: get_frame_id(), state: state, qualityStatus: status };
+  ui_target.postMessage(message, "*");
+  if (window.top !== ui_target) window.top.postMessage(message, "*");
 };
 
 const remove_ui = () => {
