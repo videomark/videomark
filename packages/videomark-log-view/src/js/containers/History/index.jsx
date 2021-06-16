@@ -178,7 +178,7 @@ export default () => {
         viewingModelsStream(viewings).pipeTo(dispatcher(addIndexes))
       );
 
-      // NOTE: 測定結果の中から最新の月をデフォルト値にする
+      // NOTE: 計測結果の中から最新の月をデフォルト値にする
       getLastValue(viewings)().then(({ start_time: latest }) =>
         setDate(startOfMonth(latest || new Date()))
       );

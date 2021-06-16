@@ -64,7 +64,7 @@ export default () => {
       <Box paddingTop={2} component={Container}>
         <img src={logo} alt="Web VideoMark" />
         <Box marginTop={2}>
-          <LabeledIconButton href="#/" icon={EqualizerIcon} label="測定結果" />
+          <LabeledIconButton href="#/" icon={EqualizerIcon} label="計測結果" />
           <LabeledIconButton href="#/history" icon={HistoryIcon} label="履歴" />
           <LabeledIconButton href={helpURL} icon={HelpIcon} label="使い方" />
           <LabeledIconButton
