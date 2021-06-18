@@ -9,6 +9,43 @@ import { useStorage } from "./Storage";
 import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, fetchAndStorePeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
 import { version } from "../../../package.json";
 
+/**
+ * 送信
+ * @typedef {Object} Payload 送信データフォーマット
+ * @property {string} version
+ * @property {string} date
+ * @property {number} startTime
+ * @property {number} endTime
+ * @property {string} session
+ * @property {"social" | "personal"} sessionType
+ * @property {any}    location
+ * @property {any}    locationIp
+ * @property {string} userAgent
+ * @property {number} sequence
+ * @property {any}    calc
+ * @property {any}    service
+ * @property {any[]}  video
+ * @property {any[]}  resource_timing
+ * @param {Payload} payload
+ */
+async function send(payload) {
+  const body = msgpack.encode(payload);
+  if (body.length > Config.get_max_send_size())
+    console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
+
+  const type = payload.sessionType === "personal" ? payload.sessionType : "social";
+  const ret = await fetch(`${Config.get_fluent_url()}.${type}`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/msgpack"
+    },
+    body
+  });
+  if (!ret.ok) {
+    throw new Error("fluent response was not ok.");
+  }
+}
+
 async function set_max_bitrate(new_video) {
   const bitrate_control = Config.get_bitrate_control();
   const quota_bitrate = Config.get_quota_bitrate();
@@ -58,10 +95,13 @@ export default class SessionData {
       settings === undefined ||
       !(Date.now() < session.expires)
     ) {
+      const id = uuidv4();
+      const type = "social";
       const expiresIn =
         settings === undefined ? NaN : Number(settings.expires_in);
       session = {
-        id: uuidv4(),
+        id,
+        type,
         expires:
           Date.now() +
           (Number.isFinite(expiresIn)
@@ -75,10 +115,10 @@ export default class SessionData {
       }, "*");
     }
 
-    this.session_id = session.id;
+    this.session = session;
     this.location = new URL(window.location.href);
     // eslint-disable-next-line no-console
-    console.log(`VIDEOMARK: New Session start Session ID[${this.session_id}]`);
+    console.log(`VIDEOMARK: New Session start Session ID[${this.session.id}]`);
 
     this.locationIp();
     this.altSessionMessage();
@@ -86,7 +126,7 @@ export default class SessionData {
 
   // eslint-disable-next-line camelcase
   get_session_id() {
-    return this.session_id;
+    return this.session.id;
   }
 
   /**
@@ -337,21 +377,10 @@ export default class SessionData {
     });
   }
 
+  /** 送信 */
   async sendData(video) {
-
-    const body = msgpack.encode(this.toJson(video));
-    if (body.length > Config.get_max_send_size())
-      console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
-    const ret = await fetch(Config.get_fluent_url(), {
-      method: "POST",
-      headers: {
-        "Content-type": "application/msgpack"
-      },
-      body
-    });
-    if (!ret.ok) {
-      throw new Error("fluent response was not ok.");
-    }
+    const payload = this.toJson(video);
+    await send(payload);
   }
 
   async requestQoE(video) {
@@ -362,7 +391,7 @@ export default class SessionData {
       },
       body: JSON.stringify({
         ids: {
-          session_id: this.session_id,
+          session_id: this.session.id,
           video_id: video.get_video_id()
         }
       })
@@ -387,7 +416,7 @@ export default class SessionData {
         },
         body: JSON.stringify({
           ids: {
-            session_id: this.session_id,
+            session_id: this.session.id,
             video_id: video.get_video_id()
           }
         })
@@ -404,7 +433,7 @@ export default class SessionData {
 
   async storeSession(video) {
     const storage = useStorage({
-      sessionId: this.session_id,
+      sessionId: this.session.id,
       videoId: video.get_video_id()
     });
     const [prevResource, resource] = this.resource.collect();
@@ -441,6 +470,7 @@ export default class SessionData {
 
   /**
    * 送信データフォーマットに変換
+   * @return {Payload} 送信データ
    */
   toJson(video) {
     this.startTime = this.endTime;
@@ -454,7 +484,8 @@ export default class SessionData {
       date: now.toISOString(),
       startTime: this.startTime,
       endTime: this.endTime,
-      session: this.session_id,
+      session: this.session.id,
+      sessionType: this.session.type,
       location: this.alt_location || this.location.href,
       locationIp: this.hostToIp[this.location.host],
       userAgent: this.userAgent,

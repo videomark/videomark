@@ -553,10 +553,12 @@ if (Config.isVMBrowser()) {
   });
 } else if (document.currentScript != null) {
   // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
-  const session = new URLSearchParams(document.currentScript.dataset.session);
+  const session = Object.fromEntries(
+    new URLSearchParams(document.currentScript.dataset.session)
+  );
   Config.session = {
-    id: session.get("id"),
-    expires: Number(session.get("expires"))
+    ...session,
+    expires: Number(session.expires),
   };
 
   Config.settings = JSON.parse(document.currentScript.dataset.settings);

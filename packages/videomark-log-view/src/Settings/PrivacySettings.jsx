@@ -15,6 +15,7 @@ import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import locale from "date-fns/locale/ja";
 import List from "./List";
 import Dialog from "./Dialog";
+import PersonalSessionSettingItem from "./PersonalSessionSettingItem";
 import {
   clearStore as clearStatsCache,
   getStoredIndex as getStatsCacheIndex,
@@ -48,10 +49,8 @@ const sessionExpiresInMarks = [
  */
 const sessionExpiresInToValue = (expiresIn) =>
   (
-    sessionExpiresInMarks.find((mark) => mark.expiresIn === expiresIn) ||
-    sessionExpiresInMarks.find(
-      (mark) => mark.expiresIn === defaultSessionExpiresIn
-    )
+    sessionExpiresInMarks.find((mark) => mark.expiresIn === expiresIn) ??
+    sessionExpiresInMarks[sessionExpiresInMarks.length - 1]
   ).value;
 
 const useStyle = makeStyles((theme) => ({
@@ -202,12 +201,16 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
       <Paper>
         {dialog}
         <List>
-          <ListItem>
+          <PersonalSessionSettingItem
+            settings={settings}
+            saveSettings={saveSettings}
+            saveSession={saveSession}
+          >
             <ListItemText
               primary="セッションID"
               secondary={sessionId === undefined ? "未設定" : sessionId}
             />
-          </ListItem>
+          </PersonalSessionSettingItem>
           <Divider component="li" />
           <SessionExpiresIn
             expiresIn={expiresIn}

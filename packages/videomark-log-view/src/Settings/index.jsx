@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { useLocation } from "react-router";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import addYears from "date-fns/addYears";
 import Header from "./Header";
 import DesignSettings from "./DesignSettings";
 import PrivacySettings from "./PrivacySettings";
@@ -11,6 +10,7 @@ import Reset from "./Reset";
 import ThemeProvider from "../js/components/ThemeProvider";
 import { clearStore as clearStatsCache } from "../js/containers/StatsDataProvider";
 import { useSession, useSettings } from "../js/utils/ChromeExtensionWrapper";
+import overwriteSessionId from "../js/utils/overwriteSessionId";
 
 const useOverwriteSessionId = ({
   settings,
@@ -31,21 +31,10 @@ const useOverwriteSessionId = ({
   )
     return;
 
-  // NOTE: サーバー側で "_" が使えない
-  if (/_/.test(sessionId)) {
-    console.error("Session ID is invalid");
-    return;
-  }
-
-  // TODO: https://github.com/webdino/sodium/issues/233
-  // NOTE: オーバーフロー無く十分に長い適当な期間
-  const expiresIn = addYears(0, 10).getTime();
-
-  saveSettings({
-    ...settings,
-    expires_in: expiresIn,
+  overwriteSessionId(settings, sessionId, {
+    saveSettings,
+    saveSession,
   });
-  saveSession({ id: sessionId, expires: Date.now() + expiresIn });
 };
 
 export default () => {
