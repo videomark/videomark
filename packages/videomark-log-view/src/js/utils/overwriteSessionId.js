@@ -1,7 +1,7 @@
 import addYears from "date-fns/addYears";
 
 // NOTE: サーバー側で "_" が使えない
-const invalidCharacters = /[^A-Za-z.-]/u;
+const invalidCharacters = /[^0-9A-Za-z.-]/u;
 
 /**
  * セッションIDの上書き処理
