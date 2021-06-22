@@ -107,6 +107,11 @@ const PlayingTimeCalendar = () => {
             theme={{
               background: palette.background.paper,
               textColor: palette.text.secondary,
+              tooltip: {
+                container: {
+                  backgroundColor: palette.background.default,
+                }
+              },
             }}
             colors={[
               "#ebf6f3",
@@ -211,6 +216,11 @@ const QoETimelineChart = () => {
                   stroke: palette.divider,
                 },
               },
+              tooltip: {
+                container: {
+                  backgroundColor: palette.background.default,
+                }
+              }
             }}
             colors={({ serieId }) => `${brandcolors.get(serieId)}40`}
             axisBottom={{
@@ -302,6 +312,11 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
                 line: {
                   stroke: palette.divider,
                 },
+              },
+              tooltip: {
+                container: {
+                  backgroundColor: palette.background.default,
+                }
               },
             }}
             enableLabel={false}
