@@ -33,7 +33,7 @@ const MonthSelect = ({ date, setDate }) => {
       </Grid>
       <Grid item>
         <h3 className={classes.date}>
-          {format(date, "yyyy年MMM", {
+          {format(date, "yyyy 年 M 月", {
             locale: ja,
           })}
         </h3>

@@ -17,11 +17,11 @@ const PersonalSessionSettingItem = ({
       // NOTE: トリプルクリックすると個人的セッションの設定
       if (event?.detail !== 3) return;
       // TODO: prompt() は標準ではないので他の何らかのインタラクティブな入力方法に変更したい
-      const sessionId = prompt("セッションIDを入力してください").trim();
+      const sessionId = prompt("セッション ID を入力してください").trim();
       const type = getSessionType(sessionId);
       if (type !== "personal") {
         // TODO: alert() は標準ではないので他の何らかのインタラクティブな入力方法に変更したい
-        alert("他のセッションIDを入力してください");
+        alert("他のセッション ID を入力してください");
         return;
       }
       overwriteSessionId(settings, sessionId, {

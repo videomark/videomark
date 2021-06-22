@@ -2,9 +2,9 @@
   "manifest_version": 2,
   "name": "Web VideoMark",
   "version": "1.4.1",
-  "description": "Web VideoMark 機能拡張 - 動画ストリーミングの体感品質をQoE (Quality of Experience)値として測定します。",
+  "description": "動画ストリーミングの体感品質を Quality of Experience (QoE) 値として測定します。",
   "author": "WebDINO Japan",
-  "homepage_url": "http://vm.webdino.org/",
+  "homepage_url": "https://vm.webdino.org/",
   "options_page": "qoelog/index.html#/settings",
   "applications": {
     "gecko": {

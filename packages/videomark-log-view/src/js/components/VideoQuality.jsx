@@ -2,8 +2,6 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import formatDistanceStrict from "date-fns/formatDistanceStrict";
-import locale from "date-fns/locale/ja";
 import { megaSizeFormat, kiloSizeFormat } from "../utils/Utils";
 
 export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
@@ -100,7 +98,7 @@ export const VideoQuality = ({
           dt="フレームドロップ率"
           dd={`${((droppedVideoFrames / totalVideoFrames) * 100).toFixed(
             2
-          )} % (${droppedVideoFrames} / ${totalVideoFrames})`}
+          )}% (${droppedVideoFrames}/${totalVideoFrames})`}
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.dropped}
         />
@@ -109,10 +107,10 @@ export const VideoQuality = ({
           dd={
             classes.waiting.na
               ? "n/a"
-              : `${(waiting / 1e3).toFixed(2)}秒 ( ${(
+              : `${(waiting / 1e3).toFixed(2)} 秒 (${(
                   (waiting / playing) *
                   100
-                ).toFixed(2)} % )`
+                ).toFixed(2)}%)`
           }
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.waiting}
@@ -122,10 +120,7 @@ export const VideoQuality = ({
           dd={
             classes.playing.na
               ? "n/a"
-              : `${formatDistanceStrict(0, playing, {
-                  unit: "second",
-                  locale,
-                })}`
+              : `${(playing / 1000).toFixed(0)} 秒`
           }
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...classes.playing}

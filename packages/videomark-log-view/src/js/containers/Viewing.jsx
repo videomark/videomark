@@ -36,7 +36,7 @@ VideoThumbnail.defaultProps = {
   thumbnail: null,
 };
 
-export const toTimeString = (date) => format(date, "yyyy/MM/dd HH:mm");
+export const toTimeString = (date) => format(date, "M 月 d 日 HH:mm");
 
 export const useViewing = (model) => {
   const [state, dispatch] = useState();

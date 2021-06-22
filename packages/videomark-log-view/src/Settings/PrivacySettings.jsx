@@ -11,8 +11,6 @@ import ArrowRight from "@material-ui/icons/ArrowRight";
 import Divider from "@material-ui/core/Divider";
 import { v4 as uuidv4 } from "uuid";
 import addDays from "date-fns/addDays";
-import formatDistanceStrict from "date-fns/formatDistanceStrict";
-import locale from "date-fns/locale/ja";
 import List from "./List";
 import Dialog from "./Dialog";
 import PersonalSessionSettingItem from "./PersonalSessionSettingItem";
@@ -33,13 +31,7 @@ const sessionExpiresInMarks = [
   addDays(0, 365).getTime(),
 ].map((expiresIn, value) => ({
   value,
-  label:
-    expiresIn > 0
-      ? formatDistanceStrict(0, expiresIn, {
-          unit: "day",
-          locale,
-        })
-      : "0",
+  label: expiresIn ? `${expiresIn / 86400000} 日` : "なし",
   expiresIn,
 }));
 
@@ -71,11 +63,7 @@ const SessionExpiresIn = ({ expiresIn, onChange }) => {
     <ListItem className={classes.sessionExpiresIn}>
       <ListItemText
         primary="セッション保持期間"
-        secondary={
-          expiresIn > 0
-            ? formatDistanceStrict(0, expiresIn, { unit: "day", locale })
-            : "新しいページを読み込むまで"
-        }
+        secondary={expiresIn ? `${expiresIn / 86400000} 日` : "新しいページを読み込むまで"}
       />
       <Slider
         color="secondary"
@@ -109,8 +97,8 @@ const useDialog = () => {
           return setDialog(
             <Dialog
               open
-              title="セッションIDをリセットします"
-              description="現在使われているセッションIDを削除し、新しいセッションIDを生成します。"
+              title="セッション ID をリセットします"
+              description="現在使われているセッション ID を削除し、新しいセッション ID を生成します。"
               disagree="キャンセル"
               agree="リセット"
               onClose={onClose}
@@ -207,7 +195,7 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
             saveSession={saveSession}
           >
             <ListItemText
-              primary="セッションID"
+              primary="セッション ID"
               secondary={sessionId === undefined ? "未設定" : sessionId}
             />
           </PersonalSessionSettingItem>
@@ -222,7 +210,7 @@ const PrivacySettings = ({ settings, saveSettings, session, saveSession }) => {
             onClick={openResetSessionDialog}
             disabled={sessionId === undefined}
           >
-            <ListItemText primary="セッションIDのリセット" />
+            <ListItemText primary="セッション ID のリセット" />
             <ArrowRight />
           </ListItem>
           <Divider component="li" />

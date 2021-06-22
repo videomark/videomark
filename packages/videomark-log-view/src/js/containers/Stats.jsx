@@ -50,8 +50,8 @@ const useStyles = makeStyles(() => ({
 
 const timeFormatFromMinutes = (min) =>
   `${
-    min > 60 ? `${Math.floor(min / 60).toLocaleString()}時間` : ""
-  }${Math.floor(min % 60)}分`;
+    min > 60 ? `${Math.floor(min / 60).toLocaleString()} 時間` : ""
+  }${Math.floor(min % 60)} 分`;
 const timeFormat = (msec) => timeFormatFromMinutes(Math.floor(msec / 1e3 / 60));
 
 const PlayingTimeStats = () => {
@@ -66,7 +66,7 @@ const PlayingTimeStats = () => {
       <LoadingProgress />
     </>
   ) : (
-    `${length.toLocaleString()}件 ${timeFormat(sum)} ${gigaSizeFormat(size)} GB`
+    `${length.toLocaleString()} 件 ${timeFormat(sum)} ${gigaSizeFormat(size)} GB`
   );
   return (
     <Typography component="small" variant="caption">
@@ -97,11 +97,9 @@ const PlayingTimeCalendar = () => {
             data={data}
             from={today}
             to={today}
-            monthLegend={(y, m) => format(new Date(y, m), "MMM", { locale })}
+            monthLegend={(y, m) => format(new Date(y, m), "M 月", { locale })}
             tooltip={({ date, value: min }) => {
-              return `${new Intl.DateTimeFormat(navigator.language).format(
-                date
-              )}: ${timeFormatFromMinutes(min)}`;
+              return `${format(date, "M 月 d 日")}: ${timeFormatFromMinutes(min)}`;
             }}
             margin={{ bottom: 16, left: 32, right: 32 }}
             theme={{
@@ -159,7 +157,7 @@ const QoEStats = () => {
   );
   if (initialState) return caption("...");
   return caption(
-    Number.isFinite(average) ? `平均${average.toFixed(2)}` : "n/a"
+    Number.isFinite(average) ? `平均 ${average.toFixed(2)}` : "n/a"
   );
 };
 const QoETimelineChart = () => {
@@ -225,7 +223,7 @@ const QoETimelineChart = () => {
             colors={({ serieId }) => `${brandcolors.get(serieId)}40`}
             axisBottom={{
               tickSize: 0,
-              format: (date) => format(date, "M/d"),
+              format: (date) => format(date, "M 月 d 日"),
             }}
             axisLeft={{
               tickSize: 0,
@@ -240,9 +238,7 @@ const QoETimelineChart = () => {
               },
             }) => (
               <Box bgcolor="background.default">
-                {`計測日時: ${x.toLocaleString(navigator.language, {
-                  timeZoneName: "short",
-                })}`}
+                {`計測日時: ${format(x, "M 月 d 日")}`}
                 <br />
                 {`QoE ${y.toFixed(2)} (${serviceNames.get(serieId)})`}
               </Box>
@@ -279,8 +275,8 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
   }));
   const tooltip = ({ id, indexValue: qoe, value }) =>
     `QoE ${qoe}${
-      qoe < 5 ? `以上${(Number(qoe) + 0.1).toFixed(1)}未満` : ""
-    }: ${value.toLocaleString()}件 (${id})`;
+      qoe < 5 ? ` 以上 ${(Number(qoe) + 0.1).toFixed(1)} 未満` : ""
+    }: ${value.toLocaleString()} 件 (${id})`;
 
   return (
     <Box m={0} component="figure">

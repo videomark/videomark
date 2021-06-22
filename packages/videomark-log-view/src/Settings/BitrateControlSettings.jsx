@@ -363,14 +363,14 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
           {[
             "実験的な機能です。",
             moile
-              ? "現在、YouTubeとニコニコ動画のPC版サイトに対応しています。"
+              ? "現在、YouTube とニコニコ動画の PC 版サイトに対応しています。"
               : null,
             "設定変更後の動画再生開始時の制限値に応じてビットレート選択が行われます。",
           ].join("")}
           <Link href="https://vm.webdino.org/spec" color="secondary">
             ビットレート制限に対応しているサイト
           </Link>
-          をご確認下さい。
+          をご確認ください。
         </Typography>
       </Box>
       <Paper>

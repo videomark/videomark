@@ -31,7 +31,7 @@ const QoEValueGraphList = ({
   }
 
   const unknown = "不明";
-  const hourDisplayName = hour === undefined ? unknown : `${hour}時`;
+  const hourDisplayName = hour === undefined ? unknown : `${hour} 時`;
   const hourlyAverageValue = hour === undefined ? 0 : hourlyAverage;
 
   return (

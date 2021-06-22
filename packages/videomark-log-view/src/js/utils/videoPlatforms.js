@@ -43,7 +43,7 @@ export default [
   },
   {
     id: "nhkondemand",
-    name: "NHKオンデマンド",
+    name: "NHK オンデマンド",
     url: "https://www.nhk-ondemand.jp/",
     brandcolor: "#f18b02",
     host: /(^|\.)nhk-ondemand\.jp$/,

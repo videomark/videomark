@@ -16,7 +16,7 @@ function overwriteSessionId(settings, sessionId, handlers) {
 
   if (invalidCharacters.test(sessionId)) {
     // TODO: alert() は標準ではないので他の何らかのインタラクティブな入力方法に変更したい
-    alert("他のセッションIDを入力してください");
+    alert("他のセッション ID を入力してください");
     console.error("Session ID is invalid");
     return;
   }
