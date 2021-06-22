@@ -1,6 +1,7 @@
 import { forEach } from "p-iteration";
 import { useState, useEffect, useCallback } from "react";
 import { isVMBrowser, isExtension, isWeb } from "../Utils";
+import getSessionType from "../getSessionType";
 import EmbeddedData from "./EmbeddedData";
 
 export const VERSION = new Date("2019-07-18T00:00:00Z").getTime();
@@ -56,7 +57,17 @@ const useStorage = (key) => {
 
   return [state, save];
 };
-export const useSession = () => useStorage("session");
+export const useSession = () => {
+  const [state, save] = useStorage("session");
+  const saveSession = useCallback(
+    (attributes) => {
+      const type = getSessionType(attributes?.id ?? "");
+      return save({ ...attributes, type });
+    },
+    [save]
+  );
+  return [state, saveSession];
+};
 export const useSettings = () => useStorage("settings");
 
 export const isCurrentVersion = async () => {
