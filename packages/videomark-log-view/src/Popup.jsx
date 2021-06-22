@@ -40,8 +40,24 @@ const LabeledIconButton = ({ href, icon, label }) => {
     <Button
       className={classes.button}
       startIcon={React.createElement(icon)}
-      onClick={() => {
-        window.open(href);
+      onClick={async () => {
+        const url = href instanceof URL ? href : new URL(href, location.href);
+        // 既にタブが開かれていないか確認、ただし URL のハッシュ部分は無視する
+        const [existingTab] = await new Promise((resolve) => {
+          chrome.tabs.query({ url: `${url.origin}${url.pathname}` }, (tabs) => resolve(tabs));
+        });
+
+        if (existingTab) {
+          // 既にタブが開かれていればそのタブを選択し、同一 URL (ハッシュ) でなければページを切り替え
+          chrome.tabs.update(existingTab.id, {
+            active: true,
+            url: existingTab.url !== url.href ? url.href : undefined,
+          });
+        } else {
+          chrome.tabs.create({ url: url.href });
+        }
+
+        // Firefox ではポップアップを明示的に閉じる必要がある
         window.close();
       }}
     >
