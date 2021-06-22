@@ -1,3 +1,5 @@
+@import './Theme.include.css';
+
 .thumbnail {
   width: 100%;
   object-fit: cover;
@@ -19,9 +21,9 @@
 }
 
 .movieInfo {
-  background-color: rgba(192, 192, 192, 0.5);
+  background-color: var(--secondary-background-color);
   font-size: 0.625rem;
-  color: #444444;
+  color: var(--secondary-foreground-color);
   padding: 0.2em 0.8em;
   display: flex;
   justify-content: space-between;
@@ -50,8 +52,9 @@
 
 /* modal state */
 .modalMain {
-  background-color: white;
-  border: 1px solid #ccc;
+  color: var(--primary-foreground-color);
+  background-color: var(--primary-background-color);
+  border: 1px solid var(--primary-border-color);
   border-radius: 4px;
 }
 

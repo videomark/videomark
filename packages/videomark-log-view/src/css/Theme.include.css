@@ -1,0 +1,29 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-foreground-color: #fff;
+    --primary-background-color: #303030;
+    --primary-border-color: rgba(255, 255, 255, 0.12);
+    --secondary-foreground-color: rgba(255, 255, 255, 0.7);
+    --secondary-background-color: rgba(255, 255, 255, 0.12);
+    --link-color: #d1101b;
+    --button-border-color: var(--primary-border-color);
+    --button-background-color: rgba(255, 255, 255, 0.16);
+    --modal-background-color: rgba(0, 0, 0, 0.7);
+    --modal-close-filter: invert(0.75);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary-foreground-color: rgba(0, 0, 0, 0.87);
+    --primary-background-color: #fafafa;
+    --primary-border-color: rgba(0, 0, 0, 0.12);
+    --secondary-foreground-color: rgba(0, 0, 0, 0.54);
+    --secondary-background-color: rgba(0, 0, 0, 0.12);
+    --link-color: #d1101b;
+    --button-border-color: var(--primary-border-color);
+    --button-background-color: rgba(0, 0, 0, 0.08);
+    --modal-background-color: rgba(255, 255, 255, 0.9);
+    --modal-close-filter: invert(0.25);
+  }
+}

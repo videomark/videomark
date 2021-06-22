@@ -19,7 +19,7 @@ import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
 import videoPlatforms from "../utils/videoPlatforms";
 import { gigaSizeFormat } from "../utils/Utils";
 import LoadingProgress from "../components/LoadingProgress";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
   chartLegend: {
@@ -38,6 +38,7 @@ const useStyles = makeStyles(() => ({
       '& span': {
         display: 'block',
         margin: '0 8px 0 0',
+        border: '1px solid #FFF6',
         borderRadius: '8px',
         width: '14px',
         height: '14px',
@@ -74,6 +75,7 @@ const PlayingTimeStats = () => {
   );
 };
 const PlayingTimeCalendar = () => {
+  const { palette } = useTheme();
   const { playingTime } = useContext(StatsDataContext);
   const data = (playingTime || []).map(({ day, value }) => ({
     day,
@@ -102,6 +104,15 @@ const PlayingTimeCalendar = () => {
               )}: ${timeFormatFromMinutes(min)}`;
             }}
             margin={{ bottom: 16, left: 32, right: 32 }}
+            theme={{
+              background: palette.background.paper,
+              textColor: palette.text.secondary,
+              tooltip: {
+                container: {
+                  backgroundColor: palette.background.default,
+                }
+              },
+            }}
             colors={[
               "#ebf6f3",
               "#d7eee7",
@@ -114,8 +125,8 @@ const PlayingTimeCalendar = () => {
               "#538D7A",
               "#427162",
             ]}
-            emptyColor="#eeeeee"
-            dayBorderColor="#ffffff"
+            emptyColor={palette.action.disabledBackground}
+            dayBorderColor={palette.background.paper}
             legends={[
               {
                 anchor: "bottom-right",
@@ -152,6 +163,7 @@ const QoEStats = () => {
   );
 };
 const QoETimelineChart = () => {
+  const { palette } = useTheme();
   const { qoeTimeline } = useContext(StatsDataContext);
   const serviceNames = new Map(
     videoPlatforms.map(({ id, name }) => [id, name])
@@ -196,6 +208,20 @@ const QoETimelineChart = () => {
               max: 5,
             }}
             margin={{ top: 16, bottom: 32, left: 40, right: 40 }}
+            theme={{
+              background: palette.background.paper,
+              textColor: palette.text.secondary,
+              grid: {
+                line: {
+                  stroke: palette.divider,
+                },
+              },
+              tooltip: {
+                container: {
+                  backgroundColor: palette.background.default,
+                }
+              }
+            }}
             colors={({ serieId }) => `${brandcolors.get(serieId)}40`}
             axisBottom={{
               tickSize: 0,
@@ -228,6 +254,7 @@ const QoETimelineChart = () => {
   );
 };
 const QoEFrequencyBarChart = withWidth()(({ width }) => {
+  const { palette } = useTheme();
   const { qoeFrequency } = useContext(StatsDataContext);
   const serviceNames = new Map(
     videoPlatforms.map(({ id, name }) => [id, name])
@@ -278,6 +305,20 @@ const QoEFrequencyBarChart = withWidth()(({ width }) => {
             }}
             keys={videoPlatforms.map(({ name }) => name)}
             colors={({ id, data: { [`${id}.brandcolor`]: color } }) => color}
+            theme={{
+              background: palette.background.paper,
+              textColor: palette.text.secondary,
+              grid: {
+                line: {
+                  stroke: palette.divider,
+                },
+              },
+              tooltip: {
+                container: {
+                  backgroundColor: palette.background.default,
+                }
+              },
+            }}
             enableLabel={false}
             axisBottom={isWidthUp("md", width) ? { tickSize: 0 } : null}
             axisLeft={{

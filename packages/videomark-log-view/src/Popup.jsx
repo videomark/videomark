@@ -11,7 +11,8 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import ThemeProvider from "./js/components/ThemeProvider";
 import helpURL from "./js/utils/helpURL";
 import QualityUiSetting from "./QualityUiSetting";
-import logo from "./images/logo.png";
+import logoLight from "./images/logo.png";
+import logoDark from "./images/logo-invert.png";
 
 // ポップアップウィンドウのサイズを調整
 const CSS = () => <style>{`body{min-width:286px;}`}</style>;
@@ -62,7 +63,10 @@ export default () => {
     <ThemeProvider>
       <CSS />
       <Box paddingTop={2} component={Container}>
-        <img src={logo} alt="Web VideoMark" />
+        <picture>
+          <source srcSet={logoDark} media="(prefers-color-scheme: dark)" />
+          <img src={logoLight} alt="Web VideoMark" />
+        </picture>
         <Box marginTop={2}>
           <LabeledIconButton href="#/" icon={EqualizerIcon} label="計測結果" />
           <LabeledIconButton href="#/history" icon={HistoryIcon} label="履歴" />
