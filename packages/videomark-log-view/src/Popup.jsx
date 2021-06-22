@@ -39,8 +39,6 @@ const LabeledIconButton = ({ href, icon, label }) => {
   return (
     <Button
       className={classes.button}
-      href={href}
-      target="_blank"
       startIcon={React.createElement(icon)}
       onClick={() => {
         window.open(href);
