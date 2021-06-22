@@ -177,9 +177,8 @@ const message_listener = async event => {
 
   switch (event.data.method) {
     case "set_session": {
-      const { id, expires } = event.data;
-      if (id == null || expires == null) return;
-      await storage.set({ session: { id, expires } });
+      const { session } = event.data;
+      await storage.set({ session });
       break;
     }
     case "set_video": {

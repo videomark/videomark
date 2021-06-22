@@ -108,11 +108,14 @@ export default class SessionData {
             ? expiresIn
             : Config.get_default_session_expires_in())
       };
-      window.postMessage({
-        type: "FROM_SODIUM_JS",
-        method: "set_session",
-        ...session
-      }, "*");
+      window.postMessage(
+        {
+          type: "FROM_SODIUM_JS",
+          method: "set_session",
+          session,
+        },
+        "*"
+      );
     }
 
     this.session = session;
