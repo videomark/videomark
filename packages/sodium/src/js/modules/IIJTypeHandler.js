@@ -109,6 +109,8 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
 
     // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
+        console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`)
+        if (throughput.downloadSize <= 0) return;
         IIJTypeHandler.throughputHistories.push(throughput);
         IIJTypeHandler.throughputHistories = IIJTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }

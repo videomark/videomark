@@ -268,6 +268,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     }
 
     static add_throughput_history(throughput) {
+        console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`)
+        if (throughput.downloadSize <= 0) return;
         YouTubeTypeHandler.throughputHistories.push(throughput);
         YouTubeTypeHandler.throughputHistories = YouTubeTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
