@@ -387,6 +387,10 @@ export default class SessionData {
   }
 
   async requestQoE(video) {
+    console.debug(`VIDEOMARK: requestQoE [${this.session.id}][${video.get_video_id()}]`);
+    if (!this.session.id || !video.get_video_id()) {
+      throw new Error("SodiumServer(qoe) bad request.");
+    }
     const ret = await fetch(`${Config.get_sodium_server_url()}/latest_qoe`, {
       method: "POST",
       headers: {
