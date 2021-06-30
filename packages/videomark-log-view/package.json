@@ -39,7 +39,7 @@
     "jest-resolve": "^26.4.0",
     "material-table": "^1.69.1",
     "material-ui-flat-pagination": "^4.1.1",
-    "mini-css-extract-plugin": "^1.0.0",
+    "mini-css-extract-plugin": "^2.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "p-iteration": "^1.1.8",
     "postcss-loader": "^4.0.0",
