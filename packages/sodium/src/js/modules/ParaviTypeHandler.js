@@ -155,6 +155,8 @@ export default class ParaviTypeHandler {
 
     // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
+        console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`)
+        if (throughput.downloadSize <= 0) return;
         ParaviTypeHandler.throughputHistories.push(throughput);
         ParaviTypeHandler.throughputHistories = ParaviTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
