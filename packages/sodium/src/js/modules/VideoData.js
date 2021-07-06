@@ -87,6 +87,9 @@ export default class VideoData {
     this.enable_quality_control = false;
     this.max_resolution = 2160;
     this.max_bitrate = 20 * 1024 * 1024; // 20Mbps
+
+    this.data_last_send = -1;
+    this.qoe_last_send  = -1;
   }
 
   async read_settings() {
@@ -255,6 +258,35 @@ export default class VideoData {
     //  if (this.playback_quality.length === 0 &&   // qualityが空でイベントもない
     //      this.events.length === 0)
     //      return false;
+
+    // 有効期限が過ぎたデータは送信対象外とする
+    const data_validity_period = Config.get_data_validity_period();
+    const qoe_validity_period  = Config.get_qoe_validity_period();
+    const now = Date.now();
+    console.debug(`is_available: now=${now} play_start_time=${this.play_start_time} last_send=(${this.data_last_send}, ${this.qoe_last_send}) validity_period=(${data_validity_period}, ${qoe_validity_period})`);
+    if (this.data_last_send === -1) {
+      if (now - this.play_start_time > data_validity_period) {
+        console.debug('is_available: failed data(1)');
+        return false;
+      }
+    } else {
+      if (now - this.data_last_send > data_validity_period) {
+        console.debug('is_available: failed data(2)');
+        return false;
+      }
+    }
+    if (this.qoe_last_send === -1) {
+      if (now - this.play_start_time > qoe_validity_period) {
+        console.debug('is_available: failed qoe(1)');
+        return false;
+      }
+    } else {
+      if (now - this.qoe_last_send > qoe_validity_period) {
+        console.debug('is_available: failed qoe(2)');
+        return false;
+      }
+    }
+
     return true;
   }
 

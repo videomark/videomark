@@ -15,6 +15,8 @@ module.exports = merge(common, {
       PEAK_TIME_LIMIT_URL: JSON.stringify(
         "https://vm.webdino.org/peak-time-limit.json"
       ),
+      DATA_VALIDITY_PERIOD: 180000,
+      QOE_VALIDITY_PERIOD: 180000,
     }),
   ],
 });

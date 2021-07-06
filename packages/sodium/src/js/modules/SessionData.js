@@ -338,6 +338,7 @@ export default class SessionData {
           try {
             // eslint-disable-next-line no-await-in-loop
             await this.sendData(mainVideo);
+            mainVideo.data_last_send = Date.now();
           } catch (e) {
             console.error(`VIDEOMARK: ${e}`);
           }
@@ -369,6 +370,7 @@ export default class SessionData {
           try {
             // eslint-disable-next-line no-await-in-loop
             qoe = await this.requestQoE(mainVideo);
+            mainVideo.qoe_last_send = Date.now();
           } catch (e) {
             console.error(`VIDEOMARK: ${e}`);
           }

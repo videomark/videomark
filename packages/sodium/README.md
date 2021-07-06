@@ -101,6 +101,16 @@ ChromeExtension/sodium.js
     // デフォルトResourceTiminingAPIのバッファサイズ
     Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 
+
+packages/sodium/webpack.dev.js
+packages/sodium/webpack.prod.js
+
+    // データの有効期間 (ミリ秒単位)
+    // 有効期間を過ぎたデータは送信対象外とする
+    DATA_VALIDITY_PERIOD: 180000,
+    QOE_VALIDITY_PERIOD: 180000,
+
+
 ステータス表示は、次のコードで div タグを作成し DOM に追加し値を表示しています。
 
         status_elm = document.createElement("div");

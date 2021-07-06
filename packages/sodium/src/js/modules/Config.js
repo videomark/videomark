@@ -133,6 +133,14 @@ export default class Config {
     return this.peak_time_limit_url;
   }
 
+  static get_data_validity_period() {
+    return this.data_validity_period;
+  }
+
+  static get_qoe_validity_period() {
+    return this.qoe_validity_period;
+  }
+
   static is_quality_control() {
     return this.quality_control;
   }
@@ -248,6 +256,11 @@ Config.sodium_server_url = SODIUM_SERVER_URL;
 
 // ネットワークの混雑する時間帯には自動的にビットレートを制限する設定ファイル
 Config.peak_time_limit_url = PEAK_TIME_LIMIT_URL;
+
+// データの有効期間 (ミリ秒単位)
+// 有効期間を過ぎたデータは送信対象外とする
+Config.data_validity_period = DATA_VALIDITY_PERIOD;
+Config.qoe_validity_period = QOE_VALIDITY_PERIOD;
 
 // 暫定QoE値保持数
 Config.num_of_latest_qoe = 20;
