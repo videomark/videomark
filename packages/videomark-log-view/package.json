@@ -57,7 +57,7 @@
     "url-loader": "^4.1.0",
     "uuid": "^8.3.0",
     "web-streams-polyfill": "^3.0.0",
-    "webpack": "^4.44.1",
+    "webpack": "^5.0.0",
     "webpack-dev-server": "^3.11.0",
     "webpack-subresource-integrity": "^1.4.1"
   },
