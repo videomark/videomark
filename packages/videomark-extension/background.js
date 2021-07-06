@@ -10,7 +10,8 @@ const permittedOrigins = [
   /^https:\/\/[a-z-]+\.video\.dmkt-sp\.jp$/,
   "https://abema.tv",
   "https://www.amazon.co.jp",
-  /^https?:\/\/pr\.iij\.ad\.jp$/
+  /^https?:\/\/pr\.iij\.ad\.jp$/,
+  "https://hamilton.britegrid.io"
 ];
 
 /**
