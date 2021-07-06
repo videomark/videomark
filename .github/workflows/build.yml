@@ -8,13 +8,8 @@ jobs:
       - id: node
         run: echo "::set-output name=version::$(cat .nvmrc)"
       - uses: actions/setup-node@v2
-        with: { node-version: "${{ steps.node.version }}" }
-      - id: yarn_cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn_cache.outputs.dir }}
-          key: yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: yarn-
+          node-version: "${{ steps.node.version }}"
+          cache: yarn
       - run: yarn
       - run: yarn build
