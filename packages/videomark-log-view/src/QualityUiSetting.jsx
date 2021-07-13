@@ -66,7 +66,7 @@ const List = styled(MuiList)({
 
 const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
-  const moile = isMobile();
+  const mobile = isMobile();
 
   const handleDisplaySettingChange = useCallback(
     () => {
@@ -94,7 +94,7 @@ const QualityUiSetting = () => {
             <List>
               <ListItem>
                 <ListItemText
-                  primary={moile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
+                  primary={mobile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
                 />
                 <Switch
                   checked={displayOnPlayer}

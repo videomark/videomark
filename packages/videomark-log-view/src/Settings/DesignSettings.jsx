@@ -29,7 +29,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
     },
     [changes, setChanges, settings, saveSettings]
   );
-  const moile = isMobile();
+  const mobile = isMobile();
 
   return (
     <Box marginY={4}>
@@ -42,7 +42,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
         <List>
           <ListItem>
             <ListItemText
-              primary={moile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
+              primary={mobile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
               secondary={changes ? "新しいページを読み込むと反映されます" : ""}
             />
             {settings && (
