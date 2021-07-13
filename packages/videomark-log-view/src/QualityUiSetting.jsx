@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useLayoutEffect } from "react";
 import { styled } from "@material-ui/styles";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -23,37 +23,39 @@ const useTabStatus = () => {
   const [alive, setAlive] = useState(false);
   const [displayOnPlayer, setDisplayOnPlayer] = useState(false);
 
-  useEffect(() => {
-    chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
-      const tab = tabs[0];
+  useLayoutEffect(() => {
+    setInterval(() => {
+      chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
+        const tab = tabs[0];
 
-      const port = chrome.runtime.connect({
-        name: "sodium-popup-communication-port"
+        const port = chrome.runtime.connect({
+          name: "sodium-popup-communication-port"
+        });
+        const requestId = getRandomToken();
+
+        const listener = value => {
+          if (value.requestId !== requestId) return false;
+
+          try {
+            setAlive(value.alive);
+            setDisplayOnPlayer(value.displayOnPlayer);
+          } catch (e) {
+            // nop
+          } finally {
+            port.onMessage.removeListener(listener);
+          }
+          return true;
+        };
+
+        port.onMessage.addListener(listener);
+        port.postMessage({
+          requestId,
+          method: "getTabStatus",
+          args: [tab.id]
+        });
       });
-      const requestId = getRandomToken();
-
-      const listener = value => {
-        if (value.requestId !== requestId) return false;
-
-        try {
-          setAlive(value.alive);
-          setDisplayOnPlayer(value.displayOnPlayer);
-        } catch (e) {
-          // nop
-        } finally {
-          port.onMessage.removeListener(listener);
-        }
-        return true;
-      };
-
-      port.onMessage.addListener(listener);
-      port.postMessage({
-        requestId,
-        method: "getTabStatus",
-        args: [tab.id]
-      });
-    });
-  });
+    }, 1000);
+  }, []);
 
   return { alive, displayOnPlayer, setDisplayOnPlayer };
 };
