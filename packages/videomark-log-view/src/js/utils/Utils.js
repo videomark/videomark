@@ -42,7 +42,7 @@ export const isMobile = () => {
     } else {
       chrome.runtime.getPlatformInfo((info) => setPlatformInfo(info));
     }
-  });
+  }, []);
 
   return isVMBrowser() || platformInfo.os === "android";
 };

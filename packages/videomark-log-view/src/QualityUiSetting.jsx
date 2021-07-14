@@ -24,36 +24,38 @@ const useTabStatus = () => {
   const [displayOnPlayer, setDisplayOnPlayer] = useState(false);
 
   useEffect(() => {
-    chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
-      const tab = tabs[0];
+    setInterval(() => {
+      chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
+        const tab = tabs[0];
 
-      const port = chrome.runtime.connect({
-        name: "sodium-popup-communication-port"
+        const port = chrome.runtime.connect({
+          name: "sodium-popup-communication-port"
+        });
+        const requestId = getRandomToken();
+
+        const listener = value => {
+          if (value.requestId !== requestId) return false;
+
+          try {
+            setAlive(value.alive);
+            setDisplayOnPlayer(value.displayOnPlayer);
+          } catch (e) {
+            // nop
+          } finally {
+            port.onMessage.removeListener(listener);
+          }
+          return true;
+        };
+
+        port.onMessage.addListener(listener);
+        port.postMessage({
+          requestId,
+          method: "getTabStatus",
+          args: [tab.id]
+        });
       });
-      const requestId = getRandomToken();
-
-      const listener = value => {
-        if (value.requestId !== requestId) return false;
-
-        try {
-          setAlive(value.alive);
-          setDisplayOnPlayer(value.displayOnPlayer);
-        } catch (e) {
-          // nop
-        } finally {
-          port.onMessage.removeListener(listener);
-        }
-        return true;
-      };
-
-      port.onMessage.addListener(listener);
-      port.postMessage({
-        requestId,
-        method: "getTabStatus",
-        args: [tab.id]
-      });
-    });
-  });
+    }, 1000);
+  }, []);
 
   return { alive, displayOnPlayer, setDisplayOnPlayer };
 };
@@ -64,7 +66,7 @@ const List = styled(MuiList)({
 
 const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
-  const moile = isMobile();
+  const mobile = isMobile();
 
   const handleDisplaySettingChange = useCallback(
     () => {
@@ -92,7 +94,7 @@ const QualityUiSetting = () => {
             <List>
               <ListItem>
                 <ListItemText
-                  primary={moile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
+                  primary={mobile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
                 />
                 <Switch
                   checked={displayOnPlayer}
