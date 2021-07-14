@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useLayoutEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { styled } from "@material-ui/styles";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -23,7 +23,7 @@ const useTabStatus = () => {
   const [alive, setAlive] = useState(false);
   const [displayOnPlayer, setDisplayOnPlayer] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setInterval(() => {
       chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
         const tab = tabs[0];
