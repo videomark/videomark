@@ -329,6 +329,11 @@ Config.video_platforms = [
     // IIJ TWILIGHT CONCERT
     id: "iijtwilightconcert",
     host: /^pr\.iij\.ad\.jp$/
+  },
+  {
+    // gorin.jp
+    id: "gorinjp",
+    host: /^www\.gorin\.jp$/
   }
 ];
 
@@ -387,12 +392,13 @@ Config.ui.youtube = {
 // そのタイミングでは .vjs-user-active でもコントロールが隠れることに注意
 // .video-js 要素は複数あるので #playerWrapper 配下のものに限定する
 Config.ui.tver = {
-  target: "#playerWrapper > .video-js",
+  target: "#playerWrapper > .video-js, #gorinPlayer",
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
-  top: calc(12px + 2em);
+  top: 12px;
   left: 12px;
+  text-align: left;
   transition: 1.0s cubic-bezier(0.4, 0.09, 0, 1.6);
 }
 .vjs-user-inactive > #${Config.ui.id},
@@ -502,6 +508,23 @@ Config.ui.iijtwilightconcert = {
 #${Config.ui.id}:not(:hover) {
   opacity: 0.5;
   transition: 500ms;
+}`
+};
+
+// gorin.jpはほぼtver
+Config.ui.gorinjp = {
+  target: ".videoContainer > video-js",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12px;
+  left: 12px;
+  text-align: left;
+  transition: 1.0s cubic-bezier(0.4, 0.09, 0, 1.6);
+}
+.vjs-user-inactive > #${Config.ui.id},
+.not-hover > #${Config.ui.id} {
+  opacity: 0;
 }`
 };
 
