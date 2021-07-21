@@ -4,7 +4,7 @@ export default class TVerTypeHandler {
         const duration = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
             .duration();
 
-        return !duration || Number.isNaN(duration) || !Number.isFinite(duration) ? -1 : duration;
+        return duration && Number.isFinite(duration) ? duration : -1;
     }
 
     static get_video_width() {
