@@ -76,4 +76,11 @@ export default [
     brandcolor: "#CCB42B",
     host: /^pr\.iij\.ad\.jp$/,
   },
+  {
+    id: "gorin",
+    name: "gorin.jp",
+    url: "https://www.gorin.jp//",
+    brandcolor: "#40b8dc",
+    host: /(^|\.)gorin\.jp$/,
+  },
 ];

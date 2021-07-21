@@ -4,14 +4,12 @@ export default class TVerTypeHandler {
         const duration = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
             .duration();
 
-        return !duration || Number.isNaN(duration) ? -1 : duration;
+        return duration && Number.isFinite(duration) ? duration : -1;
     }
 
     static get_video_width() {
         // eslint-disable-next-line no-underscore-dangle
-        const play_list = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
-            .tech_.hls.selectPlaylist();
-
+        const play_list = TVerTypeHandler.get_playlists();
         const { attributes: { RESOLUTION: { width } } } = play_list;
 
         return width;
@@ -19,9 +17,7 @@ export default class TVerTypeHandler {
 
     static get_video_height() {
         // eslint-disable-next-line no-underscore-dangle
-        const play_list = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
-            .tech_.hls.selectPlaylist();
-
+        const play_list = TVerTypeHandler.get_playlists();
         const { attributes: { RESOLUTION: { height } } } = play_list;
 
         return height;
@@ -29,8 +25,8 @@ export default class TVerTypeHandler {
 
     static get_bitrate() {
         // eslint-disable-next-line no-underscore-dangle
-        return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
-            .tech_.hls.selectPlaylist().attributes.BANDWIDTH;
+        const play_list = TVerTypeHandler.get_playlists();
+        return play_list.attributes.BANDWIDTH;
     }
 
     static get_receive_buffer() {
@@ -44,9 +40,7 @@ export default class TVerTypeHandler {
 
     static get_segment_domain() {
         // eslint-disable-next-line no-underscore-dangle
-        const play_list = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
-            .tech_.hls.selectPlaylist();
-
+        const play_list = TVerTypeHandler.get_playlists();
         const { segments } = play_list;
         if (!segments)
             return null;
@@ -77,6 +71,15 @@ export default class TVerTypeHandler {
         return Array.from(adVideoNodeList).some(
             e => e.parentNode.style.display === "block"
         );
+    }
+
+    static get_playlists() {
+        if (videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls) {
+            return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls.selectPlaylist();
+        }
+        if (videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.vhs) {
+            return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.vhs.playlists.media_;
+        }
     }
 
     static is_tver_type() {
