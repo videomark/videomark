@@ -26,6 +26,7 @@ overrides:
       FLUENT_URL: readonly
       SODIUM_SERVER_URL: readonly
       PEAK_TIME_LIMIT_URL: readonly
+      EVENT_DATA_MAX_SIZE: readonly
   - files: "packages/videomark-extension/**"
     globals:
       sodium: readonly
