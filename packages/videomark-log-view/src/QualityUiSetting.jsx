@@ -81,9 +81,8 @@ const QualityUiSetting = () => {
     [displayOnPlayer, setDisplayOnPlayer]
   );
 
-  return (
+  return alive ? (
     <Box marginY={4}>
-      { alive &&
         <Box>
           <Box marginY={1}>
             <Typography component="h3" variant="body1">
@@ -106,9 +105,8 @@ const QualityUiSetting = () => {
             </List>
           </Paper>
         </Box>
-      }
     </Box>
-  );
+  ) : <></>;
 };
 QualityUiSetting.propTypes = {
 };
