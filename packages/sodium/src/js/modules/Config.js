@@ -333,7 +333,7 @@ Config.video_platforms = [
   {
     // gorin.jp
     id: "gorinjp",
-    host: /^www\.gorin\.jp$/
+    host: /(^|\.)gorin\.jp$/
   }
 ];
 
