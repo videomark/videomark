@@ -25,8 +25,8 @@ module.exports = merge(common, {
         "https://vm.webdino.org/peak-time-limit.json"
       ),
 
-      // 80kb = 1024 x 80
-      EVENT_DATA_MAX_SIZE: 81920,
+      // server's default request body size x 0.8 (1mb x 0.8 x 1024)
+      EVENT_DATA_MAX_SIZE: 819200,
 
     }),
   ],
