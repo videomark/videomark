@@ -51,22 +51,24 @@ async function set_max_bitrate(new_video) {
   const quota_bitrate = Config.get_quota_bitrate();
   if (quota_bitrate) saveQuotaLimitStarted(new Date().getTime());
 
-  let bitrate;
-  if (bitrate_control && quota_bitrate) bitrate = Math.min(bitrate_control, quota_bitrate);
-  else bitrate = bitrate_control || quota_bitrate;
-  let resolution = Config.get_resolution_control();
+  const peak_time_limit = (await fetchAndStorePeakTimeLimit()) || {};
+  const bitrate = Math.min(
+    ...[bitrate_control, quota_bitrate, peak_time_limit.bitrate].filter(
+      Number.isFinite
+    )
+  );
+  const resolution = Math.min(
+    ...[Config.get_resolution_control(), peak_time_limit.resolution].filter(
+      Number.isFinite
+    )
+  );
 
-  const peak_time_limit = await fetchAndStorePeakTimeLimit();
-  if (peak_time_limit) {
-    bitrate    = Math.min(bitrate,    peak_time_limit.bitrate);
-    resolution = Math.min(resolution, peak_time_limit.resolution);
-  }
-
-  if (bitrate_control || quota_bitrate || resolution || peak_time_limit) new_video.set_max_bitrate(bitrate, resolution);
-  else if(underQuotaLimit() || underPeakTimeLimit()) {
-      new_video.set_default_bitrate();
-      saveQuotaLimitStarted(undefined);
-      stopPeakTimeLimit();
+  if (Number.isFinite(bitrate) && Number.isFinite(resolution)) {
+    new_video.set_max_bitrate(bitrate, resolution);
+  } else if (underQuotaLimit() || underPeakTimeLimit()) {
+    new_video.set_default_bitrate();
+    saveQuotaLimitStarted(undefined);
+    stopPeakTimeLimit();
   }
 }
 
