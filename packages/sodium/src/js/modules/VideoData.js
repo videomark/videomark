@@ -375,11 +375,18 @@ export default class VideoData {
       val[`event_${s}`] = [];
       val[`event_${s}_delta`] = [];
     });
-    const list = this.events.splice(0, this.events.length);
-    list.forEach(e => {
-      val[`event_${e.type}`].push(e.get());
-      val[`event_${e.type}_delta`].push(e.get_delta());
-    });
+    const list = this.events.splice(0, this.events.length).reverse();
+    let data_sz = Config.get_event_data_max_size();
+    for (const e of list) {
+      data_sz -= JSON.stringify(e.get()).length;
+      data_sz -= JSON.stringify(e.get_delta()).length;
+      if (data_sz < 0) {
+        console.debug(`event_data_sz max=${Config.get_event_data_max_size()} over=${-data_sz}`);
+        break;
+      }
+      val[`event_${e.type}`].splice(0, 0, e.get());
+      val[`event_${e.type}_delta`].splice(0, 0, e.get_delta());
+    }
     return val;
   }
 

@@ -133,6 +133,10 @@ export default class Config {
     return this.peak_time_limit_url;
   }
 
+  static get_event_data_max_size() {
+    return this.event_data_max_size;
+  }
+
   static is_quality_control() {
     return this.quality_control;
   }
@@ -248,6 +252,8 @@ Config.sodium_server_url = SODIUM_SERVER_URL;
 
 // ネットワークの混雑する時間帯には自動的にビットレートを制限する設定ファイル
 Config.peak_time_limit_url = PEAK_TIME_LIMIT_URL;
+
+Config.event_data_max_size = EVENT_DATA_MAX_SIZE;
 
 // 暫定QoE値保持数
 Config.num_of_latest_qoe = 20;

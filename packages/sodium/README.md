@@ -22,6 +22,9 @@ ChromeExtension/sodium.js
     Config.fluent_url = 'https://sodium.webdino.org/sodium';
     // SodiumServerのエンドポイント
     Config.sodium_server_url = 'https://sodium.webdino.org:8443/api';
+    // イベントデータのサイズの Max 値
+    // server's default request body size x 0.8 (1mb x 0.8 x 1024)
+    Config.event_data_max_size = 819200;
     // 暫定QoE値保持数
     Config.num_of_latest_qoe = 20; // 0に設定した場合すべての値を保存します。
     // 記録するイベントの種類のリスト
