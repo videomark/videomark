@@ -454,7 +454,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         try {
             const duration = this.player.getDuration();
 
-            return !duration || Number.isNaN(duration) ? -1 : duration;
+            return duration && Number.isFinite(duration) ? duration : -1;
         } catch (e) {
             return -1;
         }
