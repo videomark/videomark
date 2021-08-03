@@ -66,6 +66,11 @@ const List = styled(MuiList)({
 
 const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
+
+  if (!alive) {
+    return null;
+  }
+
   const mobile = isMobile();
 
   const handleDisplaySettingChange = useCallback(
@@ -83,30 +88,28 @@ const QualityUiSetting = () => {
 
   return (
     <Box marginY={4}>
-      { alive &&
-        <Box>
-          <Box marginY={1}>
-            <Typography component="h3" variant="body1">
-              デザイン
-            </Typography>
-          </Box>
-          <Paper>
-            <List>
-              <ListItem>
-                <ListItemText
-                  primary={mobile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
-                />
-                <Switch
-                  checked={displayOnPlayer}
-                  onChange={handleDisplaySettingChange}
-                  value="Display Setting"
-                  inputProps={{ "aria-label": "Display Setting" }}
-                />
-              </ListItem>
-            </List>
-          </Paper>
+      <Box>
+        <Box marginY={1}>
+          <Typography component="h3" variant="body1">
+            デザイン
+          </Typography>
         </Box>
-      }
+        <Paper>
+          <List>
+            <ListItem>
+              <ListItemText
+                primary={mobile ? "計測中に結果をページに重ねて表示" : "計測値を対象の動画の左上に重ねて表示する"}
+              />
+              <Switch
+                checked={displayOnPlayer}
+                onChange={handleDisplaySettingChange}
+                value="Display Setting"
+                inputProps={{ "aria-label": "Display Setting" }}
+              />
+            </ListItem>
+          </List>
+        </Paper>
+      </Box>
     </Box>
   );
 };

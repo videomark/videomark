@@ -15,7 +15,7 @@ import logoLight from "./images/logo.png";
 import logoDark from "./images/logo-invert.png";
 
 // ポップアップウィンドウのサイズを調整
-const CSS = () => <style>{`body{min-width:286px;}`}</style>;
+const CSS = () => <style>{`body{margin:16px;width:216px;}`}</style>;
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -29,6 +29,14 @@ const useStyles = makeStyles((theme) => {
       },
       "& .MuiButton-label": {
         ...theme.typography.h6,
+      },
+    },
+    logo: {
+      "& img": {
+        display: "block",
+        margin: "24px auto",
+        width: 200,
+        verticalAlign: "top",
       },
     },
   };
@@ -73,26 +81,31 @@ LabeledIconButton.propTypes = {
 };
 
 export default () => {
+  const classes = useStyles();
+
   return (
     <ThemeProvider>
       <CSS />
-      <Box paddingTop={2} component={Container}>
-        <picture>
+      <Box padding={0} component={Container}>
+        <picture className={classes.logo}>
           <source srcSet={logoDark} media="(prefers-color-scheme: dark)" />
           <img src={logoLight} alt="Web VideoMark" />
         </picture>
         <Box marginTop={2}>
           <LabeledIconButton href="#/" icon={EqualizerIcon} label="計測結果" />
           <LabeledIconButton href="#/history" icon={HistoryIcon} label="履歴" />
-          <LabeledIconButton href={helpURL} icon={HelpIcon} label="使い方" />
           <LabeledIconButton
             href="#/settings"
             icon={SettingsIcon}
             label="設定"
           />
+          <LabeledIconButton href={helpURL} icon={HelpIcon} label="使い方" />
         </Box>
         <QualityUiSetting />
       </Box>
     </ThemeProvider>
   );
 };
+
+// コンテキストメニューを無効化
+window.addEventListener('contextmenu', (event) => event.preventDefault());
