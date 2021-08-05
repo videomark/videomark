@@ -31,7 +31,7 @@ export const megaSizeFormat = (bytes) => sizeFormat(bytes, 2);
 export const kiloSizeFormat = (bytes) => sizeFormat(bytes, 1);
 
 // 必ず変数に確保してから使うこと。条件式に直接使ってはいけない
-export const isMobile = () => {
+export const useMobile = () => {
   const [platformInfo, setPlatformInfo] = useState(false);
 
   useEffect(() => {

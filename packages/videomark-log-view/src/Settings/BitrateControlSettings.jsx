@@ -11,7 +11,7 @@ import Switch from "@material-ui/core/Switch";
 import Slider from "@material-ui/core/Slider";
 import Link from "@material-ui/core/Link";
 import List from "./List";
-import { isMobile } from "../js/utils/Utils";
+import { useMobile } from "../js/utils/Utils";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -351,7 +351,7 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
     );
   }
 
-  const mobile = isMobile();
+  const mobile = useMobile();
 
   return (
     <Box marginY={4}>
