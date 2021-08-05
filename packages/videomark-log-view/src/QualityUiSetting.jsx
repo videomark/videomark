@@ -67,10 +67,6 @@ const List = styled(MuiList)({
 const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
 
-  if (!alive) {
-    return null;
-  }
-
   const mobile = isMobile();
 
   const handleDisplaySettingChange = useCallback(
@@ -85,6 +81,8 @@ const QualityUiSetting = () => {
     },
     [displayOnPlayer, setDisplayOnPlayer]
   );
+
+  if (!alive) return null;
 
   return (
     <Box marginY={4}>
