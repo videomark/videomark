@@ -2,6 +2,7 @@ extends:
   - "eslint:recommended"
   - "plugin:jsx-a11y/recommended"
   - "plugin:react/recommended"
+  - "plugin:react-hooks/recommended"
 env:
   webextensions: true
   browser: true
@@ -15,6 +16,8 @@ parserOptions:
 settings:
   react:
     version: detect
+rules:
+  react-hooks/rules-of-hooks: "off"
 overrides:
   - files: "packages/sodium/**"
     rules:
@@ -35,8 +38,20 @@ overrides:
     rules:
       jsx-a11y/no-autofocus: "off"
       react/display-name: "off"
+      react-hooks/rules-of-hooks: "error"
     globals:
       process: readonly
+  - files: # TODO: これらのファイルの warning は修正して取り除いて
+      - packages/videomark-log-view/src/Rollback.jsx
+      - packages/videomark-log-view/src/Settings/BitrateControlSettings.jsx
+      - packages/videomark-log-view/src/Settings/Reset.jsx
+      - packages/videomark-log-view/src/StatsSummary.jsx
+      - packages/videomark-log-view/src/js/containers/MiniStatsDownloadButton.jsx
+      - packages/videomark-log-view/src/js/containers/StatsDataProvider.jsx
+      - packages/videomark-log-view/src/js/containers/ViewingDetail.jsx
+      - packages/videomark-log-view/src/js/utils/ChromeExtensionWrapper/index.js
+    rules:
+      react-hooks/exhaustive-deps: "off"
   - files: "packages/videomark-mini-stats/**"
     rules:
       react/prop-types: "off"
