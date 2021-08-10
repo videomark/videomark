@@ -51,7 +51,7 @@ const QoEValueGraphList = ({
         </Grid>
       ) : null}
       <QoEValueGraph
-        label="視聴時の体感品質"
+        label="視聴時の体感品質値"
         qoe={value}
         color={isLowQuality ? "text.secondary" : "default"}
       />
@@ -60,7 +60,7 @@ const QoEValueGraphList = ({
         regionalAverage={regionalAverage}
       />
       <QoEValueGraph
-        label={`同じ時間帯の体感品質の平均 (${hourDisplayName})`}
+        label={`同じ時間帯の体感品質値の平均 (${hourDisplayName})`}
         qoe={hourlyAverageValue}
       />
     </Grid>

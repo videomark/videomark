@@ -6,9 +6,18 @@ import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import Delete from "@material-ui/icons/Delete";
-import Restore from "@material-ui/icons/Replay";
+import {
+  Delete,
+  Equalizer,
+  Error,
+  HourglassEmpty,
+  PlayCircleFilled,
+  Restore,
+  Warning,
+} from '@material-ui/icons';
 import style from "../../css/MeasureContents.module.css";
 import { urlToVideoPlatform } from "../utils/Utils";
 import ViewingModel from "../utils/Viewing";
@@ -16,6 +25,7 @@ import DataErase from "../utils/DataErase";
 import AppData from "../utils/AppData";
 import AppDataActions from "../utils/AppDataActions";
 import NoImage from "../../images/noimage.svg";
+import { isLowQuality } from "../components/VideoQuality";
 
 export const VideoThumbnail = ({ className, title, thumbnail }) => (
   <img
@@ -36,7 +46,7 @@ VideoThumbnail.defaultProps = {
   thumbnail: null,
 };
 
-export const toTimeString = (date) => format(date, "yyyy/MM/dd HH:mm");
+export const toTimeString = (date) => format(date, "M 月 d 日 HH:mm");
 
 export const useViewing = (model) => {
   const [state, dispatch] = useState();
@@ -94,8 +104,47 @@ RecoverOrRemoveButton.propTypes = {
 
 const Viewing = ({ model, disabled }) => {
   const viewing = useViewing(model);
-  if (viewing == null) return null;
-  const { title, location, thumbnail, startTime } = viewing;
+  const [state, dispatch] = useState();
+
+  useEffect(() => {
+    if (!viewing) return;
+
+    (async () => {
+      dispatch({
+        qoe: await viewing.qoe,
+      });
+    })();
+  }, [viewing, dispatch]);
+
+  if (!viewing || !state) return null;
+
+  const { title, location, thumbnail, startTime, quality } = viewing;
+  const { qoe } = state;
+
+  const QoELabel = () => {
+    let tooltip = '視聴時の体感品質値';
+    let icon = <Equalizer />;
+    let value = String(qoe);
+
+    if (qoe === undefined || qoe === -2) {
+      tooltip = '計測データ不足のため体感品質値が得られませんでした';
+      icon = <Error />;
+      value = '';
+    } else if (qoe === -1) {
+      tooltip = '体感品質値を計測または計算中です';
+      icon = <HourglassEmpty />;
+      value = '';
+    } else if (isLowQuality(quality)) {
+      tooltip = 'フレームドロップが発生したため実際の体感品質とは異なる可能性があります';
+      icon = <Warning />;
+    }
+
+    return (
+      <Tooltip title={tooltip}>
+        <span>{icon}{' '}{value}</span>
+      </Tooltip>
+    );
+  };
 
   const Title = () => (
     <Grid container component={Box} height={72} paddingX={2} paddingY={1}>
@@ -114,25 +163,40 @@ const Viewing = ({ model, disabled }) => {
     </>
   );
 
+  const openLink = (event) => {
+    event.stopPropagation();
+    window.location.href = location;
+  };
+
   return (
-    <Card>
+    <Card className={style.card}>
       <div className={style.header}>
         <CardMedia
           component={() => (
-            <VideoThumbnail
-              className={[
-                style.thumbnail,
-                disabled ? style.removedThumbnail : null,
-              ].join(" ")}
-              title={title}
-              thumbnail={thumbnail}
-            />
+            <div className={style.thumbnailWrapper}>
+              <VideoThumbnail
+                className={[
+                  style.thumbnail,
+                  disabled ? style.removedThumbnail : null,
+                ].join(" ")}
+                title={title}
+                thumbnail={thumbnail}
+              />
+              <Typography className={style.serviceName}>
+                {urlToVideoPlatform(location).name}
+              </Typography>
+              <Tooltip title="もう一度観る">
+                <IconButton className={style.playButton} onClick={(event) => openLink(event)}>
+                  <PlayCircleFilled fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
+            </div>
           )}
           image="#"
         />
         <div className={style.movieInfo}>
-          <span>{urlToVideoPlatform(location).name}</span>
           <span>{toTimeString(startTime)}</span>
+          <span><QoELabel /></span>
         </div>
       </div>
       <Title />

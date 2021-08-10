@@ -16,7 +16,7 @@ const RegionalAverageQoEGraph = ({ region, regionalAverage }) => {
 
   return (
     <QoEValueGraph
-      label={`同じ地域の体感品質の平均 (${regionDisplayName})`}
+      label={`同じ地域の体感品質値の平均 (${regionDisplayName})`}
       qoe={regionalAverage}
     />
   );
