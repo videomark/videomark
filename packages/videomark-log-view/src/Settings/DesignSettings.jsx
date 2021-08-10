@@ -8,7 +8,7 @@ import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
-import { isMobile } from "../js/utils/Utils";
+import { useMobile } from "../js/utils/Utils";
 
 const List = styled(MuiList)({
   padding: 0,
@@ -29,7 +29,7 @@ const DesignSettings = ({ settings, saveSettings }) => {
     },
     [changes, setChanges, settings, saveSettings]
   );
-  const mobile = isMobile();
+  const mobile = useMobile();
 
   return (
     <Box marginY={4}>

@@ -7,7 +7,7 @@ import MuiList from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
-import { isMobile } from "./js/utils/Utils.js";
+import { useMobile } from "./js/utils/Utils.js";
 
 const getRandomToken = () => {
   const randomPool = new Uint8Array(16);
@@ -67,11 +67,7 @@ const List = styled(MuiList)({
 const QualityUiSetting = () => {
   const { alive, displayOnPlayer, setDisplayOnPlayer } = useTabStatus();
 
-  if (!alive) {
-    return null;
-  }
-
-  const mobile = isMobile();
+  const mobile = useMobile();
 
   const handleDisplaySettingChange = useCallback(
     () => {
@@ -85,6 +81,8 @@ const QualityUiSetting = () => {
     },
     [displayOnPlayer, setDisplayOnPlayer]
   );
+
+  if (!alive) return null;
 
   return (
     <Box marginY={4}>
