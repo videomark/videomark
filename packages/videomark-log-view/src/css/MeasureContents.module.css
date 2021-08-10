@@ -1,5 +1,36 @@
 @import './Theme.include.css';
 
+.thumbnailWrapper {
+  position: relative;
+}
+
+.thumbnailWrapper > :not(img) {
+  position: absolute;
+  opacity: 0;
+}
+
+.card:hover .thumbnailWrapper > :not(img) {
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 200ms;
+  transition-delay: 200ms;
+}
+
+.serviceName {
+  top: 12px;
+  left: 12px;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  background-color: #0006;
+}
+
+.playButton {
+  bottom: 0;
+  right: 0;
+  font-size: 40px;
+}
+
 .thumbnail {
   width: 100%;
   object-fit: cover;
@@ -22,12 +53,18 @@
 
 .movieInfo {
   background-color: var(--secondary-background-color);
-  font-size: 0.625rem;
+  font-size: 14px;
   color: var(--secondary-foreground-color);
-  padding: 0.2em 0.8em;
+  padding: 4px 16px;
   display: flex;
   justify-content: space-between;
   height: auto;
+  letter-spacing: 0;
+}
+
+.movieInfo svg {
+  font-size: inherit;
+  vertical-align: -2px;
 }
 
 .removedStateButtons {
@@ -64,8 +101,4 @@
   max-height: calc(500px * 9 / 16);
   object-fit: cover;
   vertical-align: top;
-}
-
-.modalMain .movieInfo {
-  font-size: 1rem;
 }
