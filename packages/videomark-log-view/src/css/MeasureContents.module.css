@@ -6,6 +6,7 @@
 
 .thumbnailWrapper > :not(img) {
   position: absolute;
+  color: #fffd; /* dark/light 関係なく適用 */
   opacity: 0;
 }
 
@@ -22,13 +23,21 @@
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 14px;
-  background-color: #0006;
+  background-color: #0007;
 }
 
 .playButton {
   bottom: 0;
   right: 0;
   font-size: 40px;
+}
+
+.playButton:hover {
+  color: #fff; /* dark/light 関係なく適用 */
+}
+
+.playButton svg {
+  filter: drop-shadow(0 0 8px #0007);
 }
 
 .thumbnail {
