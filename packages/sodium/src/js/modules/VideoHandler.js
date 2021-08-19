@@ -95,7 +95,8 @@ export default class VideoHandler {
 
     // eslint-disable-next-line camelcase
     get_duration() {
-        return this.handler.get_duration();
+        const duration = this.handler.get_duration();
+        return duration && Number.isFinite(duration) ? duration : -1;
     }
 
     // eslint-disable-next-line camelcase

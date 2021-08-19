@@ -8,7 +8,8 @@ export default class GeneralTypeHandler {
     }
 
     get_duration() {
-        return this.elm.duration;
+        const duration = this.elm.duration;
+        return duration && Number.isFinite(duration) ? duration : -1;
     }
 
     get_video_width() {

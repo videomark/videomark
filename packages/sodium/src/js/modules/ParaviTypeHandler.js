@@ -270,7 +270,7 @@ export default class ParaviTypeHandler {
     static get_duration() {
         const duration = videojs.getAllPlayers()[0].duration();
 
-        return !duration || Number.isNaN(duration) ? -1 : duration;
+        return duration && Number.isFinite(duration) ? duration : -1;
     }
 
     // eslint-disable-next-line camelcase
