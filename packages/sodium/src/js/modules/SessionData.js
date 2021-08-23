@@ -29,7 +29,7 @@ import { version } from "../../../package.json";
  * @param {Payload} payload
  */
 async function send(payload) {
-  const body = msgpack.encode(payload);
+  const body = msgpack.encode(JSON.parse(JSON.stringify(payload)));
   if (body.length > Config.get_max_send_size())
     console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
 
