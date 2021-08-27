@@ -47,13 +47,19 @@
         "*://pr.iij.ad.jp/*",
         "*://*.gorin.jp/*"
       ],
-      "js": ["content_script.js"],
+      "js": [
+        "content_script.js"
+      ],
       "all_frames": true
     }
   ],
   "background": {
     "persistent": true,
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js"
+    ]
   },
-  "web_accessible_resources": ["sodium.js"]
+  "web_accessible_resources": [
+    "sodium.js"
+  ]
 }
