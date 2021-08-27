@@ -59,7 +59,7 @@
     "web-streams-polyfill": "^3.0.0",
     "webpack": "^4.44.1",
     "webpack-dev-server": "^3.11.0",
-    "webpack-subresource-integrity": "^1.4.1"
+    "webpack-subresource-integrity": "^5.0.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
