@@ -1,0 +1,14 @@
+#!/bin/bash
+# videomark-extension に含まれる manifest.json のバージョンアップ
+# 要: jq, lerna
+set -euo pipefail
+cd -- "$(dirname -- "$0")/.."
+export VIDEOMARK_VERSION=${VIDEOMARK_VERSION:-$(jq -r .version lerna.json)}
+version() {
+  jq .version=env.VIDEOMARK_VERSION packages/videomark-extension/manifest.json \
+    > packages/videomark-extension/manifest.json.tmp
+  mv packages/videomark-extension/manifest.json{.tmp,}
+  echo "${VIDEOMARK_VERSION}"
+}
+version
+git add .

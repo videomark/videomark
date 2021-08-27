@@ -25,6 +25,7 @@
     "e2e:extension": "yarn workspace @videomark/e2e-test test",
     "e2e:mini-stats": "yarn workspace @videomark/videomark-mini-stats test",
     "lint": "eslint --ext .js,.jsx .",
-    "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
+    "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx .",
+    "version": "bin/version"
   }
 }
