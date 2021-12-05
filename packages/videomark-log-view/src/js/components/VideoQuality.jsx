@@ -10,13 +10,14 @@ export const isLowQuality = ({ droppedVideoFrames, totalVideoFrames }) =>
   !(droppedVideoFrames / totalVideoFrames <= 1e-3);
 
 const DItem = ({ dt, dd, na }) => {
-  const color = na ? "textSecondary" : "inherit";
+  if (na) return "";
+
   return (
     <Grid item xs={6} sm={4}>
-      <Typography align="center" component="dt" variant="body2" color={color}>
+      <Typography align="center" component="dt" variant="body2" color="inherit">
         {dt}
       </Typography>
-      <Typography align="center" component="dd" variant="body2" color={color}>
+      <Typography align="center" component="dd" variant="body2" color="inherit">
         {dd}
       </Typography>
     </Grid>
