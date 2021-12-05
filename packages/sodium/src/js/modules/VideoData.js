@@ -325,15 +325,11 @@ export default class VideoData {
   }
 
   totalFrames() {
-    if (this.video_elm.webkitDecodedFrameCount !== undefined) return this.video_elm.webkitDecodedFrameCount;
-
-    return this.video_elm.mozParsedFrames;
+    return this.video_elm.getVideoPlaybackQuality().totalVideoFrames;
   }
 
   droppedFrames() {
-    if (this.video_elm.webkitDroppedFrameCount !== undefined) return this.video_elm.webkitDroppedFrameCount;
-
-    return this.totalFrames() - this.video_elm.mozPresentedFrames;
+    return this.video_elm.getVideoPlaybackQuality().droppedVideoFrames;
   }
 
   /**
