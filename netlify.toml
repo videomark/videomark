@@ -3,16 +3,16 @@
   command = "bin/build"
 [[redirects]]
   from = "/"
-  to = "/production/webvideomark.zip"
+  to = "/webvideomark.zip"
 [[redirects]]
   from = "/prod"
-  to = "/production/webvideomark.zip"
+  to = "/webvideomark.zip"
 [[redirects]]
   from = "/dev"
-  to = "/development/webvideomark-dev.zip"
+  to = "/webvideomark-dev.zip"
 [[redirects]]
   from = "/prod-xpi"
-  to = "/production/webvideomark.xpi"
+  to = "/webvideomark.xpi"
 [[redirects]]
   from = "/dev-xpi"
-  to = "/development/webvideomark-dev.xpi"
+  to = "/webvideomark-dev.xpi"

@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "bin/build",
+    "build-safari": "bin/build && bin/build-safari",
     "build-android": "bin/build-android",
     "start": "yarn workspace @videomark/videomark-log-view start",
     "test": "yarn e2e",
