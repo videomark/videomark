@@ -17,7 +17,7 @@ import { ViewingsContext } from "./ViewingsProvider";
 import { StatsDataContext } from "./StatsDataProvider";
 import { MiniStatsDownloadButton } from "./MiniStatsDownloadButton";
 import videoPlatforms from "../utils/videoPlatforms";
-import { gigaSizeFormat } from "../utils/Utils";
+import { gigaSizeFormat, availableTransferSize } from "../utils/Utils";
 import LoadingProgress from "../components/LoadingProgress";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
@@ -66,7 +66,8 @@ const PlayingTimeStats = () => {
       <LoadingProgress />
     </>
   ) : (
-    `${length.toLocaleString()}件 ${timeFormat(sum)} ${gigaSizeFormat(size)} GB`
+    `${length.toLocaleString()}件 ${timeFormat(sum)}` +
+    (availableTransferSize ? ` ${gigaSizeFormat(size)} GB` : "")
   );
   return (
     <Typography component="small" variant="caption">
