@@ -40,7 +40,7 @@
     "material-table": "^1.69.1",
     "material-ui-flat-pagination": "^4.1.1",
     "mini-css-extract-plugin": "^1.0.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "optimize-css-assets-webpack-plugin": "^6.0.0",
     "p-iteration": "^1.1.8",
     "postcss-loader": "^4.0.0",
     "postcss-preset-env": "^6.7.0",
