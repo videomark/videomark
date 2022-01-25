@@ -214,14 +214,20 @@ export default class Status {
 
   drawChart() {
     const { bitrate, throughput, transfer, resolution, framerate, droppedVideoFrames, waiting, qoe } = this.historyHolder;
-    sparkline(this.root.getElementById('bitrate_chart'), bitrate);
-    sparkline(this.root.getElementById('thruput_chart'), throughput);
-    sparkline(this.root.getElementById('transfer_chart'), transfer);
-    sparkline(this.root.getElementById('resolution_chart'), resolution);
-    sparkline(this.root.getElementById('framerate_chart'), framerate);
-    sparkline(this.root.getElementById('droprate_chart'), droppedVideoFrames);
-    sparkline(this.root.getElementById('waiting_chart'), waiting);
-    sparkline(this.root.getElementById('qoe_chart'), qoe, {min:1.0, max:5.0});
+    this.drawSparkline('bitrate_chart', bitrate);
+    this.drawSparkline('thruput_chart', throughput);
+    this.drawSparkline('transfer_chart', transfer);
+    this.drawSparkline('resolution_chart', resolution);
+    this.drawSparkline('framerate_chart', framerate);
+    this.drawSparkline('droprate_chart', droppedVideoFrames);
+    this.drawSparkline('waiting_chart', waiting);
+    this.drawSparkline('qoe_chart', qoe, {min:1.0, max:5.0});
+  }
+
+  drawSparkline(elementId, value, option) {
+    const element = this.root.getElementById(elementId);
+    if (!element) return;
+    sparkline(element, value, option);
   }
 
   quality() {
@@ -338,10 +344,12 @@ export default class Status {
   }
 
   qualityItem({ label, value, chart_id, style }) {
-    const clazz = classMap(Object.assign({ na: value == null }, style));
+    if (value == null) return "";
+
+    const clazz = classMap(style);
     return html`
       <dt class=${clazz}>${label}</dt>
-      <dd class=${clazz}>${value || "n/a"}</dd>
+      <dd class=${clazz}>${value}</dd>
       <dd class=${clazz}><svg class="chart" id="${chart_id}"></svg></dd>
     `;
   }
