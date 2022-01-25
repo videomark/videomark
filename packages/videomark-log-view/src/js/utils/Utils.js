@@ -15,6 +15,7 @@ export const isDevelop = () => process.env.NODE_ENV === "development";
 export const isVMBrowser = () => "sodium" in window;
 export const isExtension = () => !isVMBrowser() && "storage" in window.chrome;
 export const isWeb = () => !(isVMBrowser() || isExtension());
+export const availableTransferSize = navigator.vendor != "Apple Computer, Inc.";
 
 export const sizeFormat = (bytes, exponent) => {
   const divider = 1024 ** exponent;

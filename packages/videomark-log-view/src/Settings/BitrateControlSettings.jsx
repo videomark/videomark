@@ -11,7 +11,7 @@ import Switch from "@material-ui/core/Switch";
 import Slider from "@material-ui/core/Slider";
 import Link from "@material-ui/core/Link";
 import List from "./List";
-import { useMobile } from "../js/utils/Utils";
+import { useMobile, availableTransferSize } from "../js/utils/Utils";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -391,10 +391,12 @@ const BitrateControlSettings = ({ settings, saveSettings }) => {
             <ListItem className={classes.slider}>{bitrateSlider}</ListItem>
           )}
           <Divider component="li" />
-          <ListItem>
-            <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
-            {browserQuotaSwitch}
-          </ListItem>
+          {availableTransferSize && (
+            <ListItem>
+              <ListItemText primary="月間の動画通信量が指定の値を超えたら制限する" />
+              {browserQuotaSwitch}
+            </ListItem>
+          )}
           {controlByBrowserQuota && (
             <>
               <ListItem className={classes.slider}>
