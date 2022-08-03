@@ -10,7 +10,7 @@ Web VideoMark プロジェクトの紹介、ツールのダウンロード、使
 ## Develop Environment
 
 - bash: any
-- node: 14+
+- node: [see also .nvmrc](.nvmrc)
 - yarn: latest
 
 ## Build Instructions
