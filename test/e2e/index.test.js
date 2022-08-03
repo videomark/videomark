@@ -76,12 +76,12 @@ test.each(["youtube" /*, "paravi"*/])(
     await page.click(videomark);
     await page.waitForFunction(
       (el) => el.textContent.trim() !== "計測中...",
-      { timeout: 60e3 },
+      { timeout: 120e3 },
       summary
     );
     expect(await summaryText()).toMatch(/^\d{1}\.\d{2}\s/);
   },
-  90e3
+  180e3
 );
 
 // FIXME: GitHub Actions の環境にてビットレートの検知の部分で失敗するためスキップ
