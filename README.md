@@ -18,6 +18,8 @@ Web VideoMark プロジェクトの紹介、ツールのダウンロード、使
 ```sh
 git clone git@github.com:videomark/videomark.git
 cd videomark
+corepack enable yarn
+yarn install
 yarn build
 ./bin/build
 ```
