@@ -21,7 +21,6 @@ cd videomark
 corepack enable yarn
 yarn install
 yarn build
-./bin/build
 ```
 
 ## Install
