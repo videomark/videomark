@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Web VideoMark",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
   "author": "WebDINO Japan",
   "homepage_url": "http://vm.webdino.org/",
@@ -47,19 +47,13 @@
         "*://pr.iij.ad.jp/*",
         "*://*.gorin.jp/*"
       ],
-      "js": [
-        "content_script.js"
-      ],
+      "js": ["content_script.js"],
       "all_frames": true
     }
   ],
   "background": {
     "persistent": true,
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   },
-  "web_accessible_resources": [
-    "sodium.js"
-  ]
+  "web_accessible_resources": ["sodium.js"]
 }
