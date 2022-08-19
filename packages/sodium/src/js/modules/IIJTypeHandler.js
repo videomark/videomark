@@ -6,7 +6,7 @@ import GeneralTypeHandler from "./GeneralTypeHandler";
 
 import ResourceTiming from "./ResourceTiming";
 
-const IIJ_MPD_PATH = "http://edge.iijlive.ipcasting.jp/contents/live/ele/tw/index.mpd";
+const IIJ_MPD_PATH = "https://twilightconcert.live.ipcasting.jp/twi/dash.mpd";
 
 export default class IIJTypeHandler extends GeneralTypeHandler {
 
