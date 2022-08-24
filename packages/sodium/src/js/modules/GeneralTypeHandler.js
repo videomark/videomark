@@ -52,6 +52,10 @@ export default class GeneralTypeHandler {
         return this.elm.currentTime
     }
 
+    get_alt_location() {
+        return null;
+    }
+
     get_video_title() {
         return "";
     }
