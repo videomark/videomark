@@ -137,7 +137,6 @@ const ViewingDetail = ({ model, regionalAverageQoE, hourlyAverageQoE }) => {
       </div>
       <Title />
       <VideoQuality
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...quality}
         startTime={startTime}
         transferSize={transferSize}

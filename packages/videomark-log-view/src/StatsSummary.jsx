@@ -274,7 +274,7 @@ const Stats = ({ title, type }) => {
         <MaterialTable
           title={title}
           columns={styledColumns}
-          components={{ Container: (props) => <div {...props} /> }} // eslint-disable-line react/jsx-props-no-spreading
+          components={{ Container: (props) => <div {...props} /> }}
           data={formattedData}
           options={{
             sorting: true,
@@ -409,7 +409,6 @@ export default () => {
             { type: "jp-subdivision", title: "地域" },
           ].map((stats) => (
             <Grid key={stats.type} item xs={12} sm={6}>
-              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Stats {...stats} />
             </Grid>
           ))}
@@ -426,7 +425,6 @@ export default () => {
             { type: "service", title: "全体" },
           ].map((stats) => (
             <Grid key={stats.type} item xs={12} sm>
-              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Stats {...stats} />
             </Grid>
           ))}
@@ -443,7 +441,6 @@ export default () => {
             { type: "isp", title: "全体" },
           ].map((stats) => (
             <Grid key={stats.type} item xs={12} sm>
-              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Stats {...stats} />
             </Grid>
           ))}

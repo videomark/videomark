@@ -21,7 +21,7 @@ const QoEValueGraph = ({ label, qoe, color }) => {
         <Box
           className={style.qoeValueBar}
           style={valueBarStyle}
-          {...palette.qoeValueBar} // eslint-disable-line react/jsx-props-no-spreading
+          {...palette.qoeValueBar}
         />
         <div className={style.qoeBarGraphBaseRoot}>
           <div className={style.qoeBarGraphBase} />
