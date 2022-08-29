@@ -3,7 +3,7 @@ import GeneralTypeHandler from './GeneralTypeHandler';
 
 export default class DTVTypeHandler extends GeneralTypeHandler {
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_video_title() {
 
         try {
@@ -17,7 +17,7 @@ export default class DTVTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_video_thumbnail() {
 
         try {
@@ -32,12 +32,11 @@ export default class DTVTypeHandler extends GeneralTypeHandler {
 
     }
 
-    // eslint-disable-next-line camelcase
     is_main_video(video) {
         return video === this.elm
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this
     is_cm(video) {
         return false;
     }

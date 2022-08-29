@@ -11,13 +11,13 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
         if (!this.is_main_video(elm)) throw new Error("video is not main");
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_duration() {
 
         return -1;
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_video_title() {
 
         try {
@@ -32,7 +32,7 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_id_by_video_holder() {
 
         try {
@@ -49,13 +49,13 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_view_count() {
 
         return -1;
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this, no-unused-vars
+    // eslint-disable-next-line class-methods-use-this, no-unused-vars
     is_main_video(video) {
 
         // トップページのサムネイル
@@ -63,13 +63,13 @@ export default class NicoLiveTypeHandler extends GeneralTypeHandler {
 
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this
     is_cm(video) {
 
         return false;
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     is_limited() {
         return this.limited;
     }

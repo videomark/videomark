@@ -9,7 +9,6 @@ import ResourceTiming from "./ResourceTiming";
 const IIJ_MPD_PATH = "https://twilightconcert.live.ipcasting.jp/twi/dash.mpd";
 
 export default class IIJTypeHandler extends GeneralTypeHandler {
-  // eslint-disable-next-line camelcase
   static async hook_iij() {
     // eslint-disable-next-line no-restricted-globals
     const { host } = new URL(location.href);
@@ -40,7 +39,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     IIJTypeHandler.hook_iij_request();
   }
 
-  // eslint-disable-next-line camelcase
   static hook_iij_request() {
     class SodiumXMLHttpRequest extends XMLHttpRequest {
       constructor(...args) {
@@ -122,7 +120,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     XMLHttpRequest = SodiumXMLHttpRequest;
   }
 
-  // eslint-disable-next-line camelcase
   static add_throughput_history(throughput) {
     console.debug(
       `add_throughput_history: downloadSize=${throughput.downloadSize}`
@@ -134,7 +131,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     );
   }
 
-  // eslint-disable-next-line camelcase
   static get_unplayed_buffer_size() {
     let unplayedBufferSize;
     try {
@@ -151,7 +147,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     return Math.floor(unplayedBufferSize);
   }
 
-  // eslint-disable-next-line camelcase
   static get_receive_buffer() {
     let ret = -1;
     try {
@@ -163,12 +158,10 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     return ret;
   }
 
-  // eslint-disable-next-line camelcase
   static get_current_time() {
     return document.querySelector("video").currentTime;
   }
 
-  // eslint-disable-next-line camelcase
   static get_video_representation_id() {
     try {
       const video = document.querySelector("video");
@@ -185,7 +178,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     }
   }
 
-  // eslint-disable-next-line camelcase
   static play_list_form_adaptive_fmts() {
     try {
       const {
@@ -247,12 +239,11 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     }
   }
 
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_duration() {
     return -1;
   }
 
-  // eslint-disable-next-line camelcase
   get_bitrate() {
     try {
       const video = this.get_video_bitrate();
@@ -266,7 +257,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     }
   }
 
-  // eslint-disable-next-line camelcase
   get_video_bitrate() {
     try {
       const { bps } = this.get_play_list_info().find(
@@ -280,28 +270,28 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     }
   }
 
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_framerate() {
     return IIJTypeHandler.sodiumAdaptiveFmts.framerate;
   }
 
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_video_title() {
     return undefined;
   }
 
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_video_thumbnail() {
     return undefined;
   }
 
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_play_list_info() {
     return IIJTypeHandler.play_list_form_adaptive_fmts();
   }
 
   // get_throughput_info()はバッファを破壊するため、VideoData.update()以外では実行してはならない
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_throughput_info() {
     try {
       return IIJTypeHandler.throughputHistories
@@ -335,7 +325,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     }
   }
 
-  // eslint-disable-next-line camelcase
   get_codec_info() {
     try {
       const { codec } = this.get_play_list_info().find(
@@ -349,7 +338,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
     }
   }
 
-  // eslint-disable-next-line camelcase, class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   get_representation() {
     return IIJTypeHandler.get_video_representation_id();
   }
