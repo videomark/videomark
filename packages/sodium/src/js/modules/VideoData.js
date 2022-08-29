@@ -438,7 +438,6 @@ export default class VideoData {
           this.play_start_time = now;
           playPos = 0;
           playTime = 0;
-          /* eslint-disable no-console */
           console.log(
             `VIDEOMARK: set play start time Event[${this.play_start_time}]`
           );
@@ -467,7 +466,6 @@ export default class VideoData {
       // eslint-disable-next-line no-underscore-dangle
       this._is_cm()
     ) {
-      /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D):${event.type}, VALUE:[${e.toJSON()}], ID:${
           this.uuid
@@ -476,7 +474,6 @@ export default class VideoData {
       return;
     }
 
-    /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A):${event.type}, VALUE:[${e.toJSON()}], ID:${
         this.uuid
@@ -498,7 +495,6 @@ export default class VideoData {
 
     if (this.play_start_time === -1) {
       this.play_start_time = Date.now();
-      /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: set play start time time_update Event[${
           this.play_start_time
@@ -539,7 +535,6 @@ export default class VideoData {
     );
 
     if (this.play_start_time === -1) {
-      /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
           this.uuid
@@ -548,7 +543,6 @@ export default class VideoData {
       return;
     }
 
-    /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
         this.uuid
