@@ -40,7 +40,6 @@ const remove_ui_all = () => {
 (async () => {
   // --- support --- //
   if (!document || !window) {
-    // eslint-disable-next-line no-console
     console.warn("VIDEOMARK: NOT supported");
     return;
   }

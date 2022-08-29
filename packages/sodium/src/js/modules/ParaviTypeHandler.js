@@ -71,7 +71,6 @@ export default class ParaviTypeHandler {
                     }
                 } catch (e) { return };
 
-                // eslint-disable-next-line no-console
                 console.log(`VIDEOMARK: load [URL: ${this.sodiumURL
                     }, contents: ${event.loaded
                     }, duration(ms): ${this.sodiumEnd - this.sodiumStart
@@ -138,7 +137,6 @@ export default class ParaviTypeHandler {
                 return result;
             }
 
-            // eslint-disable-next-line no-console
             console.log(`VIDEOMARK: load [URL: ${sodiumURL
                 }, contents: ${size
                 }, duration(ms): ${sodiumEnd - sodiumStart

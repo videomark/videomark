@@ -204,7 +204,6 @@ export default class VideoData {
 
   // eslint-disable-next-line camelcase
   set_quality(bitrate) {
-    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
     this.video_handler.set_quality(bitrate);
   }
@@ -262,7 +261,6 @@ export default class VideoData {
   is_stay() {
     const now = this.video_handler.get_id_by_video_holder();
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
-      // eslint-disable-next-line no-console
       console.log(
         `VIDEOMARK: switch video source removing [${
           this.id_by_video_holder
@@ -391,7 +389,6 @@ export default class VideoData {
       this.video_elm.removeEventListener(e.key, e.func)
     );
     this.video_handler.clear();
-    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: delete video uuid[${this.uuid}]`);
   }
 

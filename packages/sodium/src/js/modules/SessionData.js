@@ -122,7 +122,6 @@ export default class SessionData {
 
     this.session = session;
     this.location = new URL(window.location.href);
-    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: New Session start Session ID[${this.session.id}]`);
 
     this.locationIp();

@@ -33,7 +33,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
       IIJTypeHandler.sodiumAdaptiveFmts = parse(body, IIJ_MPD_PATH);
       IIJTypeHandler.sodiumAdaptiveFmts.framerate = fps;
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn(`VIDEOMARK: IIJ failed to get adaptive formats ${e}`);
     }
 
@@ -98,7 +97,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
               });
             }, 1000);
 
-            // eslint-disable-next-line no-console
             console.log(
               `VIDEOMARK: load [URL: ${event.target.responseURL}, contents: ${
                 event.loaded
@@ -241,7 +239,6 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
       });
       return videoRepArry.concat(audioRepArray);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn(`VIDEOMARK: IIJ failed to get adaptive formats ${e}`);
       return [];
     }
