@@ -44,7 +44,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
         this.timer = setInterval(() => this.cmMonitor(), 500);
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_video_title() {
 
         try {
@@ -58,7 +58,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_id_by_video_holder() {
 
         try {
@@ -75,7 +75,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_view_count() {
 
         try {
@@ -94,7 +94,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     is_main_video(video) {
 
         try {
@@ -110,12 +110,12 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this
     is_cm(video) {
         return this.cm;
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     is_limited() {
         return this.limited;
     }
@@ -168,7 +168,6 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
         localStorage.setItem("DMCSource.selectedQualityManually", "null");
     }
 
-    // eslint-disable-next-line camelcase
     add_cm_listener(listener) {
 
         this.listeners.push(listener);

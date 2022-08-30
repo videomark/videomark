@@ -3,7 +3,6 @@ import { parse } from 'mpd-parser';
 import Config from "./Config";
 
 export default class ParaviTypeHandler {
-    // eslint-disable-next-line camelcase
     static is_paravi_type() {
         try {
             if (videojs &&
@@ -25,7 +24,6 @@ export default class ParaviTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase
     static async hook_paravi() {
         // eslint-disable-next-line no-restricted-globals
         const { host } = new URL(location.href)
@@ -35,7 +33,6 @@ export default class ParaviTypeHandler {
 
     }
 
-    // eslint-disable-next-line camelcase
     static hook_paravi_request() {
         const origOpen = XMLHttpRequest.prototype.open
         const origSend = XMLHttpRequest.prototype.send
@@ -153,7 +150,6 @@ export default class ParaviTypeHandler {
         window.fetch = (...args1) => hookFunc(args1);
     }
 
-    // eslint-disable-next-line camelcase
     static add_throughput_history(throughput) {
         console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`)
         if (throughput.downloadSize <= 0) return;
@@ -161,7 +157,6 @@ export default class ParaviTypeHandler {
         ParaviTypeHandler.throughputHistories = ParaviTypeHandler.throughputHistories.slice(-Config.get_max_throughput_history_size());
     }
 
-    // eslint-disable-next-line camelcase
     static get_unplayed_buffer_size() {
         let unplayedBufferSize;
         try {
@@ -177,7 +172,6 @@ export default class ParaviTypeHandler {
         return Math.floor(unplayedBufferSize);
     }
 
-    // eslint-disable-next-line camelcase
     static get_video_representation_id() {
         let id;
         try {
@@ -190,7 +184,6 @@ export default class ParaviTypeHandler {
         return id;
     }
 
-    // eslint-disable-next-line camelcase
     static get_play_list_info() {
         try {
             const table = videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks()
@@ -223,7 +216,6 @@ export default class ParaviTypeHandler {
         } catch (e) { return [] }
     }
 
-    // eslint-disable-next-line camelcase
     static get_throughput_info() {
         try {
             const segmentFilter = ParaviTypeHandler.sodiumAdaptiveFmts.playlists
@@ -266,24 +258,20 @@ export default class ParaviTypeHandler {
         } catch (e) { return [] }
     }
 
-    // eslint-disable-next-line camelcase
     static get_duration() {
         const duration = videojs.getAllPlayers()[0].duration();
 
         return duration && Number.isFinite(duration) ? duration : -1;
     }
 
-    // eslint-disable-next-line camelcase
     static get_video_width() {
         return videojs.getAllPlayers()[0].dash.shakaPlayer.getStats().width;
     }
 
-    // eslint-disable-next-line camelcase
     static get_video_height() {
         return videojs.getAllPlayers()[0].dash.shakaPlayer.getStats().height;
     }
 
-    // eslint-disable-next-line camelcase
     static get_bitrate() {
         const stat = videojs.getAllPlayers()[0].dash.shakaPlayer.getStats();
         const vt = videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks();
@@ -304,27 +292,23 @@ export default class ParaviTypeHandler {
         return variant.videoBandwidth;
     }
 
-    // eslint-disable-next-line camelcase
     static get_video_bitrate() {
         return ParaviTypeHandler.get_bitrate();
     }
 
-    // eslint-disable-next-line camelcase
     static get_receive_buffer() {
         return videojs.getAllPlayers()[0].bufferedEnd();
     }
 
-    // eslint-disable-next-line camelcase
     static get_framerate() {
         return -1;
     }
 
-    // eslint-disable-next-line camelcase
     static get_segment_domain() {
         return document.domain;
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     static get_current_time(video) {    // TVerのインターフェースと合わせる
         return videojs.getAllPlayers()[0].currentTime();
     }

@@ -103,52 +103,42 @@ export default class VideoData {
     this.enable_quality_control = this.enable_quality_control || Boolean(quota_bitrate);
   }
 
-  // eslint-disable-next-line camelcase
   get_video_id() {
     return this.uuid;
   }
 
-  // eslint-disable-next-line camelcase
   get_title() {
     return this.title;
   }
 
-  // eslint-disable-next-line camelcase
   get_thumbnail() {
     return this.thumbnail;
   }
 
-  // eslint-disable-next-line camelcase
   get_resolution() {
     return this.resolution;
   }
 
-  // eslint-disable-next-line camelcase
   get_media_size() {
     return this.video_handler.get_duration();
   }
 
-  // eslint-disable-next-line camelcase
   get_start_time() {
     return this.play_start_time;
   }
 
-  // eslint-disable-next-line camelcase
   get_end_time() {
     return this.play_end_time;
   }
 
-  // eslint-disable-next-line camelcase
   get_latest_qoe() {
     return this.latest_qoe;
   }
 
-  // eslint-disable-next-line camelcase
   get_domain_name() {
     return this.domain_name;
   }
 
-  // eslint-disable-next-line camelcase
   get_viewport() {
     return {
       width: this.video_elm.width,
@@ -157,7 +147,6 @@ export default class VideoData {
   }
 
   // SessionData.storeSession(video)でローカルに保存され、グラフの描画で使われる
-  // eslint-disable-next-line camelcase
   get_quality() {
     const bitrate = this.video_handler.get_bitrate();
     const videoBitrate = this.video_handler.get_video_bitrate();
@@ -185,42 +174,35 @@ export default class VideoData {
     };
   }
 
-  // eslint-disable-next-line camelcase
   get_timing() {
     const now = Date.now();
     const { waiting, pause } = this.timing;
     return { waiting: waiting(now), pause: pause(now) };
   }
 
-  // eslint-disable-next-line camelcase
   get_codec_info() {
     return this.video_handler.get_codec_info();
   }
 
-  // eslint-disable-next-line camelcase
   get_service() {
     return this.video_handler.get_service();
   }
 
-  // eslint-disable-next-line camelcase
   set_quality(bitrate) {
     // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
     this.video_handler.set_quality(bitrate);
   }
 
-  // eslint-disable-next-line camelcase
   set_max_bitrate(bitrate, resolution) {
     this.bitrate_control_data = {bitrate, resolution};
     this.video_handler.set_max_bitrate(bitrate, resolution);
   }
 
-  // eslint-disable-next-line camelcase
   set_default_bitrate() {
     this.video_handler.set_default_bitrate();
   }
 
-  // eslint-disable-next-line camelcase
   add_latest_qoe(data) {
     this.latest_qoe.push(data);
 
@@ -238,13 +220,12 @@ export default class VideoData {
    * 送信、更新するかどうかを判定する
    * TODO: getを呼び出す前に実行する必要がある
    */
-  // eslint-disable-next-line camelcase
   is_available() {
     // eslint-disable-next-line no-underscore-dangle
     if (!this.is_main_video())
       // TVer IMA3 video 、YouTubeの広告、チャンネルページの動画を除去
       return false;
-    // eslint-disable-next-line camelcase, no-underscore-dangle
+    // eslint-disable-next-line no-underscore-dangle
     if (this._is_cm())
       // YouTubeの広告時は送信を行わない
       return false;
@@ -258,7 +239,6 @@ export default class VideoData {
     return true;
   }
 
-  // eslint-disable-next-line camelcase
   is_stay() {
     const now = this.video_handler.get_id_by_video_holder();
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
@@ -274,7 +254,6 @@ export default class VideoData {
     return true;
   }
 
-  // eslint-disable-next-line camelcase
   is_calculatable() {
     return this.video_handler.is_calculatable();
   }
@@ -395,17 +374,14 @@ export default class VideoData {
     console.log(`VIDEOMARK: delete video uuid[${this.uuid}]`);
   }
 
-  // eslint-disable-next-line camelcase
   is_main_video() {
     return this.video_handler.is_main_video(this.video_elm);
   }
 
-  // eslint-disable-next-line camelcase
   _is_cm() {
     return this.video_handler.is_cm(this.video_elm);
   }
 
-  // eslint-disable-next-line camelcase
   _is_started() {
     if (this.play_start_time !== -1) return true;
     return false;
@@ -494,7 +470,6 @@ export default class VideoData {
    * current position update event
    * @param {Event} event
    */
-  // eslint-disable-next-line camelcase
   _position_update_listener(event) {
     // eslint-disable-next-line no-underscore-dangle
     if (!this.is_main_video() || this._is_cm()) return;
@@ -514,7 +489,6 @@ export default class VideoData {
 
   /**
    */
-  // eslint-disable-next-line camelcase
   _cm_listener(args) {
     const { cm, pos, time } = args;
 

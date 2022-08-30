@@ -129,7 +129,6 @@ export default class SessionData {
     this.altSessionMessage();
   }
 
-  // eslint-disable-next-line camelcase
   get_session_id() {
     return this.session.id;
   }
@@ -137,7 +136,6 @@ export default class SessionData {
   /**
    * 計測対象のvideo
    */
-  // eslint-disable-next-line camelcase
   get_main_video() {
     return this.video.find(e => e.is_main_video());
   }
@@ -145,11 +143,8 @@ export default class SessionData {
   /**
    * videoの利用可否
    */
-  // eslint-disable-next-line camelcase
   get_video_availability() {
-    // eslint-disable-next-line camelcase
     const main_video = this.get_main_video();
-    // eslint-disable-next-line camelcase
     if (main_video === undefined) return false;
     return this.location.href === window.location.href && main_video.is_available();
   }
@@ -157,7 +152,6 @@ export default class SessionData {
   /**
    * 各videoのクオリティ情報の更新
    */
-  // eslint-disable-next-line camelcase
   update_quality_info() {
     this.video.forEach(e => e.update());
   }
@@ -166,14 +160,11 @@ export default class SessionData {
    * videoリストの更新
    * @param {HTMLCollection} elms
    */
-  // eslint-disable-next-line camelcase
   set_video_elms(elms) {
     Array.prototype.forEach.call(elms, elm => {
       if (!this.video.find(e => e.video_elm === elm)) {
-        // eslint-disable-next-line camelcase
         const video_id = uuidv4();
         try {
-          // eslint-disable-next-line camelcase
           const new_video = new VideoData(elm, video_id);
           new_video.read_settings();
           /* eslint-disable no-console */

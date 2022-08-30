@@ -13,33 +13,33 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
         this.elm = elm;
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_duration() {
 
         /* video.duration には、1FFFFFFFFFFFFF が入っているため使用できない */
         return -1
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_receive_buffer() {
 
         /* buffered には、現在時刻が入っているため使用できない */
         return -1;
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_segment_domain() {
         return document.domain;
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this
     get_current_time(video) {
 
         /* currentTime には、現在時刻が入っているため使用できない */
         return -1;
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_video_title() {
 
         try {
@@ -53,14 +53,14 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
         }
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_video_thumbnail() {
 
         /* あとから見ることができるような、固定されたサムネイルはなさそう */
         return "";
     }
 
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     get_id_by_video_holder() {
 
         /* チャンネルのジャンルならURLにあるが ID ではない */
@@ -76,7 +76,7 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
     * ただし、session:video = 1:1の関係があるため、
     * is_main_videoでは、現在表示中の <video> を一つ選んでいる。
     */
-    // eslint-disable-next-line camelcase, class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
     is_main_video(video) {
         try {
           return window.getComputedStyle(video).display === "block";
@@ -93,13 +93,13 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
     * ただし、session:video = 1:1の関係があるため、
     * is_main_videoでは、現在表示中の <video> を一つ選んでいる。
     */
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this
     is_cm(video) {
 
         return false;
     }
 
-    // eslint-disable-next-line camelcase, no-unused-vars, class-methods-use-this
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this
     add_cm_listener(listener) {
 
     }
