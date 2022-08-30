@@ -122,7 +122,6 @@ export default class SessionData {
 
     this.session = session;
     this.location = new URL(window.location.href);
-    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: New Session start Session ID[${this.session.id}]`);
 
     this.locationIp();
@@ -167,7 +166,6 @@ export default class SessionData {
         try {
           const new_video = new VideoData(elm, video_id);
           new_video.read_settings();
-          /* eslint-disable no-console */
           console.log(`VIDEOMARK: new video found uuid[${video_id}]`);
           set_max_bitrate(new_video);
           this.video.push(new_video);

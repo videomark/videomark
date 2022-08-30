@@ -189,7 +189,6 @@ export default class VideoData {
   }
 
   set_quality(bitrate) {
-    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: quality from TQAPI: ${bitrate}`);
     this.video_handler.set_quality(bitrate);
   }
@@ -242,7 +241,6 @@ export default class VideoData {
   is_stay() {
     const now = this.video_handler.get_id_by_video_holder();
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
-      // eslint-disable-next-line no-console
       console.log(
         `VIDEOMARK: switch video source removing [${
           this.id_by_video_holder
@@ -370,7 +368,6 @@ export default class VideoData {
       this.video_elm.removeEventListener(e.key, e.func)
     );
     this.video_handler.clear();
-    // eslint-disable-next-line no-console
     console.log(`VIDEOMARK: delete video uuid[${this.uuid}]`);
   }
 
@@ -417,7 +414,6 @@ export default class VideoData {
           this.play_start_time = now;
           playPos = 0;
           playTime = 0;
-          /* eslint-disable no-console */
           console.log(
             `VIDEOMARK: set play start time Event[${this.play_start_time}]`
           );
@@ -446,7 +442,6 @@ export default class VideoData {
       // eslint-disable-next-line no-underscore-dangle
       this._is_cm()
     ) {
-      /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D):${event.type}, VALUE:[${e.toJSON()}], ID:${
           this.uuid
@@ -455,7 +450,6 @@ export default class VideoData {
       return;
     }
 
-    /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A):${event.type}, VALUE:[${e.toJSON()}], ID:${
         this.uuid
@@ -476,7 +470,6 @@ export default class VideoData {
 
     if (this.play_start_time === -1) {
       this.play_start_time = Date.now();
-      /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: set play start time time_update Event[${
           this.play_start_time
@@ -516,7 +509,6 @@ export default class VideoData {
     );
 
     if (this.play_start_time === -1) {
-      /* eslint-disable no-console */
       console.log(
         `VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
           this.uuid
@@ -525,7 +517,6 @@ export default class VideoData {
       return;
     }
 
-    /* eslint-disable no-console */
     console.log(
       `VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
         this.uuid

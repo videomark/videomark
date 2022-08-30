@@ -24,55 +24,45 @@ export default class VideoHandler {
             this.handler = ParaviTypeHandler;
             this.calQoeFlg = true;
             this.service = "paravi";
-            // eslint-disable-next-line no-console
             console.log('Paravi Type Handler');
         } else if (TVerTypeHandler.is_tver_type()) {
             this.handler = TVerTypeHandler;
             this.calQoeFlg = true;
             this.service = "tver";
-            // eslint-disable-next-line no-console
             console.log('TVer Type Handler');
         } else if (YouTubeTypeHandler.is_youtube_type()) {
             this.handler = new YouTubeTypeHandler(elm);
             this.calQoeFlg = true;
             this.service = "youtube";
-            // eslint-disable-next-line no-console
             console.log('YouTube Type Handler');
         } else if (url.host === "www.nicovideo.jp") {
             this.handler = new NicoVideoTypeHandler(elm);
             this.service = "nicovideo";
-            // eslint-disable-next-line no-console
             console.log('NicoVideo Type Handler');
         } else if (/live\d.nicovideo.jp/.test(url.host)) {
             this.handler = new NicoLiveTypeHandler(elm);
             this.service = "nicolive";
-            // eslint-disable-next-line no-console
             console.log('NicoLive Type Handler');
         } else if (url.host === "i.fod.fujitv.co.jp") {
             this.handler = new FodTypeHandler(elm);
             this.service = "fod";
-            // eslint-disable-next-line no-console
             console.log('Fod Type Handler');
         } else if (url.host === "www.nhk-ondemand.jp") {
             this.handler = new NHKOndemandTypeHandler(elm);
             this.service = "nhkondemand";
-            // eslint-disable-next-line no-console
             console.log('NHK Ondemand Type Handler');
         } else if (/\S+.video.dmkt-sp.jp/.test(url.host)) {
             this.handler = new DTVTypeHandler(elm);
             this.service = "dtv";
-            // eslint-disable-next-line no-console
             console.log('dTV Type Handler');
         } else if (url.host === "abema.tv") {
             if (url.pathname.split('/').indexOf("video") >= 0) {
                 this.handler = new AbemaTVVideoTypeHandler(elm);
                 this.service = "abematv_video";
-                // eslint-disable-next-line no-console
                 console.log('Abema TV Video Type Handler');
             } else if (url.pathname.split('/').indexOf("now-on-air") >= 0) {
                 this.handler = new AbemaTVLiveTypeHandler(elm);
                 this.service = "abematv_live";
-                // eslint-disable-next-line no-console
                 console.log('Abema TV Live Type Handler');
             } else {
                 throw new Error('AbemaTV ignores top page and unknown page video.');
@@ -80,13 +70,11 @@ export default class VideoHandler {
         } else if (url.host === "www.amazon.co.jp") {
             this.handler = new AmazonPrimeVideoTypeHandler(elm);
             this.service = "amazonprimevideo";
-            // eslint-disable-next-line no-console
             console.log('Amazon Prime Video Type Handler');
         } else if (url.host === "pr.iij.ad.jp") {
             this.handler = new IIJTypeHandler(elm);
             this.calQoeFlg = true;
             this.service = "iijtwilightconcert";
-            // eslint-disable-next-line no-console
             console.log('IIJ Type Handler');
         } else {
             throw new Error('Unknown Type Handler');
