@@ -6,26 +6,36 @@ import GeneralTypeHandler from "./GeneralTypeHandler";
 
 import ResourceTiming from "./ResourceTiming";
 
-const IIJ_MPD_PATH = "https://twilightconcert.live.ipcasting.jp/twi/dash.mpd";
+// const IIJ_MPD_PATH = "https://twilightconcert.live.ipcasting.jp/twi/dash.mpd";
+const IIJ_SERVER_IP = "133.110.240.98";
+const IIJ_MPD_PATH = `http://${IIJ_SERVER_IP}/bbb_dash_test/bbb_abr.mpd`;
 
 export default class IIJTypeHandler extends GeneralTypeHandler {
   static async hook_iij() {
     // eslint-disable-next-line no-restricted-globals
     const { host } = new URL(location.href);
-    if (host !== "pr.iij.ad.jp") return;
+    if (["133.110.240.98", "pr.iij.ad.jp"].indexOf(host) === -1) return;
 
     /* MPD 取得のタイミングがホックより早いため自分で取得を行う */
     try {
       const ret = await fetch(IIJ_MPD_PATH);
       const body = await ret.text();
-      /* mpd-parser で parse すると framerate が失われるため予め値を取得する */
+      /* mpd-parser で parse すると framerate が失われるため予め値を取得する
+       * dash.mpd には <AdaptationSet frameRate="30/1" ... > のように記載がある
+       * bbb_abr.mpd には <Representation frameRate="60" ... > のように記載がある
+       * 後者では Representation 毎に異なる場合も理論的にはあるが考慮しない */
       let fps;
       try {
         const {
           groups: { frameRate },
         } = /frameRate="(?<frameRate>\S+)"/.exec(body);
-        const [frame, unit] = frameRate.split("/");
-        fps = Math.floor(Number(frame) / Number(unit));
+        if (frameRate.indexOf("/")) {
+          // 分数表記のフレームレートの場合
+          const [frame, unit] = frameRate.split("/");
+          fps = Math.floor(Number(frame) / Number(unit));
+        } else {
+          fps = Math.floor(frameRate);
+        }
       } catch (e) {
         fps = -1;
       }
@@ -188,6 +198,13 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
         },
         playlists: video,
       } = IIJTypeHandler.sodiumAdaptiveFmts;
+
+      /* 次のコードは MPD が <SegmentTemplate duration="xxx"> を使っているケース専用
+       * <SegmentBase> 使っている場合の対応が必要
+       * playlists[n].segments = [] であり chunkDuration は得られない
+       * mediaGroups.AUDIO.audio.main.playlists[n].segments = [] も同じ
+       */
+      const dummyChunkDuration = 1080000 / 1000;
       const videoRepArry = video.map((e) => {
         const {
           attributes: {
@@ -196,7 +213,14 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
             CODECS: codec,
             RESOLUTION: { width: videoWidth, height: videoHeight },
           },
-          segments: [{ duration: chunkDuration, resolvedUri: serverIp }],
+          // segments: [{ duration: chunkDuration, resolvedUri: serverIp }],
+          // sodiumAdaptiveFmts に記載がない場合、取りあえずデフォルト値入れて回避
+          segments: [
+            { duration: chunkDuration, resolvedUri: serverIp } = {
+              duration: dummyChunkDuration,
+              resolvedUri: `https://${IIJ_SERVER_IP}/`,
+            },
+          ],
         } = e;
         return {
           type: "video",
@@ -214,7 +238,14 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
       const audioRepArray = audio.map((e) => {
         const {
           attributes: { NAME: representationId, BANDWIDTH: bps, CODECS: codec },
-          segments: [{ duration: chunkDuration, resolvedUri: serverIp }],
+          // segments: [{ duration: chunkDuration, resolvedUri: serverIp }],
+          // sodiumAdaptiveFmts に記載がない場合、取りあえずデフォルト値入れて回避
+          segments: [
+            { duration: chunkDuration, resolvedUri: serverIp } = {
+              duration: dummyChunkDuration,
+              resolvedUri: `https://${IIJ_SERVER_IP}/`,
+            },
+          ],
         } = e;
         return {
           type: "audio",

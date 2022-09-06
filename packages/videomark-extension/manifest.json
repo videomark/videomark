@@ -35,6 +35,8 @@
   "content_scripts": [
     {
       "matches": [
+        "*://127.0.0.1/*",
+        "*://133.110.240.98/*",
         "*://*.tver.jp/*",
         "*://*.paravi.jp/*",
         "*://*.youtube.com/*",
