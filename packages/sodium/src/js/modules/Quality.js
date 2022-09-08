@@ -10,10 +10,10 @@ export const qualityStatus = ({ sessionId, videoId }) => {
     speed,
     droppedVideoFrames,
     totalVideoFrames,
-    timing
+    timing,
   } = latestQuality({
     sessionId,
-    videoId
+    videoId,
   });
   const qoe = latestQoE({ sessionId, videoId });
 
@@ -30,13 +30,15 @@ export const qualityStatus = ({ sessionId, videoId }) => {
     timing,
     startTime: startTime({ sessionId, videoId }),
     qoe,
-    alert: Number.isFinite(qoe) && isLowQuality({ droppedVideoFrames, totalVideoFrames }),
-  }
+    alert:
+      Number.isFinite(qoe) &&
+      isLowQuality({ droppedVideoFrames, totalVideoFrames }),
+  };
 };
 
 const latest = (log, key) => {
   const { date, [key]: value } =
-    (log || []).filter(a => key in a).slice(-1)[0] || {};
+    (log || []).filter((a) => key in a).slice(-1)[0] || {};
   return { date, value };
 };
 
@@ -57,7 +59,7 @@ export const latestQuality = ({ sessionId, videoId }) => {
 export const getRealThroughput = (list) => {
   if (!list) return NaN;
   if (!list.length) return NaN;
-  return list[list.length-1].throughput;
+  return list[list.length - 1].throughput;
 };
 
 export const startTime = ({ sessionId, videoId }) => {

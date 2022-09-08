@@ -36,12 +36,12 @@ export default class VideoData {
       height: -1,
       max: {
         width: -1,
-        height: -1
+        height: -1,
       },
       min: {
         width: -1,
-        height: -1
-      }
+        height: -1,
+      },
     };
     this.latest_qoe = [];
     this.throughput = [];
@@ -50,39 +50,39 @@ export default class VideoData {
     this.listeners = [];
     this.timing = {
       waiting: () => 0,
-      pause: () => 0
+      pause: () => 0,
     };
     this.bitrate_control_data = {
       bitrate: -1,
-      resolution: -1
+      resolution: -1,
     };
     // --- set event listener --- //
-    Config.get_event_type_names().forEach(s => {
+    Config.get_event_type_names().forEach((s) => {
       this.last_events[s] = 0;
 
       // eslint-disable-next-line no-underscore-dangle
-      const l = event => this._listener(event);
+      const l = (event) => this._listener(event);
 
       this.video_elm.addEventListener(s, l);
 
       this.listeners.push({
         key: s,
-        func: l
+        func: l,
       });
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    const l = event => this._position_update_listener(event);
+    const l = (event) => this._position_update_listener(event);
 
     this.video_elm.addEventListener("timeupdate", l);
 
     this.listeners.push({
       key: "timeupdate",
-      func: l
+      func: l,
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    this.video_handler.add_cm_listener(args => this._cm_listener(args));
+    this.video_handler.add_cm_listener((args) => this._cm_listener(args));
 
     this.enable_quality_control = false;
     this.max_resolution = 2160;
@@ -92,15 +92,20 @@ export default class VideoData {
   async read_settings() {
     const resolution_control = await Config.get_resolution_control();
     if (resolution_control) this.max_resolution = resolution_control;
-    this.enable_quality_control = this.enable_quality_control || Boolean(resolution_control);
+    this.enable_quality_control =
+      this.enable_quality_control || Boolean(resolution_control);
 
     const bitrate_control = await Config.get_bitrate_control();
-    if (bitrate_control) this.max_bitrate = Math.min(this.max_bitrate, bitrate_control);
-    this.enable_quality_control = this.enable_quality_control || Boolean(bitrate_control);
+    if (bitrate_control)
+      this.max_bitrate = Math.min(this.max_bitrate, bitrate_control);
+    this.enable_quality_control =
+      this.enable_quality_control || Boolean(bitrate_control);
 
     const quota_bitrate = await Config.get_quota_bitrate();
-    if (quota_bitrate) this.max_bitrate = Math.min(this.max_bitrate, quota_bitrate);
-    this.enable_quality_control = this.enable_quality_control || Boolean(quota_bitrate);
+    if (quota_bitrate)
+      this.max_bitrate = Math.min(this.max_bitrate, quota_bitrate);
+    this.enable_quality_control =
+      this.enable_quality_control || Boolean(quota_bitrate);
   }
 
   get_video_id() {
@@ -142,7 +147,7 @@ export default class VideoData {
   get_viewport() {
     return {
       width: this.video_elm.width,
-      height: this.video_elm.height
+      height: this.video_elm.height,
     };
   }
 
@@ -170,7 +175,7 @@ export default class VideoData {
       receiveBuffer,
       framerate,
       throughput,
-      speed
+      speed,
     };
   }
 
@@ -194,7 +199,7 @@ export default class VideoData {
   }
 
   set_max_bitrate(bitrate, resolution) {
-    this.bitrate_control_data = {bitrate, resolution};
+    this.bitrate_control_data = { bitrate, resolution };
     this.video_handler.set_max_bitrate(bitrate, resolution);
   }
 
@@ -242,9 +247,7 @@ export default class VideoData {
     const now = this.video_handler.get_id_by_video_holder();
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
       console.log(
-        `VIDEOMARK: switch video source removing [${
-          this.id_by_video_holder
-        }] -> [${now}]`
+        `VIDEOMARK: switch video source removing [${this.id_by_video_holder}] -> [${now}]`
       );
       return false;
     }
@@ -289,7 +292,7 @@ export default class VideoData {
     this.creation_time = now;
     // get_throughput_info()はバッファを破壊するため、このメソッド以外では実行してはならない
     this.throughput = this.video_handler.get_throughput_info();
-    this.throughput.forEach(element => this.throughput_send.push(element));
+    this.throughput.forEach((element) => this.throughput_send.push(element));
 
     if (this.delta_total === 0) return;
     if (this.delta_total < 0 || this.delta_dropped < 0) {
@@ -330,21 +333,27 @@ export default class VideoData {
         playEndTime: this.play_end_time,
         currentPlayPos: this.current_play_pos,
         currentPlayTime: this.current_play_pos_date,
-        bitrateControlData: { 
+        bitrateControlData: {
           bitrate: this.bitrate_control_data.bitrate,
           resolution: this.bitrate_control_data.resolution,
-          limited: this.video_handler.is_limited()
-        }
+          limited: this.video_handler.is_limited(),
+        },
       },
-      playback_quality: this.playback_quality.splice(0, this.playback_quality.length),
+      playback_quality: this.playback_quality.splice(
+        0,
+        this.playback_quality.length
+      ),
       play_list_info: this.video_handler.get_play_list_info(),
-      throughput_info: this.throughput_send.splice(0, this.throughput_send.length),
-      cmHistory: this.cm_events.splice(0, this.cm_events.length)
+      throughput_info: this.throughput_send.splice(
+        0,
+        this.throughput_send.length
+      ),
+      cmHistory: this.cm_events.splice(0, this.cm_events.length),
     };
     if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
       val.property.src = this.video_elm.src;
     }
-    Config.get_event_type_names().forEach(s => {
+    Config.get_event_type_names().forEach((s) => {
       val[`event_${s}`] = [];
       val[`event_${s}_delta`] = [];
     });
@@ -354,7 +363,9 @@ export default class VideoData {
       data_sz -= JSON.stringify(e.get()).length;
       data_sz -= JSON.stringify(e.get_delta()).length;
       if (data_sz < 0) {
-        console.debug(`event_data_sz max=${Config.get_event_data_max_size()} over=${-data_sz}`);
+        console.debug(
+          `event_data_sz max=${Config.get_event_data_max_size()} over=${-data_sz}`
+        );
         break;
       }
       val[`event_${e.type}`].splice(0, 0, e.get());
@@ -364,7 +375,7 @@ export default class VideoData {
   }
 
   clear() {
-    this.listeners.forEach(e =>
+    this.listeners.forEach((e) =>
       this.video_elm.removeEventListener(e.key, e.func)
     );
     this.video_handler.clear();
@@ -400,13 +411,13 @@ export default class VideoData {
     }
     switch (event.type) {
       case "waiting":
-        this.timing.waiting = at => waiting + at - now;
+        this.timing.waiting = (at) => waiting + at - now;
         break;
       case "canplay":
         this.timing.waiting = () => waiting;
         break;
       case "pause":
-        this.timing.pause = at => pause + at - now;
+        this.timing.pause = (at) => pause + at - now;
         break;
       case "play":
         this.timing.pause = () => pause;
@@ -471,9 +482,7 @@ export default class VideoData {
     if (this.play_start_time === -1) {
       this.play_start_time = Date.now();
       console.log(
-        `VIDEOMARK: set play start time time_update Event[${
-          this.play_start_time
-        }]`
+        `VIDEOMARK: set play start time time_update Event[${this.play_start_time}]`
       );
     }
     this.current_play_pos = this.video_handler.get_current_time(event.target);

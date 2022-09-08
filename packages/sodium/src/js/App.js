@@ -19,22 +19,49 @@ const get_frame_id = () => {
   return window.top === window ? "#top" : window.location.href;
 };
 
-const update_ui = state => {
-  const status = state && state.sessionId && state.videoId ? qualityStatus(state) : {};
-  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_ui", frame_id: get_frame_id(), state: state, qualityStatus: status }, "*");
+const update_ui = (state) => {
+  const status =
+    state && state.sessionId && state.videoId ? qualityStatus(state) : {};
+  get_ui_target().postMessage(
+    {
+      type: "FROM_WEB_CONTENT",
+      method: "update_ui",
+      frame_id: get_frame_id(),
+      state: state,
+      qualityStatus: status,
+    },
+    "*"
+  );
 };
 
 const remove_ui = () => {
-  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() }, "*");
+  get_ui_target().postMessage(
+    { type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() },
+    "*"
+  );
 };
 
 const update_alive = (alive) => {
-  get_ui_target().postMessage({ type: "FROM_WEB_CONTENT", method: "update_alive", frame_id: get_frame_id(), alive: alive }, "*");
+  get_ui_target().postMessage(
+    {
+      type: "FROM_WEB_CONTENT",
+      method: "update_alive",
+      frame_id: get_frame_id(),
+      alive: alive,
+    },
+    "*"
+  );
 };
 
 const remove_ui_all = () => {
-  window.postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() }, "*");
-  window.top.postMessage({ type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() }, "*");
+  window.postMessage(
+    { type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() },
+    "*"
+  );
+  window.top.postMessage(
+    { type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() },
+    "*"
+  );
 };
 
 (async () => {
@@ -63,9 +90,15 @@ const remove_ui_all = () => {
   let collect_interval_id;
 
   // --- UI event --- //
-  window.addEventListener("message", event => {
-    const data = (typeof event.data === "string") ? jsonParseSafe(event.data) : event.data;
-    if (!["FROM_WEB_CONTENT", "FROM_ANDROID_UI", "FROM_EXTENSION_POPUP"].includes(data.type)) return;
+  window.addEventListener("message", (event) => {
+    const data =
+      typeof event.data === "string" ? jsonParseSafe(event.data) : event.data;
+    if (
+      !["FROM_WEB_CONTENT", "FROM_ANDROID_UI", "FROM_EXTENSION_POPUP"].includes(
+        data.type
+      )
+    )
+      return;
 
     if (data.method === "update_ui") {
       ui.update_status(data.state, data.qualityStatus);
@@ -76,8 +109,15 @@ const remove_ui_all = () => {
     if (data.method === "notice_active_frame") {
       active_frame_id = data.frame_id;
       if (window.top === window) {
-        Array.from(window.frames).forEach(frame => {
-          frame.postMessage({ type: "FROM_WEB_CONTENT", method: "notice_active_frame", frame_id: data.frame_id }, "*");
+        Array.from(window.frames).forEach((frame) => {
+          frame.postMessage(
+            {
+              type: "FROM_WEB_CONTENT",
+              method: "notice_active_frame",
+              frame_id: data.frame_id,
+            },
+            "*"
+          );
         });
       }
     }
@@ -89,7 +129,10 @@ const remove_ui_all = () => {
       if (active_frame_id === data.frame_id) {
         ui.remove_element();
       } else if (active_frame_id !== undefined) {
-        event.source.postMessage({ type: data.type, method: "clear_interval" }, "*");
+        event.source.postMessage(
+          { type: data.type, method: "clear_interval" },
+          "*"
+        );
       }
     }
 
@@ -105,8 +148,11 @@ const remove_ui_all = () => {
 
       // androidのメニューからではwindow.topにしかメッセージを送れないので、フレームにも伝達させる
       if (window.top === window) {
-        Array.from(window.frames).forEach(frame => {
-          frame.postMessage({ type: data.type, method: data.method, enabled: data.enabled }, "*");
+        Array.from(window.frames).forEach((frame) => {
+          frame.postMessage(
+            { type: data.type, method: data.method, enabled: data.enabled },
+            "*"
+          );
         });
       }
     }
@@ -117,9 +163,12 @@ const remove_ui_all = () => {
       if (active_frame_id === data.frame_id) {
         Config.set_alive(data.alive);
         // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-        if(!data.alive) ui.remove_element();
+        if (!data.alive) ui.remove_element();
       } else if (active_frame_id !== undefined) {
-        event.source.postMessage({ type: data.type, method: "clear_interval" }, "*");
+        event.source.postMessage(
+          { type: data.type, method: "clear_interval" },
+          "*"
+        );
       }
     }
 
@@ -127,7 +176,8 @@ const remove_ui_all = () => {
     if (data.method === "clear_interval") {
       window.clearInterval(search_video_interval_id);
       window.clearInterval(collect_interval_id);
-      if (Config.isMobile()) screen.orientation.removeEventListener("change", remove_ui_all);
+      if (Config.isMobile())
+        screen.orientation.removeEventListener("change", remove_ui_all);
     }
   });
 
@@ -166,13 +216,20 @@ const remove_ui_all = () => {
     // ページ表示直後では、どのフレームに計測対象の動画があるかわからないので、計測結果の更新を待つことになる
     const frame_id = get_frame_id();
     if (active_frame_id !== frame_id)
-      window.top.postMessage({ type: "FROM_WEB_CONTENT", method: "notice_active_frame", frame_id: frame_id }, "*");
+      window.top.postMessage(
+        {
+          type: "FROM_WEB_CONTENT",
+          method: "notice_active_frame",
+          frame_id: frame_id,
+        },
+        "*"
+      );
 
     if (!Config.get_ui_enabled()) return;
     update_ui({
       maxBitrate: video.max_bitrate,
       sessionId: session.get_session_id(),
-      videoId: video.get_video_id()
+      videoId: video.get_video_id(),
     });
   }, Config.get_collect_interval());
 

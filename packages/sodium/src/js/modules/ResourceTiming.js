@@ -30,14 +30,22 @@ class ResourceTiming {
 
     while (resources.length) {
       const resource = resources.pop();
-      if (!resource.name.startsWith(Config.get_sodium_server_url()) && !resource.name.startsWith(Config.get_fluent_url()))
+      if (
+        !resource.name.startsWith(Config.get_sodium_server_url()) &&
+        !resource.name.startsWith(Config.get_fluent_url())
+      )
         this.reversedHistories.unshift(resource);
     }
     return [previousValue, { transferSize: this.transferSize }];
   }
 
   find(url) {
-    return performance.getEntriesByType("resource").find(element => element.name === url) || this.reversedHistories.find(element => element.name === url);
+    return (
+      performance
+        .getEntriesByType("resource")
+        .find((element) => element.name === url) ||
+      this.reversedHistories.find((element) => element.name === url)
+    );
   }
 
   toDate(hires) {

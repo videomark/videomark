@@ -4,7 +4,7 @@ export class Storage {
     this.videoId = videoId;
     this.cache = {
       session_id: this.sessionId,
-      video_id: this.videoId
+      video_id: this.videoId,
     };
     this.initialized = false;
     this.id = null;
@@ -24,12 +24,15 @@ export class Storage {
       this.initialized = true;
     }
     Object.assign(this.cache, attributes);
-    window.postMessage({
-      type: "FROM_SODIUM_JS",
-      method: "set_video",
-      id: this.id,
-      video: this.cache
-    }, "*");
+    window.postMessage(
+      {
+        type: "FROM_SODIUM_JS",
+        method: "set_video",
+        id: this.id,
+        video: this.cache,
+      },
+      "*"
+    );
     return this.cache;
   }
 }

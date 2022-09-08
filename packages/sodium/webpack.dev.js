@@ -27,7 +27,6 @@ module.exports = merge(common, {
 
       // server's default request body size x 0.8 (1mb x 0.8 x 1024)
       EVENT_DATA_MAX_SIZE: 819200,
-
     }),
   ],
 
