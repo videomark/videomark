@@ -6,7 +6,14 @@ import ResourceTiming from "./ResourceTiming";
 import VideoData from "./VideoData";
 import MainVideoChangeException from "./MainVideoChangeException";
 import { useStorage } from "./Storage";
-import { saveTransferSize, underQuotaLimit, saveQuotaLimitStarted, fetchAndStorePeakTimeLimit, underPeakTimeLimit, stopPeakTimeLimit } from "./StatStorage";
+import {
+  saveTransferSize,
+  underQuotaLimit,
+  saveQuotaLimitStarted,
+  fetchAndStorePeakTimeLimit,
+  underPeakTimeLimit,
+  stopPeakTimeLimit,
+} from "./StatStorage";
 import { version } from "../../../package.json";
 
 /**
@@ -31,15 +38,18 @@ import { version } from "../../../package.json";
 async function send(payload) {
   const body = msgpack.encode(JSON.parse(JSON.stringify(payload)));
   if (body.length > Config.get_max_send_size())
-    console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
+    console.warn(
+      `VIDEOMARK: Too large payload packed body size is ${body.length}`
+    );
 
-  const type = payload.sessionType === "personal" ? payload.sessionType : "social";
+  const type =
+    payload.sessionType === "personal" ? payload.sessionType : "social";
   const ret = await fetch(`${Config.get_fluent_url()}.${type}`, {
     method: "POST",
     headers: {
-      "Content-type": "application/msgpack"
+      "Content-type": "application/msgpack",
     },
-    body
+    body,
   });
   if (!ret.ok) {
     throw new Error("fluent response was not ok.");
@@ -108,7 +118,7 @@ export default class SessionData {
           Date.now() +
           (Number.isFinite(expiresIn)
             ? expiresIn
-            : Config.get_default_session_expires_in())
+            : Config.get_default_session_expires_in()),
       };
       window.postMessage(
         {
@@ -136,7 +146,7 @@ export default class SessionData {
    * 計測対象のvideo
    */
   get_main_video() {
-    return this.video.find(e => e.is_main_video());
+    return this.video.find((e) => e.is_main_video());
   }
 
   /**
@@ -145,14 +155,16 @@ export default class SessionData {
   get_video_availability() {
     const main_video = this.get_main_video();
     if (main_video === undefined) return false;
-    return this.location.href === window.location.href && main_video.is_available();
+    return (
+      this.location.href === window.location.href && main_video.is_available()
+    );
   }
 
   /**
    * 各videoのクオリティ情報の更新
    */
   update_quality_info() {
-    this.video.forEach(e => e.update());
+    this.video.forEach((e) => e.update());
   }
 
   /**
@@ -160,8 +172,8 @@ export default class SessionData {
    * @param {HTMLCollection} elms
    */
   set_video_elms(elms) {
-    Array.prototype.forEach.call(elms, elm => {
-      if (!this.video.find(e => e.video_elm === elm)) {
+    Array.prototype.forEach.call(elms, (elm) => {
+      if (!this.video.find((e) => e.video_elm === elm)) {
         const video_id = uuidv4();
         try {
           const new_video = new VideoData(elm, video_id);
@@ -175,31 +187,30 @@ export default class SessionData {
       }
     });
     const removing = this.video.filter(
-      e =>
-        !Array.prototype.find.call(elms, elm => elm === e.video_elm) ||
+      (e) =>
+        !Array.prototype.find.call(elms, (elm) => elm === e.video_elm) ||
         !e.is_stay()
     );
-    removing.forEach(e => {
+    removing.forEach((e) => {
       e.clear();
       this.video.splice(this.video.indexOf(e), 1);
     });
   }
 
   async start() {
-
     let mainVideo;
     let startTime;
 
-    for (; ;) {
-
+    for (;;) {
       // eslint-disable-next-line no-await-in-loop
       mainVideo = await this.waitMainVideo();
 
-      console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
+      console.log(
+        `VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`
+      );
       this.location = new URL(window.location.href);
 
       try {
-
         // eslint-disable-next-line no-await-in-loop
         startTime = await this.waitPlay(mainVideo);
 
@@ -207,36 +218,33 @@ export default class SessionData {
 
         // eslint-disable-next-line no-await-in-loop
         await this.playing(mainVideo);
-
       } catch (e) {
         if (e instanceof MainVideoChangeException)
-          console.log(`VIDEOMARK: STATE CHANGE main video changed ${mainVideo.get_video_id()}`);
-        else
-          console.log(`VIDEOMARK: ${e}`);
+          console.log(
+            `VIDEOMARK: STATE CHANGE main video changed ${mainVideo.get_video_id()}`
+          );
+        else console.log(`VIDEOMARK: ${e}`);
       }
     }
   }
 
   async waitMainVideo() {
-
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
       const timer = setInterval(() => {
         const mainVideo = this.get_main_video();
         if (!mainVideo) return;
         clearInterval(timer);
-        resolve(mainVideo)
+        resolve(mainVideo);
       }, Config.get_check_state_interval());
     });
   }
 
   async waitPlay(mainVideo) {
-
     return new Promise((resolve, reject) => {
-
       const timer = setInterval(() => {
         const startTime = mainVideo.get_start_time();
-        if (mainVideo !== this.get_main_video()) reject(new MainVideoChangeException());
+        if (mainVideo !== this.get_main_video())
+          reject(new MainVideoChangeException());
         if (startTime === -1) return;
         clearInterval(timer);
         resolve(startTime);
@@ -245,66 +253,75 @@ export default class SessionData {
   }
 
   async playing(mainVideo) {
-
     const qoeRequestStart =
       (Config.get_trans_interval() * Config.get_send_data_count_for_qoe() -
-        Config.get_prev_count_for_qoe()) * Config.get_check_state_interval();
+        Config.get_prev_count_for_qoe()) *
+      Config.get_check_state_interval();
 
     let dataTimeoutId;
     let storeTimeoutId;
     let requestTimeoutId;
 
     try {
-
       /* データ送信 */
-      dataTimeoutId = this.startDataTransaction(mainVideo, Config.get_trans_interval() * Config.get_check_state_interval());
+      dataTimeoutId = this.startDataTransaction(
+        mainVideo,
+        Config.get_trans_interval() * Config.get_check_state_interval()
+      );
 
       /* 保存 */
-      storeTimeoutId = this.startDataStore(mainVideo, Config.get_check_state_interval());
+      storeTimeoutId = this.startDataStore(
+        mainVideo,
+        Config.get_check_state_interval()
+      );
 
       if (mainVideo.is_calculatable()) {
-
         /* QoE計算に必要なデータが送信されるまで待機 (5 * 2 - 3) * 1000 = 7000 ms */
-        await new Promise(resolve => setTimeout(() => resolve(), qoeRequestStart))
+        await new Promise((resolve) =>
+          setTimeout(() => resolve(), qoeRequestStart)
+        );
 
         /* 最初の最新QoE値を取得 */
-        const qoe = await this.waitFirstQoE(mainVideo, Config.get_max_count_for_qoe());
+        const qoe = await this.waitFirstQoE(
+          mainVideo,
+          Config.get_max_count_for_qoe()
+        );
         if (qoe)
           console.log(`VIDEOMARK: STATE CHANGE latest qoe computed ${qoe}`);
-        else
-          console.log(`VIDEOMARK: STATE CHANGE latest qoe timeout`);
+        else console.log(`VIDEOMARK: STATE CHANGE latest qoe timeout`);
 
         /* QoE値問い合わせ */
-        requestTimeoutId = this.startRequestTransaction(mainVideo,
-          Config.get_trans_interval() * Config.get_latest_qoe_update() * Config.get_check_state_interval());
+        requestTimeoutId = this.startRequestTransaction(
+          mainVideo,
+          Config.get_trans_interval() *
+            Config.get_latest_qoe_update() *
+            Config.get_check_state_interval()
+        );
       }
 
       /* videoが切り替わるまで待機 */
       await new Promise((resolve) => {
-
         const timer = setInterval(() => {
-
           if (mainVideo !== this.get_main_video()) {
             clearInterval(timer);
             resolve();
           }
-        }, Config.get_check_state_interval())
-      })
+        }, Config.get_check_state_interval());
+      });
     } finally {
-
       if (dataTimeoutId) clearTimeout(dataTimeoutId);
-      if (storeTimeoutId)clearTimeout(storeTimeoutId);
+      if (storeTimeoutId) clearTimeout(storeTimeoutId);
       if (requestTimeoutId) clearTimeout(requestTimeoutId);
     }
   }
 
   async waitFirstQoE(mainVideo, timeoutCount) {
-
     let qoe = null;
     let counter = 0;
 
     for (; !qoe && counter < timeoutCount; counter += 1) {
-      if (mainVideo !== this.get_main_video()) throw new MainVideoChangeException();
+      if (mainVideo !== this.get_main_video())
+        throw new MainVideoChangeException();
       try {
         // eslint-disable-next-line no-await-in-loop
         qoe = await this.requestQoE(mainVideo);
@@ -316,7 +333,9 @@ export default class SessionData {
         break;
       }
       // eslint-disable-next-line no-await-in-loop
-      await new Promise(resolve => setTimeout(() => resolve(), Config.get_check_state_interval()))
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(), Config.get_check_state_interval())
+      );
     }
 
     return qoe;
@@ -324,7 +343,7 @@ export default class SessionData {
 
   startDataTransaction(mainVideo, interval) {
     return setTimeout(async () => {
-      for (; mainVideo === this.get_main_video();) {
+      for (; mainVideo === this.get_main_video(); ) {
         if (mainVideo.is_available()) {
           try {
             // eslint-disable-next-line no-await-in-loop
@@ -334,27 +353,27 @@ export default class SessionData {
           }
         }
         // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => setTimeout(() => resolve(), interval))
+        await new Promise((resolve) => setTimeout(() => resolve(), interval));
       }
     });
   }
 
   startDataStore(mainVideo, interval) {
     return setTimeout(async () => {
-      for (; mainVideo === this.get_main_video();) {
+      for (; mainVideo === this.get_main_video(); ) {
         if (this.get_video_availability()) {
           // eslint-disable-next-line no-await-in-loop
           await this.storeSession(mainVideo);
         }
         // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => setTimeout(() => resolve(), interval))
+        await new Promise((resolve) => setTimeout(() => resolve(), interval));
       }
     });
   }
 
   startRequestTransaction(mainVideo, interval) {
     return setTimeout(async () => {
-      for (; mainVideo === this.get_main_video();) {
+      for (; mainVideo === this.get_main_video(); ) {
         if (mainVideo.is_available()) {
           let qoe;
           try {
@@ -366,7 +385,7 @@ export default class SessionData {
           if (qoe) mainVideo.add_latest_qoe({ date: Date.now(), qoe });
         }
         // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => setTimeout(() => resolve(), interval));
+        await new Promise((resolve) => setTimeout(() => resolve(), interval));
       }
     });
   }
@@ -378,21 +397,23 @@ export default class SessionData {
   }
 
   async requestQoE(video) {
-    console.debug(`VIDEOMARK: requestQoE [${this.session.id}][${video.get_video_id()}]`);
+    console.debug(
+      `VIDEOMARK: requestQoE [${this.session.id}][${video.get_video_id()}]`
+    );
     if (!this.session.id || !video.get_video_id()) {
       throw new Error("SodiumServer(qoe) bad request.");
     }
     const ret = await fetch(`${Config.get_sodium_server_url()}/latest_qoe`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         ids: {
           session_id: this.session.id,
-          video_id: video.get_video_id()
-        }
-      })
+          video_id: video.get_video_id(),
+        },
+      }),
     });
     if (!ret.ok) {
       throw new Error("SodiumServer(qoe) response was not ok.");
@@ -432,7 +453,7 @@ export default class SessionData {
   async storeSession(video) {
     const storage = useStorage({
       sessionId: this.session.id,
-      videoId: video.get_video_id()
+      videoId: video.get_video_id(),
     });
     const [prevResource, resource] = this.resource.collect();
     await storage.save({
@@ -447,7 +468,7 @@ export default class SessionData {
       title: video.get_title(),
       calc: video.is_calculatable(),
       log: [
-        ...(storage.cache.log || []).filter(a => !("qoe" in a)),
+        ...(storage.cache.log || []).filter((a) => !("qoe" in a)),
         ...video.get_latest_qoe(),
         {
           date: Date.now(),
@@ -455,12 +476,12 @@ export default class SessionData {
             ...video.get_quality(),
             viewport: video.get_viewport(),
             resolution: video.get_resolution(),
-            timing: video.get_timing()
-          }
-        }
+            timing: video.get_timing(),
+          },
+        },
       ]
         .sort(({ date: ad }, { date: bd }) => ad - bd)
-        .slice(-Config.max_log)
+        .slice(-Config.max_log),
     });
 
     await saveTransferSize(resource.transferSize - prevResource.transferSize);
@@ -491,7 +512,7 @@ export default class SessionData {
       calc: video.is_calculatable(),
       service: video.get_service(),
       video: [video.getSendData()],
-      resource_timing: []
+      resource_timing: [],
     };
 
     const netinfo = {};
@@ -503,8 +524,8 @@ export default class SessionData {
       "type",
       "apn",
       "plmn",
-      "sim"
-    ].forEach(e => {
+      "sim",
+    ].forEach((e) => {
       if (navigator.connection === undefined) {
         netinfo[e] = undefined;
       } else if (navigator.connection[e] === Infinity) {
@@ -521,8 +542,8 @@ export default class SessionData {
   }
 
   async locationIp() {
-    const ip = await new Promise(resolve => {
-      const listener = event => {
+    const ip = await new Promise((resolve) => {
+      const listener = (event) => {
         if (
           event.data.host !== this.location.host ||
           event.data.type !== "CONTENT_SCRIPT_JS"
@@ -535,7 +556,7 @@ export default class SessionData {
       window.postMessage({
         host: this.location.host,
         method: "get_ip",
-        type: "FROM_SODIUM_JS"
+        type: "FROM_SODIUM_JS",
       });
     });
     this.hostToIp[this.location.host] = ip;
@@ -553,7 +574,7 @@ export default class SessionData {
       ).content;
       const session = { location: this.location.href, thumbnail };
 
-      window.addEventListener("message", event => {
+      window.addEventListener("message", (event) => {
         const { data, source, origin } = event;
         if (data.type !== "ALT_SESSION_MESSAGE_REQ") return;
         if (!allowVideoHosts.includes(new URL(origin).hostname)) return;
@@ -565,7 +586,7 @@ export default class SessionData {
     } else {
       if (!allowVideoHosts.includes(this.location.hostname)) return;
 
-      const eventResolver = event => {
+      const eventResolver = (event) => {
         const { data, origin } = event;
         if (data.type !== "ALT_SESSION_MESSAGE_RES") return;
         if (!allowHosts.includes(new URL(origin).hostname)) return;

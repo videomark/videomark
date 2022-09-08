@@ -7,16 +7,20 @@ export default class Config {
   }
 
   static async readPlatformInfo() {
-    this.mobile = await new Promise(resolve => {
-      const listener = event => {
-        if (event.data.type !== "CONTENT_SCRIPT_JS" || event.data.method !== "get_platform_info") return;
+    this.mobile = await new Promise((resolve) => {
+      const listener = (event) => {
+        if (
+          event.data.type !== "CONTENT_SCRIPT_JS" ||
+          event.data.method !== "get_platform_info"
+        )
+          return;
         window.removeEventListener("message", listener);
         resolve(event.data.platformInfo.os === "android");
       };
       window.addEventListener("message", listener);
       window.postMessage({
         method: "get_platform_info",
-        type: "FROM_SODIUM_JS"
+        type: "FROM_SODIUM_JS",
       });
     });
   }
@@ -114,11 +118,14 @@ export default class Config {
   static save_settings(new_settings) {
     if (!new_settings || !Object.keys(new_settings).length) return;
     this.settings = { ...this.settings, ...new_settings };
-    window.postMessage({
-      method: "save_settings",
-      type: "FROM_SODIUM_JS",
-      new_settings
-    }, "*");
+    window.postMessage(
+      {
+        method: "save_settings",
+        type: "FROM_SODIUM_JS",
+        new_settings,
+      },
+      "*"
+    );
   }
 
   static get_transfer_size() {
@@ -144,7 +151,7 @@ export default class Config {
   static get_resolution_control() {
     const {
       resolution_control_enabled,
-      resolution_control
+      resolution_control,
     } = this.get_settings();
     return resolution_control_enabled ? resolution_control : undefined;
   }
@@ -160,13 +167,13 @@ export default class Config {
       control_by_os_quota,
       control_by_browser_quota,
       browser_quota,
-      browser_quota_bitrate
+      browser_quota_bitrate,
     } = this.get_settings();
     if (!control_by_traffic_volume) return undefined;
 
     const now = new Date();
     const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", {
-      minimumIntegerDigits: 2
+      minimumIntegerDigits: 2,
     }).format(now.getMonth() + 1)}`;
     const transfer_size = this.get_transfer_size();
     const browser_quota_value /* byte */ = browser_quota
@@ -184,11 +191,14 @@ export default class Config {
 
   static set_alive(alive) {
     this.alive = alive;
-    window.postMessage({
-      method: "set_alive",
-      type: "FROM_SODIUM_JS",
-      alive
-    }, "*");
+    window.postMessage(
+      {
+        method: "set_alive",
+        type: "FROM_SODIUM_JS",
+        alive,
+      },
+      "*"
+    );
   }
 
   static get_alive() {
@@ -196,27 +206,34 @@ export default class Config {
   }
 
   static async readDisplayOnPlayerSetting() {
-    this.ui_enabled = await new Promise(resolve => {
-      const listener = event => {
-        if (event.data.type !== "CONTENT_SCRIPT_JS" || event.data.method !== "get_display_on_player") return;
+    this.ui_enabled = await new Promise((resolve) => {
+      const listener = (event) => {
+        if (
+          event.data.type !== "CONTENT_SCRIPT_JS" ||
+          event.data.method !== "get_display_on_player"
+        )
+          return;
         window.removeEventListener("message", listener);
         resolve(event.data.displayOnPlayer);
       };
       window.addEventListener("message", listener);
       window.postMessage({
         method: "get_display_on_player",
-        type: "FROM_SODIUM_JS"
+        type: "FROM_SODIUM_JS",
       });
     });
   }
 
   static set_ui_enabled(enabled) {
     this.ui_enabled = enabled;
-    window.postMessage({
-      method: "set_display_on_player",
-      type: "FROM_SODIUM_JS",
-      enabled
-    }, "*");
+    window.postMessage(
+      {
+        method: "set_display_on_player",
+        type: "FROM_SODIUM_JS",
+        enabled,
+      },
+      "*"
+    );
   }
 
   static get_ui_enabled() {
@@ -271,7 +288,7 @@ Config.event_type_names = [
   "stalled",
   "progress",
   "waiting",
-  "canplay"
+  "canplay",
 ];
 
 // 動画配信サービス
@@ -279,71 +296,71 @@ Config.video_platforms = [
   {
     // YouTube Mobile
     id: "m_youtube_com",
-    host: /^m\.youtube\.com$/
+    host: /^m\.youtube\.com$/,
   },
   {
     // YouTube
     id: "youtube",
-    host: /(^|[^m]\.)youtube\.com$/
+    host: /(^|[^m]\.)youtube\.com$/,
   },
   {
     // Paravi
     id: "paravi",
-    host: /(^|\.)paravi\.jp$/
+    host: /(^|\.)paravi\.jp$/,
   },
   {
     // TVer
     id: "tver",
-    host: /(^|\.)tver\.jp$/
+    host: /(^|\.)tver\.jp$/,
   },
   {
     // FOD
     id: "fod",
-    host: /^(i\.)?fod\.fujitv\.co\.jp$/
+    host: /^(i\.)?fod\.fujitv\.co\.jp$/,
   },
   {
     // ニコニコ動画
     id: "nicovideo",
-    host: /^www\.nicovideo\.jp$/
+    host: /^www\.nicovideo\.jp$/,
   },
   {
     // ニコニコ生放送
     id: "nicolive",
-    host: /^live\d\.nicovideo\.jp$/
+    host: /^live\d\.nicovideo\.jp$/,
   },
   {
     // NHKオンデマンド
     id: "nhkondemand",
-    host: /^www\.nhk-ondemand\.jp$/
+    host: /^www\.nhk-ondemand\.jp$/,
   },
   {
     // dTV
     id: "dtv",
-    host: /\.video\.dmkt-sp\.jp$/
+    host: /\.video\.dmkt-sp\.jp$/,
   },
   {
     // AbemaTV, Abemaビデオ
     id: "abematv",
-    host: /^abema\.tv$/
+    host: /^abema\.tv$/,
   },
   {
     // Amazon Prime Video
     id: "amazonprimevideo",
-    host: /^www\.amazon\.co\.jp$/
+    host: /^www\.amazon\.co\.jp$/,
   },
   {
     // IIJ TWILIGHT CONCERT
     id: "iijtwilightconcert",
-    host: /^pr\.iij\.ad\.jp$/
+    host: /^pr\.iij\.ad\.jp$/,
   },
   {
     // gorin.jp
     id: "gorinjp",
-    host: /(^|\.)gorin\.jp$/
-  }
+    host: /(^|\.)gorin\.jp$/,
+  },
 ];
 
-Config.video_platform_matcher = ({ host }) => platform => {
+Config.video_platform_matcher = ({ host }) => (platform) => {
   return platform.host.test(host);
 };
 
@@ -366,7 +383,7 @@ Config.ui.general = {
 #${Config.ui.id}:not(:hover) {
   opacity: 0.5;
   transition: 500ms;
-}`
+}`,
 };
 
 // m.youtube.com
@@ -390,7 +407,7 @@ Config.ui.youtube = {
 }
 .ytp-autohide > #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // TVer ではユーザ操作を見て .vjs-user-(in)active を .video-js に付与
@@ -410,7 +427,7 @@ Config.ui.tver = {
 .vjs-user-inactive > #${Config.ui.id},
 .not-hover > #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // Paravi ではコントロール非表示時に .(in)active を .controls に付与
@@ -426,7 +443,7 @@ Config.ui.paravi = {
 }
 .inactive > #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 Config.ui.fod = {
@@ -437,7 +454,7 @@ Config.ui.fod = {
 // ニコニコ動画ではコメントより前面になるよう配置
 Config.ui.nicovideo = {
   ...Config.ui.general,
-  target: ".VideoContainer"
+  target: ".VideoContainer",
 };
 
 // TODO: ニコニコ生放送
@@ -455,7 +472,7 @@ Config.ui.nhkondemand = {
 }
 .player__controls[style="display: none;"] ~ #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // dTV
@@ -470,7 +487,7 @@ Config.ui.dtv = {
 }
 .controller-hidden > #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // AbemaTV, Abemaビデオ
@@ -486,7 +503,7 @@ Config.ui.abematv = {
 .com-tv-TVScreen__player > .com-tv-TVScreen__overlay--cursor-hidden ~ #${Config.ui.id},
 .com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // Amazon Prime Video
@@ -501,7 +518,7 @@ Config.ui.amazonprimevideo = {
 }
 .hideCursor + #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // IIJ TWILIGHT CONCERT
@@ -514,7 +531,7 @@ Config.ui.iijtwilightconcert = {
 #${Config.ui.id}:not(:hover) {
   opacity: 0.5;
   transition: 500ms;
-}`
+}`,
 };
 
 // gorin.jpはほぼtver
@@ -531,7 +548,7 @@ Config.ui.gorinjp = {
 .vjs-user-inactive > #${Config.ui.id},
 .not-hover > #${Config.ui.id} {
   opacity: 0;
-}`
+}`,
 };
 
 // デフォルトResourceTimingAPIのバッファサイズ
