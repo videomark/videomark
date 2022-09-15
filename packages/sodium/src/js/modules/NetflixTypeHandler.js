@@ -1,3 +1,4 @@
+/*global netflix*/
 import GeneralTypeHandler from "./GeneralTypeHandler";
 
 class NetflixTypeHandler extends GeneralTypeHandler {
@@ -79,17 +80,17 @@ class NetflixTypeHandler extends GeneralTypeHandler {
       ,
       { "Current CDN (a/v)": cdn },
     ] = netflix.player.getMostRecentPlaybackDiagnosticGroups();
-    const [, , domain] = cdn.match(
-      /(?:(\S+), Id: (\d+) |\? )\/ (\S+), Id: (\d+)/
+    const ret = cdn.match(
+      /(?:(?<audioDomain>\S+), Id: (?<audioId>\d+) |\? )\/ (?:(?<videoDomain>\S+), Id: (?<videoId>\d+)|\?)/
     );
-    return domain;
+    if (!ret) return null;
+    return ret.groups.videoDomain || null;
   }
 
   /**
    * 現在の再生位置
-   * @param {HTMLElement} video
    */
-  get_current_time(video) {
+  get_current_time() {
     const [
       ,
       { Position: position },
@@ -147,11 +148,11 @@ class NetflixTypeHandler extends GeneralTypeHandler {
     return this.service;
   }
 
-  is_main_video(video) {
+  is_main_video() {
     return location.pathname.match(/\/watch\//);
   }
 
-  is_cm(video) {
+  is_cm() {
     return false;
   }
 
