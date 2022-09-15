@@ -10,6 +10,7 @@ import AbemaTVVideoTypeHandler from "./AbemaTVVideoTypeHandler";
 import AbemaTVLiveTypeHandler from "./AbemaTVLiveTypeHandler";
 import AmazonPrimeVideoTypeHandler from "./AmazonPrimeVideoTypeHandler";
 import IIJTypeHandler from "./IIJTypeHandler";
+import NetflixTypeHandler from "./NetflixTypeHandler";
 
 export default class VideoHandler {
   constructor(elm) {
@@ -74,6 +75,11 @@ export default class VideoHandler {
       this.calQoeFlg = true;
       this.service = "iijtwilightconcert";
       console.log("IIJ Type Handler");
+    } else if (/(www\.)?netflix.com/.test(url.host)) {
+      this.handler = new NetflixTypeHandler(elm);
+      this.calQoeFlg = true;
+      this.service = "netflix";
+      console.log("Netflix Type Handler");
     } else {
       throw new Error("Unknown Type Handler");
     }

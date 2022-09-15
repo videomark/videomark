@@ -358,6 +358,11 @@ Config.video_platforms = [
     id: "gorinjp",
     host: /(^|\.)gorin\.jp$/,
   },
+  {
+    // Netflix
+    id: "Netflix",
+    host: /(^|\.)netflix\.com$/,
+  },
 ];
 
 Config.video_platform_matcher = ({ host }) => (platform) => {
