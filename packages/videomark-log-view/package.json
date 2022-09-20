@@ -1,6 +1,6 @@
 {
   "name": "@videomark/videomark-log-view",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "private": true,
   "dependencies": {
     "@babel/core": "^7.11.4",
