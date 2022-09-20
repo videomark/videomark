@@ -24,7 +24,7 @@ jobs:
         run: |
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git config user.name "${GITHUB_ACTOR}"
-          yarn lerna version "${{ github.event.inputs.version }}"
+          yarn lerna version --yes "${{ github.event.inputs.version }}"
       - run: yarn build
       - name: Browser Platform Publish
         uses: PlasmoHQ/bpp@v2
