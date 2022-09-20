@@ -1,0 +1,34 @@
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Increment "major", "minor", "patch", or "pre*" version; or specify version'
+        default: patch
+        required: true
+jobs:
+  main:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn --frozen-lockfile
+        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
+      - name: Bump version
+        run: |
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config user.name "${GITHUB_ACTOR}"
+          yarn lerna version "${{ github.event.inputs.version }}"
+      - run: yarn build
+      - name: Browser Platform Publish
+        uses: PlasmoHQ/bpp@v2
+        with:
+          artifact: dist/webvideomark.zip
+          # see also https://github.com/PlasmoHQ/bpp#readme
+          keys: ${{ secrets.BPP_KEYS }}
