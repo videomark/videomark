@@ -1,4 +1,5 @@
 /** content_scripts の許可されているOriginかどうか判定 */
+// Declarative Net Request API 向けの `request_rules.json` と同期すること
 const permittedOrigins = [
   /^https:\/\/([a-z-]+\.)?youtube\.com$/,
   /^https:\/\/([a-z-]+\.)?paravi\.jp$/,
@@ -27,30 +28,35 @@ const isPermittedOrigin = origin =>
       : stringOrRegExp.test(origin)
   );
 
-chrome.webRequest.onHeadersReceived.addListener(
-  ({ initiator, responseHeaders }) => {
-    const additionalHeaders = [
-      isPermittedOrigin(initiator) && {
-        name: "Timing-Allow-Origin",
-        value: initiator
-      }
-    ].filter(Boolean);
-    return { responseHeaders: [...responseHeaders, ...additionalHeaders] };
-  },
-  {
-    urls: ["<all_urls>"]
-  },
-  // Chrome 79 以降では、`blocking`、`responseHeaders` に加えて `extraHeaders` オプションが必要。ただし、
-  // これを付けると Firefox でリスナー自体が動作しなくなるため注意が必要。
-  // @see https://groups.google.com/a/chromium.org/g/extensions-dev/c/WAycYvTuZno
-  // @see https://stackoverflow.com/q/66265032
-  Object.values(chrome.webRequest.OnHeadersReceivedOptions)
-);
+// `webRequestBlocking` パーミッションは Manifest v3 では使用不可。以下はまだ `declarativeNetRequest` が
+// 実装されていない Firefox 向け後方互換。 @see https://bugzilla.mozilla.org/1687755
+if (typeof chrome.declarativeNetRequest === "undefined") {
+  chrome.webRequest.onHeadersReceived.addListener(
+    ({ initiator, responseHeaders }) => {
+      const additionalHeaders = [
+        isPermittedOrigin(initiator) && {
+          name: "Timing-Allow-Origin",
+          value: initiator,
+        },
+      ].filter(Boolean);
+      return { responseHeaders: [...responseHeaders, ...additionalHeaders] };
+    },
+    { urls: ["<all_urls>"] },
+    // Chrome 79 以降では、`blocking`、`responseHeaders` に加えて `extraHeaders` オプションが必要。ただし、
+    // これを付けると Firefox でリスナー自体が動作しなくなるため注意が必要。
+    // @see https://groups.google.com/a/chromium.org/g/extensions-dev/c/WAycYvTuZno
+    // @see https://stackoverflow.com/q/66265032
+    Object.values(chrome.webRequest.OnHeadersReceivedOptions)
+  );
+}
 
 chrome.webRequest.onResponseStarted.addListener(
-  details => {
+  async (details) => {
     const url = new URL(details.url);
-    if (url.host && details.ip) hostToIp[url.host] = details.ip;
+    if (url.host && details.ip) {
+      const hostToIp = (await storage.get("hostToIp")) || {};
+      await storage.set("hostToIp", { ...hostToIp, [url.host]: details.ip });
+    }
   },
   {
     urls: ["<all_urls>"]
@@ -61,7 +67,7 @@ chrome.webRequest.onResponseStarted.addListener(
 chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
   switch (reason) {
     case "install": {
-      chrome.browserAction.getPopup({}, url => {
+      chrome.action.getPopup({}, url => {
         chrome.tabs.create({ url });
       });
       break;
@@ -82,62 +88,35 @@ chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
 });
 
 const storage = {
-  get: keys => new Promise(resolve => chrome.storage.local.get(keys, resolve)),
-  set: items => new Promise(resolve => chrome.storage.local.set(items, resolve))
+  get: async (key) =>
+    new Promise((resolve) => {
+      chrome.storage.local.get([key], items => resolve(items[key]));
+    }),
+  set: async (key, value) =>
+    new Promise((resolve) => {
+      chrome.storage.local.set({ [key]: value }, resolve);
+    })
 };
 
 const getMasterDisplayOnPlayer = async () => {
-  const { settings } = await storage.get("settings");
+  const settings = await storage.get("settings");
   return settings == null ||
     settings.display_on_player == null ||
     settings.display_on_player;
 };
-
-const tabStatus = {};
-
-const hostToIp = {};
-
-chrome.runtime.onConnect.addListener(port => {
-  if (port.name === "sodium-extension-communication-port") {
-    const tabId = port.sender.tab.id;
-    port.onMessage.addListener(async value => {
-      if (!value.requestId || !value.method) return;
-      const args = Array.from(value.args || []);
-      args.unshift(port.sender.tab);
-      const ret = await communicator[value.method].apply(null, args) || {};
-      ret.requestId = value.requestId;
-      port.postMessage(ret);
-    });
-    port.onDisconnect.addListener(() => removeTab(tabId));
-  }
-
-  if (port.name === "sodium-popup-communication-port") {
-    port.onMessage.addListener(async value => {
-      if (!value.requestId || !value.method) return;
-      const args = Array.from(value.args || []);
-      const ret = await popupCommunicator[value.method].apply(null, args) || {};
-      ret.requestId = value.requestId;
-
-      // ポップアップを閉じる時もなぜか実行され、エラーになるので無視する
-      try {
-        port.postMessage(ret);
-      } catch (e) {
-        // nop
-      }
-    });
-  }
-});
 
 const communicator = {
   setAlive: async (tab, alive) => {
     updateIcon(tab.id, alive);
   },
   setDisplayOnPlayer: async (tab, displayOnPlayer) => {
+    const tabStatus = (await storage.get("tabStatus")) || {};
     const status = tabStatus[tab.id] || {};
     status.displayOnPlayer = displayOnPlayer;
-    tabStatus[tab.id] = status;
+    await storage.set("tabStatus", { ...tabStatus, [tab.id]: status });
   },
   getDisplayOnPlayer: async (tab) => {
+    const tabStatus = (await storage.get("tabStatus")) || {};
     let { displayOnPlayer } = tabStatus[tab.id] || {};
     if (displayOnPlayer === undefined) {
       displayOnPlayer = await getMasterDisplayOnPlayer();
@@ -148,11 +127,15 @@ const communicator = {
     const platformInfo = await new Promise(resolve => chrome.runtime.getPlatformInfo(resolve));
     return { platformInfo };
   },
-  getIp: async (tab, host) => ({ ip: hostToIp[host] })
+  getIp: async (tab, host) => {
+    const hostToIp = (await storage.get("hostToIp")) || {};
+    return { ip: hostToIp[host] };
+  },
 };
 
 const popupCommunicator = {
   getTabStatus: async (tabId) => {
+    const tabStatus = (await storage.get("tabStatus")) || {};
     const status = tabStatus[tabId] || {};
     if (status.displayOnPlayer === undefined) {
       status.displayOnPlayer = await getMasterDisplayOnPlayer();
@@ -162,20 +145,44 @@ const popupCommunicator = {
 };
 
 /** 計測中であることをツールバーのアイコンで通知する */
-const updateIcon = (tabId, enabled) => {
+const updateIcon = async (tabId, enabled) => {
+  const tabStatus = (await storage.get("tabStatus")) || {};
   const status = tabStatus[tabId] || {};
   if (status.alive == enabled) return;
 
   status.alive = enabled;
-  tabStatus[tabId] = status;
+  await storage.set("tabStatus", { ...tabStatus, [tabId]: status });
 
-  chrome.browserAction.setIcon({
+  chrome.action.setIcon({
     tabId,
     path: enabled ? "icons/enabled.png" : "icons/disabled.png"
   });
 };
 
-const removeTab = (tabId) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const { method, args = [] } = request;
+  const { tab } = sender;
+
+  if (!method) {
+    return false;
+  }
+
+  // 本来は `Promise` を返しその中で解決すれば良いはずだが、なぜかレスポンスが `undefined` となってしまうので、
+  // 以下のように非同期即時関数を用意し、従来通り `sendResponse` を使う。
+  (async () => {
+    const response = tab
+      ? await communicator[method].apply(null, [tab, ...args])
+      : await popupCommunicator[method].apply(null, [...args]);
+
+    sendResponse(response || {});
+  })();
+
+  return true;
+});
+
+chrome.tabs.onRemoved.addListener(async (tabId) => {
+  const tabStatus = (await storage.get("tabStatus")) || {};
   delete tabStatus[tabId];
-  // chrome.browserAction.setIcon() は余計なエラーが出るの不要
-};
+  await storage.set("tabStatus", tabStatus);
+  // `chrome.action.setIcon()` は余計なエラーが出るので不要
+});

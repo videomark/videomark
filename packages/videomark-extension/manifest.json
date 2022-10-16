@@ -1,12 +1,12 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Web VideoMark",
   "version": "1.12.1",
   "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
   "author": "WebDINO Japan",
   "homepage_url": "http://videomark.webdino.org/",
   "options_page": "qoelog/index.html#/settings",
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "videomark@webdino.org",
       "strict_min_version": "78.0"
@@ -26,9 +26,12 @@
     "webRequestBlocking",
     "storage",
     "unlimitedStorage",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
     "<all_urls>"
   ],
-  "browser_action": {
+  "action": {
     "default_icon": "icons/disabled.png",
     "default_popup": "popup.html"
   },
@@ -54,12 +57,20 @@
     }
   ],
   "background": {
-    "persistent": true,
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "1",
+      "enabled": true,
+      "path": "request_rules.json"
+    }]
   },
   "web_accessible_resources": [
-    "sodium.js"
+    {
+      "resources": ["sodium.js"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }
