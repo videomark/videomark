@@ -9,50 +9,20 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Switch from "@material-ui/core/Switch";
 import { useMobile } from "./js/utils/Utils.js";
 
-const getRandomToken = () => {
-  const randomPool = new Uint8Array(16);
-  crypto.getRandomValues(randomPool);
-  let hex = "";
-  for (var i = 0; i < randomPool.length; ++i) {
-    hex += randomPool[i].toString(16);
-  }
-  return hex;
-};
-
 const useTabStatus = () => {
   const [alive, setAlive] = useState(false);
   const [displayOnPlayer, setDisplayOnPlayer] = useState(false);
 
   useEffect(() => {
     setInterval(() => {
-      chrome.tabs.query( {active:true, currentWindow:true}, tabs => {
-        const tab = tabs[0];
-
-        const port = chrome.runtime.connect({
-          name: "sodium-popup-communication-port"
-        });
-        const requestId = getRandomToken();
-
-        const listener = value => {
-          if (value.requestId !== requestId) return false;
-
-          try {
-            setAlive(value.alive);
-            setDisplayOnPlayer(value.displayOnPlayer);
-          } catch (e) {
-            // nop
-          } finally {
-            port.onMessage.removeListener(listener);
-          }
-          return true;
-        };
-
-        port.onMessage.addListener(listener);
-        port.postMessage({
-          requestId,
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        const response = await chrome.runtime.sendMessage({
           method: "getTabStatus",
-          args: [tab.id]
+          args: [tabs[0].id]
         });
+
+        setAlive(response.alive);
+        setDisplayOnPlayer(response.displayOnPlayer);
       });
     }, 1000);
   }, []);
