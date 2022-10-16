@@ -1,7 +1,0 @@
-[build]
-  publish = "dist"
-  command = "npm run build && cp -a dist-dev dist/dev"
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Cache-Control = "private, no-store, no-cache, must-revalidate"

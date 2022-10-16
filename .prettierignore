@@ -1,0 +1,17 @@
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+/dist
+/public/data
+pnpm-lock.yaml
+
+# 後日対応
+/lerna.json
+/src/lib/background/
+/src/lib/content/
+/test/

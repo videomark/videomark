@@ -1,0 +1,67 @@
+{
+  "manifest_version": 3,
+  "name": "Web VideoMark",
+  "version": "2.0.0",
+  "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
+  "author": "WebDINO Japan",
+  "homepage_url": "http://videomark.webdino.org/",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "videomark@webdino.org",
+      "strict_min_version": "78.0"
+    }
+  },
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "index.html#/settings"
+  },
+  "icons": {
+    "32": "images/icons/videomark-32.png",
+    "48": "images/icons/videomark-48.png",
+    "64": "images/icons/videomark-64.png",
+    "96": "images/icons/videomark-96.png",
+    "128": "images/icons/videomark-128.png",
+    "192": "images/icons/videomark-192.png"
+  },
+  "permissions": [
+    "tabs",
+    "webRequest",
+    "storage",
+    "unlimitedStorage",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_icon": "images/icons/disabled.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.tver.jp/*",
+        "*://*.paravi.jp/*",
+        "*://*.youtube.com/*",
+        "*://*.nicovideo.jp/*",
+        "*://*.fod.fujitv.co.jp/*",
+        "*://*.nhk-ondemand.jp/*",
+        "*://*.video.dmkt-sp.jp/*",
+        "*://abema.tv/*",
+        "*://*.amazon.co.jp/*",
+        "*://pr.iij.ad.jp/*",
+        "*://*.netflix.com/*"
+      ],
+      "js": ["scripts/content.js"],
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "page": "background.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["scripts/sodium.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
