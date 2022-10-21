@@ -7,6 +7,13 @@ export default [
     host: /(^|\.)youtube\.com$/,
   },
   {
+    id: "netflix",
+    name: "Netflix",
+    url: "https://www.netflix.com/",
+    brandcolor: "#b40710", // NOTE: #e50914 だがYouTubeと区別付かないので暗く
+    host: /(^|\.)netflix\.com$/,
+  },
+  {
     id: "paravi",
     name: "Paravi",
     url: "https://www.paravi.jp/",

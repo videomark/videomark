@@ -45,7 +45,8 @@
         "*://abema.tv/*",
         "*://*.amazon.co.jp/*",
         "*://pr.iij.ad.jp/*",
-        "*://*.gorin.jp/*"
+        "*://*.gorin.jp/*",
+        "*://*.netflix.com/*"
       ],
       "js": [
         "content_script.js"
