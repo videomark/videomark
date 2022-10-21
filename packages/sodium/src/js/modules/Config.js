@@ -360,7 +360,7 @@ Config.video_platforms = [
   },
   {
     // Netflix
-    id: "Netflix",
+    id: "netflix",
     host: /(^|\.)netflix\.com$/,
   },
 ];
@@ -553,6 +553,21 @@ Config.ui.gorinjp = {
 .vjs-user-inactive > #${Config.ui.id},
 .not-hover > #${Config.ui.id} {
   opacity: 0;
+}`,
+};
+
+// Netflix
+Config.ui.netflix = {
+  target: "body",
+  style: `#${Config.ui.id} {
+  position: absolute;
+  z-index: 1000001;
+  top: 12em;
+  left: 12px;
+}
+#${Config.ui.id}:not(:hover) {
+  opacity: 0.5;
+  transition: 500ms;
 }`,
 };
 
