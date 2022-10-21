@@ -169,6 +169,12 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
   }
 
   is_cm() {
+    const v = document.querySelector('video[style*="display: block"]');
+    if (!v) return true;
+    const k = Object.keys(REPRESENTATION_TABLE).find(
+      (e) => e === String(v.videoHeight)
+    );
+    if (!k) return true;
     return false;
   }
 
