@@ -4,6 +4,93 @@ import GeneralTypeHandler from "./GeneralTypeHandler";
 import { AdObserver } from "./AdObserver";
 import ResourceTiming from "./ResourceTiming";
 
+/**
+ * YouTube動画リソースのURLの判定
+ * @param {URL} url URL
+ * @return {boolean} YouTube動画リソースの場合: true、それ以外: false
+ */
+function isYouTubeVideoResource(url) {
+  return (
+    /** 動画視聴ページ */
+    (url.host === "www.youtube.com" &&
+      url.pathname.endsWith("watch") &&
+      Boolean(url.searchParams.get("v"))) ||
+    /** get_video_info */
+    (url.host === "www.youtube.com" &&
+      url.pathname.endsWith("get_video_info")) ||
+    /** 動画のチャンク */
+    (url.host.endsWith("googlevideo.com") &&
+      url.pathname.endsWith("videoplayback"))
+  );
+}
+
+/**
+ * スループットの計算
+ * add_throughput_history() に与えるスループットの計算を行う
+ * @param {object} params
+ * @param {URL} params.url レスポンス URL
+ * @param {string | null} params.itag リクエスト中に含まれるitagパラメーター
+ * @param {number} params.downloadSize サイズ (bytes)
+ * @param {number} params.timeOrigin https://developer.mozilla.org/ja/docs/Web/API/Performance/timeOrigin
+ * @param {number} params.downloadStartTime ダウンロード開始時間 (ms) https://developer.mozilla.org/ja/docs/Web/API/Performance/now
+ * @param {number} params.downloadEndTime ダウンロード終了時間 (ms) https://developer.mozilla.org/ja/docs/Web/API/Performance/now
+ * @param {number} params.startUnplayedBufferSize get_unplayed_buffer_size() (bytes)
+ * @param {number} params.endUnplayedBufferSize get_unplayed_buffer_size() (bytes)
+ * @return {{
+ *  itag: string | null,
+ *  downloadSize: number,
+ *  downloadTime: number,
+ *  throughput: number,
+ *  start: number,
+ *  end: number,
+ *  startUnplayedBufferSize: number,
+ *  endUnplayedBufferSize: number,
+ *  timings: {
+ *    domainLookupStart: number,
+ *    connectStart: number,
+ *    requestStart: number,
+ *    responseStart: number,
+ *  },
+ * }}
+ */
+function createThroughput({
+  url,
+  itag,
+  timeOrigin,
+  downloadSize,
+  downloadStartTime,
+  downloadEndTime,
+  startUnplayedBufferSize,
+  endUnplayedBufferSize,
+}) {
+  /** @type {PerformanceResourceTiming} */
+  const resource = ResourceTiming.find(url.href);
+  const downloadTime = downloadEndTime - downloadStartTime;
+  const throughput = Math.floor(((downloadSize * 8) / downloadTime) * 1000);
+  const start = resource.startTime + timeOrigin;
+  const end = resource.responseEnd + timeOrigin;
+  const timings = {
+    domainLookupStart: resource.domainLookupStart - resource.startTime,
+    connectStart: resource.connectStart - resource.startTime,
+    requestStart: resource.requestStart - resource.startTime,
+    responseStart: resource.responseStart - resource.startTime,
+  };
+  return {
+    itag,
+    downloadSize,
+    downloadTime,
+    throughput,
+    start,
+    end,
+    startUnplayedBufferSize,
+    endUnplayedBufferSize,
+    timings,
+  };
+}
+
+/** カスタマイズしたことを区別するためのシンボル */
+const SodiumFetch = Symbol("SodiumFetch");
+
 class YouTubeTypeHandler extends GeneralTypeHandler {
   static is_youtube_type() {
     try {
@@ -83,11 +170,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
     // --- XHR async --- //
     YouTubeTypeHandler.hook_youtube_xhr();
+    // --- fetch --- //
+    YouTubeTypeHandler.hook_youtube_fetch();
 
     // --- PLayer async --- //
     YouTubeTypeHandler.hook_youtube_player();
   }
 
+  /** @todo: hook_youtube_fetch に移行したい */
   static async hook_youtube_xhr() {
     class SodiumXMLHttpRequest extends XMLHttpRequest {
       constructor(...args) {
@@ -215,6 +305,52 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     }
     // eslint-disable-next-line no-global-assign
     XMLHttpRequest = SodiumXMLHttpRequest;
+  }
+
+  /** fetch API の書き換え */
+  static hook_youtube_fetch() {
+    if (window.fetch[SodiumFetch]) return;
+    const fetch = window.fetch;
+    async function fetcher(...args) {
+      /** @type {string | URL | Request} */
+      const urlOrRequest = args[0];
+      const url = new URL(
+        urlOrRequest instanceof Request ? urlOrRequest.url : urlOrRequest
+      );
+      // @ts-expect-error
+      if (!isYouTubeVideoResource(url)) return await fetch(...args);
+      const id = url.searchParams.get("id");
+      if (!YouTubeTypeHandler.trackingId) YouTubeTypeHandler.trackingId = id;
+      // @ts-expect-error
+      if (YouTubeTypeHandler.trackingId !== id) return await fetch(...args);
+
+      const timeOrigin = performance.timeOrigin;
+      const downloadStartTime = performance.now();
+      const startUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
+      // @ts-expect-error
+      const res = await fetch(...args);
+      const downloadEndTime = performance.now();
+      const endUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
+      //  playerオブジェクトがない可能性がある、バッファロード処理があるため待機
+      setTimeout(() => {
+        const downloadSize = Number(res.headers.get("content-length") || 0);
+        const itag = url.searchParams.get("itag");
+        const throughput = createThroughput({
+          url,
+          itag,
+          downloadSize,
+          timeOrigin,
+          downloadStartTime,
+          downloadEndTime,
+          startUnplayedBufferSize,
+          endUnplayedBufferSize,
+        });
+        YouTubeTypeHandler.add_throughput_history(throughput);
+      }, 1000);
+      return res;
+    }
+    fetcher[SodiumFetch] = true;
+    window.fetch = fetcher;
   }
 
   /*
