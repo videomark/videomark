@@ -51,7 +51,7 @@ function isYouTubeVideoResource(url) {
  *    requestStart: number,
  *    responseStart: number,
  *  },
- * }}
+ * } | null}
  */
 function createThroughput({
   url,
@@ -63,8 +63,9 @@ function createThroughput({
   startUnplayedBufferSize,
   endUnplayedBufferSize,
 }) {
-  /** @type {PerformanceResourceTiming} */
+  /** @type {PerformanceResourceTiming | undefined} */
   const resource = ResourceTiming.find(url.href);
+  if (!resource) return null;
   const downloadTime = downloadEndTime - downloadStartTime;
   const throughput = Math.floor(((downloadSize * 8) / downloadTime) * 1000);
   const start = resource.startTime + timeOrigin;
@@ -345,7 +346,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
           startUnplayedBufferSize,
           endUnplayedBufferSize,
         });
-        YouTubeTypeHandler.add_throughput_history(throughput);
+        if (throughput) YouTubeTypeHandler.add_throughput_history(throughput);
       }, 1000);
       return res;
     }
