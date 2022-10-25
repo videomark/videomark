@@ -28,7 +28,7 @@ function isYouTubeVideoResource(url) {
  * スループットの計算
  * add_throughput_history() に与えるスループットの計算を行う
  * @param {object} params
- * @param {URL} params.url レスポンス URL
+ * @param {PerformanceResourceTiming} params.resource https://developer.mozilla.org/ja/docs/Web/API/PerformanceResourceTiming
  * @param {string | null} params.itag リクエスト中に含まれるitagパラメーター
  * @param {number} params.downloadSize サイズ (bytes)
  * @param {number} params.timeOrigin https://developer.mozilla.org/ja/docs/Web/API/Performance/timeOrigin
@@ -51,10 +51,10 @@ function isYouTubeVideoResource(url) {
  *    requestStart: number,
  *    responseStart: number,
  *  },
- * } | null}
+ * }}
  */
 function createThroughput({
-  url,
+  resource,
   itag,
   timeOrigin,
   downloadSize,
@@ -63,9 +63,6 @@ function createThroughput({
   startUnplayedBufferSize,
   endUnplayedBufferSize,
 }) {
-  /** @type {PerformanceResourceTiming | undefined} */
-  const resource = ResourceTiming.find(url.href);
-  if (!resource) return null;
   const downloadTime = downloadEndTime - downloadStartTime;
   const throughput = Math.floor(((downloadSize * 8) / downloadTime) * 1000);
   const start = resource.startTime + timeOrigin;
@@ -334,10 +331,13 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       const endUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
       //  playerオブジェクトがない可能性がある、バッファロード処理があるため待機
       setTimeout(() => {
+        /** @type {PerformanceResourceTiming | undefined} */
+        const resource = ResourceTiming.find(url.href);
+        if (!resource) return;
         const downloadSize = Number(res.headers.get("content-length") || 0);
         const itag = url.searchParams.get("itag");
         const throughput = createThroughput({
-          url,
+          resource,
           itag,
           downloadSize,
           timeOrigin,
