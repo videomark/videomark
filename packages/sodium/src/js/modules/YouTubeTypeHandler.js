@@ -19,7 +19,7 @@ function isYouTubeVideoResource(url) {
     (url.host === "www.youtube.com" &&
       url.pathname.endsWith("get_video_info")) ||
     /** 動画のチャンク */
-    (url.host.endsWith("googlevideo.com") &&
+    (url.host.endsWith(".googlevideo.com") &&
       url.pathname.endsWith("videoplayback"))
   );
 }
