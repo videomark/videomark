@@ -32,8 +32,6 @@ function isYouTubeVideoResource(url) {
  * @param {string | null} params.itag リクエスト中に含まれるitagパラメーター
  * @param {number} params.downloadSize サイズ (bytes)
  * @param {number} params.timeOrigin https://developer.mozilla.org/ja/docs/Web/API/Performance/timeOrigin
- * @param {number} params.downloadStartTime ダウンロード開始時間 (ms) https://developer.mozilla.org/ja/docs/Web/API/Performance/now
- * @param {number} params.downloadEndTime ダウンロード終了時間 (ms) https://developer.mozilla.org/ja/docs/Web/API/Performance/now
  * @param {number} params.startUnplayedBufferSize get_unplayed_buffer_size() (bytes)
  * @param {number} params.endUnplayedBufferSize get_unplayed_buffer_size() (bytes)
  * @return {{
@@ -58,12 +56,10 @@ function createThroughput({
   itag,
   timeOrigin,
   downloadSize,
-  downloadStartTime,
-  downloadEndTime,
   startUnplayedBufferSize,
   endUnplayedBufferSize,
 }) {
-  const downloadTime = downloadEndTime - downloadStartTime;
+  const downloadTime = resource.responseEnd - resource.startTime;
   const throughput = Math.floor(((downloadSize * 8) / downloadTime) * 1000);
   const start = resource.startTime + timeOrigin;
   const end = resource.responseEnd + timeOrigin;
@@ -323,11 +319,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       if (YouTubeTypeHandler.trackingId !== id) return await fetch(...args);
 
       const timeOrigin = performance.timeOrigin;
-      const downloadStartTime = performance.now();
       const startUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
       // @ts-expect-error
       const res = await fetch(...args);
-      const downloadEndTime = performance.now();
+      // TODO: fetch() の resolve されるタイミングはresponseEndのタイミングではないので要修正
       const endUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
       //  playerオブジェクトがない可能性がある、バッファロード処理があるため待機
       setTimeout(() => {
@@ -341,12 +336,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
           itag,
           downloadSize,
           timeOrigin,
-          downloadStartTime,
-          downloadEndTime,
           startUnplayedBufferSize,
           endUnplayedBufferSize,
         });
-        if (throughput) YouTubeTypeHandler.add_throughput_history(throughput);
+        YouTubeTypeHandler.add_throughput_history(throughput);
       }, 1000);
       return res;
     }
