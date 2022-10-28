@@ -57,19 +57,50 @@ export default class VideoData {
       resolution: -1,
     };
     // --- set event listener --- //
-    Config.get_event_type_names().forEach((s) => {
-      this.last_events[s] = 0;
+    // Abema Live は event を無視する
+    if (this.video_handler.service != "abematv_live") {
+      Config.get_event_type_names().forEach((s) => {
+        this.last_events[s] = 0;
 
-      // eslint-disable-next-line no-underscore-dangle
-      const l = (event) => this._listener(event);
+        // eslint-disable-next-line no-underscore-dangle
+        const l = (event) => this._listener(event);
 
-      this.video_elm.addEventListener(s, l);
+        this.video_elm.addEventListener(s, l);
 
-      this.listeners.push({
-        key: s,
-        func: l,
+        this.listeners.push({
+          key: s,
+          func: l,
+        });
       });
-    });
+    } else {
+      document.querySelectorAll("video").forEach((e) => {
+        Config.get_event_type_names().forEach((s) => {
+          if (s === "ended") {
+            e.addEventListener(s, (event) => {
+              console.log(
+                `VIDEOMARK: EVENT(D):${event.type}, ${Array.from(
+                  document.querySelectorAll("video")
+                ).indexOf(event.target)}, ID:${this.uuid}[${
+                  this.id_by_video_holder ? this.id_by_video_holder : this.uuid
+                }]`
+              );
+            });
+          } else {
+            this.last_events[s] = 0;
+
+            // eslint-disable-next-line no-underscore-dangle
+            const l = (event) => this._listener(event);
+
+            e.addEventListener(s, l);
+
+            this.listeners.push({
+              key: s,
+              func: l,
+            });
+          }
+        });
+      });
+    }
 
     // eslint-disable-next-line no-underscore-dangle
     const l = (event) => this._position_update_listener(event);
@@ -305,11 +336,11 @@ export default class VideoData {
   }
 
   totalFrames() {
-    return this.video_elm.getVideoPlaybackQuality().totalVideoFrames;
+    return this.video_handler.get_total_frames(this.video_elm);
   }
 
   droppedFrames() {
-    return this.video_elm.getVideoPlaybackQuality().droppedVideoFrames;
+    return this.video_handler.get_dropped_frames(this.video_elm);
   }
 
   /**
@@ -454,17 +485,21 @@ export default class VideoData {
       this._is_cm()
     ) {
       console.log(
-        `VIDEOMARK: EVENT(D):${event.type}, VALUE:[${e.toJSON()}], ID:${
-          this.uuid
-        }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
+        `VIDEOMARK: EVENT(D):${event.type}, ${Array.from(
+          document.querySelectorAll("video")
+        ).indexOf(event.target)}, VALUE:[${e.toJSON()}], ID:${this.uuid}[${
+          this.id_by_video_holder ? this.id_by_video_holder : this.uuid
+        }]`
       );
       return;
     }
 
     console.log(
-      `VIDEOMARK: EVENT(A):${event.type}, VALUE:[${e.toJSON()}], ID:${
-        this.uuid
-      }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
+      `VIDEOMARK: EVENT(A):${event.type}, ${Array.from(
+        document.querySelectorAll("video")
+      ).indexOf(event.target)}, VALUE:[${e.toJSON()}], ID:${this.uuid}[${
+        this.id_by_video_holder ? this.id_by_video_holder : this.uuid
+      }]`
     );
 
     this.last_events[event.type] = e.time;

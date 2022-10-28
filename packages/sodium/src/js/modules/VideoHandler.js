@@ -62,6 +62,7 @@ export default class VideoHandler {
       } else if (url.pathname.split("/").indexOf("now-on-air") >= 0) {
         this.handler = new AbemaTVLiveTypeHandler(elm);
         this.service = "abematv_live";
+        this.calQoeFlg = true;
         console.log("Abema TV Live Type Handler");
       } else {
         throw new Error("AbemaTV ignores top page and unknown page video.");
@@ -239,6 +240,18 @@ export default class VideoHandler {
 
   get_service() {
     return this.service;
+  }
+
+  get_total_frames(video) {
+    if (this.handler instanceof AbemaTVLiveTypeHandler)
+      return this.handler.get_total_frames();
+    else return video.getVideoPlaybackQuality().totalVideoFrames;
+  }
+
+  get_dropped_frames(video) {
+    if (this.handler instanceof AbemaTVLiveTypeHandler)
+      return this.handler.get_dropped_frames();
+    else return video.getVideoPlaybackQuality().droppedVideoFrames;
   }
 
   is_main_video(video) {
