@@ -64,8 +64,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "npm run build-extension-prod && npm run build-extension-dev",
-    "build-extension-prod": "cross-env PUBLIC_URL=/qoelog BASE_URL=https://sodium.webdino.org node scripts/build.js && mv build build-prod",
-    "build-extension-dev": "cross-env PUBLIC_URL=/qoelog BASE_URL=https://localhost node scripts/build.js && mv build build-dev",
+    "build-extension-prod": "cross-env PUBLIC_URL=/qoelog BASE_URL=https://sodium.webdino.org node scripts/build.js && cp -r build build-prod && rm -r build",
+    "build-extension-dev": "cross-env PUBLIC_URL=/qoelog BASE_URL=https://localhost node scripts/build.js && cp -r build build-dev && rm -r build",
     "build-android": "node scripts/build.js && rimraf build/favicon.png build/unsupported.html build/static/js/*.LICENSE*",
     "build-web": "node scripts/build.js",
     "test": "node scripts/test.js",
