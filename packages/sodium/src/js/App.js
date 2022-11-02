@@ -7,6 +7,7 @@ import { qualityStatus } from "./modules/Quality";
 import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
 import ParaviTypeHandler from "./modules/ParaviTypeHandler";
 import IIJTypeHandler from "./modules/IIJTypeHandler";
+import JWPlayerHandler from "./modules/JWPlayerHandler";
 
 const get_ui_target = () => {
   return Config.isMobileScreen() ? window.top : window;
@@ -79,6 +80,9 @@ const remove_ui_all = () => {
 
   // --- IIJ Hook --- //
   await IIJTypeHandler.hook_iij();
+
+  // --- JWPlayer Hook --- //
+  await JWPlayerHandler.hook_jwplayer();
 
   // 前回までの計測uiの表示状態をタブ単位で保持しているため
   // 表示設定をあらかじめ読み込んでおく

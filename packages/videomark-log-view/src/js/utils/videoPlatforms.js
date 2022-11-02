@@ -84,6 +84,14 @@ export default [
     host: /^pr\.iij\.ad\.jp$/,
   },
   {
+    id: "jwplayer",
+    experimental: true,
+    name: "JWPlayer",
+    brandcolor: "#CCB42B",
+    // https://www.oreilly.com/library/view/regular-expressions-cookbook/9780596802837/ch07s16.html
+    host: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+  },
+  {
     id: "gorin",
     name: "gorin.jp",
     url: "https://www.gorin.jp//",
