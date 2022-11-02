@@ -10,6 +10,7 @@ import AbemaTVVideoTypeHandler from "./AbemaTVVideoTypeHandler";
 import AbemaTVLiveTypeHandler from "./AbemaTVLiveTypeHandler";
 import AmazonPrimeVideoTypeHandler from "./AmazonPrimeVideoTypeHandler";
 import IIJTypeHandler from "./IIJTypeHandler";
+import JWPlayerHandler from "./JWPlayerHandler";
 import NetflixTypeHandler from "./NetflixTypeHandler";
 
 export default class VideoHandler {
@@ -76,6 +77,15 @@ export default class VideoHandler {
       this.calQoeFlg = true;
       this.service = "iijtwilightconcert";
       console.log("IIJ Type Handler");
+    } else if (
+      JWPlayerHandler.allowManifests.some(
+        (manifestUrl) => manifestUrl.host === url.host
+      )
+    ) {
+      this.handler = new JWPlayerHandler(elm);
+      this.calQoeFlg = true;
+      this.service = "jwplayer";
+      console.log("JWPlayer Type Handler");
     } else if (/(www\.)?netflix.com/.test(url.host)) {
       this.handler = new NetflixTypeHandler(elm);
       this.calQoeFlg = true;
@@ -115,9 +125,7 @@ export default class VideoHandler {
   get_receive_buffer() {
     let receive = -1;
 
-    if (this.handler instanceof IIJTypeHandler)
-      receive = IIJTypeHandler.get_receive_buffer();
-    else if (this.handler.get_receive_buffer instanceof Function)
+    if (this.handler.get_receive_buffer instanceof Function)
       receive = this.handler.get_receive_buffer();
 
     return receive;
@@ -230,9 +238,7 @@ export default class VideoHandler {
   get_representation() {
     let representation = {};
 
-    if (this.handler instanceof YouTubeTypeHandler)
-      representation = YouTubeTypeHandler.get_representation();
-    else if (this.handler.get_representation instanceof Function)
+    if (this.handler.get_representation instanceof Function)
       representation = this.handler.get_representation();
 
     return representation;
