@@ -30,8 +30,8 @@ cp -va packages/sodium/dist/* "${PROD_DIR}"
 cp -va packages/sodium/dist-dev/* "${DEV_DIR}"
 
 log videomark-log-view
-cp -va packages/videomark-log-view/build "${PROD_DIR}/qoelog"
-cp -va packages/videomark-log-view/build "${DEV_DIR}/qoelog"
+cp -va packages/videomark-log-view/build-prod "${PROD_DIR}/qoelog"
+cp -va packages/videomark-log-view/build-dev "${DEV_DIR}/qoelog"
 rm -v -- "${PROD_DIR}/qoelog/manifest.json" "${DEV_DIR}/qoelog/manifest.json"
 
 log videomark-extension

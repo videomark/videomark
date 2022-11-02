@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 const Stats = ({ title, type }) => {
   const classes = useStyles();
-  const baseUrl = new URL("https://sodium.webdino.org:8443/");
+  const baseUrl = new URL(`${process.env.BASE_URL}:8443/`);
   const days = "日月火水木金土";
   const daysOrder = ({ day: a }, { day: b }) =>
     days.indexOf(a) - days.indexOf(b);

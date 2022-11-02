@@ -105,7 +105,7 @@ module.exports = {
       template: path.resolve("public/index.html"),
       minify: isEnvProduction,
     }),
-    new webpack.EnvironmentPlugin(["NODE_ENV"]),
+    new webpack.EnvironmentPlugin(["NODE_ENV", "BASE_URL"]),
     !isEnvProduction && new webpack.HotModuleReplacementPlugin(),
     isEnvProduction &&
       new MiniCssExtractPlugin({
