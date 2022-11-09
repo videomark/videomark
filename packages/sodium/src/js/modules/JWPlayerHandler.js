@@ -3,9 +3,11 @@ import Config from "./Config";
 import GeneralTypeHandler from "./GeneralTypeHandler";
 import ResourceTiming from "./ResourceTiming";
 
-const allowManifests = ["http://133.110.240.98/bbb_dash_test/bbb_abr.mpd"].map(
-  (url) => new URL(url)
-);
+const allowManifests = [
+  "http://133.110.240.98/bbb_dash_test/bbb_abr.mpd",
+  "http://133.167.41.23/bbb_dash_test/bbb_abr.mpd",
+  "http://210.191.83.143/bbb_dash_test/bbb_abr.mpd",
+].map((url) => new URL(url));
 
 export default class JWPlayerHandler extends GeneralTypeHandler {
   static async hook_jwplayer() {
