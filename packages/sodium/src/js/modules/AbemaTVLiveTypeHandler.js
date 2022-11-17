@@ -1,4 +1,7 @@
+// @ts-check
+import Config from "./Config";
 import GeneralTypeHandler from "./GeneralTypeHandler";
+import ResourceTiming from "./ResourceTiming";
 
 const DURATION = 60 * 60 * 2; // 動画サイズは 2 時間の固定にする
 const RECEIVED_BUFFER_OFFSET = 5; // 5 秒分先読みを固定値で挿入
@@ -66,6 +69,79 @@ function get_representation() {
   return REPRESENTATION_TABLE[k];
 }
 
+/**
+ * スループットの計算
+ * get_throughput_info() で得られるスループットの計算を行う
+ * @param {object} params
+ * @param {PerformanceResourceTiming} params.resource https://developer.mozilla.org/ja/docs/Web/API/PerformanceResourceTiming
+ * @param {number} params.timeOrigin https://developer.mozilla.org/ja/docs/Web/API/Performance/timeOrigin
+ * @return {{
+ *  representationId: string,
+ *  downloadSize: number,
+ *  downloadTime: number,
+ *  throughput: number,
+ *  start: number,
+ *  end: number,
+ *  startUnplayedBufferSize: number,
+ *  endUnplayedBufferSize: number,
+ *  bitrate: number,
+ *  timings: {
+ *    domainLookupStart: number,
+ *    connectStart: number,
+ *    requestStart: number,
+ *    responseStart: number,
+ *  },
+ * }}
+ */
+function createThroughput({ resource, timeOrigin }) {
+  const downloadSize = resource.transferSize;
+  const downloadTime = resource.responseEnd - resource.startTime;
+  const throughput = Math.floor(((downloadSize * 8) / downloadTime) * 1000);
+  const start = resource.startTime + timeOrigin;
+  const end = resource.responseEnd + timeOrigin;
+  const timings = {
+    domainLookupStart: resource.domainLookupStart - resource.startTime,
+    connectStart: resource.connectStart - resource.startTime,
+    requestStart: resource.requestStart - resource.startTime,
+    responseStart: resource.responseStart - resource.startTime,
+  };
+  return {
+    representationId: resource.name, // NOTE: itagが特定できないのでURLで代替
+    downloadSize,
+    downloadTime,
+    throughput,
+    start,
+    end,
+    startUnplayedBufferSize: 0, // NOTE: 不明なので0と仮定
+    endUnplayedBufferSize: 0, // NOTE: 不明なので0と仮定
+    bitrate: 0, // NOTE: 不明なので0と仮定
+    timings,
+  };
+}
+
+/** PerformanceResourceTiming.startTime の最新の値 */
+let lastStarted = -Infinity;
+
+/**
+ * スループットの計測値の生成
+ * get_throughput_info() で得られるスループットの計測値の生成を行う
+ */
+function createThroughputInfo() {
+  const timeOrigin = performance.timeOrigin;
+  const resources = ResourceTiming.findAll({
+    after: lastStarted,
+    // NOTE: get_segment_domainを含むURL … 映像だけでなく音声やマニフェストなども含む
+    pattern: /^https:[/][/]ds-linear-abematv[.]akamaized[.]net[/]/,
+  });
+  lastStarted = Math.max(
+    lastStarted,
+    ...resources.map((resource) => resource.startTime)
+  );
+  return resources.map((resource) =>
+    createThroughput({ resource, timeOrigin })
+  );
+}
+
 /* あまり有用な情報は取り出せない */
 export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
   constructor() {
@@ -76,6 +152,13 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
 
     current = document.querySelectorAll("video");
     this.start_time = Date.now();
+  }
+
+  // NOTE: 破壊的メソッド
+  get_throughput_info() {
+    return createThroughputInfo().slice(
+      -Config.get_max_throughput_history_size()
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this
