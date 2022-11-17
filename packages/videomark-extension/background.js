@@ -9,6 +9,7 @@ const permittedOrigins = [
   "https://www.nhk-ondemand.jp",
   /^https:\/\/[a-z-]+\.video\.dmkt-sp\.jp$/,
   "https://abema.tv",
+  /^https:\/\/ds-linear-abematv\.akamaized\.net$/,
   /^https:\/\/[a-z0-9.-]\.abema-tv\.com$/,
   "https://www.amazon.co.jp",
   /^https?:\/\/pr\.iij\.ad\.jp$/,

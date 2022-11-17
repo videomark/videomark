@@ -71,6 +71,25 @@ export default class GeneralTypeHandler {
     return [];
   }
 
+  /**
+   * @return {number[] | Array<{
+   *  representationId: string,
+   *  downloadSize: number,
+   *  downloadTime: number,
+   *  throughput: number,
+   *  start: number,
+   *  end: number,
+   *  startUnplayedBufferSize: number,
+   *  endUnplayedBufferSize: number,
+   *  bitrate: number,
+   *  timings: {
+   *    domainLookupStart: number,
+   *    connectStart: number,
+   *    requestStart: number,
+   *    responseStart: number,
+   *  },
+   * }>}
+   */
   get_throughput_info() {
     return [];
   }
