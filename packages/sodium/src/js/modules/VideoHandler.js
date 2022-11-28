@@ -8,6 +8,7 @@ import NHKOndemandTypeHandler from "./NHKOndemandTypeHandler";
 import DTVTypeHandler from "./DTVTypeHandler";
 import AbemaTVVideoTypeHandler from "./AbemaTVVideoTypeHandler";
 import AbemaTVLiveTypeHandler from "./AbemaTVLiveTypeHandler";
+import AbemaTVLiveEventTypeHandler from "./AbemaTVLiveEventTypeHandler";
 import AmazonPrimeVideoTypeHandler from "./AmazonPrimeVideoTypeHandler";
 import IIJTypeHandler from "./IIJTypeHandler";
 import NetflixTypeHandler from "./NetflixTypeHandler";
@@ -60,14 +61,19 @@ export default class VideoHandler {
         this.service = "abematv_video";
         console.log("Abema TV Video Type Handler");
       } else if (
-        url.pathname
-          .split("/")
-          .some((name) => name === "now-on-air" || name === "live-event")
+        url.pathname.split("/").some((name) => name === "now-on-air")
       ) {
         this.handler = new AbemaTVLiveTypeHandler(elm);
         this.service = "abematv_live";
         this.calQoeFlg = true;
         console.log("Abema TV Live Type Handler");
+      } else if (
+        url.pathname.split("/").some((name) => name === "live-event")
+      ) {
+        this.handler = new AbemaTVLiveEventTypeHandler(elm);
+        this.service = "abematv_live_event";
+        this.calQoeFlg = true;
+        console.log("Abema TV Live Event Type Handler");
       } else {
         throw new Error("AbemaTV ignores top page and unknown page video.");
       }
