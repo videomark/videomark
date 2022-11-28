@@ -12,7 +12,8 @@ const fileExists = (path) => {
 };
 
 module.exports = async () => {
-  const extensionPath = fileExists("../../dist/production");
+  // NOTE: 最近(2022-11-28)の本番系は最新QoEが得られるまでの遅延が大きくなりつつあるので dev-sodium.webdino.org を使用
+  const extensionPath = fileExists("../../dist/development");
   assert(
     extensionPath,
     `拡張機能が存在しません。ビルド後に再実行してください。${extensionPath}`

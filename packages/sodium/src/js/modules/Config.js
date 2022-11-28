@@ -495,9 +495,9 @@ Config.ui.dtv = {
 }`,
 };
 
-// AbemaTV, Abemaビデオ
+// ABEMA
 Config.ui.abematv = {
-  target: ".com-tv-TVScreen__player, .com-vod-VODScreen-container",
+  target: `[class$="__player"], .com-vod-VODScreen-container`,
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -505,7 +505,7 @@ Config.ui.abematv = {
   left: 12px;
   transition: 200ms;
 }
-.com-tv-TVScreen__player > .com-tv-TVScreen__overlay--cursor-hidden ~ #${Config.ui.id},
+[class$="__player"] > .com-tv-TVScreen__overlay--cursor-hidden ~ #${Config.ui.id},
 .com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
   opacity: 0;
 }`,

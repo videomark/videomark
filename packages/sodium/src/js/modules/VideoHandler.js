@@ -59,7 +59,11 @@ export default class VideoHandler {
         this.handler = new AbemaTVVideoTypeHandler(elm);
         this.service = "abematv_video";
         console.log("Abema TV Video Type Handler");
-      } else if (url.pathname.split("/").indexOf("now-on-air") >= 0) {
+      } else if (
+        url.pathname
+          .split("/")
+          .some((name) => name === "now-on-air" || name === "live-event")
+      ) {
         this.handler = new AbemaTVLiveTypeHandler(elm);
         this.service = "abematv_live";
         this.calQoeFlg = true;
