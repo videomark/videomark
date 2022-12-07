@@ -40,7 +40,7 @@ chrome.webRequest.onHeadersReceived.addListener(
   {
     urls: ["<all_urls>"]
   },
-  ["blocking", "responseHeaders"]
+  ["blocking", "responseHeaders", "extraHeaders"]
 );
 
 chrome.webRequest.onResponseStarted.addListener(
