@@ -48,6 +48,21 @@ class ResourceTiming {
     );
   }
 
+  /**
+   * PerformanceResourceTiming[] の取得
+   * @param {object} params
+   * @param {number} params.after startTime の下限 (同値は含まない)
+   * @param {RegExp} params.pattern PerformanceEntry.name を特定する正規表現
+   * @return {PerformanceResourceTiming[]}
+   */
+  findAll({ after, pattern }) {
+    return performance
+      .getEntriesByType("resource")
+      .filter(
+        (resource) => after < resource.startTime && pattern.test(resource.name)
+      );
+  }
+
   toDate(hires) {
     return new Date(performance.timeOrigin + hires);
   }
