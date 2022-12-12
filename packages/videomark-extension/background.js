@@ -41,7 +41,11 @@ chrome.webRequest.onHeadersReceived.addListener(
   {
     urls: ["<all_urls>"]
   },
-  ["blocking", "responseHeaders", "extraHeaders"]
+  // Chrome 79 以降では、`blocking`、`responseHeaders` に加えて `extraHeaders` オプションが必要。ただし、
+  // これを付けると Firefox でリスナー自体が動作しなくなるため注意が必要。
+  // @see https://groups.google.com/a/chromium.org/g/extensions-dev/c/WAycYvTuZno
+  // @see https://stackoverflow.com/q/66265032
+  Object.values(chrome.webRequest.OnHeadersReceivedOptions)
 );
 
 chrome.webRequest.onResponseStarted.addListener(
