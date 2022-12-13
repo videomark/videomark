@@ -7,7 +7,7 @@ import JPText from "./components/JPText";
 import timeFormat from "./components/jpTimeFormat";
 import { playingTimeStats } from "./components/stats";
 const title = "VideoMark 動画視聴統計";
-const site = "https://vm.webdino.org";
+const site = "https://videomark.webdino.org";
 const width = 512; // px
 const height = 512; // px
 const appName = "videomark";
