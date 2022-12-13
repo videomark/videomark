@@ -5,7 +5,7 @@
 
 # Web VideoMark Project
 
-Web VideoMark プロジェクトの紹介、ツールのダウンロード、使用法などの説明は [Web VideoMark の Web サイト](https://vm.webdino.org/) をご覧ください。
+Web VideoMark プロジェクトの紹介、ツールのダウンロード、使用法などの説明は [Web VideoMark の Web サイト](https://videomark.webdino.org/) をご覧ください。
 
 ## Develop Environment
 

@@ -68,7 +68,7 @@ chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
         version == null ? 0 : Number(version.slice(".")[0]);
       const majorVersion = major(chrome.runtime.getManifest().version);
       if (major(previousVersion) < majorVersion) {
-        const url = `https://vm.webdino.org/whatsnew/extension/${majorVersion}`;
+        const url = `https://videomark.webdino.org/whatsnew/extension/${majorVersion}`;
         chrome.tabs.create({ url });
       }
       break;

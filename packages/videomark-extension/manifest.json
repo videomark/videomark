@@ -4,7 +4,7 @@
   "version": "1.12.0",
   "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
   "author": "WebDINO Japan",
-  "homepage_url": "http://vm.webdino.org/",
+  "homepage_url": "http://videomark.webdino.org/",
   "options_page": "qoelog/index.html#/settings",
   "applications": {
     "gecko": {
