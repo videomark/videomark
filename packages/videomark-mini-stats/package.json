@@ -1,7 +1,7 @@
 {
   "name": "@videomark/videomark-mini-stats",
   "private": true,
-  "version": "1.8.0",
+  "version": "1.12.1",
   "main": "index.js",
   "module": "index.js",
   "repository": {
