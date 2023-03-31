@@ -6,8 +6,8 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -18,7 +18,7 @@ jobs:
       - id: test
         run: xvfb-run yarn e2e
       - if: success() || failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: screenshots
           path: test/e2e/screenshots
@@ -29,7 +29,7 @@ jobs:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
       - if: success() || failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: videomark-mini-stats-screenshots
           path: packages/videomark-mini-stats/screenshots

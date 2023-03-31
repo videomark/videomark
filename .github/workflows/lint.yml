@@ -4,8 +4,8 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -13,5 +13,5 @@ jobs:
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
       - run: yarn lint-report
         continue-on-error: true
-      - uses: ataylorme/eslint-annotate-action@1.1.2
+      - uses: ataylorme/eslint-annotate-action@1.2.0
         with: { repo-token: "${{ github.token }}" }
