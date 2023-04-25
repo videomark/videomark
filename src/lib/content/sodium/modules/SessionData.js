@@ -1,10 +1,10 @@
-import msgpack from 'msgpack-lite';
-import { v4 as uuidv4 } from 'uuid';
+import msgpack from "msgpack-lite";
+import { v4 as uuidv4 } from "uuid";
 
-import { version } from '../../../../../package.json';
-import Config from './Config';
-import MainVideoChangeException from './MainVideoChangeException';
-import ResourceTiming from './ResourceTiming';
+import { version } from "../../../package.json";
+import Config from "./Config";
+import MainVideoChangeException from "./MainVideoChangeException";
+import ResourceTiming from "./ResourceTiming";
 import {
   fetchAndStorePeakTimeLimit,
   saveQuotaLimitStarted,
@@ -12,9 +12,9 @@ import {
   stopPeakTimeLimit,
   underPeakTimeLimit,
   underQuotaLimit,
-} from './StatStorage';
-import { useStorage } from './Storage';
-import VideoData from './VideoData';
+} from "./StatStorage";
+import { useStorage } from "./Storage";
+import VideoData from "./VideoData";
 
 /**
  * 送信
@@ -38,18 +38,21 @@ import VideoData from './VideoData';
 async function send(payload) {
   const body = msgpack.encode(JSON.parse(JSON.stringify(payload)));
   if (body.length > Config.get_max_send_size())
-    console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
+    console.warn(
+      `VIDEOMARK: Too large payload packed body size is ${body.length}`
+    );
 
-  const type = payload.sessionType === 'personal' ? payload.sessionType : 'social';
+  const type =
+    payload.sessionType === "personal" ? payload.sessionType : "social";
   const ret = await fetch(`${Config.get_fluent_url()}.${type}`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-type': 'application/msgpack',
+      "Content-type": "application/msgpack",
     },
     body,
   });
   if (!ret.ok) {
-    throw new Error('fluent response was not ok.');
+    throw new Error("fluent response was not ok.");
   }
 }
 
@@ -60,10 +63,14 @@ async function set_max_bitrate(new_video) {
 
   const peak_time_limit = (await fetchAndStorePeakTimeLimit()) || {};
   const bitrate = Math.min(
-    ...[bitrate_control, quota_bitrate, peak_time_limit.bitrate].filter(Number.isFinite),
+    ...[bitrate_control, quota_bitrate, peak_time_limit.bitrate].filter(
+      Number.isFinite
+    )
   );
   const resolution = Math.min(
-    ...[Config.get_resolution_control(), peak_time_limit.resolution].filter(Number.isFinite),
+    ...[Config.get_resolution_control(), peak_time_limit.resolution].filter(
+      Number.isFinite
+    )
   );
 
   if (Number.isFinite(bitrate) && Number.isFinite(resolution)) {
@@ -83,8 +90,8 @@ export default class SessionData {
     this.userAgent =
       window &&
       (window.sodium ? window.sodium.userAgent : window) &&
-      (window.navigator ? window.navigator.userAgent : '');
-    this.appVersion = this.userAgent.substr(this.userAgent.indexOf('/') + 1);
+      (window.navigator ? window.navigator.userAgent : "");
+    this.appVersion = this.userAgent.substr(this.userAgent.indexOf("/") + 1);
     this.sequence = 0;
     this.video = [];
     this.latest_qoe_update_count = 0;
@@ -95,24 +102,31 @@ export default class SessionData {
   async init() {
     const settings = Config.get_settings();
     let session = Config.get_default_session();
-    if (session === undefined || settings === undefined || !(Date.now() < session.expires)) {
+    if (
+      session === undefined ||
+      settings === undefined ||
+      !(Date.now() < session.expires)
+    ) {
       const id = uuidv4();
-      const type = 'social';
-      const expiresIn = settings === undefined ? NaN : Number(settings.expires_in);
+      const type = "social";
+      const expiresIn =
+        settings === undefined ? NaN : Number(settings.expires_in);
       session = {
         id,
         type,
         expires:
           Date.now() +
-          (Number.isFinite(expiresIn) ? expiresIn : Config.get_default_session_expires_in()),
+          (Number.isFinite(expiresIn)
+            ? expiresIn
+            : Config.get_default_session_expires_in()),
       };
       window.postMessage(
         {
-          type: 'FROM_SODIUM_JS',
-          method: 'set_session',
+          type: "FROM_SODIUM_JS",
+          method: "set_session",
           session,
         },
-        '*',
+        "*"
       );
     }
 
@@ -141,7 +155,9 @@ export default class SessionData {
   get_video_availability() {
     const main_video = this.get_main_video();
     if (main_video === undefined) return false;
-    return this.location.href === window.location.href && main_video.is_available();
+    return (
+      this.location.href === window.location.href && main_video.is_available()
+    );
   }
 
   /**
@@ -171,7 +187,9 @@ export default class SessionData {
       }
     });
     const removing = this.video.filter(
-      (e) => !Array.prototype.find.call(elms, (elm) => elm === e.video_elm) || !e.is_stay(),
+      (e) =>
+        !Array.prototype.find.call(elms, (elm) => elm === e.video_elm) ||
+        !e.is_stay()
     );
     removing.forEach((e) => {
       e.clear();
@@ -187,7 +205,9 @@ export default class SessionData {
       // eslint-disable-next-line no-await-in-loop
       mainVideo = await this.waitMainVideo();
 
-      console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
+      console.log(
+        `VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`
+      );
       this.location = new URL(window.location.href);
 
       try {
@@ -200,7 +220,9 @@ export default class SessionData {
         await this.playing(mainVideo);
       } catch (e) {
         if (e instanceof MainVideoChangeException)
-          console.log(`VIDEOMARK: STATE CHANGE main video changed ${mainVideo.get_video_id()}`);
+          console.log(
+            `VIDEOMARK: STATE CHANGE main video changed ${mainVideo.get_video_id()}`
+          );
         else console.log(`VIDEOMARK: ${e}`);
       }
     }
@@ -221,7 +243,8 @@ export default class SessionData {
     return new Promise((resolve, reject) => {
       const timer = setInterval(() => {
         const startTime = mainVideo.get_start_time();
-        if (mainVideo !== this.get_main_video()) reject(new MainVideoChangeException());
+        if (mainVideo !== this.get_main_video())
+          reject(new MainVideoChangeException());
         if (startTime === -1) return;
         clearInterval(timer);
         resolve(startTime);
@@ -243,19 +266,28 @@ export default class SessionData {
       /* データ送信 */
       dataTimeoutId = this.startDataTransaction(
         mainVideo,
-        Config.get_trans_interval() * Config.get_check_state_interval(),
+        Config.get_trans_interval() * Config.get_check_state_interval()
       );
 
       /* 保存 */
-      storeTimeoutId = this.startDataStore(mainVideo, Config.get_check_state_interval());
+      storeTimeoutId = this.startDataStore(
+        mainVideo,
+        Config.get_check_state_interval()
+      );
 
       if (mainVideo.is_calculatable()) {
         /* QoE計算に必要なデータが送信されるまで待機 (5 * 2 - 3) * 1000 = 7000 ms */
-        await new Promise((resolve) => setTimeout(() => resolve(), qoeRequestStart));
+        await new Promise((resolve) =>
+          setTimeout(() => resolve(), qoeRequestStart)
+        );
 
         /* 最初の最新QoE値を取得 */
-        const qoe = await this.waitFirstQoE(mainVideo, Config.get_max_count_for_qoe());
-        if (qoe) console.log(`VIDEOMARK: STATE CHANGE latest qoe computed ${qoe}`);
+        const qoe = await this.waitFirstQoE(
+          mainVideo,
+          Config.get_max_count_for_qoe()
+        );
+        if (qoe)
+          console.log(`VIDEOMARK: STATE CHANGE latest qoe computed ${qoe}`);
         else console.log(`VIDEOMARK: STATE CHANGE latest qoe timeout`);
 
         /* QoE値問い合わせ */
@@ -263,7 +295,7 @@ export default class SessionData {
           mainVideo,
           Config.get_trans_interval() *
             Config.get_latest_qoe_update() *
-            Config.get_check_state_interval(),
+            Config.get_check_state_interval()
         );
       }
 
@@ -288,7 +320,8 @@ export default class SessionData {
     let counter = 0;
 
     for (; !qoe && counter < timeoutCount; counter += 1) {
-      if (mainVideo !== this.get_main_video()) throw new MainVideoChangeException();
+      if (mainVideo !== this.get_main_video())
+        throw new MainVideoChangeException();
       try {
         // eslint-disable-next-line no-await-in-loop
         qoe = await this.requestQoE(mainVideo);
@@ -301,7 +334,7 @@ export default class SessionData {
       }
       // eslint-disable-next-line no-await-in-loop
       await new Promise((resolve) =>
-        setTimeout(() => resolve(), Config.get_check_state_interval()),
+        setTimeout(() => resolve(), Config.get_check_state_interval())
       );
     }
 
@@ -364,14 +397,16 @@ export default class SessionData {
   }
 
   async requestQoE(video) {
-    console.debug(`VIDEOMARK: requestQoE [${this.session.id}][${video.get_video_id()}]`);
+    console.debug(
+      `VIDEOMARK: requestQoE [${this.session.id}][${video.get_video_id()}]`
+    );
     if (!this.session.id || !video.get_video_id()) {
-      throw new Error('SodiumServer(qoe) bad request.');
+      throw new Error("SodiumServer(qoe) bad request.");
     }
     const ret = await fetch(`${Config.get_sodium_server_url()}/api/latest_qoe`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         ids: {
@@ -381,7 +416,7 @@ export default class SessionData {
       }),
     });
     if (!ret.ok) {
-      throw new Error('SodiumServer(qoe) response was not ok.');
+      throw new Error("SodiumServer(qoe) response was not ok.");
     }
     const json = await ret.json();
     const qoe = Number.parseFloat(json.qoe);
@@ -433,7 +468,7 @@ export default class SessionData {
       title: video.get_title(),
       calc: video.is_calculatable(),
       log: [
-        ...(storage.cache.log || []).filter((a) => !('qoe' in a)),
+        ...(storage.cache.log || []).filter((a) => !("qoe" in a)),
         ...video.get_latest_qoe(),
         {
           date: Date.now(),
@@ -481,19 +516,26 @@ export default class SessionData {
     };
 
     const netinfo = {};
-    ['downlink', 'downlinkMax', 'effectiveType', 'rtt', 'type', 'apn', 'plmn', 'sim'].forEach(
-      (e) => {
-        if (navigator.connection === undefined) {
-          netinfo[e] = undefined;
-        } else if (navigator.connection[e] === Infinity) {
-          netinfo[e] = Number.MAX_VALUE;
-        } else if (navigator.connection[e] === -Infinity) {
-          netinfo[e] = Number.MIN_VALUE;
-        } else {
-          netinfo[e] = navigator.connection[e];
-        }
-      },
-    );
+    [
+      "downlink",
+      "downlinkMax",
+      "effectiveType",
+      "rtt",
+      "type",
+      "apn",
+      "plmn",
+      "sim",
+    ].forEach((e) => {
+      if (navigator.connection === undefined) {
+        netinfo[e] = undefined;
+      } else if (navigator.connection[e] === Infinity) {
+        netinfo[e] = Number.MAX_VALUE;
+      } else if (navigator.connection[e] === -Infinity) {
+        netinfo[e] = Number.MIN_VALUE;
+      } else {
+        netinfo[e] = navigator.connection[e];
+      }
+    });
     param.netinfo = netinfo;
 
     return param;
@@ -502,51 +544,59 @@ export default class SessionData {
   async locationIp() {
     const ip = await new Promise((resolve) => {
       const listener = (event) => {
-        if (event.data.host !== this.location.host || event.data.type !== 'CONTENT_SCRIPT_JS')
+        if (
+          event.data.host !== this.location.host ||
+          event.data.type !== "CONTENT_SCRIPT_JS"
+        )
           return;
-        window.removeEventListener('message', listener);
+        window.removeEventListener("message", listener);
         resolve(event.data.ip);
       };
-      window.addEventListener('message', listener);
+      window.addEventListener("message", listener);
       window.postMessage({
         host: this.location.host,
-        method: 'get_ip',
-        type: 'FROM_SODIUM_JS',
+        method: "get_ip",
+        type: "FROM_SODIUM_JS",
       });
     });
     this.hostToIp[this.location.host] = ip;
   }
 
   altSessionMessage() {
-    const allowHosts = ['tver.jp', 'fod.fujitv.co.jp'];
-    const allowVideoHosts = ['i.fod.fujitv.co.jp'];
+    const allowHosts = ["tver.jp", "fod.fujitv.co.jp"];
+    const allowVideoHosts = ["i.fod.fujitv.co.jp"];
 
     if (window.top === window) {
       if (!allowHosts.includes(this.location.hostname)) return;
 
-      const thumbnail = (document.querySelector("meta[property='og:image']") || {}).content;
+      const thumbnail = (
+        document.querySelector("meta[property='og:image']") || {}
+      ).content;
       const session = { location: this.location.href, thumbnail };
 
-      window.addEventListener('message', (event) => {
+      window.addEventListener("message", (event) => {
         const { data, source, origin } = event;
-        if (data.type !== 'ALT_SESSION_MESSAGE_REQ') return;
+        if (data.type !== "ALT_SESSION_MESSAGE_REQ") return;
         if (!allowVideoHosts.includes(new URL(origin).hostname)) return;
-        source.postMessage({ type: 'ALT_SESSION_MESSAGE_RES', ...session }, origin);
+        source.postMessage(
+          { type: "ALT_SESSION_MESSAGE_RES", ...session },
+          origin
+        );
       });
     } else {
       if (!allowVideoHosts.includes(this.location.hostname)) return;
 
       const eventResolver = (event) => {
         const { data, origin } = event;
-        if (data.type !== 'ALT_SESSION_MESSAGE_RES') return;
+        if (data.type !== "ALT_SESSION_MESSAGE_RES") return;
         if (!allowHosts.includes(new URL(origin).hostname)) return;
         const { location, thumbnail } = data;
         this.alt_location = location;
         this.alt_thumbnail = thumbnail;
-        window.removeEventListener('message', eventResolver);
+        window.removeEventListener("message", eventResolver);
       };
-      window.addEventListener('message', eventResolver);
-      window.top.postMessage({ type: 'ALT_SESSION_MESSAGE_REQ' }, '*');
+      window.addEventListener("message", eventResolver);
+      window.top.postMessage({ type: "ALT_SESSION_MESSAGE_REQ" }, "*");
     }
   }
 }

@@ -1,6 +1,6 @@
-import Config from './Config';
-import EventData from './EventData';
-import VideoHandler from './VideoHandler';
+import Config from "./Config";
+import EventData from "./EventData";
+import VideoHandler from "./VideoHandler";
 
 export default class VideoData {
   constructor(elm, id) {
@@ -58,7 +58,7 @@ export default class VideoData {
     };
     // --- set event listener --- //
     // Abema Live は event を無視する
-    if (this.video_handler.service != 'abematv_live') {
+    if (this.video_handler.service != "abematv_live") {
       Config.get_event_type_names().forEach((s) => {
         this.last_events[s] = 0;
 
@@ -73,16 +73,16 @@ export default class VideoData {
         });
       });
     } else {
-      document.querySelectorAll('video').forEach((e) => {
+      document.querySelectorAll("video").forEach((e) => {
         Config.get_event_type_names().forEach((s) => {
-          if (s === 'ended') {
+          if (s === "ended") {
             e.addEventListener(s, (event) => {
               console.log(
                 `VIDEOMARK: EVENT(D):${event.type}, ${Array.from(
-                  document.querySelectorAll('video'),
+                  document.querySelectorAll("video")
                 ).indexOf(event.target)}, ID:${this.uuid}[${
                   this.id_by_video_holder ? this.id_by_video_holder : this.uuid
-                }]`,
+                }]`
               );
             });
           } else {
@@ -105,10 +105,10 @@ export default class VideoData {
     // eslint-disable-next-line no-underscore-dangle
     const l = (event) => this._position_update_listener(event);
 
-    this.video_elm.addEventListener('timeupdate', l);
+    this.video_elm.addEventListener("timeupdate", l);
 
     this.listeners.push({
-      key: 'timeupdate',
+      key: "timeupdate",
       func: l,
     });
 
@@ -123,15 +123,20 @@ export default class VideoData {
   async read_settings() {
     const resolution_control = await Config.get_resolution_control();
     if (resolution_control) this.max_resolution = resolution_control;
-    this.enable_quality_control = this.enable_quality_control || Boolean(resolution_control);
+    this.enable_quality_control =
+      this.enable_quality_control || Boolean(resolution_control);
 
     const bitrate_control = await Config.get_bitrate_control();
-    if (bitrate_control) this.max_bitrate = Math.min(this.max_bitrate, bitrate_control);
-    this.enable_quality_control = this.enable_quality_control || Boolean(bitrate_control);
+    if (bitrate_control)
+      this.max_bitrate = Math.min(this.max_bitrate, bitrate_control);
+    this.enable_quality_control =
+      this.enable_quality_control || Boolean(bitrate_control);
 
     const quota_bitrate = await Config.get_quota_bitrate();
-    if (quota_bitrate) this.max_bitrate = Math.min(this.max_bitrate, quota_bitrate);
-    this.enable_quality_control = this.enable_quality_control || Boolean(quota_bitrate);
+    if (quota_bitrate)
+      this.max_bitrate = Math.min(this.max_bitrate, quota_bitrate);
+    this.enable_quality_control =
+      this.enable_quality_control || Boolean(quota_bitrate);
   }
 
   get_video_id() {
@@ -242,7 +247,7 @@ export default class VideoData {
     )
       this.latest_qoe = this.latest_qoe.splice(
         -Config.get_num_of_latest_qoe(),
-        Config.get_num_of_latest_qoe(),
+        Config.get_num_of_latest_qoe()
       );
   }
 
@@ -273,7 +278,7 @@ export default class VideoData {
     const now = this.video_handler.get_id_by_video_holder();
     if (this.id_by_video_holder && this.id_by_video_holder !== now) {
       console.log(
-        `VIDEOMARK: switch video source removing [${this.id_by_video_holder}] -> [${now}]`,
+        `VIDEOMARK: switch video source removing [${this.id_by_video_holder}] -> [${now}]`
       );
       return false;
     }
@@ -304,7 +309,8 @@ export default class VideoData {
         this.resolution.min.height = vh;
     }
 
-    this.domain_name = this.video_handler.get_segment_domain() || this.domain_name;
+    this.domain_name =
+      this.video_handler.get_segment_domain() || this.domain_name;
 
     const total = this.totalFrames();
     const dropped = this.droppedFrames();
@@ -364,9 +370,15 @@ export default class VideoData {
           limited: this.video_handler.is_limited(),
         },
       },
-      playback_quality: this.playback_quality.splice(0, this.playback_quality.length),
+      playback_quality: this.playback_quality.splice(
+        0,
+        this.playback_quality.length
+      ),
       play_list_info: this.video_handler.get_play_list_info(),
-      throughput_info: this.throughput_send.splice(0, this.throughput_send.length),
+      throughput_info: this.throughput_send.splice(
+        0,
+        this.throughput_send.length
+      ),
       cmHistory: this.cm_events.splice(0, this.cm_events.length),
     };
     if (this.video_elm.src && !this.video_elm.src.match(/^blob:/i)) {
@@ -382,7 +394,9 @@ export default class VideoData {
       data_sz -= JSON.stringify(e.get()).length;
       data_sz -= JSON.stringify(e.get_delta()).length;
       if (data_sz < 0) {
-        console.debug(`event_data_sz max=${Config.get_event_data_max_size()} over=${-data_sz}`);
+        console.debug(
+          `event_data_sz max=${Config.get_event_data_max_size()} over=${-data_sz}`
+        );
         break;
       }
       val[`event_${e.type}`].splice(0, 0, e.get());
@@ -392,7 +406,9 @@ export default class VideoData {
   }
 
   clear() {
-    this.listeners.forEach((e) => this.video_elm.removeEventListener(e.key, e.func));
+    this.listeners.forEach((e) =>
+      this.video_elm.removeEventListener(e.key, e.func)
+    );
     this.video_handler.clear();
     console.log(`VIDEOMARK: delete video uuid[${this.uuid}]`);
   }
@@ -425,28 +441,30 @@ export default class VideoData {
       playTime = (now - this.play_start_time) / 1000;
     }
     switch (event.type) {
-      case 'waiting':
+      case "waiting":
         this.timing.waiting = (at) => waiting + at - now;
         break;
-      case 'canplay':
+      case "canplay":
         this.timing.waiting = () => waiting;
         break;
-      case 'pause':
+      case "pause":
         this.timing.pause = (at) => pause + at - now;
         break;
-      case 'play':
+      case "play":
         this.timing.pause = () => pause;
         if (this.play_start_time === -1) {
           this.play_start_time = now;
           playPos = 0;
           playTime = 0;
-          console.log(`VIDEOMARK: set play start time Event[${this.play_start_time}]`);
+          console.log(
+            `VIDEOMARK: set play start time Event[${this.play_start_time}]`
+          );
         }
         break;
-      case 'seeking':
+      case "seeking":
         playPos = this.current_play_pos;
         break;
-      case 'ended':
+      case "ended":
         this.play_end_time = now;
         break;
       default:
@@ -457,7 +475,7 @@ export default class VideoData {
       event.type,
       playPos,
       playTime,
-      this.last_events[event.type],
+      this.last_events[event.type]
     );
 
     if (
@@ -468,20 +486,20 @@ export default class VideoData {
     ) {
       console.log(
         `VIDEOMARK: EVENT(D):${event.type}, ${Array.from(
-          document.querySelectorAll('video'),
+          document.querySelectorAll("video")
         ).indexOf(event.target)}, VALUE:[${e.toJSON()}], ID:${this.uuid}[${
           this.id_by_video_holder ? this.id_by_video_holder : this.uuid
-        }]`,
+        }]`
       );
       return;
     }
 
     console.log(
-      `VIDEOMARK: EVENT(A):${event.type}, ${Array.from(document.querySelectorAll('video')).indexOf(
-        event.target,
-      )}, VALUE:[${e.toJSON()}], ID:${this.uuid}[${
+      `VIDEOMARK: EVENT(A):${event.type}, ${Array.from(
+        document.querySelectorAll("video")
+      ).indexOf(event.target)}, VALUE:[${e.toJSON()}], ID:${this.uuid}[${
         this.id_by_video_holder ? this.id_by_video_holder : this.uuid
-      }]`,
+      }]`
     );
 
     this.last_events[event.type] = e.time;
@@ -498,7 +516,9 @@ export default class VideoData {
 
     if (this.play_start_time === -1) {
       this.play_start_time = Date.now();
-      console.log(`VIDEOMARK: set play start time time_update Event[${this.play_start_time}]`);
+      console.log(
+        `VIDEOMARK: set play start time time_update Event[${this.play_start_time}]`
+      );
     }
     this.current_play_pos = this.video_handler.get_current_time(event.target);
     this.current_play_pos_date = (Date.now() - this.play_start_time) / 1000;
@@ -510,34 +530,41 @@ export default class VideoData {
     const { cm, pos, time } = args;
 
     const playPos = pos;
-    const playTime = this.play_start_time !== -1 ? (time - this.play_start_time) / 1000 : 0;
+    const playTime =
+      this.play_start_time !== -1 ? (time - this.play_start_time) / 1000 : 0;
 
     let type;
 
     if (cm) {
-      type = 'pause';
-      this.cm_events.push({ type: 'cm', time });
+      type = "pause";
+      this.cm_events.push({ type: "cm", time });
     } else {
-      type = 'play';
-      this.cm_events.push({ type: 'main', time });
+      type = "play";
+      this.cm_events.push({ type: "main", time });
       if (this.play_start_time === -1) this.play_start_time = Date.now();
     }
 
-    const event = new EventData(this.video_elm, type, playPos, playTime, this.last_events[type]);
+    const event = new EventData(
+      this.video_elm,
+      type,
+      playPos,
+      playTime,
+      this.last_events[type]
+    );
 
     if (this.play_start_time === -1) {
       console.log(
-        `VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${this.uuid}[${
-          this.id_by_video_holder ? this.id_by_video_holder : this.uuid
-        }]`,
+        `VIDEOMARK: EVENT(D(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
+          this.uuid
+        }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
       );
       return;
     }
 
     console.log(
-      `VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${this.uuid}[${
-        this.id_by_video_holder ? this.id_by_video_holder : this.uuid
-      }]`,
+      `VIDEOMARK: EVENT(A(L)):${event.type}, VALUE:[${event.toJSON()}], ID:${
+        this.uuid
+      }[${this.id_by_video_holder ? this.id_by_video_holder : this.uuid}]`
     );
 
     this.last_events[event.type] = event.time;

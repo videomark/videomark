@@ -1,9 +1,9 @@
-import GeneralTypeHandler from './GeneralTypeHandler';
+import GeneralTypeHandler from "./GeneralTypeHandler";
 
 export default class NHKOndemandTypeHandler extends GeneralTypeHandler {
   // eslint-disable-next-line class-methods-use-this
   get_video_title() {
-    return document.querySelector('.player__title').textContent;
+    return document.querySelector(".player__title").textContent;
   }
 
   // eslint-disable-next-line class-methods-use-this

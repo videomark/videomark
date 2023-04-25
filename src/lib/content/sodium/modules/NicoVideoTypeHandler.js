@@ -1,4 +1,4 @@
-import GeneralTypeHandler from './GeneralTypeHandler';
+import GeneralTypeHandler from "./GeneralTypeHandler";
 
 /**
  * @typedef {{
@@ -17,7 +17,7 @@ import GeneralTypeHandler from './GeneralTypeHandler';
  * @return {Array<SelectedQuality>} 選択可能な動画の品質一覧 (得られない場合は [])
  */
 function quality() {
-  const initDataElement = document.querySelector('#js-initial-watch-data');
+  const initDataElement = document.querySelector("#js-initial-watch-data");
   if (initDataElement == null) return [];
   const { apiData: apiDataJson } = initDataElement.dataset;
   if (apiDataJson == null) return [];
@@ -34,7 +34,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
   constructor(elm) {
     super(elm);
 
-    if (!this.is_main_video(elm)) throw new Error('video is not main');
+    if (!this.is_main_video(elm)) throw new Error("video is not main");
 
     this.cm = false;
     this.limited = false;
@@ -46,20 +46,20 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
   // eslint-disable-next-line class-methods-use-this
   get_video_title() {
     try {
-      return document.querySelector('.VideoTitle').textContent;
+      return document.querySelector(".VideoTitle").textContent;
     } catch (e) {
-      return '';
+      return "";
     }
   }
 
   // eslint-disable-next-line class-methods-use-this
   get_id_by_video_holder() {
     try {
-      const [id] = new URL(window.location.href).pathname.split('/').slice(-1);
+      const [id] = new URL(window.location.href).pathname.split("/").slice(-1);
 
       return id;
     } catch (e) {
-      return '';
+      return "";
     }
   }
 
@@ -67,9 +67,9 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
   get_view_count() {
     try {
       const count = document
-        .querySelector('.VideoViewCountMeta-counter')
-        .firstChild.textContent.split(',')
-        .join('');
+        .querySelector(".VideoViewCountMeta-counter")
+        .firstChild.textContent.split(",")
+        .join("");
 
       return Number.parseInt(count, 10);
     } catch (e) {
@@ -80,8 +80,8 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
   // eslint-disable-next-line class-methods-use-this
   is_main_video(video) {
     try {
-      const main = Array.from(document.querySelectorAll('video')).find(
-        (e) => e.parentElement.id === 'MainVideoPlayer',
+      const main = Array.from(document.querySelectorAll("video")).find(
+        (e) => e.parentElement.id === "MainVideoPlayer"
       );
 
       return video === main;
@@ -112,7 +112,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
     if (videos.length === 0) return;
 
     // NOTE: 自動か否か ('"manual"': 手動)
-    localStorage.setItem('DMCSource.qualitySelectType', '"manual"');
+    localStorage.setItem("DMCSource.qualitySelectType", '"manual"');
 
     // NOTE: 最低画質をピックアップする
     const lowestQuality = videos[videos.length - 1];
@@ -132,7 +132,10 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
     selected.levelIndex = selected.level_index;
     delete selected.level_index;
 
-    localStorage.setItem('DMCSource.selectedQualityManually', JSON.stringify(selected));
+    localStorage.setItem(
+      "DMCSource.selectedQualityManually",
+      JSON.stringify(selected)
+    );
   }
 
   /**
@@ -140,9 +143,9 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
    */
   set_default_bitrate() {
     // NOTE: 自動か否か (デフォルト: 自動)
-    localStorage.removeItem('DMCSource.qualitySelectType');
+    localStorage.removeItem("DMCSource.qualitySelectType");
     // NOTE: 画質 ("null": 自動の場合)
-    localStorage.setItem('DMCSource.selectedQualityManually', 'null');
+    localStorage.setItem("DMCSource.selectedQualityManually", "null");
   }
 
   add_cm_listener(listener) {
@@ -161,7 +164,7 @@ export default class NicoVideoTypeHandler extends GeneralTypeHandler {
           cm: cur,
           pos: this.get_current_time(null),
           time: Date.now(),
-        }),
+        })
       );
       this.cm = cur;
     }

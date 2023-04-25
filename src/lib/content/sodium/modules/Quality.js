@@ -1,4 +1,4 @@
-import { useStorage } from './Storage';
+import { useStorage } from "./Storage";
 
 export const qualityStatus = ({ sessionId, videoId }) => {
   const {
@@ -30,26 +30,29 @@ export const qualityStatus = ({ sessionId, videoId }) => {
     timing,
     startTime: startTime({ sessionId, videoId }),
     qoe,
-    alert: Number.isFinite(qoe) && isLowQuality({ droppedVideoFrames, totalVideoFrames }),
+    alert:
+      Number.isFinite(qoe) &&
+      isLowQuality({ droppedVideoFrames, totalVideoFrames }),
   };
 };
 
 const latest = (log, key) => {
-  const { date, [key]: value } = (log || []).filter((a) => key in a).slice(-1)[0] || {};
+  const { date, [key]: value } =
+    (log || []).filter((a) => key in a).slice(-1)[0] || {};
   return { date, value };
 };
 
 export const latestQoE = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
   if (storage.cache === undefined) return NaN;
-  const { value } = latest(storage.cache.log, 'qoe');
+  const { value } = latest(storage.cache.log, "qoe");
   return value == null ? NaN : value;
 };
 
 export const latestQuality = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
-  if (storage.cache === undefined) return '';
-  const { date, value } = latest(storage.cache.log, 'quality');
+  if (storage.cache === undefined) return "";
+  const { date, value } = latest(storage.cache.log, "quality");
   return value == null ? {} : { date, ...value };
 };
 

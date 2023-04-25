@@ -1,21 +1,21 @@
-import GeneralTypeHandler from './GeneralTypeHandler';
+import GeneralTypeHandler from "./GeneralTypeHandler";
 
 export default class DTVTypeHandler extends GeneralTypeHandler {
   // eslint-disable-next-line class-methods-use-this
   get_video_title() {
     try {
-      return document.querySelector('.titleDetailHeading_title').textContent;
+      return document.querySelector(".titleDetailHeading_title").textContent;
     } catch (e) {
-      return '';
+      return "";
     }
   }
 
   // eslint-disable-next-line class-methods-use-this
   get_video_thumbnail() {
     try {
-      return document.querySelector('.is-active .libertyBtn_image img').src;
+      return document.querySelector(".is-active .libertyBtn_image img").src;
     } catch (e) {
-      return '';
+      return "";
     }
   }
 

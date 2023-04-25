@@ -1,4 +1,4 @@
-import GeneralTypeHandler from './GeneralTypeHandler';
+import GeneralTypeHandler from "./GeneralTypeHandler";
 
 const DURATION = 60 * 60 * 2; // 動画サイズは 2 時間の固定にする
 const RECEIVED_BUFFER_OFFSET = 5; // 5 秒分先読みを固定値で挿入
@@ -7,7 +7,7 @@ const REPRESENTATION_TABLE = {
   // MPD の内容を切り出した固定値
   1080: {
     bandwidth: 8000000,
-    codec: 'avc1.4D4028',
+    codec: "avc1.4D4028",
     framerate: 29.97, // 30000 / 1001,
     height: 1080,
     width: 1920,
@@ -15,7 +15,7 @@ const REPRESENTATION_TABLE = {
   },
   720: {
     bandwidth: 4000000,
-    codec: 'avc1.4D4028',
+    codec: "avc1.4D4028",
     framerate: 29.97, // 30000 / 1001,
     height: 720,
     width: 1280,
@@ -23,7 +23,7 @@ const REPRESENTATION_TABLE = {
   },
   480: {
     bandwidth: 2000000,
-    codec: 'avc1.4D4028',
+    codec: "avc1.4D4028",
     framerate: 29.97, // 30000 / 1001,
     height: 480,
     width: 854,
@@ -31,7 +31,7 @@ const REPRESENTATION_TABLE = {
   },
   360: {
     bandwidth: 1000000,
-    codec: 'avc1.4D4028',
+    codec: "avc1.4D4028",
     framerate: 29.97, // 30000 / 1001,
     height: 360,
     width: 640,
@@ -39,7 +39,7 @@ const REPRESENTATION_TABLE = {
   },
   240: {
     bandwidth: 499968,
-    codec: 'avc1.4D4028',
+    codec: "avc1.4D4028",
     framerate: 29.97, // 30000 / 1001,
     height: 240,
     width: 426,
@@ -55,10 +55,13 @@ function equal_videos(a, b) {
 }
 
 function get_representation() {
-  const default_representation = REPRESENTATION_TABLE[DEFAULT_REPRESENTATION_KEY];
-  const v = document.querySelector('video');
+  const default_representation =
+    REPRESENTATION_TABLE[DEFAULT_REPRESENTATION_KEY];
+  const v = document.querySelector("video");
   if (!v) return default_representation;
-  const k = Object.keys(REPRESENTATION_TABLE).find((e) => e === String(v.videoHeight));
+  const k = Object.keys(REPRESENTATION_TABLE).find(
+    (e) => e === String(v.videoHeight)
+  );
   if (!k) return default_representation;
   return REPRESENTATION_TABLE[k];
 }
@@ -68,10 +71,10 @@ export default class AbemaTVLiveEventTypeHandler extends GeneralTypeHandler {
   constructor() {
     super(null);
 
-    if (current && equal_videos(current, document.querySelectorAll('video')))
-      throw new Error('ignore this video');
+    if (current && equal_videos(current, document.querySelectorAll("video")))
+      throw new Error("ignore this video");
 
-    current = document.querySelectorAll('video');
+    current = document.querySelectorAll("video");
     this.start_time = Date.now();
   }
 
@@ -85,13 +88,13 @@ export default class AbemaTVLiveEventTypeHandler extends GeneralTypeHandler {
   /* CM 時の resolution を判定可能にするため width, height は表示中の video から取得する */
   /* ただし、CM 時の video の resolution が REPRESENTATION_TABLE に含まれている場合判断することはできない */
   get_video_width() {
-    return document.querySelector('video').videoWidth;
+    return document.querySelector("video").videoWidth;
   }
 
   /* CM 時の resolution を判定可能にするため width, height は表示中の video から取得する */
   /* ただし、CM 時の video の resolution が REPRESENTATION_TABLE に含まれている場合判断することはできない */
   get_video_height() {
-    return document.querySelector('video').videoHeight;
+    return document.querySelector("video").videoHeight;
   }
 
   /* 表示中の video の height が REPRESENTATION_TABLE にない場合 DEFAULT_REPRESENTATION_KEY の値を返す */
@@ -117,7 +120,7 @@ export default class AbemaTVLiveEventTypeHandler extends GeneralTypeHandler {
   }
 
   get_segment_domain() {
-    return 'live-playout-abematv.akamaized.net';
+    return "live-playout-abematv.akamaized.net";
   }
 
   get_current_time() {
@@ -125,7 +128,7 @@ export default class AbemaTVLiveEventTypeHandler extends GeneralTypeHandler {
   }
 
   get_video_title() {
-    const heading = document.querySelector('.com-live-event-LiveEventTitle');
+    const heading = document.querySelector(".com-live-event-LiveEventTitle");
     return heading ? heading.textContent : document.title;
   }
 
@@ -137,18 +140,18 @@ export default class AbemaTVLiveEventTypeHandler extends GeneralTypeHandler {
   // eslint-disable-next-line class-methods-use-this
   get_id_by_video_holder() {
     /* チャンネルのジャンルならURLにあるが ID ではない */
-    return '';
+    return "";
   }
 
   get_total_frames() {
-    return Array.from(document.querySelectorAll('video')).reduce((acc, cur) => {
+    return Array.from(document.querySelectorAll("video")).reduce((acc, cur) => {
       acc += cur.getVideoPlaybackQuality().totalVideoFrames;
       return acc;
     }, 0);
   }
 
   get_dropped_frames() {
-    return Array.from(document.querySelectorAll('video')).reduce((acc, cur) => {
+    return Array.from(document.querySelectorAll("video")).reduce((acc, cur) => {
       acc += cur.getVideoPlaybackQuality().droppedVideoFrames;
       return acc;
     }, 0);
@@ -159,8 +162,13 @@ export default class AbemaTVLiveEventTypeHandler extends GeneralTypeHandler {
   }
 
   is_cm() {
-    const v = document.querySelector('video');
-    return !v || Object.keys(REPRESENTATION_TABLE).every((e) => Number(e) !== v.videoHeight);
+    const v = document.querySelector("video");
+    return (
+      !v ||
+      Object.keys(REPRESENTATION_TABLE).every(
+        (e) => Number(e) !== v.videoHeight
+      )
+    );
   }
 
   add_cm_listener() {}

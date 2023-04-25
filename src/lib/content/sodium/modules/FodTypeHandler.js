@@ -1,20 +1,20 @@
 // @ts-check
-import GeneralTypeHandler from './GeneralTypeHandler';
-import { AdObserver } from './AdObserver';
+import GeneralTypeHandler from "./GeneralTypeHandler";
+import { AdObserver } from "./AdObserver";
 
 export default class FodTypeHandler extends GeneralTypeHandler {
   /** @param {HTMLVideoElement} elm */
   constructor(elm) {
     super(elm);
-    if (!this.is_main_video(elm)) throw new Error('video is not main');
-    this.adObserver = new AdObserver(this, elm, ['style']);
+    if (!this.is_main_video(elm)) throw new Error("video is not main");
+    this.adObserver = new AdObserver(this, elm, ["style"]);
   }
 
   get_video_title() {
     try {
-      return document.querySelector('#header_banner').textContent;
+      return document.querySelector("#header_banner").textContent;
     } catch (e) {
-      return '';
+      return "";
     }
   }
 
@@ -23,7 +23,7 @@ export default class FodTypeHandler extends GeneralTypeHandler {
   }
 
   is_main_video(video) {
-    const [main] = Array.from(document.querySelectorAll('video'));
+    const [main] = Array.from(document.querySelectorAll("video"));
     return video === main;
   }
 
@@ -36,8 +36,8 @@ export default class FodTypeHandler extends GeneralTypeHandler {
         {
           style: { visibility: cm },
         },
-      ] = Array.from(document.querySelectorAll('video'));
-      return main === 'hidden' && cm === 'visible';
+      ] = Array.from(document.querySelectorAll("video"));
+      return main === "hidden" && cm === "visible";
     } catch {
       return false;
     }

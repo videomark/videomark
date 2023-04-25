@@ -6,7 +6,7 @@ class MainVideoChangeException extends Error {
       Error.captureStackTrace(this, MainVideoChangeException);
     }
 
-    this.name = 'MainVideoChangeException';
+    this.name = "MainVideoChangeException";
   }
 }
 export default MainVideoChangeException;

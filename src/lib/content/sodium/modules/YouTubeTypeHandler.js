@@ -1,8 +1,8 @@
 // @ts-check
-import Config from './Config';
-import GeneralTypeHandler from './GeneralTypeHandler';
-import { AdObserver } from './AdObserver';
-import ResourceTiming from './ResourceTiming';
+import Config from "./Config";
+import GeneralTypeHandler from "./GeneralTypeHandler";
+import { AdObserver } from "./AdObserver";
+import ResourceTiming from "./ResourceTiming";
 
 /**
  * YouTube動画リソースのURLの判定
@@ -12,13 +12,15 @@ import ResourceTiming from './ResourceTiming';
 function isYouTubeVideoResource(url) {
   return (
     /** 動画視聴ページ */
-    (url.host === 'www.youtube.com' &&
-      url.pathname.endsWith('watch') &&
-      Boolean(url.searchParams.get('v'))) ||
+    (url.host === "www.youtube.com" &&
+      url.pathname.endsWith("watch") &&
+      Boolean(url.searchParams.get("v"))) ||
     /** get_video_info */
-    (url.host === 'www.youtube.com' && url.pathname.endsWith('get_video_info')) ||
+    (url.host === "www.youtube.com" &&
+      url.pathname.endsWith("get_video_info")) ||
     /** 動画のチャンク */
-    (url.host.endsWith('.googlevideo.com') && url.pathname.endsWith('videoplayback'))
+    (url.host.endsWith(".googlevideo.com") &&
+      url.pathname.endsWith("videoplayback"))
   );
 }
 
@@ -81,17 +83,17 @@ function createThroughput({
 }
 
 /** カスタマイズしたことを区別するためのシンボル */
-const SodiumFetch = Symbol('SodiumFetch');
+const SodiumFetch = Symbol("SodiumFetch");
 
 class YouTubeTypeHandler extends GeneralTypeHandler {
   static is_youtube_type() {
     try {
       // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
       const url = new URL(location.href);
-      if (url.pathname === '/embed/') return false;
+      if (url.pathname === "/embed/") return false;
 
       /** @type {any} */
-      const player = document.querySelector('#movie_player');
+      const player = document.querySelector("#movie_player");
       if (!player) return false;
 
       if (
@@ -106,7 +108,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
         const q = player.getPlaybackQuality();
-        if (!q || q === 'unknown') return false;
+        if (!q || q === "unknown") return false;
         return true;
       }
 
@@ -139,7 +141,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   static is_mobile() {
-    return new URL(location.href).host === 'm.youtube.com';
+    return new URL(location.href).host === "m.youtube.com";
   }
 
   static bitrate_table() {
@@ -158,7 +160,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   static async hook_youtube() {
     const { host } = new URL(location.href);
-    if (!(host === 'www.youtube.com' || host === 'm.youtube.com')) return;
+    if (!(host === "www.youtube.com" || host === "m.youtube.com")) return;
 
     // --- XHR async --- //
     YouTubeTypeHandler.hook_youtube_xhr();
@@ -174,7 +176,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     class SodiumXMLHttpRequest extends XMLHttpRequest {
       constructor(...args) {
         super(args);
-        this.addEventListener('readystatechange', () => {
+        this.addEventListener("readystatechange", () => {
           switch (this.readyState) {
             case 1: // OPENED
               this.downloadStartTime = performance.now();
@@ -187,33 +189,41 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
           }
         });
 
-        this.addEventListener('load', (event) => {
+        this.addEventListener("load", (event) => {
           try {
             const url = new URL(event.target.responseURL);
             if (
               // --- 動画ページ --- //
-              (url.host === 'www.youtube.com' &&
-                url.pathname.endsWith('watch') &&
-                url.searchParams.get('v')) ||
+              (url.host === "www.youtube.com" &&
+                url.pathname.endsWith("watch") &&
+                url.searchParams.get("v")) ||
               // --- get_video_info --- //
-              (url.host === 'www.youtube.com' && url.pathname.endsWith('get_video_info')) ||
+              (url.host === "www.youtube.com" &&
+                url.pathname.endsWith("get_video_info")) ||
               // --- chunk --- //
-              (url.host.endsWith('googlevideo.com') && url.pathname.endsWith('videoplayback'))
+              (url.host.endsWith("googlevideo.com") &&
+                url.pathname.endsWith("videoplayback"))
             ) {
-              const id = url.searchParams.get('id');
-              if (!YouTubeTypeHandler.trackingId && id) YouTubeTypeHandler.trackingId = id;
+              const id = url.searchParams.get("id");
+              if (!YouTubeTypeHandler.trackingId && id)
+                YouTubeTypeHandler.trackingId = id;
               if (YouTubeTypeHandler.trackingId === id) {
                 const resource = ResourceTiming.find(event.target.responseURL);
                 //const downloadTime = resource.duration; // ここでは DONE - OPENED を使う
-                const downloadTime = this.downloadEndTime - this.downloadStartTime;
+                const downloadTime =
+                  this.downloadEndTime - this.downloadStartTime;
                 const start = resource.startTime + performance.timeOrigin;
                 const end = resource.responseEnd + performance.timeOrigin;
-                const throughput = Math.floor(((event.loaded * 8) / downloadTime) * 1000);
+                const throughput = Math.floor(
+                  ((event.loaded * 8) / downloadTime) * 1000
+                );
 
-                const domainLookupStart = resource.domainLookupStart - resource.startTime;
+                const domainLookupStart =
+                  resource.domainLookupStart - resource.startTime;
                 const connectStart = resource.connectStart - resource.startTime;
                 const requestStart = resource.requestStart - resource.startTime;
-                const responseStart = resource.responseStart - resource.startTime;
+                const responseStart =
+                  resource.responseStart - resource.startTime;
                 const timings = {
                   domainLookupStart,
                   connectStart,
@@ -232,7 +242,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     end,
                     endUnplayedBufferSize: this.sodiumEndUnplayedBuffer,
                     timings,
-                    itag: url.searchParams.get('itag'),
+                    itag: url.searchParams.get("itag"),
                   });
                   console.log(
                     `VIDEOMARK: load [URL: ${
@@ -247,7 +257,9 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     }, duration(Date): ${new Date(start)} - ${
                       new Date(end)
                       // @ts-expect-error
-                    }, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${
+                    }, UnplayedBufferSize: ${
+                      this.sodiumStartUnplayedBuffer
+                    } - ${
                       this.sodiumEndUnplayedBuffer
                       // @ts-expect-error
                     }, throughput: ${
@@ -257,9 +269,9 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                       JSON.stringify(timings)
                       // @ts-expect-error
                     }, itag: ${
-                      JSON.stringify(url.searchParams.get('itag'))
+                      JSON.stringify(url.searchParams.get("itag"))
                       // @ts-expect-error
-                    }, id: ${url.searchParams.get('id')}]`,
+                    }, id: ${url.searchParams.get("id")}]`
                   );
                 }, 1000);
               }
@@ -270,12 +282,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
             // その中に streamingData.adaptiveFormats に入っているため
             // #ytd-playerのイベントに頼らずにxhrをフックして取得する必要がある
             if (
-              url.host === 'www.youtube.com' &&
-              url.pathname.endsWith('watch') &&
-              url.searchParams.get('v') &&
-              url.searchParams.get('pbj')
+              url.host === "www.youtube.com" &&
+              url.pathname.endsWith("watch") &&
+              url.searchParams.get("v") &&
+              url.searchParams.get("pbj")
             ) {
-              YouTubeTypeHandler.set_adaptive_formats_json(event.target.responseText);
+              YouTubeTypeHandler.set_adaptive_formats_json(
+                event.target.responseText
+              );
             }
           } catch (e) {
             // nop
@@ -294,10 +308,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     async function fetcher(...args) {
       /** @type {string | URL | Request} */
       const urlOrRequest = args[0];
-      const url = new URL(urlOrRequest instanceof Request ? urlOrRequest.url : urlOrRequest);
+      const url = new URL(
+        urlOrRequest instanceof Request ? urlOrRequest.url : urlOrRequest
+      );
       // @ts-expect-error
       if (!isYouTubeVideoResource(url)) return await fetch(...args);
-      const id = url.searchParams.get('id');
+      const id = url.searchParams.get("id");
       if (!YouTubeTypeHandler.trackingId) YouTubeTypeHandler.trackingId = id;
       // @ts-expect-error
       if (YouTubeTypeHandler.trackingId !== id) return await fetch(...args);
@@ -313,8 +329,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         /** @type {PerformanceResourceTiming | undefined} */
         const resource = ResourceTiming.find(url.href);
         if (!resource) return;
-        const downloadSize = Number(res.headers.get('content-length') || 0);
-        const itag = url.searchParams.get('itag');
+        const downloadSize = Number(res.headers.get("content-length") || 0);
+        const itag = url.searchParams.get("itag");
         const throughput = createThroughput({
           resource,
           itag,
@@ -338,7 +354,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   static async hook_youtube_player() {
     let elm;
     for (;;) {
-      elm = document.querySelector('#ytd-player');
+      elm = document.querySelector("#ytd-player");
       if (elm) break;
       await new Promise((resolve) => setTimeout(() => resolve(), 100));
     }
@@ -353,10 +369,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       const ytplayer = window.ytplayer;
       if (ytplayer.config && ytplayer.config.args) {
         const arg = ytplayer.config.args;
-        if (!YouTubeTypeHandler.set_adaptive_formats_json(arg.player_response)) {
+        if (
+          !YouTubeTypeHandler.set_adaptive_formats_json(arg.player_response)
+        ) {
           if (arg.raw_player_response && arg.raw_player_response.streamingData)
             YouTubeTypeHandler.set_adaptive_formats(
-              arg.raw_player_response.streamingData.adaptiveFormats,
+              arg.raw_player_response.streamingData.adaptiveFormats
             );
         }
       }
@@ -369,7 +387,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         if (!YouTubeTypeHandler.set_adaptive_formats(arg.player_response)) {
           if (arg.raw_player_response && arg.raw_player_response.streamingData)
             YouTubeTypeHandler.set_adaptive_formats(
-              arg.raw_player_response.streamingData.adaptiveFormats,
+              arg.raw_player_response.streamingData.adaptiveFormats
             );
         }
         return this.sodiumLoadVideoByPlayerVars(arg);
@@ -385,11 +403,16 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     if (!response) return false;
     try {
       let json = JSON.parse(response);
-      if (Array.isArray(json)) json = json.find((element) => element.playerResponse).playerResponse;
+      if (Array.isArray(json))
+        json = json.find((element) => element.playerResponse).playerResponse;
       if (json.streamingData)
-        return YouTubeTypeHandler.set_adaptive_formats(json.streamingData.adaptiveFormats);
+        return YouTubeTypeHandler.set_adaptive_formats(
+          json.streamingData.adaptiveFormats
+        );
     } catch (e) {
-      console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
+      console.warn(
+        `VIDEOMARK: YouTube adaptive format data not found ${e.message}`
+      );
     }
     return false;
   }
@@ -401,21 +424,25 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       YouTubeTypeHandler.sodiumAdaptiveFmts = adaptiveFormats;
       return true;
     } catch (e) {
-      console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
+      console.warn(
+        `VIDEOMARK: YouTube adaptive format data not found ${e.message}`
+      );
     }
     return false;
   }
 
   static check_formats(adaptiveFormats) {
     let message;
-    const formats = YouTubeTypeHandler.convert_adaptive_formats(adaptiveFormats);
+    const formats = YouTubeTypeHandler.convert_adaptive_formats(
+      adaptiveFormats
+    );
     const ret = formats.find((e) => {
       let val = !e.itag || !e.bitrate || !e.type || !e.container || !e.codec;
       if (val) {
         message = `itag:${e.itag}, bitrate:${e.bitrate}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
         return val;
       }
-      if (e.type === 'video') val = !e.fps || !e.size || !e.quality;
+      if (e.type === "video") val = !e.fps || !e.size || !e.quality;
       if (val)
         message = `itag:${e.itag}, bitrate:${e.bitrate}, fps:${e.fps}, size:${e.size}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
       return val;
@@ -424,11 +451,13 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   static add_throughput_history(throughput) {
-    console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`);
+    console.debug(
+      `add_throughput_history: downloadSize=${throughput.downloadSize}`
+    );
     if (throughput.downloadSize <= 0) return;
     YouTubeTypeHandler.throughputHistories.push(throughput);
     YouTubeTypeHandler.throughputHistories = YouTubeTypeHandler.throughputHistories.slice(
-      -Config.get_max_throughput_history_size(),
+      -Config.get_max_throughput_history_size()
     );
   }
 
@@ -436,10 +465,11 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     let unplayedBufferSize;
     try {
       /** @type {any} */
-      const player = document.querySelector('#movie_player');
+      const player = document.querySelector("#movie_player");
       const received = Number.parseFloat(player.getVideoLoadedFraction());
       const duration = Number.parseFloat(player.getDuration());
-      if (Number.isNaN(received) || Number.isNaN(duration)) throw new Error(`NaN`);
+      if (Number.isNaN(received) || Number.isNaN(duration))
+        throw new Error(`NaN`);
       unplayedBufferSize = duration * received * 1000;
     } catch (e) {
       unplayedBufferSize = 0;
@@ -456,7 +486,9 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       try {
         const {
           groups: { type, container, codec },
-        } = /(?<type>\S+)\/(?<container>\S+);(?:\s+)codecs="(?<codec>\S+)"/.exec(v.mimeType);
+        } = /(?<type>\S+)\/(?<container>\S+);(?:\s+)codecs="(?<codec>\S+)"/.exec(
+          v.mimeType
+        );
         v.type = type;
         v.container = container;
         v.codec = codec;
@@ -471,14 +503,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   static get_play_list_info() {
     try {
       const formats = YouTubeTypeHandler.convert_adaptive_formats(
-        YouTubeTypeHandler.sodiumAdaptiveFmts,
+        YouTubeTypeHandler.sodiumAdaptiveFmts
       );
       return formats.map((e) => {
         return {
           representationId: e.itag,
           bps: Number.parseInt(e.bitrate, 10),
-          videoWidth: e.size ? Number.parseInt(e.size.split('x')[0], 10) : -1,
-          videoHeight: e.size ? Number.parseInt(e.size.split('x')[1], 10) : -1,
+          videoWidth: e.size ? Number.parseInt(e.size.split("x")[0], 10) : -1,
+          videoHeight: e.size ? Number.parseInt(e.size.split("x")[1], 10) : -1,
           container: e.container,
           codec: e.codec,
           fps: e.fps ? Number.parseInt(e.fps, 10) : -1,
@@ -494,15 +526,18 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   static get_playable_video_format_list() {
     try {
       const formats = YouTubeTypeHandler.convert_adaptive_formats(
-        YouTubeTypeHandler.sodiumAdaptiveFmts,
+        YouTubeTypeHandler.sodiumAdaptiveFmts
       );
       // @ts-expect-error
-      const { fmt } = document.querySelector('#movie_player').getVideoStats();
-      if (!fmt || !formats) throw new Error('not found');
+      const { fmt } = document.querySelector("#movie_player").getVideoStats();
+      if (!fmt || !formats) throw new Error("not found");
       const { type } = formats.find((e) => e.itag === fmt);
       return formats
         .filter((e) => e.type === type)
-        .sort((a, b) => Number.parseInt(b.bitrate, 10) - Number.parseInt(a.bitrate, 10));
+        .sort(
+          (a, b) =>
+            Number.parseInt(b.bitrate, 10) - Number.parseInt(a.bitrate, 10)
+        );
     } catch (e) {
       return [];
     }
@@ -545,9 +580,13 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     return histories.reduce((acc, cur) => {
       // plInfo duration に合わせた形に throughput を変更する
       const downloadDuration = cur.downloadSize / (cur.bitrate / 8);
-      if (downloadDuration > YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION / 1000) {
+      if (
+        downloadDuration >
+        YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION / 1000
+      ) {
         const numOfSegments = Math.round(
-          downloadDuration / (YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION / 1000),
+          downloadDuration /
+            (YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION / 1000)
         );
         for (let i = 0; i < numOfSegments; i += 1) {
           const size = Math.floor(cur.downloadSize / numOfSegments);
@@ -575,7 +614,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   static get_codec_info() {
     /** @type {any} */
-    const player = document.querySelector('#movie_player');
+    const player = document.querySelector("#movie_player");
     const stats = player.getVideoStats();
     const list = YouTubeTypeHandler.get_play_list_info();
     const video = list.find((e) => e.representationId === stats.fmt);
@@ -594,7 +633,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   static get_representation() {
     /** @type {any} */
-    const player = document.querySelector('#movie_player');
+    const player = document.querySelector("#movie_player");
     const stats = player.getVideoStats();
     return {
       video: stats.fmt,
@@ -610,7 +649,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
     this.elm = elm;
     /** @type {any} */
-    this.player = document.querySelector('#movie_player');
+    this.player = document.querySelector("#movie_player");
     this.adObserver = new AdObserver(this, this.player);
   }
 
@@ -643,14 +682,16 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   get_bitrate() {
     try {
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
-        const f = this.get_framerate() === 60 ? 'h' : 'l';
+        const f = this.get_framerate() === 60 ? "h" : "l";
         const q = this.player.getPlaybackQuality();
         return YouTubeTypeHandler.bitrate_table()[q][f];
       }
 
       const { video, audio } = this.get_streaming_info();
 
-      return Number.parseInt(video.bitrate, 10) + Number.parseInt(audio.bitrate, 10);
+      return (
+        Number.parseInt(video.bitrate, 10) + Number.parseInt(audio.bitrate, 10)
+      );
     } catch (e) {
       return -1;
     }
@@ -689,7 +730,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       const received = Number.parseFloat(this.player.getVideoLoadedFraction());
       const duration = Number.parseFloat(this.player.getDuration());
 
-      if (Number.isNaN(duration) || Number.isNaN(received)) throw new Error('NaN');
+      if (Number.isNaN(duration) || Number.isNaN(received))
+        throw new Error("NaN");
 
       return duration * received;
     } catch (e) {
@@ -701,7 +743,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     try {
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
         const { optimal_format } = this.player.getVideoStats();
-        return optimal_format.endsWith('60') ? 60 : 30;
+        return optimal_format.endsWith("60") ? 60 : 30;
       }
 
       const { video } = this.get_streaming_info();
@@ -776,7 +818,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
     if (!YouTubeTypeHandler.can_get_streaming_info()) {
       const q = this.player.getPlaybackQuality();
-      if (!q || q === 'unknown') return videoId;
+      if (!q || q === "unknown") return videoId;
       ({ video_id: videoId } = this.player.getVideoData());
       return videoId;
     }
@@ -799,13 +841,15 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   get_view_count() {
     try {
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
-        const e = document.querySelector('.slim-video-metadata-title-and-badges div span span');
+        const e = document.querySelector(
+          ".slim-video-metadata-title-and-badges div span span"
+        );
         if (!e) throw new Error();
-        const s = e.getAttribute('aria-label');
+        const s = e.getAttribute("aria-label");
         if (!s) throw new Error();
         const n = s.match(/\d/g);
         if (!n) throw new Error();
-        return Number.parseInt(n.join(''), 10);
+        return Number.parseInt(n.join(""), 10);
       }
       const {
         videoDetails: { viewCount },
@@ -820,7 +864,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   get_streaming_info() {
     const stats = this.player.getVideoStats();
     const formats = YouTubeTypeHandler.convert_adaptive_formats(
-      YouTubeTypeHandler.sodiumAdaptiveFmts,
+      YouTubeTypeHandler.sodiumAdaptiveFmts
     );
     const video = formats.find((e) => e.itag === stats.fmt);
     const audio = formats.find((e) => e.itag === stats.afmt);
@@ -832,7 +876,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   is_cm() {
-    return this.player.classList.contains('ad-showing');
+    return this.player.classList.contains("ad-showing");
   }
 
   is_limited() {
@@ -844,15 +888,20 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       return;
     }
     try {
-      const { quality_label, itag, type, size } =
-        YouTubeTypeHandler.get_playable_video_format_list().find(
-          (e) => Number.parseInt(e.bitrate, 10) === bitrate,
-        );
+      const {
+        quality_label,
+        itag,
+        type,
+        size,
+      } = YouTubeTypeHandler.get_playable_video_format_list().find(
+        (e) => Number.parseInt(e.bitrate, 10) === bitrate
+      );
       // const quality = YouTubeTypeHandler.qualityLabelTable[quality_label.replace(/[^0-9^\\.]/g, "")];
-      const quality = YouTubeTypeHandler.qualityLabelTable[/\d+/.exec(quality_label)[0]];
+      const quality =
+        YouTubeTypeHandler.qualityLabelTable[/\d+/.exec(quality_label)[0]];
       if (quality) {
         console.log(
-          `VIDEOMARK: Playback quality [quality:${quality_label}(${quality}), bitrate:${bitrate}, itag:${itag}, type:${type}, size:${size}]`,
+          `VIDEOMARK: Playback quality [quality:${quality_label}(${quality}), bitrate:${bitrate}, itag:${itag}, type:${type}, size:${size}]`
         );
         this.player.setPlaybackQualityRange(quality, quality);
       }
@@ -865,67 +914,85 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     try {
       const { fmt } = this.player.getVideoStats();
       const formats = YouTubeTypeHandler.convert_adaptive_formats(
-        YouTubeTypeHandler.sodiumAdaptiveFmts,
+        YouTubeTypeHandler.sodiumAdaptiveFmts
       );
       const { container, codec } = formats.find((e) => e.itag === fmt);
 
-      const codecCond = new RegExp(`^${codec.split('.')[0]}`);
+      const codecCond = new RegExp(`^${codec.split(".")[0]}`);
       const qualityMap = {};
       formats
-        .filter((e) => e.type === 'video' && e.codec.match(codecCond))
+        .filter((e) => e.type === "video" && e.codec.match(codecCond))
         .forEach((v) => {
           qualityMap[v.quality] =
-            (qualityMap[v.quality] || { fps: 0 }).fps > v.fps ? qualityMap[v.quality] : v;
+            (qualityMap[v.quality] || { fps: 0 }).fps > v.fps
+              ? qualityMap[v.quality]
+              : v;
         });
-      const video = Object.values(qualityMap).sort(({ bitrate: a }, { bitrate: b }) => b - a);
+      const video = Object.values(qualityMap).sort(
+        ({ bitrate: a }, { bitrate: b }) => b - a
+      );
 
       video.forEach((v) => {
         const [audio, audio2] = formats
-          .filter((e) => e.type === 'audio' && e.container === v.container)
+          .filter((e) => e.type === "audio" && e.container === v.container)
           .sort(({ bitrate: a }, { bitrate: b }) => b - a);
-        v.audio = v.container === 'webm' && v.quality === 'tiny' && audio2 ? audio2 : audio;
+        v.audio =
+          v.container === "webm" && v.quality === "tiny" && audio2
+            ? audio2
+            : audio;
         console.log(
-          `VIDEOMARK: set_max_bitrate(): itag=${v.itag} quality=${v.quality} bitrate=${
-            (v.bitrate + v.audio.bitrate) / 1024
-          } fps=${v.fps} container=${v.container} codec=${v.codec}/${v.audio.codec}`,
+          `VIDEOMARK: set_max_bitrate(): itag=${v.itag} quality=${
+            v.quality
+          } bitrate=${(v.bitrate + v.audio.bitrate) / 1024} fps=${
+            v.fps
+          } container=${v.container} codec=${v.codec}/${v.audio.codec}`
         );
       });
 
       const current = video.find((e) => e.itag === fmt);
       const resolutionSelect = video.find((e) => e.height <= resolution);
-      const bitrateSelect = video.find((e) => e.bitrate + e.audio.bitrate < bitrate);
+      const bitrateSelect = video.find(
+        (e) => e.bitrate + e.audio.bitrate < bitrate
+      );
       console.log(
         `VIDEOMARK: set_max_bitrate(): bitrate=${
           bitrate / 1024
-        } resolution=${resolution} container=${container} codec=${codec}`,
+        } resolution=${resolution} container=${container} codec=${codec}`
       );
       console.log(
-        `VIDEOMARK: set_max_bitrate(): current: quality=${current.quality} bitrate=${
-          (current.bitrate + current.audio.bitrate) / 1024
-        }`,
+        `VIDEOMARK: set_max_bitrate(): current: quality=${
+          current.quality
+        } bitrate=${(current.bitrate + current.audio.bitrate) / 1024}`
       );
       if (bitrateSelect)
         console.log(
-          `VIDEOMARK: set_max_bitrate(): bitrateSelect: quality=${bitrateSelect.quality} bitrate=${
+          `VIDEOMARK: set_max_bitrate(): bitrateSelect: quality=${
+            bitrateSelect.quality
+          } bitrate=${
             (bitrateSelect.bitrate + bitrateSelect.audio.bitrate) / 1024
-          }`,
+          }`
         );
       if (resolutionSelect)
         console.log(
           `VIDEOMARK: set_max_bitrate(): resolutionSelect: quality=${
             resolutionSelect.quality
-          } bitrate=${(resolutionSelect.bitrate + resolutionSelect.audio.bitrate) / 1024}`,
+          } bitrate=${
+            (resolutionSelect.bitrate + resolutionSelect.audio.bitrate) / 1024
+          }`
         );
 
       let select;
       if (resolutionSelect && bitrateSelect)
         select =
-          resolutionSelect.bitrate < bitrateSelect.bitrate ? resolutionSelect : bitrateSelect;
-      else select = resolutionSelect || bitrateSelect || video[video.length - 1];
+          resolutionSelect.bitrate < bitrateSelect.bitrate
+            ? resolutionSelect
+            : bitrateSelect;
+      else
+        select = resolutionSelect || bitrateSelect || video[video.length - 1];
       console.log(
-        `VIDEOMARK: set_max_bitrate(): select: quality=${select.quality} bitrate=${
-          (select.bitrate + select.audio.bitrate) / 1024
-        }`,
+        `VIDEOMARK: set_max_bitrate(): select: quality=${
+          select.quality
+        } bitrate=${(select.bitrate + select.audio.bitrate) / 1024}`
       );
 
       if (select.bitrate < current.bitrate) {
@@ -934,7 +1001,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         this.limited = true;
       } else
         console.log(
-          `VIDEOMARK: too small or does not need a change bitrate:${bitrate} not changed`,
+          `VIDEOMARK: too small or does not need a change bitrate:${bitrate} not changed`
         );
     } catch (e) {
       console.warn(`VIDEOMARK: failed to find quality label`);
@@ -942,21 +1009,21 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   set_default_bitrate() {
-    this.player.setPlaybackQualityRange('default', 'default');
+    this.player.setPlaybackQualityRange("default", "default");
   }
 }
 
 YouTubeTypeHandler.qualityLabelTable = {
-  144: 'tiny',
-  240: 'small',
-  360: 'medium',
-  480: 'large',
-  720: 'hd720',
-  1080: 'hd1080',
-  1440: 'hd1440',
-  2160: 'hd2160',
-  2880: 'hd2880',
-  4320: 'highres',
+  144: "tiny",
+  240: "small",
+  360: "medium",
+  480: "large",
+  720: "hd720",
+  1080: "hd1080",
+  1440: "hd1440",
+  2160: "hd2160",
+  2880: "hd2880",
+  4320: "highres",
 };
 YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION = 5000;
 YouTubeTypeHandler.sodiumAdaptiveFmts = null;

@@ -26,12 +26,12 @@ export class Storage {
     Object.assign(this.cache, attributes);
     window.postMessage(
       {
-        type: 'FROM_SODIUM_JS',
-        method: 'set_video',
+        type: "FROM_SODIUM_JS",
+        method: "set_video",
         id: this.id,
         video: this.cache,
       },
-      '*',
+      "*"
     );
     return this.cache;
   }

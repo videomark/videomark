@@ -1,7 +1,7 @@
 // @ts-check
-import Config from './Config';
-import GeneralTypeHandler from './GeneralTypeHandler';
-import ResourceTiming from './ResourceTiming';
+import Config from "./Config";
+import GeneralTypeHandler from "./GeneralTypeHandler";
+import ResourceTiming from "./ResourceTiming";
 
 const DURATION = 60 * 60 * 2; // 動画サイズは 2 時間の固定にする
 const RECEIVED_BUFFER_OFFSET = 5; // 5 秒分先読みを固定値で挿入
@@ -10,7 +10,7 @@ const REPRESENTATION_TABLE = {
   // MPD の内容を切り出した固定値
   1080: {
     bandwidth: 4000000,
-    codec: 'avc1.640029',
+    codec: "avc1.640029",
     framerate: 29.97, // 30000 / 1001,
     height: 1080,
     width: 1920,
@@ -18,7 +18,7 @@ const REPRESENTATION_TABLE = {
   },
   720: {
     bandwidth: 2000000,
-    codec: 'avc1.640029',
+    codec: "avc1.640029",
     framerate: 29.97, // 30000 / 1001,
     height: 720,
     width: 1280,
@@ -26,7 +26,7 @@ const REPRESENTATION_TABLE = {
   },
   480: {
     bandwidth: 900000,
-    codec: 'avc1.640029',
+    codec: "avc1.640029",
     framerate: 29.97, // 30000 / 1001,
     height: 480,
     width: 854,
@@ -34,7 +34,7 @@ const REPRESENTATION_TABLE = {
   },
   240: {
     bandwidth: 240000,
-    codec: 'avc1.640029',
+    codec: "avc1.640029",
     framerate: 29.97, // 30000 / 1001,
     height: 240,
     width: 426,
@@ -42,7 +42,7 @@ const REPRESENTATION_TABLE = {
   },
   180: {
     bandwidth: 120000,
-    codec: 'avc1.640029',
+    codec: "avc1.640029",
     framerate: 29.97, // 30000 / 1001,
     height: 180,
     width: 320,
@@ -58,10 +58,13 @@ function equal_videos(a, b) {
 }
 
 function get_representation() {
-  const default_representation = REPRESENTATION_TABLE[DEFAULT_REPRESENTATION_KEY];
+  const default_representation =
+    REPRESENTATION_TABLE[DEFAULT_REPRESENTATION_KEY];
   const v = document.querySelector('video[style*="display: block"]');
   if (!v) return default_representation;
-  const k = Object.keys(REPRESENTATION_TABLE).find((e) => e === String(v.videoHeight));
+  const k = Object.keys(REPRESENTATION_TABLE).find(
+    (e) => e === String(v.videoHeight)
+  );
   if (!k) return default_representation;
   return REPRESENTATION_TABLE[k];
 }
@@ -130,8 +133,13 @@ function createThroughputInfo() {
     // NOTE: get_segment_domainを含むURL … 映像だけでなく音声やマニフェストなども含む
     pattern: /^https:\/\/ds-linear-abematv\.akamaized\.net\//,
   });
-  lastStarted = Math.max(lastStarted, ...resources.map((resource) => resource.startTime));
-  return resources.map((resource) => createThroughput({ resource, timeOrigin }));
+  lastStarted = Math.max(
+    lastStarted,
+    ...resources.map((resource) => resource.startTime)
+  );
+  return resources.map((resource) =>
+    createThroughput({ resource, timeOrigin })
+  );
 }
 
 /* あまり有用な情報は取り出せない */
@@ -139,16 +147,18 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
   constructor() {
     super(null);
 
-    if (current && equal_videos(current, document.querySelectorAll('video')))
-      throw new Error('ignore this video');
+    if (current && equal_videos(current, document.querySelectorAll("video")))
+      throw new Error("ignore this video");
 
-    current = document.querySelectorAll('video');
+    current = document.querySelectorAll("video");
     this.start_time = Date.now();
   }
 
   // NOTE: 破壊的メソッド
   get_throughput_info() {
-    return createThroughputInfo().slice(-Config.get_max_throughput_history_size());
+    return createThroughputInfo().slice(
+      -Config.get_max_throughput_history_size()
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -194,7 +204,7 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
 
   // eslint-disable-next-line class-methods-use-this
   get_segment_domain() {
-    return 'ds-linear-abematv.akamaized.net';
+    return "ds-linear-abematv.akamaized.net";
   }
 
   get_current_time() {
@@ -204,34 +214,34 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
   // eslint-disable-next-line class-methods-use-this
   get_video_title() {
     try {
-      return document.querySelector('.com-tv-SlotHeading__title').textContent;
+      return document.querySelector(".com-tv-SlotHeading__title").textContent;
     } catch (e) {
-      return '';
+      return "";
     }
   }
 
   // eslint-disable-next-line class-methods-use-this
   get_video_thumbnail() {
     return `https://hayabusa.io/abema/channels/logo/${
-      location.pathname.split('/').slice(-1)[0]
+      location.pathname.split("/").slice(-1)[0]
     }?format=png&height=48&quality=30&version=20200413&width=128&background=black`;
   }
 
   // eslint-disable-next-line class-methods-use-this
   get_id_by_video_holder() {
     /* チャンネルのジャンルならURLにあるが ID ではない */
-    return '';
+    return "";
   }
 
   get_total_frames() {
-    return Array.from(document.querySelectorAll('video')).reduce((acc, cur) => {
+    return Array.from(document.querySelectorAll("video")).reduce((acc, cur) => {
       acc += cur.getVideoPlaybackQuality().totalVideoFrames;
       return acc;
     }, 0);
   }
 
   get_dropped_frames() {
-    return Array.from(document.querySelectorAll('video')).reduce((acc, cur) => {
+    return Array.from(document.querySelectorAll("video")).reduce((acc, cur) => {
       acc += cur.getVideoPlaybackQuality().droppedVideoFrames;
       return acc;
     }, 0);
@@ -244,7 +254,9 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
   is_cm() {
     const v = document.querySelector('video[style*="display: block"]');
     if (!v) return true;
-    const k = Object.keys(REPRESENTATION_TABLE).find((e) => e === String(v.videoHeight));
+    const k = Object.keys(REPRESENTATION_TABLE).find(
+      (e) => e === String(v.videoHeight)
+    );
     if (!k) return true;
     return false;
   }

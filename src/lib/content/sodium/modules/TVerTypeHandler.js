@@ -1,6 +1,8 @@
 export default class TVerTypeHandler {
   static get_duration() {
-    const duration = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].duration();
+    const duration = videojs
+      .getPlayers()
+      [Object.keys(videojs.getPlayers())[0]].duration();
 
     return duration && Number.isFinite(duration) ? duration : -1;
   }
@@ -36,7 +38,9 @@ export default class TVerTypeHandler {
   }
 
   static get_receive_buffer() {
-    return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].bufferedEnd();
+    return videojs
+      .getPlayers()
+      [Object.keys(videojs.getPlayers())[0]].bufferedEnd();
   }
 
   static get_framerate() {
@@ -57,26 +61,37 @@ export default class TVerTypeHandler {
   static get_current_time(video) {
     if (!TVerTypeHandler.is_main_video(video)) return -1;
 
-    return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].currentTime();
+    return videojs
+      .getPlayers()
+      [Object.keys(videojs.getPlayers())[0]].currentTime();
   }
 
   static is_main_video(video) {
-    return !videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].ima3.el.contains(video);
+    return !videojs
+      .getPlayers()
+      [Object.keys(videojs.getPlayers())[0]].ima3.el.contains(video);
   }
 
   static is_cm() {
     const adVideoNodeList = videojs
       .getPlayers()
-      [Object.keys(videojs.getPlayers())[0]].ima3.el.getElementsByTagName('video');
-    return Array.from(adVideoNodeList).some((e) => e.parentNode.style.display === 'block');
+      [Object.keys(videojs.getPlayers())[0]].ima3.el.getElementsByTagName(
+        "video"
+      );
+    return Array.from(adVideoNodeList).some(
+      (e) => e.parentNode.style.display === "block"
+    );
   }
 
   static get_playlists() {
     if (videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls) {
-      return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls.selectPlaylist();
+      return videojs
+        .getPlayers()
+        [Object.keys(videojs.getPlayers())[0]].tech_.hls.selectPlaylist();
     }
     if (videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.vhs) {
-      return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.vhs.playlists.media_;
+      return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_
+        .vhs.playlists.media_;
     }
   }
 
@@ -95,10 +110,12 @@ export default class TVerTypeHandler {
         // eslint-disable-next-line no-underscore-dangle
         videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls
           .selectPlaylist instanceof Function &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].bufferedEnd instanceof
-          Function &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].duration instanceof Function &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].currentTime instanceof Function
+        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
+          .bufferedEnd instanceof Function &&
+        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
+          .duration instanceof Function &&
+        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]]
+          .currentTime instanceof Function
       )
         return true;
 

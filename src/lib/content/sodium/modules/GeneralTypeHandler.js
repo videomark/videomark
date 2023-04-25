@@ -52,15 +52,15 @@ export default class GeneralTypeHandler {
   }
 
   get_video_title() {
-    return '';
+    return "";
   }
 
   get_video_thumbnail() {
-    return '';
+    return "";
   }
 
   get_id_by_video_holder() {
-    return '';
+    return "";
   }
 
   get_view_count() {

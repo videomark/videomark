@@ -1,4 +1,4 @@
-import Config from './Config';
+import Config from "./Config";
 
 class ResourceTiming {
   constructor() {
@@ -11,16 +11,22 @@ class ResourceTiming {
       this.bufferSize += 50;
       performance.setResourceTimingBufferSize(this.bufferSize);
     };
-    performance.removeEventListener('resourcetimingbufferfull', bufferFullHandler);
+    performance.removeEventListener(
+      "resourcetimingbufferfull",
+      bufferFullHandler
+    );
     performance.setResourceTimingBufferSize(this.bufferSize);
-    performance.addEventListener('resourcetimingbufferfull', bufferFullHandler);
+    performance.addEventListener("resourcetimingbufferfull", bufferFullHandler);
   }
 
   collect() {
     const previousValue = { transferSize: this.transferSize };
-    const resources = performance.getEntriesByType('resource').slice();
+    const resources = performance.getEntriesByType("resource").slice();
     performance.clearResourceTimings();
-    this.transferSize += resources.reduce((a, { transferSize }) => a + transferSize, 0);
+    this.transferSize += resources.reduce(
+      (a, { transferSize }) => a + transferSize,
+      0
+    );
 
     while (resources.length) {
       const resource = resources.pop();
@@ -35,7 +41,9 @@ class ResourceTiming {
 
   find(url) {
     return (
-      performance.getEntriesByType('resource').find((element) => element.name === url) ||
+      performance
+        .getEntriesByType("resource")
+        .find((element) => element.name === url) ||
       this.reversedHistories.find((element) => element.name === url)
     );
   }
@@ -49,8 +57,10 @@ class ResourceTiming {
    */
   findAll({ after, pattern }) {
     return performance
-      .getEntriesByType('resource')
-      .filter((resource) => after < resource.startTime && pattern.test(resource.name));
+      .getEntriesByType("resource")
+      .filter(
+        (resource) => after < resource.startTime && pattern.test(resource.name)
+      );
   }
 
   toDate(hires) {

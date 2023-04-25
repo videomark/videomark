@@ -2,7 +2,7 @@ const sizeFormat = (bytes, exponent) => {
   const divider = 1024 ** exponent;
   // 整数部が4桁になったら小数部は省く
   const fraction = bytes >= divider * 1000 ? 0 : 2;
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat("en-US", {
     maximumFractionDigits: fraction,
     minimumFractionDigits: fraction,
   }).format(bytes / divider);
