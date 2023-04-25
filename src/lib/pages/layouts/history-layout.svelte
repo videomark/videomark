@@ -1,10 +1,11 @@
 <script>
+  import Wordmark from '$lib/pages/common/wordmark.svelte';
   import { Spacer } from '@sveltia/ui';
 </script>
 
 <div class="wrapper">
   <header>
-    <h1><img src="images/logo-invert.png" alt="VideoMark" /></h1>
+    <h1><Wordmark /></h1>
     <slot name="header" />
     {#if $$slots['header-extras']}
       <Spacer flex={true} />
@@ -51,7 +52,7 @@
     h1 {
       margin: 0;
 
-      img {
+      :global(img) {
         height: 40px;
       }
     }

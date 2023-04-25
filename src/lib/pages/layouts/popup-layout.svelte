@@ -1,4 +1,5 @@
 <script>
+  import Wordmark from '$lib/pages/common/wordmark.svelte';
   import { onMount } from 'svelte';
 
   // ポップアップのサイズを調整
@@ -19,7 +20,7 @@
 
 <div class="wrapper">
   <header>
-    <h1><img src="images/logo-invert.png" alt="VideoMark" /></h1>
+    <h1><Wordmark /></h1>
   </header>
   <slot />
 </div>
@@ -36,7 +37,7 @@
   h1 {
     margin: 0;
 
-    img {
+    :global(img) {
       height: 32px;
     }
   }

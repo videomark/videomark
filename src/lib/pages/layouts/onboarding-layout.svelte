@@ -1,6 +1,10 @@
+<script>
+  import Wordmark from '$lib/pages/common/wordmark.svelte';
+</script>
+
 <div class="wrapper">
   <header>
-    <h1><img src="images/logo-invert.png" alt="VideoMark" /></h1>
+    <h1><Wordmark /></h1>
   </header>
   <div class="content">
     <slot />
@@ -40,7 +44,7 @@
     h1 {
       margin: 0;
 
-      img {
+      :global(img) {
         height: 40px;
       }
     }
