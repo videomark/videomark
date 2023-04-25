@@ -7,7 +7,9 @@
   const pages = ['visualize', 'dropdown', 'history', 'privacy'];
   let currentIndex = 0;
 
+  $: currentPage = pages[currentIndex];
   $: isLastPage = currentIndex === pages.length - 1;
+  $: imageExtension = currentPage === 'privacy' ? 'svg' : 'png';
 
   const agreeTerms = () => {
     storage.set('AgreedTerm', true);
@@ -18,14 +20,14 @@
 
 <div class="row">
   <div class="col">
-    <img src="/images/onboarding/{pages[currentIndex]}.png" alt="" />
+    <img src="/images/onboarding/{currentPage}.{imageExtension}" alt="" />
   </div>
   <div class="col">
-    <h2>{@html $_(`onboarding.${pages[currentIndex]}.title`)}</h2>
-    <p>{$_(`onboarding.${pages[currentIndex]}.description`)}</p>
+    <h2>{@html $_(`onboarding.${currentPage}.title`)}</h2>
+    <p>{$_(`onboarding.${currentPage}.description`)}</p>
     {#if isLastPage}
       <p class="extra">
-        {@html $_(`onboarding.${pages[currentIndex]}.extra`).replaceAll(
+        {@html $_(`onboarding.${currentPage}.extra`).replaceAll(
           /<a (.+?)>/g,
           `<a href="${SODIUM_MARKETING_SITE_URL}/${$locale}/$1" target="_blank">`,
         )}
@@ -39,7 +41,7 @@
             currentIndex = index;
           }}
         >
-          <Icon name="circle" label={$_(`onboarding.${page}.title`)} />
+          <Icon name="circle" label={$_(`onboarding.${page}.title`).replace('<wbr>', '')} />
         </Button>
       {/each}
     </p>
@@ -80,6 +82,7 @@
     min-height: 400px;
 
     .col:last-of-type {
+      flex: none;
       width: 45%;
     }
   }
