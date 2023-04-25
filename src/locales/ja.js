@@ -131,6 +131,8 @@ export const strings = {
       playAgain: 'もう一度見る',
       viewStats: '統計データを表示',
       viewingHistory: '視聴履歴',
+      delete: '削除',
+      deleteAll: 'すべて削除',
       qoe: '視聴時の体感品質 (QoE) 値',
       whatIsQOE: 'QoE とは？',
       aggregatedHourlyQoe: '同時間帯 ({hour}台) の平均 QoE',

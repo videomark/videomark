@@ -41,7 +41,7 @@
             <div>
               <Button
                 class="tertiary"
-                label={'Delete All'}
+                label={$_('history.detail.deleteAll')}
                 on:click={() => deleteItemsLater(historyItems.map(({ key }) => key))}
               >
                 <Icon slot="start-icon" name="delete_sweep" />
@@ -81,7 +81,7 @@
                   disabled={deleted}
                   on:click={() => deleteItemsLater([key])}
                 >
-                  <Icon slot="start-icon" name="delete" label={'Delete'} />
+                  <Icon slot="start-icon" name="delete" label={$_('history.detail.delete')} />
                 </Button>
               </div>
             </div>

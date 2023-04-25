@@ -131,6 +131,8 @@ export const strings = {
       playAgain: 'Play Again',
       viewStats: 'View Stats',
       viewingHistory: 'Viewing History',
+      delete: 'Delete',
+      deleteAll: 'Delete All',
       qoe: 'Quality of Experience (QoE) value while watching',
       whatIsQOE: 'What is QoE?',
       aggregatedHourlyQoe: 'Average QoE during the same hour ({hour})',
