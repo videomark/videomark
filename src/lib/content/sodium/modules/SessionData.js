@@ -1,7 +1,7 @@
 import msgpack from "msgpack-lite";
 import { v4 as uuidv4 } from "uuid";
 
-import { version } from "../../../package.json";
+import { version } from "../../../../../package.json";
 import Config from "./Config";
 import MainVideoChangeException from "./MainVideoChangeException";
 import ResourceTiming from "./ResourceTiming";

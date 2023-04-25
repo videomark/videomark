@@ -1,7 +1,7 @@
-import { html, render } from "lit-html";
-import { styleMap } from "lit-html/directives/style-map";
-import { classMap } from "lit-html/directives/class-map";
 import sparkline from '@videomark/sparkline';
+import { html, render } from "lit-html";
+import { classMap } from "lit-html/directives/class-map.js";
+import { styleMap } from "lit-html/directives/style-map.js";
 import Config from "../Config";
 import { kiloSizeFormat, megaSizeFormat } from "../Utils";
 
