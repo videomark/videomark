@@ -70,6 +70,18 @@ chrome.webRequest.onResponseStarted.addListener(
   ["responseHeaders"]
 );
 
+const initToolbarButton = async () => {
+  const termsAgreed = await storage.get('AgreedTerm');
+
+  if (termsAgreed) {
+    chrome.action.setPopup({ popup: '/index.html#/popup' });
+  } else {
+    chrome.action.onClicked.addListener(() => openTab('#/onboarding'));
+  }
+};
+
+initToolbarButton();
+
 chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
   (async () => {
     const termsAgreed = await storage.get("AgreedTerm");
