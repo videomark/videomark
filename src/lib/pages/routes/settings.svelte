@@ -113,7 +113,7 @@
 
 <HistoryLayout>
   <h1 slot="header">{$_('settings.title')}</h1>
-  <Button slot="header-extras" on:click={() => openTab('#/history')}>
+  <Button slot="header-extras" class="ghost" on:click={() => openTab('#/history')}>
     <Icon slot="start-icon" name="arrow_back" />
     {$_('settings.backToHistory')}
   </Button>

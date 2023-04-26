@@ -62,7 +62,7 @@ const inject_script = async opt => {
   const target = document.getElementsByTagName(opt.target)[0];
 
   const script = document.createElement("script");
-  script.setAttribute("type", "text/javascript");
+  script.setAttribute("type", "module");
   script.setAttribute("src", opt.script);
 
   const { session, settings, transfer_size, peak_time_limit } = await storage.get(["session", "settings", "transfer_size", "peak_time_limit"]);

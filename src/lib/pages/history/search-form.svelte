@@ -25,7 +25,7 @@
     <SearchBar placeholder={$_('history.search.input')} bind:value={$searchCriteria.terms} />
   </div>
   <Toolbar>
-    <Button label={$_('history.search.filters.dates')} aria-haspopup="dialog">
+    <Button class="ghost" label={$_('history.search.filters.dates')} aria-haspopup="dialog">
       <Icon slot="end-icon" name="arrow_drop_down" />
       <div slot="popup" class="popup">
         <div class="row">
@@ -56,7 +56,7 @@
         </div>
       </div>
     </Button>
-    <Button label={$_('history.search.filters.sources')} aria-haspopup="dialog">
+    <Button class="ghost" label={$_('history.search.filters.sources')} aria-haspopup="dialog">
       <Icon slot="end-icon" name="arrow_drop_down" />
       <div slot="popup" class="popup">
         {#each videoPlatforms.filter(({ experimental }) => !experimental) as { id } (id)}
@@ -82,7 +82,7 @@
         {/each}
       </div>
     </Button>
-    <Button label={$_('history.search.filters.quality')} aria-haspopup="dialog">
+    <Button class="ghost" label={$_('history.search.filters.quality')} aria-haspopup="dialog">
       <Icon slot="end-icon" name="arrow_drop_down" />
       <div slot="popup" class="popup">
         <Slider
@@ -95,7 +95,7 @@
         />
       </div>
     </Button>
-    <Button label={$_('history.search.filters.regions')} aria-haspopup="dialog">
+    <Button class="ghost" label={$_('history.search.filters.regions')} aria-haspopup="dialog">
       <Icon slot="end-icon" name="arrow_drop_down" />
       <div slot="popup" class="popup">
         {#each $viewingHistoryRegions || [] as region}
@@ -124,7 +124,7 @@
         {/each}
       </div>
     </Button>
-    <Button label={$_('history.search.filters.hours')} aria-haspopup="dialog">
+    <Button class="ghost" label={$_('history.search.filters.hours')} aria-haspopup="dialog">
       <Icon slot="end-icon" name="arrow_drop_down" />
       <div slot="popup" class="popup">
         <Slider
@@ -145,10 +145,11 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 4px;
 
     :global(.sui.toolbar) {
-      justify-content: center;
+      justify-content: flex-start;
+      gap: 4px;
       width: 100%;
 
       :global(.sui.button.medium) {
@@ -160,7 +161,7 @@
 
   .terms {
     :global(.search-bar) {
-      width: 480px;
+      width: 560px;
       --input--medium--border-radius: 32px;
     }
   }

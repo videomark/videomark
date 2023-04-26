@@ -45,7 +45,7 @@
   {#if $viewingHistory.length}
     <HistoryLayout>
       <SearchForm slot="header" />
-      <Button slot="header-extras" on:click={() => openTab('#/settings')}>
+      <Button slot="header-extras" class="ghost" on:click={() => openTab('#/settings')}>
         <Icon slot="start-icon" name="settings" />
         {$_('settings.title')}
       </Button>

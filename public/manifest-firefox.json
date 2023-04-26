@@ -60,7 +60,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["scripts/sodium.js"],
+      "resources": ["scripts/sodium.js", "assets/*"],
       "matches": ["<all_urls>"]
     }
   ]
