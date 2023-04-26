@@ -6,6 +6,7 @@
   "author": "WebDINO Japan",
   "homepage_url": "http://videomark.webdino.org/",
   "options_ui": {
+    "open_in_tab": true,
     "page": "index.html#/settings"
   },
   "icons": {
