@@ -1,3 +1,5 @@
+import { strings as enStrings } from '$lib/locales/en';
+import { strings as jaStrings } from '$lib/locales/ja';
 import sparkline from '@videomark/sparkline';
 import { html, render } from "lit-html";
 import { classMap } from "lit-html/directives/class-map.js";
@@ -6,6 +8,8 @@ import Config from "../Config";
 import { kiloSizeFormat, megaSizeFormat } from "../Utils";
 
 const HISTORY_SIZE = 120;
+const [locale] = navigator.language.split('-'); // chrome.i18n.getUILanguage() は使えない
+const str = locale === 'ja' ? jaStrings : enStrings;
 
 const blankHistory = () => {
   return Array.from({length:HISTORY_SIZE}, () => NaN);
@@ -143,7 +147,7 @@ export default class Status {
                   >
                   <span style=${styleMap(qoeStyles.stars)}>★★★★★</span>
                 `
-              : "計測中..."}
+              : str.stats.quality.measuringShort}
           </summary>
           ${open ? this.quality() : ""}
         </details>
@@ -300,7 +304,7 @@ export default class Status {
         }
         dl.alert:after {
           grid-column: 1 / -1;
-          content: "⚠ 実際の体感品質とは異なる可能性があります。";
+          content: "⚠ ${str.stats.quality.frameDropsShort}";
           font-size: 10px;
         }
         dt.alert,
@@ -331,14 +335,14 @@ export default class Status {
         }
       </style>
       <dl class=${classMap({ alert })}>
-        ${this.qualityItem({ label: "ビットレート", value: bitrateView, chart_id: "bitrate_chart" })}
-        ${this.qualityItem({ label: "スループット", value: throughputView, chart_id: "thruput_chart" })}
-        ${this.qualityItem({ label: "通信量", value: transferView, chart_id: "transfer_chart" })}
-        ${this.qualityItem({ label: "解像度", value: resolutionView, chart_id: "resolution_chart" })}
-        ${this.qualityItem({ label: "フレームレート", value: framerateView, chart_id: "framerate_chart" })}
-        ${this.qualityItem({ label: "フレームドロップ率", value: dropRateView, chart_id: "droprate_chart" })}
-        ${this.qualityItem({ label: "待機時間", value: waitingTimeView, chart_id: "waiting_chart" })}
-        ${this.qualityItem({ label: "体感品質 (QoE)", value: qoeView, chart_id: "qoe_chart", style: { alert } })}
+        ${this.qualityItem({ label: str.stats.bitrate, value: bitrateView, chart_id: "bitrate_chart" })}
+        ${this.qualityItem({ label: str.stats.throughput, value: throughputView, chart_id: "thruput_chart" })}
+        ${this.qualityItem({ label: str.stats.transferSize, value: transferView, chart_id: "transfer_chart" })}
+        ${this.qualityItem({ label: str.stats.resolution, value: resolutionView, chart_id: "resolution_chart" })}
+        ${this.qualityItem({ label: str.stats.frameRate, value: framerateView, chart_id: "framerate_chart" })}
+        ${this.qualityItem({ label: str.stats.frameDrops, value: dropRateView, chart_id: "droprate_chart" })}
+        ${this.qualityItem({ label: str.stats.waitingTime, value: waitingTimeView, chart_id: "waiting_chart" })}
+        ${this.qualityItem({ label: str.stats.qoeShort, value: qoeView, chart_id: "qoe_chart", style: { alert } })}
       </dl>
     `;
   }

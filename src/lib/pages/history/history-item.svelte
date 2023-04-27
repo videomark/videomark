@@ -37,12 +37,12 @@
       </div>
       <div class="qoe">
         {#if qoe === undefined || qoe === -1}
-          <Icon name="hourglass_empty" label={$_('history.detail.quality.calculating')} />
+          <Icon name="hourglass_empty" label={$_('stats.quality.measuring')} />
         {:else if qoe === -2}
-          <Icon name="error" label={$_('history.detail.quality.error')} />
+          <Icon name="error" label={$_('stats.quality.error')} />
         {:else}
           {#if isLowQuality}
-            <Icon name="warning" label={$_('history.detail.quality.frameDrops')} />
+            <Icon name="warning" label={$_('stats.quality.frameDrops')} />
           {:else}
             <Icon name="equalizer" />
           {/if}

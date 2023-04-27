@@ -89,30 +89,30 @@
               <div class="detail" inert={deleted || undefined}>
                 <section class="row">
                   <h4>
-                    {$_('history.detail.qoe')}
+                    {$_('stats.qoe')}
                     <Button
                       on:click={() =>
                         openTab(
                           `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
                         )}
                     >
-                      <Icon name="help" label={$_('history.detail.whatIsQOE')} />
+                      <Icon name="help" label={$_('stats.whatIsQOE')} />
                     </Button>
                   </h4>
                   <div>
                     {#if qoe === undefined || qoe === -1}
-                      {$_('history.detail.quality.calculating')}
+                      {$_('stats.quality.measuring')}
                     {:else if qoe === -2}
                       <span class="alert error">
                         <Icon name="error" />
-                        {$_('history.detail.quality.error')}
+                        {$_('stats.quality.error')}
                       </span>
                     {:else}
                       <QualityBar value={qoe} />
                       {#if isLowQuality}
                         <span class="alert warning">
                           <Icon name="warning" />
-                          {$_('history.detail.quality.frameDrops')}
+                          {$_('stats.quality.frameDrops')}
                         </span>
                       {/if}
                     {/if}
@@ -123,7 +123,7 @@
                     {#if average}
                       <section class="row">
                         <h4>
-                          {$_('history.detail.aggregatedRegionalQoe', {
+                          {$_('stats.aggregatedRegionalQoe', {
                             values: {
                               region: $_(`subdivisions.${country}.${subdivision}`, {
                                 default: subdivision,
@@ -142,7 +142,7 @@
                   {#if average}
                     <section class="row">
                       <h4>
-                        {$_('history.detail.aggregatedHourlyQoe', {
+                        {$_('stats.aggregatedHourlyQoe', {
                           values: {
                             hour: new Date(startTime)
                               .toLocaleTimeString($locale, { hour: 'numeric', hour12: true })
@@ -159,7 +159,7 @@
                   {/if}
                 {/await}
                 <section class="row">
-                  <h4>{$_('history.detail.bitrate')}</h4>
+                  <h4>{$_('stats.bitrate')}</h4>
                   <div>
                     {#if bitrate > 0}
                       {new Intl.NumberFormat(locale, {
@@ -167,22 +167,22 @@
                         maximumFractionDigits: 0,
                       }).format(bitrate / 1024)} kbps
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
                 <section class="row">
-                  <h4>{$_('history.detail.resolution')}</h4>
+                  <h4>{$_('stats.resolution')}</h4>
                   <div>
                     {#if resolution.width > 0 && resolution.height > 0}
                       {resolution.width} × {resolution.height}
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
                 <section class="row">
-                  <h4>{$_('history.detail.frameRate')}</h4>
+                  <h4>{$_('stats.frameRate')}</h4>
                   <div>
                     {#if framerate > 0}
                       {new Intl.NumberFormat(locale, {
@@ -192,12 +192,12 @@
                         × {speed}
                       {/if}
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
                 <section class="row">
-                  <h4>{$_('history.detail.frameDrops')}</h4>
+                  <h4>{$_('stats.frameDrops')}</h4>
                   <div>
                     {#if Number.isFinite(droppedVideoFrames / totalVideoFrames)}
                       {new Intl.NumberFormat(locale, {
@@ -212,12 +212,12 @@
                         useGrouping: false,
                       }).format(totalVideoFrames)})
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
                 <section class="row">
-                  <h4>{$_('history.detail.waitingTime')}</h4>
+                  <h4>{$_('stats.waitingTime')}</h4>
                   <div>
                     {#if Number.isFinite(waiting / playback)}
                       {new Intl.NumberFormat(locale, {
@@ -232,12 +232,12 @@
                         maximumFractionDigits: 2,
                       }).format(waiting / playback)})
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
                 <section class="row">
-                  <h4>{$_('history.detail.playbackTime')}</h4>
+                  <h4>{$_('stats.playbackTime')}</h4>
                   <div>
                     {#if Number.isFinite(playback)}
                       {new Intl.NumberFormat(locale, {
@@ -247,12 +247,12 @@
                         maximumFractionDigits: 0,
                       }).format(playback / 1000)}
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
                 <section class="row">
-                  <h4>{$_('history.detail.transferSize')}</h4>
+                  <h4>{$_('stats.transferSize')}</h4>
                   <div>
                     {#if Number.isFinite(transferSize)}
                       {new Intl.NumberFormat(locale, {
@@ -262,7 +262,7 @@
                         maximumFractionDigits: 2,
                       }).format(transferSize / 1024 / 1024)}
                     {:else}
-                      {$_('history.detail.dataMissing')}
+                      {$_('stats.dataMissing')}
                     {/if}
                   </div>
                 </section>
