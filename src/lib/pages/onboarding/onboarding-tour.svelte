@@ -9,7 +9,7 @@
 
   $: currentPage = pages[currentIndex];
   $: isLastPage = currentIndex === pages.length - 1;
-  $: imageExtension = currentPage === 'privacy' ? 'svg' : 'png';
+  $: imageExtension = currentPage === 'privacy' ? 'svg' : `${$locale}.png`;
 
   const agreeTerms = () => {
     storage.set('AgreedTerm', true);
@@ -83,7 +83,7 @@
 
     .col:last-of-type {
       flex: none;
-      width: 45%;
+      width: 40%;
     }
   }
 

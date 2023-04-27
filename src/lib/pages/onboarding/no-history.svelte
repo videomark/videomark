@@ -2,7 +2,7 @@
   import PopupPlatformList from '$lib/pages/popup/popup-platform-list.svelte';
   import { getBrowserName } from '$lib/services/runtime';
   import { onMount } from 'svelte';
-  import { _, json } from 'svelte-i18n';
+  import { _, json, locale } from 'svelte-i18n';
 
   let browserName = 'chrome';
 
@@ -22,7 +22,7 @@
     <section class="toolbar-instruction {browserName}">
       <h2>{$_('onboarding.addToToolbar.title')}</h2>
       <div>
-        <img src="/images/onboarding/add-to-toolbar.png" alt="" />
+        <img src="/images/onboarding/toolbar-{browserName}.{$locale}.png" alt="" />
       </div>
       <ol>
         {#each $json(`onboarding.addToToolbar.${browserName}`) as step}
