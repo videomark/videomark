@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "echo dummy",
-    "test": "jest"
+    "test": "jest --clearCache --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "jest": "^26.4.2",
