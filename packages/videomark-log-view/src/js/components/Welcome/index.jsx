@@ -60,8 +60,8 @@ export default () => {
             </Typography>
             <Box fontSize="body1.fontSize">
               <ul>
-                {videoPlatforms.map(({ id, name, url, experimental }) =>
-                  experimental ? null : (
+                {videoPlatforms.map(({ id, name, url, experimental, deprecated }) =>
+                  experimental || deprecated ? null : (
                     <li key={id}>
                       <Link href={url} color="secondary">{name}</Link>
                     </li>
