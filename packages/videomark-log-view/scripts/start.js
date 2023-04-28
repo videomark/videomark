@@ -11,7 +11,6 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-const fs = require("fs");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
