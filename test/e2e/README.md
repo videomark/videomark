@@ -6,8 +6,8 @@ VideoMark Extension のテスト環境
 
 ```sh
 sudo apt-get install -y chromium-browser
-PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install
-npm test
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true pnpm install
+pnpm test
 ```
 
 ## 既知の問題

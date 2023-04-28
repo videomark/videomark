@@ -6,7 +6,7 @@ module.exports = {
     acceptDownloads: true,
   },
   serverOptions: {
-    command: "yarn dev",
+    command: "pnpm dev",
     port: 1234,
   },
 };

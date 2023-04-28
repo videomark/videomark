@@ -14,18 +14,21 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
       - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
-          cache: yarn
-      - run: yarn --frozen-lockfile
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
       - name: Bump version
         run: |
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git config user.name "${GITHUB_ACTOR}"
-          yarn lerna version --yes "${{ github.event.inputs.version }}"
-      - run: yarn build
+          pnpm lerna version --yes "${{ github.event.inputs.version }}"
+      - run: pnpm build
       - name: Browser Platform Publish
         uses: PlasmoHQ/bpp@v2
         with:

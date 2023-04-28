@@ -5,5 +5,5 @@
 ## Demo
 
 ```sh
-npm run dev
+pnpm dev
 ```
