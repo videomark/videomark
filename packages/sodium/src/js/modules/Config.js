@@ -354,11 +354,6 @@ Config.video_platforms = [
     host: /^pr\.iij\.ad\.jp$/,
   },
   {
-    // gorin.jp
-    id: "gorinjp",
-    host: /(^|\.)gorin\.jp$/,
-  },
-  {
     // Netflix
     id: "netflix",
     host: /(^|\.)netflix\.com$/,
@@ -420,7 +415,7 @@ Config.ui.youtube = {
 // そのタイミングでは .vjs-user-active でもコントロールが隠れることに注意
 // .video-js 要素は複数あるので #playerWrapper 配下のものに限定する
 Config.ui.tver = {
-  target: "#playerWrapper > .video-js, #gorinPlayer",
+  target: "#playerWrapper > .video-js",
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -536,23 +531,6 @@ Config.ui.iijtwilightconcert = {
 #${Config.ui.id}:not(:hover) {
   opacity: 0.5;
   transition: 500ms;
-}`,
-};
-
-// gorin.jpはほぼtver
-Config.ui.gorinjp = {
-  target: ".videoContainer > video-js",
-  style: `#${Config.ui.id} {
-  position: absolute;
-  z-index: 1000001;
-  top: 12px;
-  left: 12px;
-  text-align: left;
-  transition: 1.0s cubic-bezier(0.4, 0.09, 0, 1.6);
-}
-.vjs-user-inactive > #${Config.ui.id},
-.not-hover > #${Config.ui.id} {
-  opacity: 0;
 }`,
 };
 
