@@ -4,10 +4,6 @@
   "repository": "git@github.com:videomark/videomark.git",
   "license": "Apache-2.0",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "test/*"
-  ],
   "devDependencies": {
     "eslint": "^7.7.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
@@ -20,11 +16,11 @@
     "build": "bin/build",
     "build-safari": "bin/build && bin/build-safari",
     "build-android": "bin/build-android",
-    "start": "yarn workspace @videomark/videomark-log-view start",
-    "test": "yarn e2e",
+    "start": "pnpm --filter @videomark/videomark-log-view start",
+    "test": "pnpm e2e",
     "e2e": "run-s build e2e:*",
-    "e2e:extension": "yarn workspace @videomark/e2e-test test",
-    "e2e:mini-stats": "yarn workspace @videomark/videomark-mini-stats test",
+    "e2e:extension": "pnpm --filter @videomark/e2e-test test",
+    "e2e:mini-stats": "pnpm --filter @videomark/videomark-mini-stats test",
     "lint": "eslint --ext .js,.jsx .",
     "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx .",
     "version": "bin/version"

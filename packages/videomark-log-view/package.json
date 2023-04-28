@@ -63,7 +63,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "npm run build-extension-prod && npm run build-extension-dev",
+    "build": "pnpm build-extension-prod && pnpm build-extension-dev",
     "build-extension-prod": "cross-env PUBLIC_URL=/qoelog BASE_URL=https://sodium.webdino.org node scripts/build.js && rm -rf build-prod && cp -r build build-prod && rm -r build",
     "build-extension-dev": "cross-env PUBLIC_URL=/qoelog BASE_URL=https://localhost node scripts/build.js && rm -rf build-dev && cp -r build build-dev && rm -r build",
     "build-android": "cross-env BASE_URL=https://sodium.webdino.org node scripts/build.js && rimraf build/favicon.png build/unsupported.html build/static/js/*.LICENSE*",
@@ -92,10 +92,11 @@
     "testEnvironment": "jsdom",
     "testURL": "http://localhost",
     "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
+    "//": "pnpm との相性問題を回避 https://jestjs.io/docs/configuration#transformignorepatterns-arraystring",
     "transformIgnorePatterns": [
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
       "^.+\\.module\\.(css|sass|scss)$"

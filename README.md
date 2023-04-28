@@ -11,16 +11,17 @@ Web VideoMark プロジェクトの紹介、ツールのダウンロード、使
 
 - bash: any
 - node: [see also .nvmrc](.nvmrc)
-- yarn: latest
+- pnpm: latest
 
 ## Build Instructions
 
 ```sh
 git clone git@github.com:videomark/videomark.git
 cd videomark
-corepack enable yarn
-yarn install
-yarn build
+corepack enable pnpm
+# Playwright/Puppeteer のインストールスクリプトは実行しない
+pnpm install --ignore-scripts
+pnpm build
 ```
 
 ## Install

@@ -31,7 +31,7 @@
     "webpack-merge": "^5.1.2"
   },
   "scripts": {
-    "build": "npm run build-dev && npm run build-prod",
+    "build": "pnpm build-dev && pnpm build-prod",
     "build-prod": "webpack --config webpack.prod.js",
     "build-dev": "webpack --config webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",

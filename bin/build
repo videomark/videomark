@@ -17,7 +17,7 @@ log "BUILD START: videomark-extension"
 # TODO: https://github.com/webdino/sodium/issues/741
 export NODE_OPTIONS=--openssl-legacy-provider
 
-yarn workspaces run build
+pnpm --filter @videomark/* build
 
 log cleanup
 rm -vrf -- "${PROD_DIR}"

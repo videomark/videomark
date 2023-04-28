@@ -17,8 +17,8 @@ log "BUILD START: videomark-browser"
 # TODO: https://github.com/webdino/sodium/issues/741
 export NODE_OPTIONS=--openssl-legacy-provider
 
-yarn workspace @videomark/sodium run build
-yarn workspace @videomark/videomark-log-view run build-android
+pnpm --filter @videomark/sodium build
+pnpm --filter @videomark/videomark-log-view build-android
 
 log cleanup
 rm -vrf -- "${ANDROID_DIR}"

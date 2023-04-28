@@ -15,6 +15,14 @@
     "puppeteer": "^5.2.1"
   },
   "jest": {
+    "//": "pnpm との相性問題を回避 https://jestjs.io/docs/configuration#transformignorepatterns-arraystring",
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "moduleNameMapper": {
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
     "preset": "jest-puppeteer",
     "globalSetup": "./setup.js",
     "globalTeardown": "./teardown.js",

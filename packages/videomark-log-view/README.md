@@ -2,7 +2,7 @@
 
 # コマンド
 
-## `npm start`
+## `pnpm start`
 
 develop モードでアプリケーションの起動をする。
 [http://localhost:3000](http://localhost:3000) をブラウザで開く。

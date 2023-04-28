@@ -11,7 +11,6 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-const fs = require("fs");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
@@ -28,7 +27,6 @@ const paths = require("../config/paths");
 const config = require("../config/webpack.config");
 const createDevServerConfig = require("../config/webpackDevServer.config");
 
-const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
@@ -80,7 +78,7 @@ checkBrowsers(paths.appPath, isInteractive)
       config,
       appName,
       urls,
-      useYarn,
+      useYarn: false,
     });
     // Load proxy config
     const proxySetting = require(paths.appPackageJson).proxy;
