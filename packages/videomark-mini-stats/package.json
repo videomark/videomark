@@ -26,10 +26,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest --clearCache --runInBand --detectOpenHandles --forceExit",
+    "test": "jest",
     "dev": "parcel demo/index.html"
   },
   "jest": {
+    "moduleNameMapper": {
+      "\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
     "preset": "jest-playwright-preset"
   },
   "browserslist": [
