@@ -64,8 +64,8 @@ class SiteSelect extends Component {
             name="site"
           >
             <MenuItem value="">すべて</MenuItem>
-            {videoPlatforms.map(({ id, name, experimental }) =>
-              experimental ? null : (
+            {videoPlatforms.map(({ id, name, experimental, deprecated }) =>
+              experimental || deprecated ? null : (
                 <MenuItem key={id} value={id}>
                   {name}
                 </MenuItem>

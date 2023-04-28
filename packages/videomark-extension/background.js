@@ -13,7 +13,6 @@ const permittedOrigins = [
   /^https:\/\/[a-z0-9.-]\.abema-tv\.com$/,
   "https://www.amazon.co.jp",
   /^https?:\/\/pr\.iij\.ad\.jp$/,
-  /^https:\/\/([a-z-]+\.)?gorin\.jp$/
 ];
 
 /**
