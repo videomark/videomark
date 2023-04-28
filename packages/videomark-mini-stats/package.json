@@ -30,8 +30,13 @@
     "dev": "parcel demo/index.html"
   },
   "jest": {
+    "//": "pnpm との相性問題を回避 https://jestjs.io/docs/configuration#transformignorepatterns-arraystring",
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
     "moduleNameMapper": {
-      "\\.(css|sass|scss)$": "identity-obj-proxy"
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
     },
     "preset": "jest-playwright-preset"
   },
