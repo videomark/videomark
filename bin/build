@@ -14,9 +14,6 @@ cd -- "$(dirname -- "$0")/.."
 log "Working directory is: $(pwd)"
 log "BUILD START: videomark-extension"
 
-# TODO: https://github.com/webdino/sodium/issues/741
-export NODE_OPTIONS=--openssl-legacy-provider
-
 pnpm --filter @videomark/* build
 
 log cleanup
