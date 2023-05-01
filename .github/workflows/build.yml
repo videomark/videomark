@@ -31,7 +31,7 @@ jobs:
       - run: pnpm install
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
       - run: pnpm build-safari
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: webvideomark-safari-extension.zip
           path: dist/webvideomark-safari-extension.zip

@@ -16,5 +16,5 @@ jobs:
         env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
       - run: pnpm lint-report
         continue-on-error: true
-      - uses: ataylorme/eslint-annotate-action@1.1.2
+      - uses: ataylorme/eslint-annotate-action@1.2.0
         with: { repo-token: "${{ github.token }}" }
