@@ -10,16 +10,12 @@ const useId = async viewingId => {
   if (typeof state[viewingId] === "string" || Number.isFinite(state[viewingId]))
     return state[viewingId];
 
-  const { index } = await storage.get("index");
-  if (Array.isArray(index)) {
-    const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
-    await storage.set({
-      index: [...index, id]
-    });
-    state[viewingId] = id;
-  } else {
-    state[viewingId] = viewingId;
-  }
+  const { index = [] } = await storage.get("index");
+  const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
+
+  await storage.set({ index: [...index, id] });
+  state[viewingId] = id;
+
   return state[viewingId];
 };
 
