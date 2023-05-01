@@ -3,7 +3,9 @@ set -euo pipefail
 
 PUBLISH_DIR=dist
 PROD_DIR=${PUBLISH_DIR}/production
+PROD_DIR_FIREFOX=${PUBLISH_DIR}/production-firefox
 DEV_DIR=${PUBLISH_DIR}/development
+DEV_DIR_FIREFOX=${PUBLISH_DIR}/development-firefox
 
 log() {
   echo "$0:" "$@"
@@ -20,10 +22,8 @@ export NODE_OPTIONS=--openssl-legacy-provider
 pnpm --filter @videomark/* build
 
 log cleanup
-rm -vrf -- "${PROD_DIR}"
-mkdir -vp -- "${PROD_DIR}"
-rm -vrf -- "${DEV_DIR}"
-mkdir -vp -- "${DEV_DIR}"
+rm -vrf -- "${PUBLISH_DIR}"
+mkdir -vp -- "${PROD_DIR}" "${DEV_DIR}"
 
 log sodium.js
 cp -va packages/sodium/dist/* "${PROD_DIR}"
@@ -38,9 +38,25 @@ log videomark-extension
 cp -va packages/videomark-extension/* "${PROD_DIR}"
 cp -va packages/videomark-extension/* "${DEV_DIR}"
 rm -v -- "${PROD_DIR}/README.md" "${DEV_DIR}/README.md"
-(cd -- "${PROD_DIR}" && zip -r ../webvideomark.zip .)
-(cd -- "${DEV_DIR}" && zip -r ../webvideomark-dev.zip .)
-cp ${PUBLISH_DIR}/webvideomark.zip ${PUBLISH_DIR}/webvideomark.xpi
-cp ${PUBLISH_DIR}/webvideomark-dev.zip ${PUBLISH_DIR}/webvideomark-dev.xpi
+
+# PROD: Firefox はマニフェストファイルに互換性がないため別途コピーで対応
+cp -r ${PROD_DIR} ${PROD_DIR_FIREFOX}
+mv ${PROD_DIR_FIREFOX}/manifest-firefox.json ${PROD_DIR_FIREFOX}/manifest.json
+rm ${PROD_DIR_FIREFOX}/request_rules.json
+(cd -- "${PROD_DIR_FIREFOX}" && zip -r ../videomark-firefox.zip . -x '.DS_Store')
+cp ${PUBLISH_DIR}/videomark-firefox.zip ${PUBLISH_DIR}/videomark-firefox.xpi
+
+rm ${PROD_DIR}/manifest-firefox.json ${PROD_DIR}/background.html
+(cd -- "${PROD_DIR}" && zip -r ../videomark.zip . -x '.DS_Store')
+
+# DEV: Firefox はマニフェストファイルに互換性がないため別途コピーで対応
+cp -r ${DEV_DIR} ${DEV_DIR_FIREFOX}
+mv ${DEV_DIR_FIREFOX}/manifest-firefox.json ${DEV_DIR_FIREFOX}/manifest.json
+rm ${DEV_DIR_FIREFOX}/request_rules.json
+(cd -- "${DEV_DIR_FIREFOX}" && zip -r ../videomark-dev-firefox.zip . -x '.DS_Store')
+cp ${PUBLISH_DIR}/videomark-dev-firefox.zip ${PUBLISH_DIR}/videomark-dev-firefox.xpi
+
+rm ${DEV_DIR}/manifest-firefox.json ${DEV_DIR}/background.html
+(cd -- "${DEV_DIR}" && zip -r ../videomark-dev.zip . -x '.DS_Store')
 
 log "BUILD END: videomark-extension"
