@@ -14,9 +14,6 @@ cd -- "$(dirname -- "$0")/.."
 log "Working directory is: $(pwd)"
 log "BUILD START: videomark-browser"
 
-# TODO: https://github.com/webdino/sodium/issues/741
-export NODE_OPTIONS=--openssl-legacy-provider
-
 pnpm --filter @videomark/sodium build
 pnpm --filter @videomark/videomark-log-view build-android
 
