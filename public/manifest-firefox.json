@@ -26,6 +26,7 @@
   "permissions": [
     "tabs",
     "webRequest",
+    "webRequestBlocking",
     "storage",
     "unlimitedStorage",
     "declarativeNetRequestWithHostAccess"
