@@ -157,7 +157,7 @@ export const strings = {
     dataMissing: 'Data unavailable',
     quality: {
       measuringShort: 'Measuring...',
-      calculating: 'QoE value is being measured or calculated.',
+      measuring: 'QoE value is being measured or calculated.',
       error: 'We could not retrieve QoE values due to the lack of measurement data.',
       frameDrops: 'Actual quality of experience may differ due to frame drops',
       frameDropsShort: 'Actual quality of experience  may differ',
