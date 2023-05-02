@@ -22,12 +22,9 @@ rm -vrf -- "${ANDROID_DIR}"
 mkdir -vp -- "${RESOURCES_DIR}"
 
 log sodium.js
-cp -va packages/sodium/dist/sodium.js "${RESOURCES_DIR}/sodium.js"
+cp -va dist/production/scripts/sodium.js "${RESOURCES_DIR}/sodium.js"
 
-log videomark-log-view
-cp -va packages/videomark-log-view/build "${RESOURCES_DIR}/sodium_result"
-
-log videomark-extension
-cp -va packages/videomark-extension/content_script.js "${RESOURCES_DIR}/content_script.js"
+log extension
+cp -va dist/production/scripts/content.js "${RESOURCES_DIR}/content_script.js"
 
 log "BUILD END: videomark-browser"

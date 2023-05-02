@@ -1,7 +1,0 @@
-[build]
-  publish = "build"
-  command = "npm --prefix ../videomark-mini-stats i && npm run build-web"
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Cache-Control = "private, no-store, no-cache, must-revalidate"

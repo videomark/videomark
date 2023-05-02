@@ -1,10 +1,4 @@
 /dist/
-/packages/sodium/dist/
-/packages/sodium/dist-dev/
-/packages/videomark-log-view/build/
-/packages/videomark-log-view/build-dev/
-/packages/videomark-log-view/build-prod/
-/packages/videomark-mini-stats/dist/
-/packages/videomark-mini-stats/jest-playwright.config.js
-/packages/videomark-mini-stats/**/*.test.js
-/test/e2e/
+
+# 後日対応
+/test/

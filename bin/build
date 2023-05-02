@@ -14,7 +14,7 @@ log() {
 cd -- "$(dirname -- "$0")/.."
 
 log "Working directory is: $(pwd)"
-log "BUILD START: videomark-extension"
+log "BUILD START: extension"
 
 pnpm --filter @videomark/* build
 
@@ -22,19 +22,8 @@ log cleanup
 rm -vrf -- "${PUBLISH_DIR}"
 mkdir -vp -- "${PROD_DIR}" "${DEV_DIR}"
 
-log sodium.js
-cp -va packages/sodium/dist/* "${PROD_DIR}"
-cp -va packages/sodium/dist-dev/* "${DEV_DIR}"
-
-log videomark-log-view
-cp -va packages/videomark-log-view/build-prod "${PROD_DIR}/qoelog"
-cp -va packages/videomark-log-view/build-dev "${DEV_DIR}/qoelog"
-rm -v -- "${PROD_DIR}/qoelog/manifest.json" "${DEV_DIR}/qoelog/manifest.json"
-
-log videomark-extension
-cp -va packages/videomark-extension/* "${PROD_DIR}"
-cp -va packages/videomark-extension/* "${DEV_DIR}"
-rm -v -- "${PROD_DIR}/README.md" "${DEV_DIR}/README.md"
+log build for production
+MODE=production vite build --outDir "${PROD_DIR}"
 
 # PROD: Firefox はマニフェストファイルに互換性がないため別途コピーで対応
 cp -r ${PROD_DIR} ${PROD_DIR_FIREFOX}
@@ -46,6 +35,9 @@ cp ${PUBLISH_DIR}/videomark-firefox.zip ${PUBLISH_DIR}/videomark-firefox.xpi
 rm ${PROD_DIR}/manifest-firefox.json ${PROD_DIR}/background.html
 (cd -- "${PROD_DIR}" && zip -r ../videomark.zip . -x '.DS_Store')
 
+log build for development
+MODE=development vite build --outDir "${DEV_DIR}"
+
 # DEV: Firefox はマニフェストファイルに互換性がないため別途コピーで対応
 cp -r ${DEV_DIR} ${DEV_DIR_FIREFOX}
 mv ${DEV_DIR_FIREFOX}/manifest-firefox.json ${DEV_DIR_FIREFOX}/manifest.json
@@ -56,4 +48,4 @@ cp ${PUBLISH_DIR}/videomark-dev-firefox.zip ${PUBLISH_DIR}/videomark-dev-firefox
 rm ${DEV_DIR}/manifest-firefox.json ${DEV_DIR}/background.html
 (cd -- "${DEV_DIR}" && zip -r ../videomark-dev.zip . -x '.DS_Store')
 
-log "BUILD END: videomark-extension"
+log "BUILD END: extension"

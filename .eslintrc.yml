@@ -1,64 +1,26 @@
-extends:
-  - "eslint:recommended"
-  - "plugin:jsx-a11y/recommended"
-  - "plugin:react/recommended"
-  - "plugin:react-hooks/recommended"
+root: true
+parser: '@babel/eslint-parser'
+parserOptions:
+  requireConfigFile: false
+  sourceType: module
+  ecmaVersion: 2020
 env:
   webextensions: true
   browser: true
-  es6: true
+  es2022: true
+extends:
+  - eslint:recommended
+  # - eslint-config-airbnb-base
+  - prettier
+plugins:
+  - svelte3
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
-parserOptions:
-  ecmaVersion: 2020
-  sourceType: module
-settings:
-  react:
-    version: detect
-rules:
-  react-hooks/rules-of-hooks: "off"
+  sodium: readonly
+  videojs: readonly
+  process: readonly
 overrides:
-  - files: "packages/sodium/**"
-    rules:
-      no-extra-semi: "off"
-      no-unexpected-multiline: "off"
-    globals:
-      sodium: readonly
-      videojs: readonly
-      FLUENT_URL: readonly
-      SODIUM_SERVER_URL: readonly
-      PEAK_TIME_LIMIT_URL: readonly
-      EVENT_DATA_MAX_SIZE: readonly
-  - files: "packages/videomark-extension/**"
-    globals:
-      sodium: readonly
-      chrome: readonly
-  - files: "packages/videomark-log-view/**"
-    rules:
-      jsx-a11y/no-autofocus: "off"
-      react/display-name: "off"
-      react-hooks/rules-of-hooks: "error"
-    globals:
-      process: readonly
-  - files: # TODO: これらのファイルの warning は修正して取り除いて
-      - packages/videomark-log-view/src/Rollback.jsx
-      - packages/videomark-log-view/src/Settings/BitrateControlSettings.jsx
-      - packages/videomark-log-view/src/Settings/Reset.jsx
-      - packages/videomark-log-view/src/StatsSummary.jsx
-      - packages/videomark-log-view/src/js/containers/MiniStatsDownloadButton.jsx
-      - packages/videomark-log-view/src/js/containers/StatsDataProvider.jsx
-      - packages/videomark-log-view/src/js/containers/ViewingDetail.jsx
-      - packages/videomark-log-view/src/js/utils/ChromeExtensionWrapper/index.js
-    rules:
-      react-hooks/exhaustive-deps: "off"
-  - files: "packages/videomark-mini-stats/**"
-    rules:
-      react/prop-types: "off"
   - files:
-      - "packages/sodium/webpack.*.js"
-      - "packages/sodium/Gruntfile.js"
-      - "packages/videomark-log-view/config/**"
-      - "packages/videomark-log-view/scripts/**"
-    env:
-      node: true
+      - '*.svelte'
+    processor: svelte3/svelte3
