@@ -86,7 +86,9 @@ export const viewingHistory = writable(undefined, (set) => {
 export const viewingHistoryRegions = derived([viewingHistory], ([history]) => {
   const regions = [];
 
-  history.forEach(({ region: { country, subdivision } = {} }) => {
+  history.forEach(({ region }) => {
+    const { country, subdivision } = region ?? {};
+
     if (!country || !subdivision) {
       return;
     }

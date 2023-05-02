@@ -59,7 +59,7 @@
             transferSize,
             qualityDetails,
           } = item}
-          {@const { country, subdivision } = region}
+          {@const { country, subdivision } = region ?? {}}
           {@const {
             bitrate,
             resolution,

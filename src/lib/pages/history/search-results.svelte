@@ -7,13 +7,8 @@
   $: searchTerms = $searchCriteria.terms.trim();
 
   $: results = $viewingHistory.filter((historyItem) => {
-    const {
-      title,
-      platformId,
-      startTime,
-      qoe,
-      region: { country = '', subdivision = '' } = {},
-    } = historyItem;
+    const { title, platformId, startTime, qoe, region } = historyItem;
+    const { country = '', subdivision = '' } = region ?? {};
 
     const date = new Date(startTime);
 
