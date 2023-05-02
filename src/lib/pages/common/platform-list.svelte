@@ -9,7 +9,7 @@
 
 <Group class="buttons" aria-label={$_('platformList.title')}>
   <div class="buttons">
-    {#each videoPlatforms.filter(({ experimental }) => !experimental) as { id, url } (id)}
+    {#each videoPlatforms.filter(({ experimental, deprecated }) => !(experimental || deprecated)) as { id, url } (id)}
       <Button class="secondary pill" on:click={() => openTab(url)}>
         {$_(`platforms.${id}`)}
       </Button>

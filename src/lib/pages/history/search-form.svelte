@@ -59,7 +59,7 @@
     <Button class="ghost" label={$_('history.search.filters.sources')} aria-haspopup="dialog">
       <Icon slot="end-icon" name="arrow_drop_down" />
       <div slot="popup" class="popup">
-        {#each videoPlatforms.filter(({ experimental }) => !experimental) as { id } (id)}
+        {#each videoPlatforms.filter(({ experimental, deprecated }) => !(experimental || deprecated)) as { id } (id)}
           <div class="row">
             <Checkbox
               value={id}
