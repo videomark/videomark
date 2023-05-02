@@ -30,7 +30,7 @@ jobs:
           pnpm lerna version --yes "${{ github.event.inputs.version }}"
       - run: pnpm build
       - name: Browser Platform Publish
-        uses: PlasmoHQ/bpp@v2
+        uses: PlasmoHQ/bpp@v3
         with:
           # see also https://github.com/PlasmoHQ/bpp#readme
           keys: ${{ secrets.BPP_KEYS }}
