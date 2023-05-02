@@ -77,7 +77,7 @@ export const videoPlatforms = [
   {
     id: "gorin",
     deprecated: true, // 2023 年 3 月末でサービス終了
-    url: "https://www.gorin.jp//",
+    url: "https://www.gorin.jp/",
     brandcolor: "#40b8dc",
     host: /(^|\.)gorin\.jp$/,
   },
