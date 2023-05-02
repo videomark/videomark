@@ -17,6 +17,8 @@ jobs:
       - run: pnpm build
 
   safari:
+    # 拡張機能 v2 は Safari 対応未確認なので無効化
+    if: false
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
