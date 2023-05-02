@@ -12,6 +12,7 @@ pnpm-lock.yaml
 
 # 後日対応
 *.md
+video-platforms.js
 /.github/workflows/
 /lerna.json
 /public/
