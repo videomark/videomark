@@ -56,18 +56,16 @@
     "type": "module"
   },
   "declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "1",
-        "enabled": true,
-        "path": "request_rules.json"
-      }
-    ]
+    "rule_resources": [{
+      "id": "1",
+      "enabled": true,
+      "path": "request_rules.json"
+    }]
   },
   "web_accessible_resources": [
     {
       "resources": ["scripts/sodium.js", "assets/*"],
       "matches": ["<all_urls>"]
     }
-  ],
+  ]
 }
