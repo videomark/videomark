@@ -350,7 +350,7 @@ export default class Status {
   qualityItem({ label, value, chart_id, style }) {
     if (value == null) return "";
 
-    const clazz = classMap(style);
+    const clazz = classMap(style ?? {});
     return html`
       <dt class=${clazz}>${label}</dt>
       <dd class=${clazz}>${value}</dd>
