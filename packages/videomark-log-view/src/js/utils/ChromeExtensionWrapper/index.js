@@ -102,6 +102,8 @@ export const allViewings = async () => {
     "AgreedTerm",
     "transfer_size",
     "peak_time_limit",
+    "hostToIp",
+    "tabStatus",
   ].forEach((index) => delete obj[index]);
   const entries = Object.entries(obj)
     .map(([id, { start_time: time }]) => [id, time])

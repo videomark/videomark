@@ -10,16 +10,12 @@ const useId = async viewingId => {
   if (typeof state[viewingId] === "string" || Number.isFinite(state[viewingId]))
     return state[viewingId];
 
-  const { index } = await storage.get("index");
-  if (Array.isArray(index)) {
-    const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
-    await storage.set({
-      index: [...index, id]
-    });
-    state[viewingId] = id;
-  } else {
-    state[viewingId] = viewingId;
-  }
+  const { index = [] } = await storage.get("index");
+  const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
+
+  await storage.set({ index: [...index, id] });
+  state[viewingId] = id;
+
   return state[viewingId];
 };
 
@@ -79,39 +75,8 @@ const inject_script = async opt => {
 
 /** @class background と通信するための汎用的なクラス */
 class BackgroundCommunicationPort {
-  constructor() {
-    this.port = null;
-    this.portName = "sodium-extension-communication-port";
-  }
-
-  postMessage(method, args) {
-    if (this.port == null) {
-      this.port = chrome.runtime.connect({
-        name: this.portName
-      });
-    }
-
-    const requestId = getRandomToken();
-    return new Promise((resolve, reject) => {
-      const listener = value => {
-        if (value.requestId !== requestId) return false;
-
-        try {
-          resolve(value);
-        } catch (e) {
-          reject(e);
-        } finally {
-          this.port.onMessage.removeListener(listener);
-        }
-        return true;
-      };
-      this.port.onMessage.addListener(listener);
-      this.port.postMessage({
-        requestId,
-        method: method,
-        args: args
-      });
-    });
+  async postMessage(method, args) {
+    return chrome.runtime.sendMessage({ method, args });
   }
 
   setAlive(alive) {
@@ -155,16 +120,6 @@ class BackgroundCommunicationPort {
   }
 }
 const communicationPort = new BackgroundCommunicationPort();
-
-function getRandomToken() {
-  const randomPool = new Uint8Array(16);
-  crypto.getRandomValues(randomPool);
-  let hex = "";
-  for (var i = 0; i < randomPool.length; ++i) {
-    hex += randomPool[i].toString(16);
-  }
-  return hex;
-}
 
 const message_listener = async event => {
   if (

@@ -32,6 +32,7 @@ jobs:
       - name: Browser Platform Publish
         uses: PlasmoHQ/bpp@v2
         with:
-          artifact: dist/webvideomark.zip
           # see also https://github.com/PlasmoHQ/bpp#readme
           keys: ${{ secrets.BPP_KEYS }}
+          chrome-file: dist/videomark.zip
+          firefox-file: dist/videomark-firefox.zip
