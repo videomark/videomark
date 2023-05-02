@@ -1,8 +1,6 @@
 import { openTab } from "$lib/services/navigation";
 import { SCHEMA_VERSION, storage } from "$lib/services/storage";
 
-const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
-
 /** content_scripts の許可されているOriginかどうか判定 */
 // Declarative Net Request API 向けの `request_rules.json` と同期すること
 const permittedOrigins = [
@@ -81,7 +79,7 @@ const initToolbarButton = async () => {
 
 initToolbarButton();
 
-chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
+chrome.runtime.onInstalled.addListener(() => {
   (async () => {
     const termsAgreed = await storage.get("AgreedTerm");
     const version = await storage.get("version");
@@ -98,21 +96,6 @@ chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
       openTab("#/onboarding");
     }
   })();
-
-  switch (reason) {
-    case "update": {
-      const major = version =>
-        version == null ? 0 : Number(version.slice(".")[0]);
-      const majorVersion = major(chrome.runtime.getManifest().version);
-      if (major(previousVersion) < majorVersion) {
-        const url = `${SODIUM_MARKETING_SITE_URL}/whatsnew/extension/${majorVersion}`;
-        chrome.tabs.create({ url });
-      }
-      break;
-    }
-    default:
-      break;
-  }
 });
 
 const getMasterDisplayOnPlayer = async () => {
