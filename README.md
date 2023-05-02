@@ -1,4 +1,7 @@
-![build](https://github.com/videomark/videomark/workflows/build/badge.svg?branch=master) ![e2e](https://github.com/videomark/videomark/workflows/e2e/badge.svg?branch=master) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/videomark/videomark.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/videomark/videomark/context:javascript) [![Netlify Status](https://api.netlify.com/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.com/sites/sodium-extension/deploys)
+![build](https://github.com/videomark/videomark/workflows/build/badge.svg?branch=master)
+![e2e](https://github.com/videomark/videomark/workflows/e2e/badge.svg?branch=master)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/videomark/videomark.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/videomark/videomark/context:javascript)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.com/sites/sodium-extension/deploys)
 
 # Web VideoMark Project
 

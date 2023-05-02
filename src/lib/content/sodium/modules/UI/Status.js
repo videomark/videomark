@@ -1,5 +1,5 @@
-import { strings as enStrings } from '$lib/locales/en';
-import { strings as jaStrings } from '$lib/locales/ja';
+import { strings as enStrings } from "$lib/locales/en";
+import { strings as jaStrings } from "$lib/locales/ja";
 import sparkline from '@videomark/sparkline';
 import { html, render } from "lit-html";
 import { classMap } from "lit-html/directives/class-map.js";

@@ -4,7 +4,9 @@
     "priority": 1,
     "action": {
       "type": "modifyHeaders",
-      "responseHeaders": [{ "header": "Timing-Allow-Origin", "operation": "set", "value": "*" }]
+      "responseHeaders": [
+        { "header": "Timing-Allow-Origin", "operation": "set", "value": "*" }
+      ]
     },
     "condition": {
       "initiatorDomains": [
@@ -19,8 +21,7 @@
         "ds-linear-abematv.akamaized.net",
         "abema-tv.com",
         "www.amazon.co.jp",
-        "pr.iij.ad.jp",
-        "gorin.jp"
+        "pr.iij.ad.jp"
       ]
     }
   }

@@ -17,4 +17,4 @@ jobs:
       - run: pnpm lint-report
         continue-on-error: true
       - uses: ataylorme/eslint-annotate-action@1.1.2
-        with: { repo-token: '${{ github.token }}' }
+        with: { repo-token: "${{ github.token }}" }

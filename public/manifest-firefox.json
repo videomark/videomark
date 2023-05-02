@@ -51,7 +51,9 @@
         "*://pr.iij.ad.jp/*",
         "*://*.netflix.com/*"
       ],
-      "js": ["scripts/content.js"],
+      "js": [
+        "scripts/content.js"
+      ],
       "all_frames": true
     }
   ],

@@ -11,7 +11,10 @@ node_modules
 pnpm-lock.yaml
 
 # 後日対応
+*.md
+/.github/workflows/
 /lerna.json
+/public/
 /src/lib/background/
 /src/lib/content/
 /test/

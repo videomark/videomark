@@ -19,7 +19,8 @@ Web VideoMark 拡張機能では以下のデータを Chrome に保存します�
 | title       | 動画のタイトル                                                            |
 | user_agent  | ユーザーエージェント文字列                                                |
 
-これらのデータは、chrome.storage.local に保存されます。 latest_qoe は初期設定で 20 件まで保存されます。すべての暫定 QoE 値を保存したい場合は、sodium.js の Config.num_of_latest_qoe の値を０に設定してください。
+これらのデータは、chrome.storage.local に保存されます。
+latest_qoe は初期設定で 20 件まで保存されます。すべての暫定 QoE 値を保存したい場合は、sodium.js の Config.num_of_latest_qoe の値を０に設定してください。
 
 ## 拡張機能に保存されるデータの扱い
 
