@@ -197,6 +197,7 @@ export const strings = {
       graphCache: 'Stats graph cache',
       confirm: 'Clear Now',
     },
+    personalSessionPrompt: 'Please enter your Session ID',
   },
   popup: {
     playing: 'Now Playing',
