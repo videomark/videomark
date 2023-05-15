@@ -2,14 +2,14 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@sveltia/ui':
-    specifier: ^0.2.3
-    version: 0.2.3(svelte@3.59.1)
+    specifier: ^0.2.4
+    version: 0.2.4(svelte@3.59.1)
   '@videomark/sparkline':
     specifier: github:videomark/sparkline
     version: github.com/videomark/sparkline/da263f1f1429787c606fe5885c9b85518472f4c2
   lit-html:
-    specifier: ^2.7.3
-    version: 2.7.3
+    specifier: ^2.7.4
+    version: 2.7.4
   mpd-parser:
     specifier: ^1.1.1
     version: 1.1.1
@@ -29,7 +29,7 @@ devDependencies:
     version: 7.21.8(@babel/core@7.21.8)(eslint@8.40.0)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^2.2.0
-    version: 2.2.0(svelte@3.59.1)(vite@4.3.5)
+    version: 2.2.0(svelte@3.59.1)(vite@4.3.6)
   eslint:
     specifier: ^8.40.0
     version: 8.40.0
@@ -88,8 +88,8 @@ devDependencies:
     specifier: ^5.0.3
     version: 5.0.3(@babel/core@7.21.8)(postcss@8.4.23)(sass@1.62.1)(svelte@3.59.1)(typescript@5.0.4)
   vite:
-    specifier: ^4.3.5
-    version: 4.3.5(sass@1.62.1)
+    specifier: ^4.3.6
+    version: 4.3.6(sass@1.62.1)
 
 packages:
 
@@ -1288,7 +1288,7 @@ packages:
     resolution: {integrity: sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==}
     dev: true
 
-  /@sveltejs/vite-plugin-svelte@2.2.0(svelte@3.59.1)(vite@4.3.5):
+  /@sveltejs/vite-plugin-svelte@2.2.0(svelte@3.59.1)(vite@4.3.6):
     resolution: {integrity: sha512-KDtdva+FZrZlyug15KlbXuubntAPKcBau0K7QhAIqC5SAy0uDbjZwoexDRx0L0J2T4niEfC6FnA9GuQQJKg+Aw==}
     engines: {node: ^14.18.0 || >= 16}
     peerDependencies:
@@ -1301,14 +1301,14 @@ packages:
       magic-string: 0.30.0
       svelte: 3.59.1
       svelte-hmr: 0.15.1(svelte@3.59.1)
-      vite: 4.3.5(sass@1.62.1)
-      vitefu: 0.2.4(vite@4.3.5)
+      vite: 4.3.6(sass@1.62.1)
+      vitefu: 0.2.4(vite@4.3.6)
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@sveltia/ui@0.2.3(svelte@3.59.1):
-    resolution: {integrity: sha512-i5xxxOSNJHUhM1Zd0EZGqsMz1s4JPfjJg68qBwqpg0HVFKcUI2CSXklL5WU82ZLpwMPyCNHCjIlb1M5YnBaFKQ==}
+  /@sveltia/ui@0.2.4(svelte@3.59.1):
+    resolution: {integrity: sha512-YCYDO7NWBZ8PinGYqucMKjznUJu6DUcTypNC16fnC2WxcmeA2oQR/toMHtO/i05+TZhMQkAjCw5EEDhCTpDkOg==}
     peerDependencies:
       svelte: ^3.55.1
     dependencies:
@@ -4204,8 +4204,8 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: true
 
-  /lit-html@2.7.3:
-    resolution: {integrity: sha512-9DyLzcn/kbRGowz2vFmSANFbRZTxYUgYYFqzie89w6GLpPUiBCDHfcdeRUV/k3Q2ueYxNjfv46yPCtKAEAPOVw==}
+  /lit-html@2.7.4:
+    resolution: {integrity: sha512-/Jw+FBpeEN+z8X6PJva5n7+0MzCVAH2yypN99qHYYkq8bI+j7I39GH+68Z/MZD6rGKDK9RpzBw7CocfmHfq6+g==}
     dependencies:
       '@types/trusted-types': 2.0.3
     dev: false
@@ -6867,8 +6867,8 @@ packages:
       builtins: 5.0.1
     dev: true
 
-  /vite@4.3.5(sass@1.62.1):
-    resolution: {integrity: sha512-0gEnL9wiRFxgz40o/i/eTBwm+NEbpUeTWhzKrZDSdKm6nplj+z4lKz8ANDgildxHm47Vg8EUia0aicKbawUVVA==}
+  /vite@4.3.6(sass@1.62.1):
+    resolution: {integrity: sha512-cqIyLSbA6gornMS659AXTVKF7cvSHMdKmJJwQ9DXq3lwsT1uZSdktuBRlpHQ8VnOWx0QHtjDwxPpGtyo9Fh/Qg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -6900,7 +6900,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitefu@0.2.4(vite@4.3.5):
+  /vitefu@0.2.4(vite@4.3.6):
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0
@@ -6908,7 +6908,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.3.5(sass@1.62.1)
+      vite: 4.3.6(sass@1.62.1)
     dev: true
 
   /walk-up-path@1.0.0:
