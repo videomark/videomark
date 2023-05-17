@@ -1,10 +1,10 @@
-import { createStorageSync } from '$lib/services/storage';
+import { createStorageSync, storage } from '$lib/services/storage';
 import { validate, version } from 'uuid';
 
 export const session = createStorageSync('session', {});
 
 // NOTE: サーバー側で "_" が使えない
-const invalidCharacters = /[^0-9A-Za-z.-]/u;
+const allowedPattern = /^[0-9A-Za-z.-]+$/;
 
 /**
  * セッション ID をもとにセッション種別を判定。
@@ -14,35 +14,24 @@ const invalidCharacters = /[^0-9A-Za-z.-]/u;
 export const getSessionType = (id) => (validate(id) && version(id) === 4 ? 'social' : 'personal');
 
 /**
- * セッション ID を上書き。
- * @param {object} settings 設定オブジェクト。
+ * セッション ID を即時上書き。
  * @param {string} sessionId セッション ID。
- * @param {object} handlers 処理関数群。
- * @param {Function} handlers.saveSettings 設定保存処理。
- * @param {Function} handlers.saveSession セッション保存処理。
+ * @param {number} expiresIn 有効期間 (ms)。
  */
-export const overwriteSessionId = (settings, sessionId, { saveSettings, saveSession }) => {
-  if (!settings || !sessionId) {
-    return;
+export const overwritePersonalSession = async (sessionId, expiresIn) => {
+  if (!(getSessionType(sessionId) === 'personal' && allowedPattern.test(sessionId))) {
+    const error = new Error('Session ID is invalid');
+    window.alert(error.message);
+    throw error;
   }
 
-  if (invalidCharacters.test(sessionId)) {
-    // TODO: alert() は標準ではないので他の何らかのインタラクティブな入力方法に変更したい
-    alert('他のセッションIDを入力してください');
-    console.error('Session ID is invalid');
-    return;
-  }
-
-  // NOTE: オーバーフロー無く十分に長い適当な期間
-  const expiresIn = 10 * 365 * 24 * 60 * 60 * 1000;
-
-  saveSettings({
-    ...settings,
-    expires_in: expiresIn,
-  });
-
-  saveSession({
+  const personalSession = {
+    type: 'personal',
     id: sessionId,
     expires: Date.now() + expiresIn,
-  });
+  };
+
+  await storage.set('session', personalSession);
+  // storage への書き込みを完了を待機してから呼び出さなければ古い状態のまま
+  session.set(personalSession);
 };

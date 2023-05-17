@@ -197,6 +197,7 @@ export const strings = {
       graphCache: '統計グラフのキャッシュ',
       confirm: '今すぐ消去',
     },
+    personalSessionPrompt: 'セッション ID を入力してください',
   },
   popup: {
     playing: '再生中の動画',

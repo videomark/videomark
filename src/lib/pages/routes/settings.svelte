@@ -2,7 +2,7 @@
   import HistoryLayout from '$lib/pages/layouts/history-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
   import { openTab } from '$lib/services/navigation';
-  import { session } from '$lib/services/sessions';
+  import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
   import { defaultSettings, settings } from '$lib/services/settings';
   import { storage } from '$lib/services/storage';
   import { Button, Checkbox, Dialog, Icon, Option, Select, Switch } from '@sveltia/ui';
@@ -104,11 +104,20 @@
     }
   };
 
-  onMount(() => {
-    (async () => {
-      loadedSettings = JSON.parse(JSON.stringify($settings));
-    })();
+  onMount(async () => {
+    loadedSettings = JSON.parse(JSON.stringify($settings));
+
+    // 自動計測向けのセッション ID の設定機能
+    const sessionId = new URLSearchParams(window.location.search).get('session_id');
+    if (sessionId) {
+      // NOTE: オーバーフロー無く十分に長い適当な期間
+      const expiresIn = 10 * 365 * 24 * 60 * 60 * 1000;
+      await overwritePersonalSession(sessionId, expiresIn);
+      settings.update((loadedSettings) => ({ ...(loadedSettings ?? {}), expires_in: expiresIn }));
+    }
   });
+
+  $: $session.type = getSessionType($session.id);
 </script>
 
 <HistoryLayout>
@@ -144,9 +153,24 @@
       <header>
         <h2>{$_('settings.privacy')}</h2>
       </header>
-      <SettingItem title={$_('settings.sessionId')}>
-        {$session.id || ''}
-      </SettingItem>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div
+        on:click={(e) => {
+          // 自動計測向けのセッション ID の設定機能
+          if (e.detail === 3) {
+            const sessionId = window.prompt($_('settings.personalSessionPrompt'))?.trim();
+            if (sessionId) {
+              window.location.search = `?${new URLSearchParams({
+                session_id: sessionId,
+              })}`;
+            }
+          }
+        }}
+      >
+        <SettingItem title={$_('settings.sessionId')}>
+          {$session.id || ''}
+        </SettingItem>
+      </div>
       <SettingItem title={$_('settings.sessionPersistence')}>
         <Select
           position="bottom-right"
