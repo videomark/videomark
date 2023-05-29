@@ -1,11 +1,11 @@
 <script>
+  import { Button, Icon, SearchBar } from '@sveltia/ui';
+  import { onMount } from 'svelte';
+  import { _ } from 'svelte-i18n';
   import HistoryItem from '$lib/pages/history/history-item.svelte';
   import NotFound from '$lib/pages/history/not-found.svelte';
   import { viewingHistory } from '$lib/services/history';
   import { openTab } from '$lib/services/navigation';
-  import { Button, Icon, SearchBar } from '@sveltia/ui';
-  import { onMount } from 'svelte';
-  import { _ } from 'svelte-i18n';
 
   let searchTerms = '';
   let playingVideos = [];
@@ -69,7 +69,7 @@
       <Icon name="history" />
       {$_('popup.seeAll')}
     </Button>
-    <Button on:click={() => location.replace('#/popup/platforms')}>
+    <Button on:click={() => window.location.replace('#/popup/platforms')}>
       <Icon name="subscriptions" />
       {$_('popup.compatiblePlatforms.title')}
     </Button>

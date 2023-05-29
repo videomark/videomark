@@ -1,0 +1,93 @@
+version: "0.2"
+language: en
+dictionaries:
+  - css
+  - html
+  - typescript
+enableFiletypes:
+  - ignore
+  - properties
+  - svelte
+  - xml
+files:
+  - "**/.*"
+  - "**/*.{css,js,json,jsonc,html,md,scss,svelte,svg,yaml,yml,xml}"
+useGitignore: true
+ignorePaths:
+  - pnpm-lock.yaml
+  - dist/**
+words:
+  - abema
+  - abematv
+  - afmt
+  - Aichi
+  - akamaized
+  - amazonprimevideo
+  - Aomori
+  - atvwebplayersdk
+  - autohide
+  - automerge
+  - bitrates
+  - camelcase
+  - clazz
+  - corepack
+  - dmkt
+  - droprate
+  - Ehime
+  - eqeqeq
+  - fluentd
+  - Fmts
+  - fujitv
+  - Fukui
+  - Fukushima
+  - googlevideo
+  - gorin
+  - Gunma
+  - highres
+  - Hyogo
+  - Ibaraki
+  - iijtwilightconcert
+  - inittop
+  - Ishikawa
+  - itag
+  - Iwate
+  - Kagawa
+  - Kanagawa
+  - kbps
+  - Mbps
+  - Miyagi
+  - Miyazaki
+  - msgpack
+  - netinfo
+  - nhkondemand
+  - nicolive
+  - Niconico
+  - nicovideo
+  - Oita
+  - ondemand
+  - packshot
+  - paravi
+  - playout
+  - plmn
+  - postcss
+  - Saitama
+  - Shiga
+  - Shimane
+  - singleline
+  - sparkline
+  - stylelint
+  - sveltia
+  - Tochigi
+  - Tokushima
+  - Tottori
+  - TQAPI
+  - Typecheck
+  - uuidv
+  - videojs
+  - VideoMark
+  - videoplayback
+  - webextensions
+  - wordmark
+  - Yamaguchi
+  - Yamanashi
+  - ytplayer

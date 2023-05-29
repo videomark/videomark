@@ -2,7 +2,7 @@
 /** 広告の表示状態が変わったタイミングで発報されるイベント */
 export class AdEvent extends Event {
   constructor({ showing, playPos }) {
-    super("ad");
+    super('ad');
     /** @type {boolean} 広告表示中か否か (広告表示中: true、通常再生中: それ以外) */
     this.showing = showing;
     /** @type {number} 再生位置 */
@@ -18,30 +18,38 @@ export class AdObserver extends EventTarget {
    * @param {Node} target
    * @param {string[]} attributeFilter
    */
-  constructor(handler, target, attributeFilter = ["class"]) {
+  constructor(handler, target, attributeFilter = ['class']) {
     super();
     this.listeners = new Set();
     /** @type {boolean} 広告表示中か否か (広告表示中: true、通常再生中: それ以外) */
     this.showing = false;
+
     const observer = new MutationObserver(() => {
       const showing = handler.is_cm();
-      if (this.showing === showing) return;
+
+      if (this.showing === showing) {
+        return;
+      }
+
       this.showing = showing;
+
       const event = new AdEvent({
         showing,
         playPos: handler.get_current_time(),
       });
+
       this.dispatchEvent(event);
     });
+
     observer.observe(target, { attributeFilter });
   }
 
   on(listener) {
-    this.addEventListener("ad", listener);
+    this.addEventListener('ad', listener);
   }
 
   off(listener) {
-    this.removeEventListener("ad", listener);
+    this.removeEventListener('ad', listener);
   }
 
   removeAllListeners() {

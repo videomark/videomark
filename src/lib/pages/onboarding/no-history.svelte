@@ -1,8 +1,8 @@
 <script>
-  import PopupPlatformList from '$lib/pages/popup/popup-platform-list.svelte';
-  import { getBrowserName } from '$lib/services/runtime';
   import { onMount } from 'svelte';
   import { _, json, locale } from 'svelte-i18n';
+  import PopupPlatformList from '$lib/pages/popup/popup-platform-list.svelte';
+  import { getBrowserName } from '$lib/services/runtime';
 
   let browserName = 'chrome';
 

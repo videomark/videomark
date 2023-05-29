@@ -1,7 +1,7 @@
 <script>
-  import { storage } from '$lib/services/storage';
   import { Button, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
   const pages = ['visualize', 'dropdown', 'history', 'privacy'];

@@ -1,5 +1,5 @@
-import { createStorageSync, storage } from '$lib/services/storage';
 import { validate, version } from 'uuid';
+import { createStorageSync, storage } from '$lib/services/storage';
 
 export const session = createStorageSync('session', {});
 
@@ -21,6 +21,8 @@ export const getSessionType = (id) => (validate(id) && version(id) === 4 ? 'soci
 export const overwritePersonalSession = async (sessionId, expiresIn) => {
   if (!(getSessionType(sessionId) === 'personal' && allowedPattern.test(sessionId))) {
     const error = new Error('Session ID is invalid');
+
+    // eslint-disable-next-line no-alert
     window.alert(error.message);
     throw error;
   }

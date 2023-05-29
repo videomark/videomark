@@ -1,8 +1,8 @@
 <script>
-  import { openTab } from '$lib/services/navigation';
-  import { videoPlatforms } from '$lib/services/video-platforms';
   import { Button, Group } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { openTab } from '$lib/services/navigation';
+  import { videoPlatforms } from '$lib/services/video-platforms';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 </script>

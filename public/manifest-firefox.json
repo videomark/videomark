@@ -31,9 +31,7 @@
     "unlimitedStorage",
     "declarativeNetRequestWithHostAccess"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_icon": "images/icons/disabled.png"
   },
@@ -52,9 +50,7 @@
         "*://pr.iij.ad.jp/*",
         "*://*.netflix.com/*"
       ],
-      "js": [
-        "scripts/content.js"
-      ],
+      "js": ["scripts/content.js"],
       "all_frames": true
     }
   ],

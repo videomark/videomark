@@ -1,8 +1,8 @@
 <script>
-  import PlatformList from '$lib/pages/common/platform-list.svelte';
-  import { viewingHistory } from '$lib/services/history';
   import { Button, Icon } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
+  import PlatformList from '$lib/pages/common/platform-list.svelte';
+  import { viewingHistory } from '$lib/services/history';
 </script>
 
 <div class="empty">
@@ -12,7 +12,7 @@
   </div>
   {#if $viewingHistory?.length}
     <footer>
-      <Button on:click={() => location.replace('#/popup')}>
+      <Button on:click={() => window.location.replace('#/popup')}>
         <Icon slot="start-icon" name="arrow_back" />
         {$_('popup.backToHistory')}
       </Button>

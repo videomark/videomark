@@ -1,16 +1,19 @@
 // @ts-check
-import GeneralTypeHandler from "./GeneralTypeHandler";
-import { AdObserver } from "./AdObserver";
+import { AdObserver } from './AdObserver';
+import GeneralTypeHandler from './GeneralTypeHandler';
 
 /* あまり有用な情報は取り出せない */
 export default class AbemaTVVideoTypeHandler extends GeneralTypeHandler {
   /** @param {HTMLVideoElement} elm */
   constructor(elm) {
     super(elm);
-    if (!this.is_main_video(elm)) throw new Error("video is not main");
-    const target = document.querySelector(
-      ".c-vod-EpisodePlayerContainer-screen"
-    );
+
+    if (!this.is_main_video(elm)) {
+      throw new Error('video is not main');
+    }
+
+    const target = document.querySelector('.c-vod-EpisodePlayerContainer-screen');
+
     this.adObserver = new AdObserver(this, target);
   }
 
@@ -26,12 +29,12 @@ export default class AbemaTVVideoTypeHandler extends GeneralTypeHandler {
   }
 
   get_id_by_video_holder() {
-    return "";
+    return '';
   }
 
   is_main_video(video) {
     try {
-      const [main] = Array.from(document.querySelectorAll("video"))
+      const [main] = Array.from(document.querySelectorAll('video'))
         .filter((e) => e.src.length !== 0)
         .filter((e) => /^blob:http\S:\/\/abema.tv/.test(e.src));
 
@@ -44,10 +47,9 @@ export default class AbemaTVVideoTypeHandler extends GeneralTypeHandler {
   is_cm() {
     try {
       const ad = Array.from(
-        document.querySelectorAll(
-          ".c-vod-EpisodePlayerContainer-screen--playing-ad"
-        )
+        document.querySelectorAll('.c-vod-EpisodePlayerContainer-screen--playing-ad'),
       );
+
       return ad.length !== 0;
     } catch (e) {
       return false;

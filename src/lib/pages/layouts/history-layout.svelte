@@ -1,6 +1,6 @@
 <script>
-  import Wordmark from '$lib/pages/common/wordmark.svelte';
   import { Spacer } from '@sveltia/ui';
+  import Wordmark from '$lib/pages/common/wordmark.svelte';
 </script>
 
 <div class="wrapper">
