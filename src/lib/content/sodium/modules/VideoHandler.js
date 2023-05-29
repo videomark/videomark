@@ -1,17 +1,17 @@
-import ParaviTypeHandler from "./ParaviTypeHandler";
-import TVerTypeHandler from "./TVerTypeHandler";
-import YouTubeTypeHandler from "./YouTubeTypeHandler";
-import NicoVideoTypeHandler from "./NicoVideoTypeHandler";
-import NicoLiveTypeHandler from "./NicoLiveTypeHandler";
-import FodTypeHandler from "./FodTypeHandler";
-import NHKOndemandTypeHandler from "./NHKOndemandTypeHandler";
-import DTVTypeHandler from "./DTVTypeHandler";
-import AbemaTVVideoTypeHandler from "./AbemaTVVideoTypeHandler";
-import AbemaTVLiveTypeHandler from "./AbemaTVLiveTypeHandler";
-import AbemaTVLiveEventTypeHandler from "./AbemaTVLiveEventTypeHandler";
-import AmazonPrimeVideoTypeHandler from "./AmazonPrimeVideoTypeHandler";
-import IIJTypeHandler from "./IIJTypeHandler";
-import NetflixTypeHandler from "./NetflixTypeHandler";
+import AbemaTVLiveEventTypeHandler from './AbemaTVLiveEventTypeHandler';
+import AbemaTVLiveTypeHandler from './AbemaTVLiveTypeHandler';
+import AbemaTVVideoTypeHandler from './AbemaTVVideoTypeHandler';
+import AmazonPrimeVideoTypeHandler from './AmazonPrimeVideoTypeHandler';
+import DTVTypeHandler from './DTVTypeHandler';
+import FodTypeHandler from './FodTypeHandler';
+import IIJTypeHandler from './IIJTypeHandler';
+import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
+import NetflixTypeHandler from './NetflixTypeHandler';
+import NicoLiveTypeHandler from './NicoLiveTypeHandler';
+import NicoVideoTypeHandler from './NicoVideoTypeHandler';
+import ParaviTypeHandler from './ParaviTypeHandler';
+import TVerTypeHandler from './TVerTypeHandler';
+import YouTubeTypeHandler from './YouTubeTypeHandler';
 
 export default class VideoHandler {
   constructor(elm) {
@@ -23,81 +23,78 @@ export default class VideoHandler {
     if (ParaviTypeHandler.is_paravi_type()) {
       this.handler = ParaviTypeHandler;
       this.calQoeFlg = true;
-      this.service = "paravi";
-      console.log("Paravi Type Handler");
+      this.service = 'paravi';
+      console.log('Paravi Type Handler');
     } else if (TVerTypeHandler.is_tver_type()) {
       this.handler = TVerTypeHandler;
       this.calQoeFlg = true;
-      this.service = "tver";
-      console.log("TVer Type Handler");
+      this.service = 'tver';
+      console.log('TVer Type Handler');
     } else if (YouTubeTypeHandler.is_youtube_type()) {
       this.handler = new YouTubeTypeHandler(elm);
       this.calQoeFlg = true;
-      this.service = "youtube";
-      console.log("YouTube Type Handler");
-    } else if (url.host === "www.nicovideo.jp") {
+      this.service = 'youtube';
+      console.log('YouTube Type Handler');
+    } else if (url.host === 'www.nicovideo.jp') {
       this.handler = new NicoVideoTypeHandler(elm);
-      this.service = "nicovideo";
-      console.log("NicoVideo Type Handler");
+      this.service = 'nicovideo';
+      console.log('NicoVideo Type Handler');
     } else if (/live\d.nicovideo.jp/.test(url.host)) {
       this.handler = new NicoLiveTypeHandler(elm);
-      this.service = "nicolive";
-      console.log("NicoLive Type Handler");
-    } else if (url.host === "i.fod.fujitv.co.jp") {
+      this.service = 'nicolive';
+      console.log('NicoLive Type Handler');
+    } else if (url.host === 'i.fod.fujitv.co.jp') {
       this.handler = new FodTypeHandler(elm);
-      this.service = "fod";
-      console.log("Fod Type Handler");
-    } else if (url.host === "www.nhk-ondemand.jp") {
+      this.service = 'fod';
+      console.log('Fod Type Handler');
+    } else if (url.host === 'www.nhk-ondemand.jp') {
       this.handler = new NHKOndemandTypeHandler(elm);
-      this.service = "nhkondemand";
-      console.log("NHK Ondemand Type Handler");
+      this.service = 'nhkondemand';
+      console.log('NHK Ondemand Type Handler');
     } else if (/\S+.video.dmkt-sp.jp/.test(url.host)) {
       this.handler = new DTVTypeHandler(elm);
-      this.service = "dtv";
-      console.log("dTV Type Handler");
-    } else if (url.host === "abema.tv") {
-      if (url.pathname.split("/").indexOf("video") >= 0) {
+      this.service = 'dtv';
+      console.log('dTV Type Handler');
+    } else if (url.host === 'abema.tv') {
+      if (url.pathname.split('/').indexOf('video') >= 0) {
         this.handler = new AbemaTVVideoTypeHandler(elm);
-        this.service = "abematv_video";
-        console.log("Abema TV Video Type Handler");
-      } else if (
-        url.pathname.split("/").some((name) => name === "now-on-air")
-      ) {
+        this.service = 'abematv_video';
+        console.log('Abema TV Video Type Handler');
+      } else if (url.pathname.split('/').some((name) => name === 'now-on-air')) {
         this.handler = new AbemaTVLiveTypeHandler(elm);
-        this.service = "abematv_live";
+        this.service = 'abematv_live';
         this.calQoeFlg = true;
-        console.log("Abema TV Live Type Handler");
-      } else if (
-        url.pathname.split("/").some((name) => name === "live-event")
-      ) {
+        console.log('Abema TV Live Type Handler');
+      } else if (url.pathname.split('/').some((name) => name === 'live-event')) {
         this.handler = new AbemaTVLiveEventTypeHandler(elm);
-        this.service = "abematv_live_event";
+        this.service = 'abematv_live_event';
         this.calQoeFlg = true;
-        console.log("Abema TV Live Event Type Handler");
+        console.log('Abema TV Live Event Type Handler');
       } else {
-        throw new Error("AbemaTV ignores top page and unknown page video.");
+        throw new Error('AbemaTV ignores top page and unknown page video.');
       }
-    } else if (url.host === "www.amazon.co.jp") {
+    } else if (url.host === 'www.amazon.co.jp') {
       this.handler = new AmazonPrimeVideoTypeHandler(elm);
-      this.service = "amazonprimevideo";
-      console.log("Amazon Prime Video Type Handler");
-    } else if (url.host === "pr.iij.ad.jp") {
+      this.service = 'amazonprimevideo';
+      console.log('Amazon Prime Video Type Handler');
+    } else if (url.host === 'pr.iij.ad.jp') {
       this.handler = new IIJTypeHandler(elm);
       this.calQoeFlg = true;
-      this.service = "iijtwilightconcert";
-      console.log("IIJ Type Handler");
+      this.service = 'iijtwilightconcert';
+      console.log('IIJ Type Handler');
     } else if (/(www\.)?netflix.com/.test(url.host)) {
       this.handler = new NetflixTypeHandler(elm);
       this.calQoeFlg = true;
-      this.service = "netflix";
-      console.log("Netflix Type Handler");
+      this.service = 'netflix';
+      console.log('Netflix Type Handler');
     } else {
-      throw new Error("Unknown Type Handler");
+      throw new Error('Unknown Type Handler');
     }
   }
 
   get_duration() {
     const duration = this.handler.get_duration();
+
     return duration && Number.isFinite(duration) ? duration : -1;
   }
 
@@ -116,8 +113,9 @@ export default class VideoHandler {
   get_video_bitrate() {
     let videoBitrate = -1;
 
-    if (this.handler.get_video_bitrate instanceof Function)
+    if (this.handler.get_video_bitrate instanceof Function) {
       videoBitrate = this.handler.get_video_bitrate();
+    }
 
     return videoBitrate;
   }
@@ -125,10 +123,11 @@ export default class VideoHandler {
   get_receive_buffer() {
     let receive = -1;
 
-    if (this.handler instanceof IIJTypeHandler)
+    if (this.handler instanceof IIJTypeHandler) {
       receive = IIJTypeHandler.get_receive_buffer();
-    else if (this.handler.get_receive_buffer instanceof Function)
+    } else if (this.handler.get_receive_buffer instanceof Function) {
       receive = this.handler.get_receive_buffer();
+    }
 
     return receive;
   }
@@ -152,24 +151,34 @@ export default class VideoHandler {
   get_video_title() {
     let title;
 
-    if (this.handler.get_video_title instanceof Function)
+    if (this.handler.get_video_title instanceof Function) {
       title = this.handler.get_video_title();
+    }
 
     if (!title) {
       const og_title = document.querySelector("meta[property='og:title']");
-      if (og_title) title = og_title.content;
 
-      if (!title) ({ title } = document);
-
-      let separator = -1;
-      if (title.indexOf("｜") !== -1) {
-        separator = title.indexOf("｜");
-      } else if (title.indexOf("|") !== -1) {
-        separator = title.indexOf("|");
+      if (og_title) {
+        title = og_title.content;
       }
 
-      if (separator !== -1) title = title.substr(0, separator).trim();
-      else title = title.trim();
+      if (!title) {
+        ({ title } = document);
+      }
+
+      let separator = -1;
+
+      if (title.indexOf('｜') !== -1) {
+        separator = title.indexOf('｜');
+      } else if (title.indexOf('|') !== -1) {
+        separator = title.indexOf('|');
+      }
+
+      if (separator !== -1) {
+        title = title.substr(0, separator).trim();
+      } else {
+        title = title.trim();
+      }
     }
 
     return title;
@@ -178,10 +187,15 @@ export default class VideoHandler {
   get_video_thumbnail() {
     let thumbnail;
 
-    if (this.handler.get_video_thumbnail instanceof Function)
+    if (this.handler.get_video_thumbnail instanceof Function) {
       thumbnail = this.handler.get_video_thumbnail();
+    }
+
     const og_image = document.querySelector("meta[property='og:image']");
-    if (!thumbnail && og_image) thumbnail = og_image.content;
+
+    if (!thumbnail && og_image) {
+      thumbnail = og_image.content;
+    }
 
     return thumbnail;
   }
@@ -189,8 +203,9 @@ export default class VideoHandler {
   get_id_by_video_holder() {
     let id_by_video_holder;
 
-    if (this.handler.get_id_by_video_holder instanceof Function)
+    if (this.handler.get_id_by_video_holder instanceof Function) {
       id_by_video_holder = this.handler.get_id_by_video_holder();
+    }
 
     return id_by_video_holder;
   }
@@ -198,8 +213,9 @@ export default class VideoHandler {
   get_view_count() {
     let view_count = -1;
 
-    if (this.handler.get_view_count instanceof Function)
+    if (this.handler.get_view_count instanceof Function) {
       view_count = this.handler.get_view_count();
+    }
 
     return view_count;
   }
@@ -207,10 +223,11 @@ export default class VideoHandler {
   get_play_list_info() {
     let list = [];
 
-    if (this.handler instanceof YouTubeTypeHandler)
+    if (this.handler instanceof YouTubeTypeHandler) {
       list = YouTubeTypeHandler.get_play_list_info();
-    else if (this.handler.get_play_list_info instanceof Function)
+    } else if (this.handler.get_play_list_info instanceof Function) {
       list = this.handler.get_play_list_info();
+    }
 
     return list;
   }
@@ -218,10 +235,11 @@ export default class VideoHandler {
   get_throughput_info() {
     let list = [];
 
-    if (this.handler instanceof YouTubeTypeHandler)
+    if (this.handler instanceof YouTubeTypeHandler) {
       list = YouTubeTypeHandler.get_throughput_info();
-    else if (this.handler.get_throughput_info instanceof Function)
+    } else if (this.handler.get_throughput_info instanceof Function) {
       list = this.handler.get_throughput_info();
+    }
 
     return list;
   }
@@ -229,10 +247,11 @@ export default class VideoHandler {
   get_codec_info() {
     let info = {};
 
-    if (this.handler instanceof YouTubeTypeHandler)
+    if (this.handler instanceof YouTubeTypeHandler) {
       info = YouTubeTypeHandler.get_codec_info();
-    else if (this.handler.get_codec_info instanceof Function)
+    } else if (this.handler.get_codec_info instanceof Function) {
       info = this.handler.get_codec_info();
+    }
 
     return info;
   }
@@ -240,10 +259,11 @@ export default class VideoHandler {
   get_representation() {
     let representation = {};
 
-    if (this.handler instanceof YouTubeTypeHandler)
+    if (this.handler instanceof YouTubeTypeHandler) {
       representation = YouTubeTypeHandler.get_representation();
-    else if (this.handler.get_representation instanceof Function)
+    } else if (this.handler.get_representation instanceof Function) {
       representation = this.handler.get_representation();
+    }
 
     return representation;
   }
@@ -253,60 +273,76 @@ export default class VideoHandler {
   }
 
   get_total_frames(video) {
-    if (this.handler instanceof AbemaTVLiveTypeHandler)
+    if (this.handler instanceof AbemaTVLiveTypeHandler) {
       return this.handler.get_total_frames();
-    else return video.getVideoPlaybackQuality().totalVideoFrames;
+    }
+
+    return video.getVideoPlaybackQuality().totalVideoFrames;
   }
 
   get_dropped_frames(video) {
-    if (this.handler instanceof AbemaTVLiveTypeHandler)
+    if (this.handler instanceof AbemaTVLiveTypeHandler) {
       return this.handler.get_dropped_frames();
-    else return video.getVideoPlaybackQuality().droppedVideoFrames;
+    }
+
+    return video.getVideoPlaybackQuality().droppedVideoFrames;
   }
 
   is_main_video(video) {
-    if (this.handler.is_main_video instanceof Function)
+    if (this.handler.is_main_video instanceof Function) {
       return this.handler.is_main_video(video);
+    }
+
     return true;
   }
 
   is_cm(video) {
-    if (this.handler.is_cm instanceof Function)
+    if (this.handler.is_cm instanceof Function) {
       return this.handler.is_cm(video);
+    }
+
     return false;
   }
 
   is_limited() {
-    if (this.handler.is_limited instanceof Function)
+    if (this.handler.is_limited instanceof Function) {
       return this.handler.is_limited();
+    }
+
     return false;
   }
 
-  is_calculatable() {
+  is_calculable() {
     return this.calQoeFlg;
   }
 
   set_quality(bitrate) {
-    if (this.handler.set_quality instanceof Function)
+    if (this.handler.set_quality instanceof Function) {
       this.handler.set_quality(bitrate);
+    }
   }
 
   set_max_bitrate(bitrate, resolution) {
-    if (this.handler.set_max_bitrate instanceof Function)
+    if (this.handler.set_max_bitrate instanceof Function) {
       this.handler.set_max_bitrate(bitrate, resolution);
+    }
   }
 
   set_default_bitrate() {
-    if (this.handler.set_default_bitrate instanceof Function)
+    if (this.handler.set_default_bitrate instanceof Function) {
       this.handler.set_default_bitrate();
+    }
   }
 
   add_cm_listener(listener) {
-    if (this.handler.add_cm_listener instanceof Function)
+    if (this.handler.add_cm_listener instanceof Function) {
       this.handler.add_cm_listener(listener);
+    }
   }
 
   clear() {
-    if (this.handler.clear instanceof Function) this.handler.clear();
+    if (this.handler.clear instanceof Function) {
+      this.handler.clear();
+    }
   }
 }

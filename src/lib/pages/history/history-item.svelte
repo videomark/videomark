@@ -1,18 +1,18 @@
 <script>
+  import { Button, Icon } from '@sveltia/ui';
+  import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
-  import { Button, Icon } from '@sveltia/ui';
-  import { _ } from 'svelte-i18n';
 
   export let historyItem = {};
   export let horizontal = false;
 
   $: ({ key, url, title, thumbnail, startTime, qoe, isLowQuality } = historyItem || {});
 
-  const _openTab = async (url) => {
-    await openTab(url);
+  const _openTab = async (_url) => {
+    await openTab(_url);
 
     if (window.location.hash === '#/popup') {
       // ポップアップを閉じる

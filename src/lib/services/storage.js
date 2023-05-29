@@ -1,5 +1,5 @@
-import { isExtension, isVmBrowser } from '$lib/services/runtime';
 import { writable } from 'svelte/store';
+import { isExtension, isVmBrowser } from '$lib/services/runtime';
 
 /**
  * 現在のデータスキーマバージョン。

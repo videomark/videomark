@@ -13,8 +13,14 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install
-        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
+        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }
       - run: pnpm lint-report
         continue-on-error: true
-      - uses: ataylorme/eslint-annotate-action@1.1.2
-        with: { repo-token: "${{ github.token }}" }
+      - run: pnpm run lint:cspell
+      - run: pnpm run lint:svelte
+      - uses: wearerequired/lint-action@v2
+        with:
+          prettier: true
+          eslint: true
+          stylelint: true
+          stylelint_extensions: css,scss,svelte

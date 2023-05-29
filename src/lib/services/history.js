@@ -1,6 +1,6 @@
+import { derived, get, writable } from 'svelte/store';
 import { deleteHistoryItems, fetchFinalQoe, fetchViewerRegion } from '$lib/services/api';
 import { createStorageSync, storage } from '$lib/services/storage';
-import { derived, get, writable } from 'svelte/store';
 import { videoPlatforms } from './video-platforms';
 
 // 保持する最大履歴アイテム数
@@ -66,14 +66,16 @@ export const viewingHistory = writable(undefined, (set) => {
           region,
           transferSize,
           isLowQuality: !(droppedVideoFrames / totalVideoFrames <= 0.001),
-          qualityDetails: qualityDetails,
+          qualityDetails,
         };
       })
       .sort((a, b) => b.startTime - a.startTime);
 
     set(_viewingHistory);
 
+    // eslint-disable-next-line no-use-before-define
     await deleteScheduledItems();
+    // eslint-disable-next-line no-use-before-define
     await addMissingData();
   })();
 
@@ -163,6 +165,7 @@ export const deleteItemsNow = async (targetKeys) => {
 
     viewingHistory.update((history) => history.filter(({ key }) => !targetKeys.includes(key)));
   } catch (ex) {
+    // eslint-disable-next-line no-console
     console.error(`VIDEOMARK: ${ex}`);
   }
 };
@@ -172,6 +175,7 @@ export const deleteItemsNow = async (targetKeys) => {
  */
 export const deleteScheduledItems = async () => {
   const items = get(viewingHistory);
+
   const targetKeys = [
     ...((await get(deletedHistoryItemKeys)) || []),
     ...items.slice(0, items.length - maxItems).map(({ key }) => key),
@@ -188,17 +192,18 @@ export const deleteScheduledItems = async () => {
 const addMissingData = async () => {
   get(viewingHistory).forEach(async ({ key, id, sessionId, qoe, canCalc, region }, index) => {
     if ((qoe === undefined || qoe === -1) && canCalc) {
+      // eslint-disable-next-line no-param-reassign
       [{ qoe } = {}] = (await fetchFinalQoe([{ videoId: id, sessionId }])) || [];
     }
 
     if (!region) {
+      // eslint-disable-next-line no-param-reassign
       region = await fetchViewerRegion(id, sessionId);
     }
 
     if (qoe || region) {
       viewingHistory.update((history) => {
-        history[index].qoe = qoe;
-        history[index].region = region;
+        Object.assign(history[index], { qoe, region });
 
         return history;
       });

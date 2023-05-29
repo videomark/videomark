@@ -1,9 +1,9 @@
 <script>
+  import { onMount } from 'svelte';
   import PopupLayout from '$lib/pages/layouts/popup-layout.svelte';
   import PopupHistory from '$lib/pages/popup/popup-history.svelte';
   import PopupPlatformList from '$lib/pages/popup/popup-platform-list.svelte';
   import { viewingHistory } from '$lib/services/history';
-  import { onMount } from 'svelte';
 
   let currentPage = 'history';
 

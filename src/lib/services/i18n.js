@@ -11,9 +11,9 @@ export const initAppLocales = () => {
   const modules = import.meta.glob('../locales/*.js', { eager: true });
 
   Object.entries(modules).forEach(([path, { strings }]) => {
-    const [, locale] = path.match(/([a-zA-Z-]+)\.js/);
+    const [, _locale] = path.match(/([a-zA-Z-]+)\.js/);
 
-    addMessages(locale, strings);
+    addMessages(_locale, strings);
   });
 
   const config = {
@@ -35,6 +35,7 @@ export const initAppLocales = () => {
  */
 export const formatDateTime = (date, { full = false } = {}) => {
   if (!(date instanceof Date)) {
+    // eslint-disable-next-line no-param-reassign
     date = new Date(date);
   }
 

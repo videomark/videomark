@@ -9,7 +9,6 @@
   $: results = $viewingHistory.filter((historyItem) => {
     const { title, platformId, startTime, qoe, region } = historyItem;
     const { country = '', subdivision = '' } = region ?? {};
-
     const date = new Date(startTime);
 
     if (

@@ -24,8 +24,8 @@ export const getHourlyQoe = async (hour) => {
     }
 
     cachedHourlyQoe.push(
-      ...results.map(({ hour, average }) => ({
-        hour,
+      ...results.map(({ hour: _hour, average }) => ({
+        hour: _hour,
         average: Number(average.toFixed(2)),
       })),
     );
