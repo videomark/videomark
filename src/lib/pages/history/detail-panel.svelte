@@ -1,4 +1,6 @@
 <script>
+  import { Button, Drawer, Group, Icon } from '@sveltia/ui';
+  import { _, locale } from 'svelte-i18n';
   import QualityBar from '$lib/pages/history/quality-bar.svelte';
   import { getHourlyQoe, getRegionalQoe } from '$lib/services/aggregations';
   import {
@@ -9,8 +11,6 @@
   } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { openTab } from '$lib/services/navigation';
-  import { Button, Drawer, Group, Icon } from '@sveltia/ui';
-  import { _, locale } from 'svelte-i18n';
 
   export let open = false;
   export let historyItems = [];

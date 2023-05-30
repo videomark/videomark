@@ -9,18 +9,18 @@ export default class Config {
   static async readPlatformInfo() {
     this.mobile = await new Promise((resolve) => {
       const listener = (event) => {
-        if (
-          event.data.type !== "CONTENT_SCRIPT_JS" ||
-          event.data.method !== "get_platform_info"
-        )
+        if (event.data.type !== 'CONTENT_SCRIPT_JS' || event.data.method !== 'get_platform_info') {
           return;
-        window.removeEventListener("message", listener);
-        resolve(event.data.platformInfo.os === "android");
+        }
+
+        window.removeEventListener('message', listener);
+        resolve(event.data.platformInfo.os === 'android');
       };
-      window.addEventListener("message", listener);
+
+      window.addEventListener('message', listener);
       window.postMessage({
-        method: "get_platform_info",
-        type: "FROM_SODIUM_JS",
+        method: 'get_platform_info',
+        type: 'FROM_SODIUM_JS',
       });
     });
   }
@@ -30,7 +30,7 @@ export default class Config {
   }
 
   static isMobileScreen() {
-    return this.isMobile() && screen.orientation.type.startsWith("portrait");
+    return this.isMobile() && window.screen.orientation.type.startsWith('portrait');
   }
 
   static get_collect_interval() {
@@ -66,12 +66,18 @@ export default class Config {
   }
 
   static get_ui_target(platform) {
-    if (platform in this.ui) return this.ui[platform].target;
+    if (platform in this.ui) {
+      return this.ui[platform].target;
+    }
+
     return this.ui.general.target;
   }
 
   static get_style(platform) {
-    if (platform in this.ui) return this.ui[platform].style;
+    if (platform in this.ui) {
+      return this.ui[platform].style;
+    }
+
     return this.ui.general.style;
   }
 
@@ -116,15 +122,18 @@ export default class Config {
   }
 
   static save_settings(new_settings) {
-    if (!new_settings || !Object.keys(new_settings).length) return;
+    if (!new_settings || !Object.keys(new_settings).length) {
+      return;
+    }
+
     this.settings = { ...this.settings, ...new_settings };
     window.postMessage(
       {
-        method: "save_settings",
-        type: "FROM_SODIUM_JS",
+        method: 'save_settings',
+        type: 'FROM_SODIUM_JS',
         new_settings,
       },
-      "*"
+      '*',
     );
   }
 
@@ -149,15 +158,14 @@ export default class Config {
   }
 
   static get_resolution_control() {
-    const {
-      resolution_control_enabled,
-      resolution_control,
-    } = this.get_settings();
+    const { resolution_control_enabled, resolution_control } = this.get_settings();
+
     return resolution_control_enabled ? resolution_control : undefined;
   }
 
   static get_bitrate_control() {
     const { bitrate_control_enabled, bitrate_control } = this.get_settings();
+
     return bitrate_control_enabled ? bitrate_control : undefined;
   }
 
@@ -169,19 +177,26 @@ export default class Config {
       browser_quota,
       browser_quota_bitrate,
     } = this.get_settings();
-    if (!control_by_traffic_volume) return undefined;
+
+    if (!control_by_traffic_volume) {
+      return undefined;
+    }
 
     const now = new Date();
-    const month = `${now.getFullYear()}-${new Intl.NumberFormat("en-US", {
+
+    const month = `${now.getFullYear()}-${new Intl.NumberFormat('en-US', {
       minimumIntegerDigits: 2,
     }).format(now.getMonth() + 1)}`;
+
     const transfer_size = this.get_transfer_size();
+
     const browser_quota_value /* byte */ = browser_quota
       ? browser_quota /* MiB */ * 1024 * 1024
       : Infinity;
+
     const browser_quota_full =
-      control_by_browser_quota &&
-      browser_quota_value < (transfer_size[month] || 0);
+      control_by_browser_quota && browser_quota_value < (transfer_size[month] || 0);
+
     const os_quota_full = control_by_os_quota;
 
     return browser_quota_bitrate && (browser_quota_full || os_quota_full)
@@ -193,11 +208,11 @@ export default class Config {
     this.alive = alive;
     window.postMessage(
       {
-        method: "set_alive",
-        type: "FROM_SODIUM_JS",
+        method: 'set_alive',
+        type: 'FROM_SODIUM_JS',
         alive,
       },
-      "*"
+      '*',
     );
   }
 
@@ -209,17 +224,20 @@ export default class Config {
     this.ui_enabled = await new Promise((resolve) => {
       const listener = (event) => {
         if (
-          event.data.type !== "CONTENT_SCRIPT_JS" ||
-          event.data.method !== "get_display_on_player"
-        )
+          event.data.type !== 'CONTENT_SCRIPT_JS' ||
+          event.data.method !== 'get_display_on_player'
+        ) {
           return;
-        window.removeEventListener("message", listener);
+        }
+
+        window.removeEventListener('message', listener);
         resolve(event.data.displayOnPlayer);
       };
-      window.addEventListener("message", listener);
+
+      window.addEventListener('message', listener);
       window.postMessage({
-        method: "get_display_on_player",
-        type: "FROM_SODIUM_JS",
+        method: 'get_display_on_player',
+        type: 'FROM_SODIUM_JS',
       });
     });
   }
@@ -228,11 +246,11 @@ export default class Config {
     this.ui_enabled = enabled;
     window.postMessage(
       {
-        method: "set_display_on_player",
-        type: "FROM_SODIUM_JS",
+        method: 'set_display_on_player',
+        type: 'FROM_SODIUM_JS',
         enabled,
       },
-      "*"
+      '*',
     );
   }
 
@@ -243,6 +261,7 @@ export default class Config {
   static get_video_platform() {
     const matcher = this.video_platform_matcher(window.location);
     const match = this.video_platforms.find(matcher);
+
     return match && match.id;
   }
 
@@ -280,94 +299,95 @@ Config.max_log = 100;
 
 // 記録するイベントの種類のリスト
 Config.event_type_names = [
-  "play",
-  "pause",
-  "seeking",
-  "seeked",
-  "ended",
-  "stalled",
-  "progress",
-  "waiting",
-  "canplay",
+  'play',
+  'pause',
+  'seeking',
+  'seeked',
+  'ended',
+  'stalled',
+  'progress',
+  'waiting',
+  'canplay',
 ];
 
 // 動画配信サービス
 Config.video_platforms = [
   {
     // YouTube Mobile
-    id: "m_youtube_com",
+    id: 'm_youtube_com',
     host: /^m\.youtube\.com$/,
   },
   {
     // YouTube
-    id: "youtube",
+    id: 'youtube',
     host: /(^|[^m]\.)youtube\.com$/,
   },
   {
     // Paravi
-    id: "paravi",
+    id: 'paravi',
     host: /(^|\.)paravi\.jp$/,
   },
   {
     // TVer
-    id: "tver",
+    id: 'tver',
     host: /(^|\.)tver\.jp$/,
   },
   {
     // FOD
-    id: "fod",
+    id: 'fod',
     host: /^(i\.)?fod\.fujitv\.co\.jp$/,
   },
   {
     // ニコニコ動画
-    id: "nicovideo",
+    id: 'nicovideo',
     host: /^www\.nicovideo\.jp$/,
   },
   {
     // ニコニコ生放送
-    id: "nicolive",
+    id: 'nicolive',
     host: /^live\d\.nicovideo\.jp$/,
   },
   {
     // NHKオンデマンド
-    id: "nhkondemand",
+    id: 'nhkondemand',
     host: /^www\.nhk-ondemand\.jp$/,
   },
   {
     // dTV
-    id: "dtv",
+    id: 'dtv',
     host: /\.video\.dmkt-sp\.jp$/,
   },
   {
     // AbemaTV, Abemaビデオ
-    id: "abematv",
+    id: 'abematv',
     host: /^abema\.tv$/,
   },
   {
     // Amazon Prime Video
-    id: "amazonprimevideo",
+    id: 'amazonprimevideo',
     host: /^www\.amazon\.co\.jp$/,
   },
   {
     // IIJ TWILIGHT CONCERT
-    id: "iijtwilightconcert",
+    id: 'iijtwilightconcert',
     host: /^pr\.iij\.ad\.jp$/,
   },
   {
     // Netflix
-    id: "netflix",
+    id: 'netflix',
     host: /(^|\.)netflix\.com$/,
   },
 ];
 
-Config.video_platform_matcher = ({ host }) => (platform) => {
-  return platform.host.test(host);
-};
+Config.video_platform_matcher =
+  ({ host }) =>
+  (platform) =>
+    platform.host.test(host);
 
 // 表示用
 Config.ui = {
-  id: "__videomark_ui",
-  style_id: "__videomark_ui_style",
+  id: '__videomark_ui',
+  style_id: '__videomark_ui_style',
 };
 
 // デフォルトではvideoタグの親に挿入
@@ -389,12 +409,12 @@ Config.ui.general = {
 // m.youtube.com
 Config.ui.m_youtube_com = {
   ...Config.ui.general,
-  target: "#player-container-id",
+  target: '#player-container-id',
 };
 
 // YouTube
 Config.ui.youtube = {
-  target: "#movie_player",
+  target: '#movie_player',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -415,7 +435,7 @@ Config.ui.youtube = {
 // そのタイミングでは .vjs-user-active でもコントロールが隠れることに注意
 // .video-js 要素は複数あるので #playerWrapper 配下のものに限定する
 Config.ui.tver = {
-  target: "#playerWrapper > .video-js",
+  target: '#playerWrapper > .video-js',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -433,7 +453,7 @@ Config.ui.tver = {
 // Paravi ではコントロール非表示時に .(in)active を .controls に付与
 // .controls 要素は複数あるので .paravi-player 配下のものに限定する
 Config.ui.paravi = {
-  target: ".paravi-player .controls",
+  target: '.paravi-player .controls',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -448,13 +468,13 @@ Config.ui.paravi = {
 
 Config.ui.fod = {
   ...Config.ui.general,
-  target: "#fod_player, #video_container",
+  target: '#fod_player, #video_container',
 };
 
 // ニコニコ動画ではコメントより前面になるよう配置
 Config.ui.nicovideo = {
   ...Config.ui.general,
-  target: ".VideoContainer",
+  target: '.VideoContainer',
 };
 
 // TODO: ニコニコ生放送
@@ -508,7 +528,7 @@ Config.ui.abematv = {
 
 // Amazon Prime Video
 Config.ui.amazonprimevideo = {
-  target: Config.isMobile() ? "#dv-web-player" : ".scalingUiContainerBottom",
+  target: Config.isMobile() ? '#dv-web-player' : '.scalingUiContainerBottom',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -536,7 +556,7 @@ Config.ui.iijtwilightconcert = {
 
 // Netflix
 Config.ui.netflix = {
-  target: "body",
+  target: 'body',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -583,35 +603,30 @@ Config.max_count_for_qoe = 20; // 27000ms
 Config.quality_control = false;
 
 if (Config.isVMBrowser()) {
-  window.sodium.storage.local.get("session", ({ session }) => {
+  window.sodium.storage.local.get('session', ({ session }) => {
     Config.session = session || {};
   });
-  window.sodium.storage.local.get("settings", ({ settings }) => {
+  window.sodium.storage.local.get('settings', ({ settings }) => {
     Config.settings = settings || {};
   });
-  window.sodium.storage.local.get("transfer_size", ({ transfer_size }) => {
+  window.sodium.storage.local.get('transfer_size', ({ transfer_size }) => {
     Config.transfer_size = transfer_size || {};
   });
-  window.sodium.storage.local.get("peak_time_limit", ({ peak_time_limit }) => {
+  window.sodium.storage.local.get('peak_time_limit', ({ peak_time_limit }) => {
     Config.peak_time_limit = peak_time_limit || {};
   });
-} else if (document.currentScript != null) {
+} else if (document.currentScript !== null) {
   // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
-  const session = Object.fromEntries(
-    new URLSearchParams(document.currentScript.dataset.session)
-  );
+  const session = Object.fromEntries(new URLSearchParams(document.currentScript.dataset.session));
+
   Config.session = {
     ...session,
     expires: Number(session.expires),
   };
 
   Config.settings = JSON.parse(document.currentScript.dataset.settings);
-  Config.transfer_size = JSON.parse(
-    document.currentScript.dataset.transfer_size
-  );
-  Config.peak_time_limit = JSON.parse(
-    document.currentScript.dataset.peak_time_limit
-  );
+  Config.transfer_size = JSON.parse(document.currentScript.dataset.transfer_size);
+  Config.peak_time_limit = JSON.parse(document.currentScript.dataset.peak_time_limit);
 }
 
 // デフォルトのセッション保持期間

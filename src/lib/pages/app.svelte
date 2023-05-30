@@ -1,13 +1,13 @@
 <script>
+  import { AppShell } from '@sveltia/ui';
+  import { onMount } from 'svelte';
+  import { isLoading, locale } from 'svelte-i18n';
   import History from '$lib/pages/routes/history.svelte';
   import Onboarding from '$lib/pages/routes/onboarding.svelte';
   import Popup from '$lib/pages/routes/popup.svelte';
   import Settings from '$lib/pages/routes/settings.svelte';
   import { initAppLocales } from '$lib/services/i18n';
   import { selectedPageName } from '$lib/services/navigation';
-  import { AppShell } from '@sveltia/ui';
-  import { onMount } from 'svelte';
-  import { isLoading, locale } from 'svelte-i18n';
 
   const pages = {
     history: History,
@@ -49,7 +49,7 @@
     --video-background-color: #111; // !hardcoded
   }
 
-  button.secondary {
+  :global(button.secondary) {
     color: var(--highlight-foreground-color) !important;
   }
 </style>

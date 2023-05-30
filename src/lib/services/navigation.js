@@ -14,6 +14,7 @@ export const openTab = async (url) => {
     return;
   }
 
+  // eslint-disable-next-line no-param-reassign
   url = chrome.runtime.getURL(url.replace(/^#/, '/index.html#'));
 
   const [currentTab] = await chrome.tabs.query({

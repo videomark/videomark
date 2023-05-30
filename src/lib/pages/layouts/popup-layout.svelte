@@ -1,6 +1,6 @@
 <script>
-  import Wordmark from '$lib/pages/common/wordmark.svelte';
   import { onMount } from 'svelte';
+  import Wordmark from '$lib/pages/common/wordmark.svelte';
 
   // ポップアップのサイズを調整
   onMount(() => {

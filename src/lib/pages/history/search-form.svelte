@@ -1,21 +1,21 @@
 <script>
-  import { searchCriteria, viewingHistoryRegions } from '$lib/services/history';
-  import { videoPlatforms } from '$lib/services/video-platforms';
   import { Button, Checkbox, Icon, SearchBar, Slider, Toolbar } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { searchCriteria, viewingHistoryRegions } from '$lib/services/history';
+  import { videoPlatforms } from '$lib/services/video-platforms';
 
   let startDateInput;
   let endDateInput;
 
   $: {
     if (endDateInput && $searchCriteria.dates) {
-      endDateInput.min = $searchCriteria.dates[0];
+      [endDateInput.min] = $searchCriteria.dates;
     }
   }
 
   $: {
     if (startDateInput && $searchCriteria.dates) {
-      startDateInput.max = $searchCriteria.dates[1];
+      [, startDateInput.max] = $searchCriteria.dates;
     }
   }
 </script>

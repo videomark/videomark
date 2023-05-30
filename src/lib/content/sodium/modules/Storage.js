@@ -23,25 +23,30 @@ export class Storage {
       await this.init();
       this.initialized = true;
     }
+
     Object.assign(this.cache, attributes);
     window.postMessage(
       {
-        type: "FROM_SODIUM_JS",
-        method: "set_video",
+        type: 'FROM_SODIUM_JS',
+        method: 'set_video',
         id: this.id,
         video: this.cache,
       },
-      "*"
+      '*',
     );
+
     return this.cache;
   }
 }
 
 const state = {};
+
 export const useStorage = ({ sessionId, videoId }) => {
   const id = `${sessionId}_${videoId}`;
+
   if (!(state[id] instanceof Storage)) {
     state[id] = new Storage({ sessionId, videoId });
   }
+
   return state[id];
 };
