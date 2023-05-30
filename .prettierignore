@@ -2,3 +2,4 @@ node_modules
 /dist
 pnpm-lock.yaml
 eslint_report.json
+/public/manifest*.json

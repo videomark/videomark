@@ -1,13 +1,14 @@
 #!/bin/bash
 # extension に含まれる manifest.json のバージョンアップ
-# 要: jq, lerna
+# 要: jq
 set -euo pipefail
 cd -- "$(dirname -- "$0")/.."
-export VIDEOMARK_VERSION=${VIDEOMARK_VERSION:-$(jq -r .version lerna.json)}
+export VIDEOMARK_VERSION=${VIDEOMARK_VERSION:-$(node -pe 'require("./package.json").version')}
 version() {
-  jq .version=env.VIDEOMARK_VERSION manifest.json \
-    > manifest.json.tmp
-  mv manifest.json{.tmp,}
+  echo "$(jq .version=env.VIDEOMARK_VERSION public/manifest.json)" \
+    >public/manifest.json
+  echo "$(jq .version=env.VIDEOMARK_VERSION public/manifest-firefox.json)" \
+    >public/manifest-firefox.json
   echo "${VIDEOMARK_VERSION}"
 }
 version

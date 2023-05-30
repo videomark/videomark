@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_NAME=WebVideoMark
-VERSION=`grep version lerna.json | awk -F \" '{print $4}'`
+VERSION=$(node -pe 'require("./package.json").version')
 EXTENSION_ZIP=webvideomark-safari-extension.zip
 
 PUBLISH_DIR=dist/safari

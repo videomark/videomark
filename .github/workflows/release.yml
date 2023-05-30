@@ -27,7 +27,7 @@ jobs:
         run: |
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git config user.name "${GITHUB_ACTOR}"
-          pnpm lerna version --yes "${{ github.event.inputs.version }}"
+          pnpm version "${{ github.event.inputs.version }}"
       - run: pnpm build
       - name: Browser Platform Publish
         uses: PlasmoHQ/bpp@v3
