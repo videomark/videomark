@@ -120,6 +120,7 @@
   });
 
   $: $session.type = getSessionType($session.id);
+  $: $session.expires = Date.now() + $settings.expires_in;
 </script>
 
 <HistoryLayout>
