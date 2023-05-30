@@ -36,5 +36,3 @@ jobs:
           keys: ${{ secrets.BPP_KEYS }}
           chrome-file: dist/videomark.zip
           firefox-file: dist/videomark-firefox.zip
-          version-file: dist/production/manifest.json
-          verbose: true
