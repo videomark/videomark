@@ -618,18 +618,24 @@ if (Config.isVMBrowser()) {
   window.sodium.storage.local.get('peak_time_limit', ({ peak_time_limit }) => {
     Config.peak_time_limit = peak_time_limit || {};
   });
-} else if (document.currentScript !== null) {
+}
+
+const currentScript = Config.isVMBrowser()
+  ? null
+  : document.querySelector(`script[type="module"][src="${import.meta.url}"]`);
+
+if (currentScript !== null) {
   // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
-  const session = Object.fromEntries(new URLSearchParams(document.currentScript.dataset.session));
+  const session = Object.fromEntries(new URLSearchParams(currentScript.dataset.session));
 
   Config.session = {
     ...session,
     expires: Number(session.expires),
   };
 
-  Config.settings = JSON.parse(document.currentScript.dataset.settings);
-  Config.transfer_size = JSON.parse(document.currentScript.dataset.transfer_size);
-  Config.peak_time_limit = JSON.parse(document.currentScript.dataset.peak_time_limit);
+  Config.settings = JSON.parse(currentScript.dataset.settings);
+  Config.transfer_size = JSON.parse(currentScript.dataset.transfer_size);
+  Config.peak_time_limit = JSON.parse(currentScript.dataset.peak_time_limit);
 }
 
 // デフォルトのセッション保持期間
