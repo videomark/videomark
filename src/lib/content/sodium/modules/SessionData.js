@@ -172,31 +172,46 @@ export default class SessionData {
    * @param {HTMLCollection} elms
    */
   set_video_elms(elms) {
-    Array.prototype.forEach.call(elms, (elm) => {
-      if (!this.video.find((e) => e.video_elm === elm)) {
-        const video_id = uuidv4();
+    const video = [];
 
-        try {
-          const new_video = new VideoData(elm, video_id);
+    Array.from(elms).forEach((elm) => {
+      // 有効期限内かつソースの変わらない既存の要素はそのまま
+      const v = this.video.find(
+        (e) =>
+          e.is_stay() &&
+          e.video_elm === elm &&
+          !(e.get_start_time() + Config.max_video_ttl < Date.now()),
+      );
 
-          new_video.read_settings();
-          console.log(`VIDEOMARK: new video found uuid[${video_id}]`);
-          set_max_bitrate(new_video);
-          this.video.push(new_video);
-        } catch (err) {
-          // どのタイプでもない
-        }
+      if (v) {
+        video.push(v);
+
+        return;
+      }
+
+      // 新しい要素の追加
+      const video_id = uuidv4();
+
+      try {
+        const new_video = new VideoData(elm, video_id);
+
+        new_video.read_settings();
+        console.log(`VIDEOMARK: new video found uuid[${video_id}]`);
+        set_max_bitrate(new_video);
+        video.push(new_video);
+      } catch (err) {
+        // どのタイプでもない
       }
     });
 
-    const removing = this.video.filter(
-      (e) => !Array.prototype.find.call(elms, (elm) => elm === e.video_elm) || !e.is_stay(),
-    );
-
-    removing.forEach((e) => {
-      e.clear();
-      this.video.splice(this.video.indexOf(e), 1);
+    // 存在しない要素を除去
+    this.video.forEach((currentVideo) => {
+      if (!video.some((v) => v.get_video_id() === currentVideo.get_video_id())) {
+        currentVideo.clear();
+      }
     });
+
+    this.video = video;
   }
 
   async start() {

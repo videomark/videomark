@@ -280,6 +280,9 @@ Config.collect_interval = 1 * 1000;
 // videoタグ検索インターバル(ミリ秒単位)
 Config.search_video_interval = 1 * 1000;
 
+// videoの有効な最大時間(ミリ秒単位)
+Config.max_video_ttl = 60 * 60 * 1000;
+
 // fluentd サーバーのエンドポイント
 Config.fluent_url = import.meta.env.SODIUM_FLUENT_URL;
 
