@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Web VideoMark",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
   "author": "WebDINO Japan",
   "homepage_url": "http://videomark.webdino.org/",
@@ -31,7 +31,9 @@
     "unlimitedStorage",
     "declarativeNetRequestWithHostAccess"
   ],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "action": {
     "default_icon": "images/icons/disabled.png"
   },
@@ -50,7 +52,9 @@
         "*://pr.iij.ad.jp/*",
         "*://*.netflix.com/*"
       ],
-      "js": ["scripts/content.js"],
+      "js": [
+        "scripts/content.js"
+      ],
       "all_frames": true
     }
   ],
@@ -59,8 +63,13 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["scripts/sodium.js", "assets/*"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "scripts/sodium.js",
+        "assets/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }
