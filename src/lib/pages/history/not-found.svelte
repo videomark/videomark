@@ -1,6 +1,7 @@
 <script>
   import { Button } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
+  import { openTab } from '$lib/services/navigation';
 
   export let searchTerms = '';
 </script>
@@ -11,11 +12,11 @@
   {#if searchTerms}
     <div>
       <Button
-        class="primary pill"
+        class="primary pill close-popup"
         on:click={() => {
-          window.location.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-            searchTerms,
-          )}`;
+          openTab(
+            `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerms)}`,
+          );
         }}
       >
         {$_('history.search.notFound.search')}

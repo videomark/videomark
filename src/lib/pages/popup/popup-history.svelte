@@ -10,74 +10,78 @@
   let searchTerms = '';
   let playingVideos = [];
 
-  $: previousVideos = $viewingHistory.filter(({ id }) => !playingVideos.find((v) => v.id === id));
-  $: searchResults = previousVideos.filter(({ title }) =>
-    searchTerms ? title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase()) : true,
-  );
+  $: history = $viewingHistory
+    // Remove duplicates
+    .filter((item, index, arr) => arr.findIndex(({ url }) => url === item.url) === index);
+  $: previousVideos = history.filter(({ id }) => !playingVideos.find((v) => v.id === id));
+  $: searchResults = previousVideos
+    .filter(({ title }) =>
+      searchTerms ? title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase()) : true,
+    )
+    // Use the latest 10 items
+    .slice(0, 10);
 
   onMount(() => {
     (async () => {
       const tabUrls = (await chrome.tabs.query({ currentWindow: true })).map(({ url }) => url);
 
-      playingVideos = $viewingHistory.filter((item) => tabUrls.includes(item.url));
+      playingVideos = history.filter((item) => tabUrls.includes(item.url));
     })();
   });
 </script>
 
-<div class="history">
-  {#if playingVideos.length}
-    <section>
-      <header>
-        <h2>{$_('popup.playing')}</h2>
-      </header>
+{#if playingVideos.length}
+  <section class="playing">
+    <header>
+      <h2>{$_('popup.playing')}</h2>
+    </header>
+    <div class="items">
+      {#each playingVideos as historyItem (historyItem.id)}
+        <HistoryItem {historyItem} horizontal={true} />
+      {/each}
+    </div>
+  </section>
+{/if}
+{#if previousVideos.length}
+  <section class="recent">
+    <header>
+      <h2>{$_('popup.recent')}</h2>
+      <SearchBar placeholder={$_('history.search.input')} bind:value={searchTerms} />
+    </header>
+    {#if searchResults.length}
       <div class="items">
-        {#each playingVideos as historyItem, index (historyItem.id)}
-          {#if playingVideos.findIndex(({ url }) => url === historyItem.url) === index}
-            <HistoryItem {historyItem} horizontal={true} />
-          {/if}
+        {#each searchResults as historyItem (historyItem.id)}
+          <HistoryItem {historyItem} horizontal={true} />
         {/each}
       </div>
-    </section>
-  {/if}
-  {#if previousVideos.length}
-    <section>
-      <header>
-        <h2>{$_('popup.recent')}</h2>
-        <SearchBar placeholder={$_('history.search.input')} bind:value={searchTerms} />
-      </header>
-      {#if searchResults.length}
-        <div class="items">
-          {#each searchResults as historyItem, index (historyItem.id)}
-            {#if searchResults.findIndex(({ url }) => url === historyItem.url) === index}
-              <HistoryItem {historyItem} horizontal={true} />
-            {/if}
-          {/each}
-        </div>
-      {:else}
-        <NotFound {searchTerms} --image-width="160px" />
-      {/if}
-    </section>
-  {/if}
-  <footer>
-    <Button
-      on:click={async () => {
-        await openTab('#/history');
-        // ポップアップを閉じる
-        window.close();
-      }}
-    >
-      <Icon name="history" />
-      {$_('popup.seeAll')}
-    </Button>
-    <Button on:click={() => window.location.replace('#/popup/platforms')}>
-      <Icon name="subscriptions" />
-      {$_('popup.compatiblePlatforms.title')}
-    </Button>
-  </footer>
-</div>
+    {:else}
+      <NotFound {searchTerms} --image-width="160px" />
+    {/if}
+  </section>
+{/if}
+<footer>
+  <Button class="close-popup" on:click={() => openTab('#/history')}>
+    <Icon name="history" />
+    {$_('popup.seeAll')}
+  </Button>
+  <Button on:click={() => window.location.replace('#/popup/platforms')}>
+    <Icon name="subscriptions" />
+    {$_('popup.compatiblePlatforms.title')}
+  </Button>
+</footer>
 
 <style lang="scss">
-  .history {
+  section {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &.playing:not(:only-of-type) {
+      flex: none;
+      max-height: 192px;
+    }
+
     :global(.not-found) {
       padding: 32px;
     }
@@ -91,6 +95,7 @@
 
   header,
   footer {
+    flex: none;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -102,6 +107,8 @@
   }
 
   footer {
+    margin: auto 0 0;
+
     :global(button) {
       font-size: var(--font-size--small);
     }
@@ -113,7 +120,8 @@
   }
 
   .items {
-    overflow: hidden;
+    flex: auto;
+    overflow: auto;
 
     & > :global(div) {
       margin: 8px;
