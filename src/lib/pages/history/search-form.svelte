@@ -146,22 +146,34 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+    width: 560px;
 
     :global(.sui.toolbar) {
-      justify-content: flex-start;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 4px;
       width: 100%;
+      height: auto;
+      min-height: var(--toolbar-size);
+      white-space: nowrap;
 
       :global(.sui.button.medium) {
         gap: 0;
         --button--medium--padding: 0 8px;
       }
     }
+
+    @media (max-width: 1023px) {
+      order: 1;
+      width: 100%;
+    }
   }
 
   .terms {
+    width: 100%;
+
     :global(.search-bar) {
-      width: 560px;
+      width: 100%;
       --input--medium--border-radius: 32px;
     }
   }
