@@ -1,8 +1,8 @@
 <script>
-  import PopupPlatformList from '$lib/pages/popup/popup-platform-list.svelte';
-  import { getBrowserName } from '$lib/services/runtime';
   import { onMount } from 'svelte';
   import { _, json, locale } from 'svelte-i18n';
+  import PlatformList from '$lib/pages/common/platform-list.svelte';
+  import { getBrowserName } from '$lib/services/runtime';
 
   let browserName = 'chrome';
 
@@ -15,7 +15,7 @@
   <div class="col">
     <section>
       <h2>{$_('history.empty')}</h2>
-      <PopupPlatformList />
+      <PlatformList />
     </section>
   </div>
   <div class="col">
@@ -45,8 +45,17 @@
     gap: 64px;
     min-height: 400px;
 
+    @media (max-width: 1023px) {
+      flex-direction: column;
+    }
+
     .col {
       width: calc(50% - 16px);
+
+      @media (max-width: 1023px) {
+        width: 100%;
+        max-width: 640px;
+      }
     }
   }
 

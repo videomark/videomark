@@ -8,7 +8,8 @@ export default class GeneralTypeHandler {
   }
 
   get_duration() {
-    const duration = this.elm.duration;
+    const { duration } = this.elm;
+
     return duration && Number.isFinite(duration) ? duration : -1;
   }
 
@@ -30,12 +31,15 @@ export default class GeneralTypeHandler {
 
   get_receive_buffer() {
     let ret = -1;
+
     try {
       const { buffered } = this.elm;
+
       ret = buffered.end(buffered.length - 1);
     } catch (e) {
       // do nothing
     }
+
     return ret;
   }
 
@@ -52,15 +56,15 @@ export default class GeneralTypeHandler {
   }
 
   get_video_title() {
-    return "";
+    return '';
   }
 
   get_video_thumbnail() {
-    return "";
+    return '';
   }
 
   get_id_by_video_holder() {
-    return "";
+    return '';
   }
 
   get_view_count() {
@@ -113,17 +117,25 @@ export default class GeneralTypeHandler {
   set_quality() {}
 
   add_cm_listener(listener) {
-    if (this.adObserver == null) return;
+    if (this.adObserver === null) {
+      return;
+    }
+
     /** @param {import("./AdObserver").AdEvent} event */
     function handler(event) {
       const { showing: cm, playPos: pos, dateTime: time } = event;
+
       listener.call(null, { cm, pos, time });
     }
+
     this.adObserver.on(handler);
   }
 
   clear() {
-    if (this.adObserver == null) return;
+    if (this.adObserver === null) {
+      return;
+    }
+
     this.adObserver.removeAllListeners();
   }
 }

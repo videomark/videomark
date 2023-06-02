@@ -1,8 +1,8 @@
 <script>
-  import { openTab } from '$lib/services/navigation';
-  import { videoPlatforms } from '$lib/services/video-platforms';
   import { Button, Group } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { openTab } from '$lib/services/navigation';
+  import { videoPlatforms } from '$lib/services/video-platforms';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 </script>
@@ -10,14 +10,17 @@
 <Group class="buttons" aria-label={$_('platformList.title')}>
   <div class="buttons">
     {#each videoPlatforms.filter(({ experimental, deprecated }) => !(experimental || deprecated)) as { id, url } (id)}
-      <Button class="secondary pill" on:click={() => openTab(url)}>
+      <Button class="secondary pill close-popup" on:click={() => openTab(url)}>
         {$_(`platforms.${id}`)}
       </Button>
     {/each}
   </div>
 </Group>
 <div class="limitations">
-  <Button class="link" on:click={() => openTab(`${SODIUM_MARKETING_SITE_URL}/${$locale}/spec`)}>
+  <Button
+    class="link close-popup"
+    on:click={() => openTab(`${SODIUM_MARKETING_SITE_URL}/${$locale}/spec`)}
+  >
     {$_('platformList.limitations')}
   </Button>
 </div>

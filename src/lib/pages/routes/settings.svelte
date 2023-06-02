@@ -1,13 +1,13 @@
 <script>
+  import { Button, Checkbox, Dialog, Icon, Option, Select, Switch } from '@sveltia/ui';
+  import { onMount } from 'svelte';
+  import { _, locale } from 'svelte-i18n';
   import HistoryLayout from '$lib/pages/layouts/history-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
   import { openTab } from '$lib/services/navigation';
   import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
   import { defaultSettings, settings } from '$lib/services/settings';
   import { storage } from '$lib/services/storage';
-  import { Button, Checkbox, Dialog, Icon, Option, Select, Switch } from '@sveltia/ui';
-  import { onMount } from 'svelte';
-  import { _, locale } from 'svelte-i18n';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
@@ -109,15 +109,18 @@
 
     // 自動計測向けのセッション ID の設定機能
     const sessionId = new URLSearchParams(window.location.search).get('session_id');
+
     if (sessionId) {
       // NOTE: オーバーフロー無く十分に長い適当な期間
       const expiresIn = 10 * 365 * 24 * 60 * 60 * 1000;
+
       await overwritePersonalSession(sessionId, expiresIn);
-      settings.update((loadedSettings) => ({ ...(loadedSettings ?? {}), expires_in: expiresIn }));
+      settings.update((_settings) => ({ ...(_settings ?? {}), expires_in: expiresIn }));
     }
   });
 
   $: $session.type = getSessionType($session.id);
+  $: $session.expires = Date.now() + $settings.expires_in;
 </script>
 
 <HistoryLayout>
@@ -158,7 +161,9 @@
         on:click={(e) => {
           // 自動計測向けのセッション ID の設定機能
           if (e.detail === 3) {
+            // eslint-disable-next-line no-alert
             const sessionId = window.prompt($_('settings.personalSessionPrompt'))?.trim();
+
             if (sessionId) {
               window.location.search = `?${new URLSearchParams({
                 session_id: sessionId,

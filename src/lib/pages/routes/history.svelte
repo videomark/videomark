@@ -1,4 +1,6 @@
 <script>
+  import { Button, Icon } from '@sveltia/ui';
+  import { _ } from 'svelte-i18n';
   import DetailPanel from '$lib/pages/history/detail-panel.svelte';
   import SearchForm from '$lib/pages/history/search-form.svelte';
   import SearchResults from '$lib/pages/history/search-results.svelte';
@@ -7,8 +9,6 @@
   import NoHistory from '$lib/pages/onboarding/no-history.svelte';
   import { viewingHistory } from '$lib/services/history';
   import { openTab } from '$lib/services/navigation';
-  import { Button, Icon } from '@sveltia/ui';
-  import { _ } from 'svelte-i18n';
 
   let historyItems = [];
   let showDialog = false;

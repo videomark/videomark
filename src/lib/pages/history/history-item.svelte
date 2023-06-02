@@ -1,24 +1,15 @@
 <script>
+  import { Button, Icon } from '@sveltia/ui';
+  import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
-  import { Button, Icon } from '@sveltia/ui';
-  import { _ } from 'svelte-i18n';
 
   export let historyItem = {};
   export let horizontal = false;
 
   $: ({ key, url, title, thumbnail, startTime, qoe, isLowQuality } = historyItem || {});
-
-  const _openTab = async (url) => {
-    await openTab(url);
-
-    if (window.location.hash === '#/popup') {
-      // ポップアップを閉じる
-      window.close();
-    }
-  };
 </script>
 
 <div class="item" class:horizontal>
@@ -52,11 +43,11 @@
     </div>
   </div>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="actions" on:click|stopPropagation={() => _openTab(url)}>
+  <div class="actions close-popup" on:click|stopPropagation={() => openTab(url)}>
     <Button
-      class="primary"
+      class="primary close-popup"
       on:click={(event) => {
-        _openTab(url);
+        openTab(url);
         event.stopPropagation();
       }}
     >
@@ -64,13 +55,13 @@
       {$_('history.detail.playAgain')}
     </Button>
     <Button
-      class="secondary"
+      class="secondary close-popup"
       on:click={(event) => {
         const keys = $settings.show_duplicate_videos
           ? [key]
           : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
 
-        _openTab(`#/history/${keys.join(',')}`);
+        openTab(`#/history/${keys.join(',')}`);
         event.stopPropagation();
       }}
     >

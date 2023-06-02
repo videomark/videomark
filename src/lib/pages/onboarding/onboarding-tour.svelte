@@ -1,7 +1,7 @@
 <script>
-  import { storage } from '$lib/services/storage';
   import { Button, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
   const pages = ['visualize', 'dropdown', 'history', 'privacy'];
@@ -81,9 +81,18 @@
     gap: 64px;
     min-height: 400px;
 
+    @media (max-width: 1023px) {
+      flex-direction: column;
+    }
+
     .col:last-of-type {
       flex: none;
       width: 40%;
+
+      @media (max-width: 1023px) {
+        width: 100%;
+        max-width: 640px;
+      }
     }
   }
 
@@ -111,6 +120,7 @@
 
   img {
     width: 100%;
+    max-width: 560px;
   }
 
   .extra {

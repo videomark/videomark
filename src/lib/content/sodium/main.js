@@ -1,73 +1,71 @@
-import Config from "./modules/Config";
-import UI from "./modules/UI";
-import { jsonParseSafe } from "./modules/Utils";
-import SessionData from "./modules/SessionData";
-import VideoData from "./modules/VideoData";
-import { qualityStatus } from "./modules/Quality";
-import YouTubeTypeHandler from "./modules/YouTubeTypeHandler";
-import ParaviTypeHandler from "./modules/ParaviTypeHandler";
-import IIJTypeHandler from "./modules/IIJTypeHandler";
+/* eslint-disable no-use-before-define */
 
-const get_ui_target = () => {
-  return Config.isMobileScreen() ? window.top : window;
-};
+import Config from './modules/Config';
+import IIJTypeHandler from './modules/IIJTypeHandler';
+import ParaviTypeHandler from './modules/ParaviTypeHandler';
+import { qualityStatus } from './modules/Quality';
+import SessionData from './modules/SessionData';
+import UI from './modules/UI';
+import { jsonParseSafe } from './modules/Utils';
+import VideoData from './modules/VideoData';
+import YouTubeTypeHandler from './modules/YouTubeTypeHandler';
 
+const get_ui_target = () => (Config.isMobileScreen() ? window.top : window);
 // モバイル表示のyoutubeで、動画ページからトップなどに移動すると
 // 計測uiが表示されたままになってしまうのを回避するため
 // window.topの場合、active_frame_idはurlではなく固有のidにする
-const get_frame_id = () => {
-  return window.top === window ? "#top" : window.location.href;
-};
+const get_frame_id = () => (window.top === window ? '#top' : window.location.href);
 
 const update_ui = (state) => {
-  const status =
-    state && state.sessionId && state.videoId ? qualityStatus(state) : {};
+  const status = state && state.sessionId && state.videoId ? qualityStatus(state) : {};
+
   get_ui_target().postMessage(
     {
-      type: "FROM_WEB_CONTENT",
-      method: "update_ui",
+      type: 'FROM_WEB_CONTENT',
+      method: 'update_ui',
       frame_id: get_frame_id(),
-      state: state,
+      state,
       qualityStatus: status,
     },
-    "*"
+    '*',
   );
 };
 
 const remove_ui = () => {
   get_ui_target().postMessage(
-    { type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() },
-    "*"
+    { type: 'FROM_WEB_CONTENT', method: 'remove_ui', frame_id: get_frame_id() },
+    '*',
   );
 };
 
 const update_alive = (alive) => {
   get_ui_target().postMessage(
     {
-      type: "FROM_WEB_CONTENT",
-      method: "update_alive",
+      type: 'FROM_WEB_CONTENT',
+      method: 'update_alive',
       frame_id: get_frame_id(),
-      alive: alive,
+      alive,
     },
-    "*"
+    '*',
   );
 };
 
 const remove_ui_all = () => {
   window.postMessage(
-    { type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() },
-    "*"
+    { type: 'FROM_WEB_CONTENT', method: 'remove_ui', frame_id: get_frame_id() },
+    '*',
   );
   window.top.postMessage(
-    { type: "FROM_WEB_CONTENT", method: "remove_ui", frame_id: get_frame_id() },
-    "*"
+    { type: 'FROM_WEB_CONTENT', method: 'remove_ui', frame_id: get_frame_id() },
+    '*',
   );
 };
 
 (async () => {
   // --- support --- //
   if (!document || !window) {
-    console.warn("VIDEOMARK: NOT supported");
+    console.warn('VIDEOMARK: NOT supported');
+
     return;
   }
 
@@ -90,33 +88,31 @@ const remove_ui_all = () => {
   let collect_interval_id;
 
   // --- UI event --- //
-  window.addEventListener("message", (event) => {
-    const data =
-      typeof event.data === "string" ? jsonParseSafe(event.data) : event.data;
-    if (
-      !["FROM_WEB_CONTENT", "FROM_ANDROID_UI", "FROM_EXTENSION_POPUP"].includes(
-        data.type
-      )
-    )
-      return;
+  window.addEventListener('message', (event) => {
+    const data = typeof event.data === 'string' ? jsonParseSafe(event.data) : event.data;
 
-    if (data.method === "update_ui") {
+    if (!['FROM_WEB_CONTENT', 'FROM_ANDROID_UI', 'FROM_EXTENSION_POPUP'].includes(data.type)) {
+      return;
+    }
+
+    if (data.method === 'update_ui') {
       ui.update_status(data.state, data.qualityStatus);
     }
 
     // fodの通常表示でも無関係なフレームの監視をやめさせて、再生中を正しく判定させるため
     // 計測中のフレームを全フレームに伝達する
-    if (data.method === "notice_active_frame") {
+    if (data.method === 'notice_active_frame') {
       active_frame_id = data.frame_id;
+
       if (window.top === window) {
         Array.from(window.frames).forEach((frame) => {
           frame.postMessage(
             {
-              type: "FROM_WEB_CONTENT",
-              method: "notice_active_frame",
+              type: 'FROM_WEB_CONTENT',
+              method: 'notice_active_frame',
               frame_id: data.frame_id,
             },
-            "*"
+            '*',
           );
         });
       }
@@ -125,19 +121,17 @@ const remove_ui_all = () => {
     // 計測対象の動画があるフレームからのメッセージの場合だけ計測uiを消去する
     // 関係ないフレームもsession.get_video_availability()で動画がないと判定し、計測uiを消去させようとするが
     // 動画フレーム特定後は、関係ないフレームの状態監視は不要になるため停止させる
-    if (data.method === "remove_ui") {
+    if (data.method === 'remove_ui') {
       if (active_frame_id === data.frame_id) {
         ui.remove_element();
       } else if (active_frame_id !== undefined) {
-        event.source.postMessage(
-          { type: data.type, method: "clear_interval" },
-          "*"
-        );
+        event.source.postMessage({ type: data.type, method: 'clear_interval' }, '*');
       }
     }
 
-    if (data.method === "display_ui") {
+    if (data.method === 'display_ui') {
       Config.set_ui_enabled(data.enabled);
+
       if (session.get_video_availability()) {
         if (data.enabled) {
           update_ui();
@@ -149,45 +143,45 @@ const remove_ui_all = () => {
       // androidのメニューからではwindow.topにしかメッセージを送れないので、フレームにも伝達させる
       if (window.top === window) {
         Array.from(window.frames).forEach((frame) => {
-          frame.postMessage(
-            { type: data.type, method: data.method, enabled: data.enabled },
-            "*"
-          );
+          frame.postMessage({ type: data.type, method: data.method, enabled: data.enabled }, '*');
         });
       }
     }
 
     // 計測中のフレームは計測uiの表示制御を行う
     // それ以外のフレームは監視ループは停止させられる
-    if (data.method === "update_alive") {
+    if (data.method === 'update_alive') {
       if (active_frame_id === data.frame_id) {
         Config.set_alive(data.alive);
+
         // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-        if (!data.alive) ui.remove_element();
+        if (!data.alive) {
+          ui.remove_element();
+        }
       } else if (active_frame_id !== undefined) {
-        event.source.postMessage(
-          { type: data.type, method: "clear_interval" },
-          "*"
-        );
+        event.source.postMessage({ type: data.type, method: 'clear_interval' }, '*');
       }
     }
 
     // 状態監視を停止する
-    if (data.method === "clear_interval") {
+    if (data.method === 'clear_interval') {
       window.clearInterval(search_video_interval_id);
       window.clearInterval(collect_interval_id);
-      if (Config.isMobile())
-        screen.orientation.removeEventListener("change", remove_ui_all);
+
+      if (Config.isMobile()) {
+        window.screen.orientation.removeEventListener('change', remove_ui_all);
+      }
     }
   });
 
   if (Config.isMobile()) {
     // 再表示は次回更新時を待つ
-    screen.orientation.addEventListener("change", remove_ui_all);
+    window.screen.orientation.addEventListener('change', remove_ui_all);
   }
 
   // --- New Session --- //
   const session = new SessionData();
+
   await session.init();
 
   // --- UI --- //
@@ -197,7 +191,8 @@ const remove_ui_all = () => {
   // --- update video list --- //
   search_video_interval_id = window.setInterval(() => {
     // video の検索と保持しているvideoの更新
-    const elms = document.getElementsByTagName("video");
+    const elms = document.getElementsByTagName('video');
+
     session.set_video_elms(elms);
     update_alive(session.get_video_availability());
   }, Config.get_search_video_interval());
@@ -205,27 +200,38 @@ const remove_ui_all = () => {
   // --- update latest qoe view element --- //
   collect_interval_id = window.setInterval(() => {
     // --- update quality info --- //
-    if (!session.get_video_availability()) return;
+    if (!session.get_video_availability()) {
+      return;
+    }
+
     session.update_quality_info();
 
     // --- show status  --- //
     const video = session.get_main_video();
-    if (!(video instanceof VideoData)) return;
+
+    if (!(video instanceof VideoData)) {
+      return;
+    }
 
     // 計測結果の更新があるフレームを記録する
     // ページ表示直後では、どのフレームに計測対象の動画があるかわからないので、計測結果の更新を待つことになる
     const frame_id = get_frame_id();
-    if (active_frame_id !== frame_id)
+
+    if (active_frame_id !== frame_id) {
       window.top.postMessage(
         {
-          type: "FROM_WEB_CONTENT",
-          method: "notice_active_frame",
-          frame_id: frame_id,
+          type: 'FROM_WEB_CONTENT',
+          method: 'notice_active_frame',
+          frame_id,
         },
-        "*"
+        '*',
       );
+    }
 
-    if (!Config.get_ui_enabled()) return;
+    if (!Config.get_ui_enabled()) {
+      return;
+    }
+
     update_ui({
       maxBitrate: video.max_bitrate,
       sessionId: session.get_session_id(),

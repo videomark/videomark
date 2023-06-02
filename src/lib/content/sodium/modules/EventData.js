@@ -28,11 +28,13 @@ export default class EventData {
    */
   get_delta() {
     let delta;
+
     if (this.time > this.last) {
       delta = this.time - this.last;
     } else {
       delta = this.time;
     }
+
     return {
       delta,
       dateTime: this.date_time,

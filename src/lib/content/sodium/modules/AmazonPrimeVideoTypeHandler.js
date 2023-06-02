@@ -1,34 +1,37 @@
 // @ts-check
-import GeneralTypeHandler from "./GeneralTypeHandler";
-import { AdObserver } from "./AdObserver";
+import { AdObserver } from './AdObserver';
+import GeneralTypeHandler from './GeneralTypeHandler';
 
 export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
   /** @param {HTMLVideoElement} elm */
   constructor(elm) {
     super(elm);
-    if (!this.is_main_video(elm)) throw new Error("video is not main");
-    this.adObserver = new AdObserver(this, elm, ["style"]);
+
+    if (!this.is_main_video(elm)) {
+      throw new Error('video is not main');
+    }
+
+    this.adObserver = new AdObserver(this, elm, ['style']);
   }
 
   get_video_title() {
     try {
-      return [...document.querySelectorAll(".contentTitlePanel > *")]
+      return [...document.querySelectorAll('.contentTitlePanel > *')]
         .map((e) => e.textContent)
-        .join(", ");
+        .join(', ');
     } catch (e) {
-      return "";
+      return '';
     }
   }
 
   get_video_thumbnail() {
     try {
       // @ts-expect-error
-      const { src } = document.querySelector(
-        ".dv-fallback-packshot-image > img"
-      );
+      const { src } = document.querySelector('.dv-fallback-packshot-image > img');
+
       return src;
     } catch (e) {
-      return "";
+      return '';
     }
   }
 
@@ -43,24 +46,27 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
 
   is_cm() {
     try {
-      return getComputedStyle(this.elm).visibility !== "visible";
+      return getComputedStyle(this.elm).visibility !== 'visible';
     } catch {
       return false;
     }
   }
 
   set_max_bitrate(bitrate, resolution) {
-    if (!Number.isFinite(resolution)) return;
+    if (!Number.isFinite(resolution)) {
+      return;
+    }
 
-    const setting =
-      localStorage.getItem("atvwebplayersdk_data_saver_setting") || "best";
+    const setting = localStorage.getItem('atvwebplayersdk_data_saver_setting') || 'best';
+
     const current = AmazonPrimeVideoTypeHandler.qualityLabelTable.find(
-      (row) => row.quality === setting
+      (row) => row.quality === setting,
     );
 
     const selectedQuality = AmazonPrimeVideoTypeHandler.qualityLabelTable.find(
-      (row) => row.resolution <= resolution
+      (row) => row.resolution <= resolution,
     );
+
     const selected =
       selectedQuality ||
       AmazonPrimeVideoTypeHandler.qualityLabelTable[
@@ -68,20 +74,17 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
       ]; // 標準画質
 
     if (!current || current.resolution > selected.resolution) {
-      localStorage.setItem(
-        "atvwebplayersdk_data_saver_setting",
-        selected.quality
-      );
+      localStorage.setItem('atvwebplayersdk_data_saver_setting', selected.quality);
     }
   }
 
   set_default_bitrate() {
-    localStorage.setItem("atvwebplayersdk_data_saver_setting", "best");
+    localStorage.setItem('atvwebplayersdk_data_saver_setting', 'best');
   }
 }
 
 AmazonPrimeVideoTypeHandler.qualityLabelTable = [
-  { resolution: 1080, quality: "best" }, // 最高画質
-  { resolution: 720, quality: "better" }, // 高画質
-  { resolution: 480, quality: "good" }, // 標準画質
+  { resolution: 1080, quality: 'best' }, // 最高画質
+  { resolution: 720, quality: 'better' }, // 高画質
+  { resolution: 480, quality: 'good' }, // 標準画質
 ];

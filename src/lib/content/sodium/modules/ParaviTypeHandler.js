@@ -1,6 +1,6 @@
-import { parse } from "mpd-parser";
+import { parse } from 'mpd-parser';
 
-import Config from "./Config";
+import Config from './Config';
 
 export default class ParaviTypeHandler {
   static is_paravi_type() {
@@ -14,14 +14,12 @@ export default class ParaviTypeHandler {
         videojs.getAllPlayers()[0].bufferedEnd instanceof Function &&
         videojs.getAllPlayers()[0].duration instanceof Function &&
         videojs.getAllPlayers()[0].currentTime instanceof Function &&
-        videojs.getAllPlayers()[0].dash.shakaPlayer.getStats instanceof
-          Function &&
-        videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks instanceof
-          Function &&
-        videojs.getAllPlayers()[0].dash.shakaPlayer.getMediaElement instanceof
-          Function
-      )
+        videojs.getAllPlayers()[0].dash.shakaPlayer.getStats instanceof Function &&
+        videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks instanceof Function &&
+        videojs.getAllPlayers()[0].dash.shakaPlayer.getMediaElement instanceof Function
+      ) {
         return true;
+      }
 
       return false;
     } catch (e) {
@@ -30,9 +28,11 @@ export default class ParaviTypeHandler {
   }
 
   static async hook_paravi() {
-    // eslint-disable-next-line no-restricted-globals
-    const { host } = new URL(location.href);
-    if (host !== "www.paravi.jp") return;
+    const { host } = new URL(window.location.href);
+
+    if (host !== 'www.paravi.jp') {
+      return;
+    }
 
     ParaviTypeHandler.hook_paravi_request();
   }
@@ -48,20 +48,17 @@ export default class ParaviTypeHandler {
       this.addEventListener(`load`, (event) => {
         this.sodiumEnd = performance.now();
         this.sodiumEndDate = Date.now();
+
         try {
-          const contentType = this.getResponseHeader("content-type");
-          const [filename] = new URL(this.sodiumURL).pathname
-            .split("/")
-            .slice(-1);
-          if (
-            filename === "manifest.mpd" &&
-            contentType === "application/dash+xml"
-          ) {
+          const contentType = this.getResponseHeader('content-type');
+          const [filename] = new URL(this.sodiumURL).pathname.split('/').slice(-1);
+
+          if (filename === 'manifest.mpd' && contentType === 'application/dash+xml') {
             // manifest
 
             ParaviTypeHandler.sodiumAdaptiveFmts = parse(
-              String.fromCharCode.apply("", new Uint8Array(this.response)),
-              this.sodiumURL
+              String.fromCharCode.apply('', new Uint8Array(this.response)),
+              this.sodiumURL,
             );
           } else {
             this.sodiumEndUnplayedBuffer = ParaviTypeHandler.get_unplayed_buffer_size();
@@ -71,8 +68,7 @@ export default class ParaviTypeHandler {
                 url: this.sodiumURL,
                 downloadTime: Math.floor(this.sodiumEnd - this.sodiumStart),
                 throughput: Math.floor(
-                  ((event.loaded * 8) / (this.sodiumEnd - this.sodiumStart)) *
-                    1000
+                  ((event.loaded * 8) / (this.sodiumEnd - this.sodiumStart)) * 1000,
                 ),
                 downloadSize: Number.parseFloat(event.loaded),
                 start: this.sodiumStartDate,
@@ -88,63 +84,58 @@ export default class ParaviTypeHandler {
         }
 
         console.log(
-          `VIDEOMARK: load [URL: ${this.sodiumURL}, contents: ${
-            event.loaded
-          }, duration(ms): ${
+          `VIDEOMARK: load [URL: ${this.sodiumURL}, contents: ${event.loaded}, duration(ms): ${
             this.sodiumEnd - this.sodiumStart
           }, duration(Date): ${new Date(this.sodiumStartDate)} - ${new Date(
-            this.sodiumEndDate
+            this.sodiumEndDate,
           )}, UnplayedBufferSize: ${this.sodiumStartUnplayedBuffer} - ${
             this.sodiumEndUnplayedBuffer
           }, throughput: ${Math.floor(
-            ((event.loaded * 8) / (this.sodiumEnd - this.sodiumStart)) * 1000
-          )}, itag: ${this.sodiumItag}]`
+            ((event.loaded * 8) / (this.sodiumEnd - this.sodiumStart)) * 1000,
+          )}, itag: ${this.sodiumItag}]`,
         );
       });
+
       return origOpen.apply(this, args);
     };
+
     // eslint-disable-next-line func-names, prefer-arrow-callback
     XMLHttpRequest.prototype.send = function (...args) {
       this.sodiumStart = performance.now();
       this.sodiumStartDate = Date.now();
       this.sodiumStartUnplayedBuffer = ParaviTypeHandler.get_unplayed_buffer_size();
       this.sodiumItag = ParaviTypeHandler.get_video_representation_id();
+
       return origSend.apply(this, args);
     };
 
     const hookFunc = async (args) => {
       const [sodiumURL] = args;
       const sodiumItag = ParaviTypeHandler.get_video_representation_id();
-
       const sodiumStart = performance.now();
       const sodiumStartDate = Date.now();
       const sodiumStartUnplayedBuffer = ParaviTypeHandler.get_unplayed_buffer_size();
-
       // call origin
       const result = await origFetch(...args);
-
       // clone response
       const clone = result.clone();
-
       const sodiumEnd = performance.now();
       const sodiumEndDate = Date.now();
       const sodiumEndUnplayedBuffer = ParaviTypeHandler.get_unplayed_buffer_size();
-
-      const size = clone.headers.get("content-length") || 0;
+      const size = clone.headers.get('content-length') || 0;
 
       try {
-        const contentType = clone.headers.get("content-type");
-        const [filename] = new URL(sodiumURL).pathname.split("/").slice(-1);
-        if (
-          filename === "manifest.mpd" &&
-          contentType === "application/dash+xml"
-        ) {
+        const contentType = clone.headers.get('content-type');
+        const [filename] = new URL(sodiumURL).pathname.split('/').slice(-1);
+
+        if (filename === 'manifest.mpd' && contentType === 'application/dash+xml') {
           // manifest
 
           const data = await clone.arrayBuffer();
+
           ParaviTypeHandler.sodiumAdaptiveFmts = parse(
-            String.fromCharCode.apply("", new Uint8Array(data)),
-            sodiumURL
+            String.fromCharCode.apply('', new Uint8Array(data)),
+            sodiumURL,
           );
         } else {
           setTimeout(() => {
@@ -152,9 +143,7 @@ export default class ParaviTypeHandler {
             ParaviTypeHandler.add_throughput_history({
               url: sodiumURL,
               downloadTime: Math.floor(sodiumEnd - sodiumStart),
-              throughput: Math.floor(
-                ((size * 8) / (sodiumEnd - sodiumStart)) * 1000
-              ),
+              throughput: Math.floor(((size * 8) / (sodiumEnd - sodiumStart)) * 1000),
               downloadSize: Number.parseFloat(size),
               start: sodiumStartDate,
               startUnplayedBufferSize: sodiumStartUnplayedBuffer,
@@ -172,10 +161,10 @@ export default class ParaviTypeHandler {
         `VIDEOMARK: load [URL: ${sodiumURL}, contents: ${size}, duration(ms): ${
           sodiumEnd - sodiumStart
         }, duration(Date): ${new Date(sodiumStartDate)} - ${new Date(
-          sodiumEndDate
+          sodiumEndDate,
         )}, UnplayedBufferSize: ${sodiumStartUnplayedBuffer} - ${sodiumEndUnplayedBuffer}, throughput: ${Math.floor(
-          ((size * 8) / (sodiumEnd - sodiumStart)) * 1000
-        )}, itag: ${sodiumItag}]`
+          ((size * 8) / (sodiumEnd - sodiumStart)) * 1000,
+        )}, itag: ${sodiumItag}]`,
       );
 
       return result;
@@ -185,42 +174,57 @@ export default class ParaviTypeHandler {
   }
 
   static add_throughput_history(throughput) {
-    console.debug(
-      `add_throughput_history: downloadSize=${throughput.downloadSize}`
-    );
-    if (throughput.downloadSize <= 0) return;
+    console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`);
+
+    if (throughput.downloadSize <= 0) {
+      return;
+    }
+
     ParaviTypeHandler.throughputHistories.push(throughput);
     ParaviTypeHandler.throughputHistories = ParaviTypeHandler.throughputHistories.slice(
-      -Config.get_max_throughput_history_size()
+      -Config.get_max_throughput_history_size(),
     );
   }
 
   static get_unplayed_buffer_size() {
     let unplayedBufferSize;
+
     try {
       const received = ParaviTypeHandler.get_receive_buffer();
       const current = ParaviTypeHandler.get_current_time();
-      if (Number.isNaN(received) || Number.isNaN(current))
+
+      if (Number.isNaN(received) || Number.isNaN(current)) {
         throw new Error(`NaN`);
+      }
+
       unplayedBufferSize = (received - current) * 1000;
-      if (unplayedBufferSize < 0)
+
+      if (unplayedBufferSize < 0) {
         throw new Error(`unplayedBufferSize is negative value`);
+      }
     } catch (e) {
       unplayedBufferSize = 0;
     }
+
     return Math.floor(unplayedBufferSize);
   }
 
   static get_video_representation_id() {
     let id;
+
     try {
       const stat = videojs.getAllPlayers()[0].dash.shakaPlayer.getStats();
-      const video = stat.switchHistory.filter((e) => e.type === "video");
-      if (!video || video.length === 0) return null;
+      const video = stat.switchHistory.filter((e) => e.type === 'video');
+
+      if (!video || video.length === 0) {
+        return null;
+      }
+
       ({ id } = video[video.length - 1]);
     } catch (e) {
       /* DO NOTHING */
     }
+
     return id;
   }
 
@@ -235,16 +239,26 @@ export default class ParaviTypeHandler {
           fps: e.frameRate,
         }))
         .reduce((acc, cur) => {
-          if (acc.find((e) => e.bitrate === cur.bitrate)) return acc;
+          if (acc.find((e) => e.bitrate === cur.bitrate)) {
+            return acc;
+          }
+
           acc.push(cur);
+
           return acc;
         }, []);
+
       const formats = ParaviTypeHandler.sodiumAdaptiveFmts.playlists;
+
       return formats.reduce((acc, cur) => {
         const { id: representationId, fps } = table.find(
-          (e) => e.bitrate === cur.attributes.BANDWIDTH
+          (e) => e.bitrate === cur.attributes.BANDWIDTH,
         );
-        if (!representationId) return acc;
+
+        if (!representationId) {
+          return acc;
+        }
+
         const {
           attributes: {
             RESOLUTION: { width: videoWidth, height: videoHeight },
@@ -253,6 +267,7 @@ export default class ParaviTypeHandler {
           targetDuration: chunkDuration,
           segments: [{ resolvedUri }],
         } = cur;
+
         acc.push({
           representationId,
           bps,
@@ -262,6 +277,7 @@ export default class ParaviTypeHandler {
           chunkDuration: Math.floor(chunkDuration * 1000),
           serverIp: new URL(resolvedUri).host,
         });
+
         return acc;
       }, []);
     } catch (e) {
@@ -271,38 +287,37 @@ export default class ParaviTypeHandler {
 
   static get_throughput_info() {
     try {
-      const segmentFilter = ParaviTypeHandler.sodiumAdaptiveFmts.playlists.reduce(
-        (acc, cur) => {
-          try {
-            const {
-              segments: [{ resolvedUri }],
-              attributes: { BANDWIDTH: bitrate },
-            } = cur;
-            const url = new URL(resolvedUri);
-            acc.push({
-              prefix: `${url.origin}${url.pathname
-                .split("/")
-                .slice(0, -1)
-                .join("/")}`,
-              bitrate,
-            });
-          } catch (e) {
-            /* DO NOTHING */
-          }
-          return acc;
-        },
-        []
-      );
+      const segmentFilter = ParaviTypeHandler.sodiumAdaptiveFmts.playlists.reduce((acc, cur) => {
+        try {
+          const {
+            segments: [{ resolvedUri }],
+            attributes: { BANDWIDTH: bitrate },
+          } = cur;
+
+          const url = new URL(resolvedUri);
+
+          acc.push({
+            prefix: `${url.origin}${url.pathname.split('/').slice(0, -1).join('/')}`,
+            bitrate,
+          });
+        } catch (e) {
+          /* DO NOTHING */
+        }
+
+        return acc;
+      }, []);
 
       return ParaviTypeHandler.throughputHistories
         .splice(0, ParaviTypeHandler.throughputHistories.length)
         .filter((h) => segmentFilter.find((e) => h.url.includes(e.prefix)))
         .filter((h) => h.itag)
         .reduce((acc, cur) => {
-          if (!cur.itag) return acc;
-          const { bitrate } = segmentFilter.find((e) =>
-            cur.url.includes(e.prefix)
-          );
+          if (!cur.itag) {
+            return acc;
+          }
+
+          const { bitrate } = segmentFilter.find((e) => cur.url.includes(e.prefix));
+
           acc.push({
             downloadTime: cur.downloadTime,
             throughput: cur.throughput,
@@ -314,6 +329,7 @@ export default class ParaviTypeHandler {
             bitrate,
             representationId: cur.itag,
           });
+
           return acc;
         }, []);
     } catch (e) {
@@ -338,19 +354,25 @@ export default class ParaviTypeHandler {
   static get_bitrate() {
     const stat = videojs.getAllPlayers()[0].dash.shakaPlayer.getStats();
     const vt = videojs.getAllPlayers()[0].dash.shakaPlayer.getVariantTracks();
-    if (!stat || !vt) return null;
 
-    const audio = stat.switchHistory.filter((e) => e.type === "audio");
-    const video = stat.switchHistory.filter((e) => e.type === "video");
-    if (!audio || audio.length === 0 || !video || video.length === 0)
+    if (!stat || !vt) {
       return null;
+    }
+
+    const audio = stat.switchHistory.filter((e) => e.type === 'audio');
+    const video = stat.switchHistory.filter((e) => e.type === 'video');
+
+    if (!audio || audio.length === 0 || !video || video.length === 0) {
+      return null;
+    }
 
     const variant = vt.find(
-      (e) =>
-        e.audioId === audio[audio.length - 1].id &&
-        e.videoId === video[video.length - 1].id
+      (e) => e.audioId === audio[audio.length - 1].id && e.videoId === video[video.length - 1].id,
     );
-    if (!variant) return null;
+
+    if (!variant) {
+      return null;
+    }
 
     return variant.videoBandwidth;
   }
@@ -371,37 +393,41 @@ export default class ParaviTypeHandler {
     return document.domain;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  static get_current_time(video) {
+  static get_current_time() {
     // TVerのインターフェースと合わせる
     return videojs.getAllPlayers()[0].currentTime();
   }
 
   static set_max_bitrate(bitrate, resolution) {
-    if (!Number.isFinite(resolution)) return;
+    if (!Number.isFinite(resolution)) {
+      return;
+    }
 
     const settings = JSON.parse(
-      localStorage.getItem("settings") || '{"playbackRate":1,"quality":0}'
+      localStorage.getItem('settings') || '{"playbackRate":1,"quality":0}',
     );
+
     const current = settings.quality;
 
     const selectedQuality = ParaviTypeHandler.qualityLabelTable.find(
-      (row) => row.resolution <= resolution
+      (row) => row.resolution <= resolution,
     );
+
     const selected = selectedQuality ? selectedQuality.quality : 4; // さくさく
 
     if (current === 0 || current < selected) {
       settings.quality = selected;
-      localStorage.setItem("settings", JSON.stringify(settings));
+      localStorage.setItem('settings', JSON.stringify(settings));
     }
   }
 
   static set_default_bitrate() {
     const settings = JSON.parse(
-      localStorage.getItem("settings") || '{"playbackRate":1,"quality":0}'
+      localStorage.getItem('settings') || '{"playbackRate":1,"quality":0}',
     );
+
     settings.quality = 0;
-    localStorage.setItem("settings", JSON.stringify(settings));
+    localStorage.setItem('settings', JSON.stringify(settings));
   }
 }
 

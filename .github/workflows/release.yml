@@ -22,12 +22,13 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true" }
+        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }
       - name: Bump version
         run: |
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git config user.name "${GITHUB_ACTOR}"
-          pnpm lerna version --yes "${{ github.event.inputs.version }}"
+          pnpm version "${{ github.event.inputs.version }}"
+          git push --follow-tags
       - run: pnpm build
       - name: Browser Platform Publish
         uses: PlasmoHQ/bpp@v3
@@ -36,3 +37,13 @@ jobs:
           keys: ${{ secrets.BPP_KEYS }}
           chrome-file: dist/videomark.zip
           firefox-file: dist/videomark-firefox.zip
+      - name: Create Release Note
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = require("./package.json").version;
+            await github.rest.repos.createRelease({
+              ...context.repo,
+              tag_name: `v${version.replace(/^v/i, "")}`,
+              generate_release_notes: true,
+            });

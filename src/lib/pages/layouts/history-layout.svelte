@@ -1,6 +1,6 @@
 <script>
-  import Wordmark from '$lib/pages/common/wordmark.svelte';
   import { Spacer } from '@sveltia/ui';
+  import Wordmark from '$lib/pages/common/wordmark.svelte';
 </script>
 
 <div class="wrapper">
@@ -45,9 +45,13 @@
     z-index: 1;
     flex: none;
     display: flex;
-    gap: 32px;
+    gap: 16px 32px;
     justify-content: flex-start;
     align-items: flex-start;
+
+    @media (max-width: 1023px) {
+      flex-wrap: wrap;
+    }
 
     h1 {
       margin: 0;
