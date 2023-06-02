@@ -415,7 +415,7 @@ Config.ui.youtube = {
 // そのタイミングでは .vjs-user-active でもコントロールが隠れることに注意
 // .video-js 要素は複数あるので #playerWrapper 配下のものに限定する
 Config.ui.tver = {
-  target: "#playerWrapper > .video-js",
+  target: ".controller_container__PMXA9",
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
