@@ -410,11 +410,8 @@ Config.ui.youtube = {
 }`,
 };
 
-// TVer ではユーザ操作を見て .vjs-user-(in)active を .video-js に付与
-// .vjs-user-inactive になるより先にマウスホバー解除で .not-hover 付与
-// そのタイミングでは .vjs-user-active でもコントロールが隠れることに注意
 Config.ui.tver = {
-  target: ".controller_container__PMXA9",
+  target: '[class^="controller_container__"]',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
