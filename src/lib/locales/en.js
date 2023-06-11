@@ -1,4 +1,8 @@
 export const strings = {
+  _: {
+    selectAll: 'Select All',
+    unselectAll: 'Unselect All',
+  },
   platforms: {
     youtube: 'YouTube',
     netflix: 'Netflix',
@@ -112,15 +116,53 @@ export const strings = {
     search: {
       input: 'Search History',
       filters: {
-        dates: 'Dates',
-        dateOptions: {
-          from: 'From',
-          to: 'To',
+        date: {
+          buttonLabel: 'Dates',
+          dropdownLabel: 'Viewing Date Range',
+          options: {
+            all: 'All',
+            today: 'Today',
+            yesterday: 'Yesterday',
+            thisWeek: 'This Week',
+            lastWeek: 'Last Week',
+            thisMonth: 'This Month',
+            lastMonth: 'Last Month',
+            last7d: 'Last 7 Days',
+            last30d: 'Last 30 Days',
+            last90d: 'Last 90 Days',
+            custom: 'Custom',
+          },
+          input: {
+            from: 'From',
+            to: 'To',
+          },
         },
-        sources: 'Sources',
-        quality: 'Quality',
-        regions: 'Regions',
-        hours: 'Hours',
+        source: {
+          buttonLabel: 'Sources',
+          dropdownLabel: 'Video Platforms',
+        },
+        region: {
+          buttonLabel: 'Regions',
+          dropdownLabel: 'Viewing Regions',
+          unknown: 'Unknown',
+        },
+        quality: {
+          buttonLabel: 'Quality',
+          dropdownLabel: 'QoE Value Range and Statuses',
+          status: {
+            progress: 'Calculating',
+            complete: 'Calculated',
+            error: 'Error',
+          },
+          input: {
+            min: 'Min.',
+            max: 'Max.',
+          },
+        },
+        time: {
+          buttonLabel: 'Time',
+          dropdownLabel: 'Viewing Time Slot Range',
+        },
       },
       notFound: {
         title: 'No videos were found matching the criteria.',
