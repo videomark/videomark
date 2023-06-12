@@ -9,14 +9,14 @@ const maxItems = 10000;
 /**
  * 有効な計測・計算ステータスのリスト。
  */
-export const qualityStatuses = ['progress', 'complete', 'error'];
+export const validQualityStatuses = ['progress', 'complete', 'error'];
 
 /**
  * QoE 値から計測・計算ステータスを取得する。
  * @param {(number | undefined)} qoe QuE 値。
  * @returns {('progress' | 'complete' | 'error')} ステータス。
  */
-export const getStatus = (qoe) => {
+export const getQualityStatus = (qoe) => {
   if (qoe === undefined || qoe === -1) {
     return 'progress';
   }
@@ -35,7 +35,7 @@ export const searchCriteria = writable({
   terms: '',
   dateRange: ['', ''],
   sources: videoPlatforms.filter(({ experimental }) => !experimental).map(({ id }) => id),
-  qualityStatuses: [...qualityStatuses],
+  qualityStatuses: [...validQualityStatuses],
   qualityRange: [1, 5],
   regions: [],
   timeRange: [0, 24],
@@ -158,31 +158,38 @@ export const viewingHistorySources = derived([viewingHistory], ([history]) => {
  */
 export const searchResults = derived([searchCriteria, viewingHistory], (states) => {
   const [criteria, historyItems] = states;
-  const searchTerms = criteria.terms.trim();
+  const { terms, dateRange, sources, qualityStatuses, qualityRange, regions, timeRange } = criteria;
+  const searchTerms = terms.trim();
+  const [startDate, endDate] = dateRange;
+  const [startHours, endHours] = timeRange;
+  const [lowestQoe, highestQoe] = qualityRange;
 
   return historyItems.filter((historyItem) => {
     const { title, platformId, startTime, qoe, region } = historyItem;
     const { country = '', subdivision = '' } = region ?? {};
-    const status = getStatus(qoe);
+    const hasRegion = !!(country && subdivision);
+    const qualityStatus = getQualityStatus(qoe);
     const date = new Date(startTime);
 
-    if (
-      !!(searchTerms && !title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase())) ||
-      !!(criteria.dateRange[0] && new Date(criteria.dateRange[0]) > date) ||
-      !!(criteria.dateRange[1] && new Date(criteria.dateRange[1]) < date) ||
-      !criteria.sources.includes(platformId) ||
-      !criteria.qualityStatuses.includes(status) ||
-      (qoe >= 0 && criteria.qualityRange[0] > qoe) ||
-      (qoe >= 0 && criteria.qualityRange[1] < qoe) ||
-      !!(country && subdivision && !criteria.regions.includes(`${country}-${subdivision}`)) ||
-      !!((!country || !subdivision) && !criteria.regions.includes('unknown')) ||
-      criteria.timeRange[0] > date.getHours() ||
-      criteria.timeRange[1] < date.getHours()
-    ) {
-      return false;
-    }
-
-    return true;
+    return (
+      // 検索語
+      (!searchTerms || title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase())) &&
+      // 視聴日
+      (!startDate || new Date(`${startDate}T00:00:00`) <= date) &&
+      (!endDate || date <= new Date(`${endDate}T23:59:59`)) &&
+      // 配信元
+      sources.includes(platformId) &&
+      // 品質
+      qualityStatuses.includes(qualityStatus) &&
+      (qualityStatus !== 'complete' || lowestQoe <= qoe) &&
+      (qualityStatus !== 'complete' || qoe <= highestQoe) &&
+      // 地域
+      ((hasRegion && regions.includes(`${country}-${subdivision}`)) ||
+        (!hasRegion && regions.includes('unknown'))) &&
+      // 時間帯
+      startHours <= date.getHours() &&
+      date.getHours() <= endHours
+    );
   });
 });
 

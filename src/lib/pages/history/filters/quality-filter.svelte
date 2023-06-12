@@ -2,7 +2,7 @@
   import { Button, Checkbox, CheckboxGroup, Icon, NumberInput, Slider } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
   import FilterItem from '$lib/pages/history/filters/filter-item.svelte';
-  import { qualityStatuses, searchCriteria } from '$lib/services/history';
+  import { searchCriteria, validQualityStatuses } from '$lib/services/history';
   import { openTab } from '$lib/services/navigation';
   import { toggleListItem } from '$lib/services/utils';
 
@@ -69,7 +69,7 @@
   </div>
   <div class="row">
     <CheckboxGroup orientation="vertical">
-      {#each qualityStatuses as status}
+      {#each validQualityStatuses as status}
         <Checkbox
           value={status}
           checked={$searchCriteria.qualityStatuses.includes(status)}
