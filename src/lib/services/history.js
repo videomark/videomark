@@ -158,11 +158,18 @@ export const viewingHistorySources = derived([viewingHistory], ([history]) => {
  */
 export const searchResults = derived([searchCriteria, viewingHistory], (states) => {
   const [criteria, historyItems] = states;
-  const { terms, dateRange, sources, qualityStatuses, qualityRange, regions, timeRange } = criteria;
+
+  const {
+    terms,
+    dateRange: [startDate, endDate],
+    sources,
+    qualityStatuses,
+    qualityRange: [lowestQoe, highestQoe],
+    regions,
+    timeRange: [startHours, endHours],
+  } = criteria;
+
   const searchTerms = terms.trim();
-  const [startDate, endDate] = dateRange;
-  const [startHours, endHours] = timeRange;
-  const [lowestQoe, highestQoe] = qualityRange;
 
   return historyItems.filter((historyItem) => {
     const { title, platformId, startTime, qoe, region } = historyItem;

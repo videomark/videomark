@@ -18,7 +18,18 @@
     { value: 'custom' },
   ];
 
-  const getYMD = (d) => d.toJSON().split('T').shift();
+  /**
+   * 与えられた `Date` オブジェクトをローカルタイムゾーンの `YYYY-MM-DD` 表記に変換する。
+   * `Date.prototype.toJSON()` は UTC 基準なので使ってはいけない。
+   * @param {Date} date 日時。
+   * @returns {string} `YYYY-MM-DD`.
+   */
+  const getYMD = (date) =>
+    [
+      String(date.getFullYear()),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-');
 
   const updateDateRange = (range) => {
     const d1 = new Date();
@@ -54,7 +65,7 @@
     }
 
     if (range.match(/^last(\d+)d$/)) {
-      d1.setDate(d1.getDate() - Number(RegExp.$1));
+      d1.setDate(d1.getDate() - Number(RegExp.$1) + 1);
       start = d1;
       end = d2;
     }
