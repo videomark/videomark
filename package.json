@@ -48,7 +48,7 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
-    "@sveltia/ui": "^0.2.5",
+    "@sveltia/ui": "^0.3.1",
     "@videomark/sparkline": "github:videomark/sparkline",
     "lit-html": "^2.7.4",
     "mpd-parser": "^1.1.1",
