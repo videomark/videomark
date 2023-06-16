@@ -1,4 +1,8 @@
 export const strings = {
+  _: {
+    selectAll: 'すべて選択',
+    unselectAll: '選択を解除',
+  },
   platforms: {
     youtube: 'YouTube',
     netflix: 'Netflix',
@@ -112,15 +116,53 @@ export const strings = {
     search: {
       input: '履歴を検索',
       filters: {
-        dates: '視聴期間',
-        dateOptions: {
-          from: '開始日',
-          to: '終了日',
+        date: {
+          buttonLabel: '視聴日',
+          dropdownLabel: '視聴期間',
+          options: {
+            all: 'すべて',
+            today: '今日',
+            yesterday: '昨日',
+            thisWeek: '今週',
+            lastWeek: '先週',
+            thisMonth: '今月',
+            lastMonth: '先月',
+            last7d: '過去 7 日間',
+            last30d: '過去 30 日間',
+            last90d: '過去 90 日間',
+            custom: '任意',
+          },
+          input: {
+            from: '開始日',
+            to: '終了日',
+          },
         },
-        sources: '配信元',
-        quality: '体感品質',
-        regions: '地域',
-        hours: '時間帯',
+        source: {
+          buttonLabel: '配信元',
+          dropdownLabel: '動画サイト',
+        },
+        region: {
+          buttonLabel: '地域',
+          dropdownLabel: '視聴地域',
+          unknown: '不明',
+        },
+        quality: {
+          buttonLabel: '品質',
+          dropdownLabel: 'QoE 値の範囲とステータス',
+          status: {
+            progress: '計算中',
+            complete: '計算済み',
+            error: 'エラー',
+          },
+          input: {
+            min: '最小値',
+            max: '最大値',
+          },
+        },
+        time: {
+          buttonLabel: '時間帯',
+          dropdownLabel: '視聴時間帯',
+        },
       },
       notFound: {
         title: '条件に該当する動画は見つかりませんでした。',
