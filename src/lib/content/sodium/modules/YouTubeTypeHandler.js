@@ -88,8 +88,16 @@ const SodiumFetch = Symbol('SodiumFetch');
 class YouTubeTypeHandler extends GeneralTypeHandler {
   static is_youtube_type() {
     try {
+      
       // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
       const url = new URL(window.location.href);
+
+      // let instance = new YouTubeTypeHandler(document.querySelector('video')); 
+      // let videoId_test = instance.get_id_by_video_holder(); 
+      
+      // if(url.href === 'https://www.youtube.com/'){
+      //   url.href = `https://www.youtube.com/watch?v=${videoId_test}`;
+      // }
 
       if (url.pathname === '/embed/') {
         return false;
@@ -177,6 +185,14 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   static async hook_youtube() {
     const { host } = new URL(window.location.href);
+
+    // let instance = new YouTubeTypeHandler(document.querySelector('video')); 
+    // let videoId_test = instance.get_id_by_video_holder(); 
+
+
+    // if(host.href === 'https://www.youtube.com/'){
+    //   host.href = `https://www.youtube.com/watch?v=${videoId_test}`;
+    // }
 
     if (!(host === 'www.youtube.com' || host === 'm.youtube.com')) {
       return;
@@ -989,6 +1005,16 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     const audio = formats.find((e) => e.itag === stats.afmt);
 
     return { video, audio };
+  }
+
+  get_alt_location(url){
+    let videoId;
+    if(url === 'https://www.youtube.com/'){
+      this.player = document.querySelector('#movie_player');
+      videoId = this.player.getVideoData();
+      return `https://www.youtube.com/watch?v=${videoId.video_id}`;
+    }
+    return '';
   }
 
   is_main_video(video) {

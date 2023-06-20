@@ -288,6 +288,10 @@ export default class VideoHandler {
     return video.getVideoPlaybackQuality().droppedVideoFrames;
   }
 
+  get_alt_location(url){
+    return this.handler.get_alt_location(url);
+  }
+
   is_main_video(video) {
     if (this.handler.is_main_video instanceof Function) {
       return this.handler.is_main_video(video);
