@@ -92,13 +92,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
       const url = new URL(window.location.href);
 
-      // let instance = new YouTubeTypeHandler(document.querySelector('video')); 
-      // let videoId_test = instance.get_id_by_video_holder(); 
-      
-      // if(url.href === 'https://www.youtube.com/'){
-      //   url.href = `https://www.youtube.com/watch?v=${videoId_test}`;
-      // }
-
       if (url.pathname === '/embed/') {
         return false;
       }
@@ -185,14 +178,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   static async hook_youtube() {
     const { host } = new URL(window.location.href);
-
-    // let instance = new YouTubeTypeHandler(document.querySelector('video')); 
-    // let videoId_test = instance.get_id_by_video_holder(); 
-
-
-    // if(host.href === 'https://www.youtube.com/'){
-    //   host.href = `https://www.youtube.com/watch?v=${videoId_test}`;
-    // }
 
     if (!(host === 'www.youtube.com' || host === 'm.youtube.com')) {
       return;
