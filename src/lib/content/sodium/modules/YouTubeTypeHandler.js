@@ -88,7 +88,6 @@ const SodiumFetch = Symbol('SodiumFetch');
 class YouTubeTypeHandler extends GeneralTypeHandler {
   static is_youtube_type() {
     try {
-      
       // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
       const url = new URL(window.location.href);
 
@@ -992,13 +991,16 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     return { video, audio };
   }
 
-  get_alt_location(url){
+  get_alt_location(url) {
     let videoId;
-    if(url === 'https://www.youtube.com/'){
+
+    if (url === 'https://www.youtube.com/') {
       this.player = document.querySelector('#movie_player');
       videoId = this.player.getVideoData();
+
       return `https://www.youtube.com/watch?v=${videoId.video_id}`;
     }
+
     return '';
   }
 

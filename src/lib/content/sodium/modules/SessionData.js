@@ -224,10 +224,10 @@ export default class SessionData {
       console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
       this.location = new URL(window.location.href);
 
-      if(this.alt_location === undefined){
+      if (this.alt_location === undefined) {
         this.alt_location = mainVideo.video_handler.get_alt_location(this.location.href);
       }
-      
+
       try {
         startTime = await this.waitPlay(mainVideo);
 

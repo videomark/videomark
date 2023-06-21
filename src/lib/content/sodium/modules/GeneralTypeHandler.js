@@ -75,7 +75,7 @@ export default class GeneralTypeHandler {
     return [];
   }
 
-  get_alt_location(){
+  get_alt_location() {
     return '';
   }
 
