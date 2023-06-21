@@ -224,10 +224,6 @@ export default class SessionData {
       console.log(`VIDEOMARK: STATE CHANGE found main video ${mainVideo.get_video_id()}`);
       this.location = new URL(window.location.href);
 
-      if (this.alt_location === undefined) {
-        this.alt_location = mainVideo.video_handler.get_alt_location(this.location.href);
-      }
-
       try {
         startTime = await this.waitPlay(mainVideo);
 
@@ -530,8 +526,6 @@ export default class SessionData {
         .slice(-Config.max_log),
     });
 
-    this.alt_location = undefined;
-
     await saveTransferSize(resource.transferSize - prevResource.transferSize);
   }
 
@@ -553,7 +547,10 @@ export default class SessionData {
       endTime: this.endTime,
       session: this.session.id,
       sessionType: this.session.type,
-      location: this.alt_location || this.location.href,
+      location:
+        this.alt_location ||
+        video.video_handler.get_alt_location(this.location.href) ||
+        this.location.href,
       locationIp: this.hostToIp[this.location.host],
       userAgent: this.userAgent,
       sequence: this.sequence,
