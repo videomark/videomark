@@ -995,7 +995,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     let videoId;
 
     if (url === 'https://www.youtube.com/') {
-      this.player = document.querySelector('#movie_player');
       videoId = this.player.getVideoData();
 
       return `https://www.youtube.com/watch?v=${videoId.video_id}`;
