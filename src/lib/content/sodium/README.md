@@ -16,8 +16,8 @@ ChromeExtension/sodium.js
     Config.trans_interval = 5 * 1000;
     // videoタグ検索インターバル(ミリ秒単位)
     Config.search_video_interval = 1 * 1000;
-    // videoの有効な最大時間(ミリ秒単位) この時間を超えると別の動画として新しく計測します
-    Config.max_video_ttl = 60 * 60 * 1000;
+    // 最大計測単位のデフォルト値(ミリ秒単位) この時間を超えると別の動画として新しく計測します
+    Config.default_max_video_ttl = 60 * 60 * 1000;
     // 暫定QoE値取得(回数)　Config.trans_interval x この値 が暫定QoE値取得インターバルになる
     Config.latest_qoe_update = 5;
     // fluentd サーバーのエンドポイント

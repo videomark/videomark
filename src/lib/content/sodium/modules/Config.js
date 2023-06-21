@@ -272,6 +272,13 @@ export default class Config {
   static get_max_send_size() {
     return this.max_send_size;
   }
+
+  /** 最大計測単位(ミリ秒単位) */
+  static get_max_video_ttl() {
+    const settings = this.get_settings();
+
+    return settings?.max_video_ttl ?? this.default_max_video_ttl;
+  }
 }
 
 // playback quality の取得インターバル(ミリ秒単位)
@@ -280,8 +287,8 @@ Config.collect_interval = 1 * 1000;
 // videoタグ検索インターバル(ミリ秒単位)
 Config.search_video_interval = 1 * 1000;
 
-// videoの有効な最大時間(ミリ秒単位)
-Config.max_video_ttl = 60 * 60 * 1000;
+/** 最大計測単位のデフォルト値(ミリ秒単位) */
+Config.default_max_video_ttl = 60 * 60 * 1000;
 
 // fluentd サーバーのエンドポイント
 Config.fluent_url = import.meta.env.SODIUM_FLUENT_URL;

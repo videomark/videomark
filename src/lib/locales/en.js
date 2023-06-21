@@ -240,6 +240,8 @@ export const strings = {
       confirm: 'Clear Now',
     },
     personalSessionPrompt: 'Please enter your Session ID',
+    advancedSettings: 'Advanced Settings',
+    maxVideoTtl: 'Maximum measurement unit',
   },
   popup: {
     playing: 'Now Playing',

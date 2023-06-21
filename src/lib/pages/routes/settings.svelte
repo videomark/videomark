@@ -14,6 +14,8 @@
   let openResetDialog = false;
   let loadedSettings;
   let expiries = [];
+  /** 動画の最大計測単位(ミリ秒単位) */
+  let maxVideoTTLs = [];
   let resolutions = [];
   let bitrates = [];
   let quotaMarks = [];
@@ -31,6 +33,12 @@
                 useGrouping: false,
               }).format(v),
       }));
+
+      maxVideoTTLs = [5, 10, 20, 30, 60] // min
+        .map((min) => ({
+          value: min * 60 * 1000, // msec
+          label: new Intl.NumberFormat('ja', { style: 'unit', unit: 'minute' }).format(min),
+        }));
 
       resolutions = [0, 144, 240, 360, 480, 720, 1080, 1440, 2160].map((v) => ({
         value: v,
@@ -198,115 +206,140 @@
         </Button>
       </SettingItem>
     </section>
-    <section>
-      <header>
-        <h2>
-          {$_('settings.dataSaver')}
-          <span class="experimental">
-            <Icon name="science" />
-            {$_('settings.experimental')}
-          </span>
-        </h2>
-        <p>
-          {@html $_('settings.dataSaverDescription').replace(
-            '<a>',
-            `<a href="${SODIUM_MARKETING_SITE_URL}/${$locale}/spec" target="_blank">`,
-          )}
-        </p>
-      </header>
-      <SettingItem title={$_('settings.maxResolution')}>
-        <Select
-          position="bottom-right"
-          label={resolutions.find(
-            ({ value }) =>
-              value === ($settings.resolution_control_enabled ? $settings.resolution_control : 0),
-          )?.label}
-          bind:value={$settings.resolution_control}
-          on:change={({ detail: { value } }) => {
-            $settings.resolution_control_enabled = value > 0;
-          }}
-        >
-          {#each resolutions as { value, label } (value)}
-            <Option
-              {label}
-              {value}
-              selected={value ===
-                ($settings.resolution_control_enabled ? $settings.resolution_control : 0)}
-            />
-          {/each}
-        </Select>
-      </SettingItem>
-      <SettingItem title={$_('settings.maxBitrate')}>
-        <Select
-          position="bottom-right"
-          label={bitrates.find(
-            ({ value }) =>
-              value === ($settings.bitrate_control_enabled ? $settings.bitrate_control : 0),
-          )?.label}
-          bind:value={$settings.bitrate_control}
-          on:change={({ detail: { value } }) => {
-            $settings.bitrate_control_enabled = value > 0;
-          }}
-        >
-          {#each bitrates as { value, label } (value)}
-            <Option
-              {label}
-              {value}
-              selected={value ===
-                ($settings.bitrate_control_enabled ? $settings.bitrate_control : 0)}
-            />
-          {/each}
-        </Select>
-      </SettingItem>
-      <SettingItem title={$_('settings.bandwidthQuota')}>
-        <Select
-          position="bottom-right"
-          label={quotaMarks.find(
-            ({ value }) =>
-              value === ($settings.control_by_traffic_volume ? $settings.browser_quota : 0),
-          )?.label}
-          bind:value={$settings.browser_quota}
-          on:change={({ detail: { value } }) => {
-            $settings.control_by_traffic_volume = value > 0;
-          }}
-        >
-          {#each quotaMarks as { value, label } (value)}
-            <Option
-              {label}
-              {value}
-              selected={value ===
-                ($settings.control_by_traffic_volume ? $settings.browser_quota : 0)}
-            />
-          {/each}
-        </Select>
-      </SettingItem>
-      <SettingItem title={$_('settings.maxBitratePerQuota')}>
-        <Select
-          position="bottom-right"
-          label={bitrates.find(
-            ({ value }) =>
-              value === ($settings.control_by_browser_quota ? $settings.browser_quota_bitrate : 0),
-          )?.label}
-          bind:value={$settings.browser_quota_bitrate}
-          disabled={!$settings.control_by_traffic_volume}
-          on:change={({ detail: { value } }) => {
-            $settings.control_by_browser_quota = value > 0;
-          }}
-        >
-          {#each bitrates.slice(1) as { value, label } (value)}
-            <Option
-              {label}
-              {value}
-              selected={value ===
-                ($settings.control_by_browser_quota ? $settings.browser_quota_bitrate : 0)}
-            />
-          {/each}
-        </Select>
-      </SettingItem>
-      <SettingItem title={$_('settings.primeTimeControl')}>
-        <Switch bind:checked={$settings.peak_time_limit_enabled} />
-      </SettingItem>
-    </section>
+    <details>
+      <summary>{$_('settings.advancedSettings')}</summary>
+      <section>
+        <header>
+          <h2>{$_('settings.history')}</h2>
+        </header>
+        <SettingItem title={$_('settings.maxVideoTtl')}>
+          <Select
+            position="bottom-right"
+            label={maxVideoTTLs.find(({ value }) => value === $settings.max_video_ttl)?.label}
+            bind:value={$settings.max_video_ttl}
+          >
+            {#each maxVideoTTLs as { label, value }}
+              <Option
+                class="secondary"
+                {label}
+                {value}
+                selected={value === $settings.max_video_ttl}
+              />
+            {/each}
+          </Select>
+        </SettingItem>
+      </section>
+      <section>
+        <header>
+          <h2>
+            {$_('settings.dataSaver')}
+            <span class="experimental">
+              <Icon name="science" />
+              {$_('settings.experimental')}
+            </span>
+          </h2>
+          <p>
+            {@html $_('settings.dataSaverDescription').replace(
+              '<a>',
+              `<a href="${SODIUM_MARKETING_SITE_URL}/${$locale}/spec" target="_blank">`,
+            )}
+          </p>
+        </header>
+        <SettingItem title={$_('settings.maxResolution')}>
+          <Select
+            position="bottom-right"
+            label={resolutions.find(
+              ({ value }) =>
+                value === ($settings.resolution_control_enabled ? $settings.resolution_control : 0),
+            )?.label}
+            bind:value={$settings.resolution_control}
+            on:change={({ detail: { value } }) => {
+              $settings.resolution_control_enabled = value > 0;
+            }}
+          >
+            {#each resolutions as { value, label } (value)}
+              <Option
+                {label}
+                {value}
+                selected={value ===
+                  ($settings.resolution_control_enabled ? $settings.resolution_control : 0)}
+              />
+            {/each}
+          </Select>
+        </SettingItem>
+        <SettingItem title={$_('settings.maxBitrate')}>
+          <Select
+            position="bottom-right"
+            label={bitrates.find(
+              ({ value }) =>
+                value === ($settings.bitrate_control_enabled ? $settings.bitrate_control : 0),
+            )?.label}
+            bind:value={$settings.bitrate_control}
+            on:change={({ detail: { value } }) => {
+              $settings.bitrate_control_enabled = value > 0;
+            }}
+          >
+            {#each bitrates as { value, label } (value)}
+              <Option
+                {label}
+                {value}
+                selected={value ===
+                  ($settings.bitrate_control_enabled ? $settings.bitrate_control : 0)}
+              />
+            {/each}
+          </Select>
+        </SettingItem>
+        <SettingItem title={$_('settings.bandwidthQuota')}>
+          <Select
+            position="bottom-right"
+            label={quotaMarks.find(
+              ({ value }) =>
+                value === ($settings.control_by_traffic_volume ? $settings.browser_quota : 0),
+            )?.label}
+            bind:value={$settings.browser_quota}
+            on:change={({ detail: { value } }) => {
+              $settings.control_by_traffic_volume = value > 0;
+            }}
+          >
+            {#each quotaMarks as { value, label } (value)}
+              <Option
+                {label}
+                {value}
+                selected={value ===
+                  ($settings.control_by_traffic_volume ? $settings.browser_quota : 0)}
+              />
+            {/each}
+          </Select>
+        </SettingItem>
+        <SettingItem title={$_('settings.maxBitratePerQuota')}>
+          <Select
+            position="bottom-right"
+            label={bitrates.find(
+              ({ value }) =>
+                value ===
+                ($settings.control_by_browser_quota ? $settings.browser_quota_bitrate : 0),
+            )?.label}
+            bind:value={$settings.browser_quota_bitrate}
+            disabled={!$settings.control_by_traffic_volume}
+            on:change={({ detail: { value } }) => {
+              $settings.control_by_browser_quota = value > 0;
+            }}
+          >
+            {#each bitrates.slice(1) as { value, label } (value)}
+              <Option
+                {label}
+                {value}
+                selected={value ===
+                  ($settings.control_by_browser_quota ? $settings.browser_quota_bitrate : 0)}
+              />
+            {/each}
+          </Select>
+        </SettingItem>
+        <SettingItem title={$_('settings.primeTimeControl')}>
+          <Switch bind:checked={$settings.peak_time_limit_enabled} />
+        </SettingItem>
+      </section>
+    </details>
   </div>
 </HistoryLayout>
 
@@ -356,6 +389,9 @@
     margin: 0 auto;
     max-width: 800px;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 
     h2 {
       font-size: var(--font-size--large);

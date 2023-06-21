@@ -180,7 +180,7 @@ export default class SessionData {
         (e) =>
           e.is_stay() &&
           e.video_elm === elm &&
-          !(e.get_start_time() + Config.max_video_ttl < Date.now()),
+          !(e.get_start_time() + Config.get_max_video_ttl() < Date.now()),
       );
 
       if (v) {
