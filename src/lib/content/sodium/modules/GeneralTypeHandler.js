@@ -75,6 +75,10 @@ export default class GeneralTypeHandler {
     return [];
   }
 
+  get_alt_location() {
+    return '';
+  }
+
   /**
    * @return {number[] | Array<{
    *  representationId: string,

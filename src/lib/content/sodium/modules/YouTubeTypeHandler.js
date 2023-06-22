@@ -991,6 +991,18 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     return { video, audio };
   }
 
+  get_alt_location(url) {
+    let videoId;
+
+    if (url === 'https://www.youtube.com/') {
+      videoId = this.player.getVideoData();
+
+      return `https://www.youtube.com/watch?v=${videoId.video_id}`;
+    }
+
+    return '';
+  }
+
   is_main_video(video) {
     return this.player.contains(video);
   }
