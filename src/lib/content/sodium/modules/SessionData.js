@@ -500,7 +500,10 @@ export default class SessionData {
 
     await storage.save({
       user_agent: this.userAgent,
-      location: this.alt_location || this.location.href,
+      location:
+        this.alt_location ||
+        video.video_handler.get_alt_location(this.location.href) ||
+        this.location.href,
       transfer_size: resource.transferSize,
       media_size: video.get_media_size(),
       domain_name: video.get_domain_name(),
