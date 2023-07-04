@@ -42,8 +42,7 @@
       </div>
     </div>
   </div>
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="actions close-popup" on:click|stopPropagation={() => openTab(url)}>
+  <div class="actions close-popup" role="none" on:click|stopPropagation={() => openTab(url)}>
     <Button
       class="primary close-popup"
       on:click={(event) => {

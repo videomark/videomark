@@ -156,8 +156,8 @@
       <header>
         <h2>{$_('settings.privacy')}</h2>
       </header>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
+        role="none"
         on:click={(e) => {
           // 自動計測向けのセッション ID の設定機能
           if (e.detail === 3) {

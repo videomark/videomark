@@ -21,9 +21,9 @@
   });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="wrapper"
+  role="none"
   on:click|capture={(event) => {
     if (event.target.matches('.close-popup')) {
       // Close the popup (after waiting for a new tab being opened)
