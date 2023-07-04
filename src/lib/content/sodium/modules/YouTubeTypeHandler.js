@@ -992,12 +992,16 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   get_alt_location(url) {
-    let videoId;
-
+    const videoId = this.player.getVideoData();
+    
     if (url === 'https://www.youtube.com/') {
-      videoId = this.player.getVideoData();
-
+      
       return `https://www.youtube.com/watch?v=${videoId.video_id}`;
+    }
+    
+    if (url !== `https://music.youtube.com/watch?v=${videoId.video_id}`) {
+
+      return `https://music.youtube.com/watch?v=${videoId.video_id}`;
     }
 
     return '';
