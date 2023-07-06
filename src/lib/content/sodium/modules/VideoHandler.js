@@ -289,11 +289,7 @@ export default class VideoHandler {
   }
 
   get_alt_location(url) {
-    if (typeof this.handler.get_alt_location === 'function') {
-      return this.handler.get_alt_location(url);
-    }
-
-    return '';
+    return this.handler.get_alt_location(url);
   }
 
   is_main_video(video) {
