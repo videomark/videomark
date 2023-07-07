@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "videomark",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "repository": "git@github.com:videomark/videomark.git",
   "license": "Apache-2.0",
   "private": true,
