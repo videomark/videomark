@@ -240,6 +240,8 @@ export const strings = {
       confirm: '今すぐ消去',
     },
     personalSessionPrompt: 'セッション ID を入力してください',
+    advancedSettings: '上級者向け設定',
+    maxVideoTtl: '最大計測単位',
   },
   popup: {
     playing: '再生中の動画',

@@ -13,6 +13,8 @@ export const defaultSettings = {
   browser_quota_bitrate: 20480 * 1024,
   peak_time_limit_enabled: false,
   show_duplicate_videos: false,
+  /** 最大計測単位(ミリ秒単位) この時間を超えると別の動画として新しく計測します */
+  max_video_ttl: 60 * 60 * 1000,
 };
 
 export const settings = createStorageSync('settings', { ...defaultSettings });
