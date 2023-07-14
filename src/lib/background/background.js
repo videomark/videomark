@@ -5,7 +5,6 @@ import { SCHEMA_VERSION, storage } from '$lib/services/storage';
 // Declarative Net Request API 向けの `request_rules.json` と同期すること
 const permittedOrigins = [
   /^https:\/\/([a-z-]+\.)?youtube\.com$/,
-  /^https:\/\/([a-z-]+\.)?paravi\.jp$/,
   /^https:\/\/([a-z-]+\.)?tver\.jp$/,
   'https://i.fod.fujitv.co.jp',
   'https://www.nicovideo.jp',

@@ -1,5 +1,5 @@
 <script>
-  import { Button, Icon } from '@sveltia/ui';
+  import { Alert, Button, Icon } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
@@ -9,7 +9,7 @@
   export let historyItem = {};
   export let horizontal = false;
 
-  $: ({ key, url, title, thumbnail, startTime, qoe, isLowQuality } = historyItem || {});
+  $: ({ key, platform, url, title, thumbnail, startTime, qoe, isLowQuality } = historyItem || {});
 </script>
 
 <div class="item" class:horizontal>
@@ -42,17 +42,31 @@
       </div>
     </div>
   </div>
-  <div class="actions close-popup" role="none" on:click|stopPropagation={() => openTab(url)}>
-    <Button
-      class="primary close-popup"
-      on:click={(event) => {
+  <div
+    class="actions close-popup"
+    role="none"
+    on:click|stopPropagation={() => {
+      if (!platform?.deprecated) {
         openTab(url);
-        event.stopPropagation();
-      }}
-    >
-      <Icon slot="start-icon" name="play_circle" />
-      {$_('history.detail.playAgain')}
-    </Button>
+      }
+    }}
+  >
+    {#if platform?.deprecated}
+      <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
+        {$_('history.detail.platformDeprecated')}
+      </Alert>
+    {:else}
+      <Button
+        class="primary close-popup"
+        on:click={(event) => {
+          openTab(url);
+          event.stopPropagation();
+        }}
+      >
+        <Icon slot="start-icon" name="play_circle" />
+        {$_('history.detail.playAgain')}
+      </Button>
+    {/if}
     <Button
       class="secondary close-popup"
       on:click={(event) => {
@@ -180,6 +194,10 @@
     .item:hover &,
     .item:focus-within & {
       opacity: 1;
+    }
+
+    :global(button) {
+      white-space: nowrap;
     }
   }
 </style>

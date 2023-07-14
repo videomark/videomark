@@ -80,29 +80,6 @@ ChromeExtension/sodium.js
                 opacity: 0;
             }`;
 
-    // paravi
-    Config.style.paravi = `.paravi-player .controls:after {
-            content: 'QoE: ';
-            opacity: 0;
-            position: absolute; top: 0; left:0;
-            z-index: 1000001;
-            top: 12px;
-            left: 12px;
-            background: rgba(0, 161, 255, 0.5);
-            padding: 5px 10px;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            line-height: 1;
-            transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
-        }
-        .paravi-player .controls:hover:after {
-            opacity: 1;
-        }
-        .paravi-player .controls.inactive:hover:after {
-            opacity: 0;
-    }`;
-
     // デフォルトResourceTimingAPIのバッファサイズ
     Config.DEFAULT_RESOURCE_BUFFER_SIZE = 150;
 

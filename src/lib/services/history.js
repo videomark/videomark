@@ -79,7 +79,7 @@ export const viewingHistory = writable(undefined, (set) => {
           id,
           sessionId,
           viewingId: [id, sessionId].join('_'),
-          platformId: platform?.id,
+          platform,
           canCalc: calc === undefined || calc === true,
           title,
           url,
@@ -145,7 +145,7 @@ export const viewingHistoryRegions = derived([viewingHistory], ([history]) => {
  * 閲覧履歴の配信元リストのステート。
  */
 export const viewingHistorySources = derived([viewingHistory], ([history]) => {
-  const sources = [...new Set(history.map(({ platformId }) => platformId))];
+  const sources = [...new Set(history.map(({ platform }) => platform?.id))];
 
   sources.sort();
   searchCriteria.update((criteria) => ({ ...criteria, sources }));
@@ -172,7 +172,7 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
   const searchTerms = terms.trim();
 
   return historyItems.filter((historyItem) => {
-    const { title, platformId, startTime, qoe, region } = historyItem;
+    const { title, platform, startTime, qoe, region } = historyItem;
     const { country = '', subdivision = '' } = region ?? {};
     const hasRegion = !!(country && subdivision);
     const qualityStatus = getQualityStatus(qoe);
@@ -185,7 +185,7 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
       (!startDate || new Date(`${startDate}T00:00:00`) <= date) &&
       (!endDate || date <= new Date(`${endDate}T23:59:59`)) &&
       // 配信元
-      sources.includes(platformId) &&
+      sources.includes(platform?.id) &&
       // 品質
       qualityStatuses.includes(qualityStatus) &&
       (qualityStatus !== 'complete' || lowestQoe <= qoe) &&
