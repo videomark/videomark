@@ -272,33 +272,6 @@ QoE サーバーに対応するために以下のデータを追加した。
 | video.event\_\*.playPos | requestNotificationViewingInformation.eventType | 現在再生位置の秒 |
 | video.event\_\*.playTime | requestNotificationViewingInformation.eventType | 再生開始からの経過時間 |
 
-#### Paravi 固有の対応
-
-Paravi は、Video.js + Shaka Player で実装されている。上記のフィールドの値は以下の API を使用し取得している
-
-- userAgent
-  - window.navigator.userAgent の値
-- video.property.mediaSize
-  - Class: videojs.Player duration()
-- video.property.domainName
-  - document.domain の値
-- video.playback_quality.bitrate
-  - Class: shaka.Player getStats(), getVariantTracks()
-- video.playback_quality.receiveBuffer
-  - videojs.Player bufferedEnd()
-- video.playback_quality.framerate
-  - Class: shaka.Player getStats(), getVariantTracks()
-- video.property.playStartTime
-  - Class: shaka.Player getStats() もしくは、video tag の play event
-- video.event\_\*.datetime
-  - Date.nwo()の値
-- video.event\_\*.playPos
-  - videojs.Player currentTime()
-- video.event\_\*.playTime
-  - イベント発生時の Date.now()の値から playStartTime を引いた値
-
-プレイヤー依存実装と互換性確認のコードは [ParaviTypeHandler.js](https://github.com/videomark/sodium.js/blob/master/src/js/modules/ParaviTypeHandler.js) にて定義されている。
-
 #### TVer 固有の対応 (フジテレビ(CX)以外)
 
 TVer は、Video.js で実装されている。上記のフィールドの値は以下の API を使用し取得している
