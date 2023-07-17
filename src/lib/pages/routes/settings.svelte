@@ -382,7 +382,7 @@
     display: flex;
     height: 40px;
     align-items: center;
-    font-size: var(--font-size--xxx-large);
+    font-size: var(--sui-font-size-xxx-large);
   }
 
   .settings {
@@ -394,29 +394,29 @@
     gap: 24px;
 
     h2 {
-      font-size: var(--font-size--large);
+      font-size: var(--sui-font-size-large);
 
       .experimental {
         margin: 0 4px;
-        border: 1px solid var(--success-border-color);
+        border: 1px solid var(--sui-success-border-color);
         border-radius: 8px;
         padding: 2px 8px;
         text-transform: uppercase;
-        color: var(--success-foreground-color);
-        background-color: var(--success-background-color);
-        font-size: var(--font-size--x-small);
+        color: var(--sui-success-foreground-color);
+        background-color: var(--sui-success-background-color);
+        font-size: var(--sui-font-size-x-small);
         font-weight: normal;
         vertical-align: 2px;
 
         :global(.icon) {
-          font-size: var(--font-size--small);
+          font-size: var(--sui-font-size-small);
           vertical-align: -2px;
         }
       }
 
       & + p {
         margin: 0;
-        color: var(--tertiary-foreground-color);
+        color: var(--sui-tertiary-foreground-color);
       }
     }
   }

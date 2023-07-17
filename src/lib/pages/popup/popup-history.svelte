@@ -89,7 +89,7 @@
 
   header {
     :global(.search-bar) {
-      --input--medium--border-radius: 32px;
+      --sui-input-medium-border-radius: 32px;
     }
   }
 
@@ -102,7 +102,7 @@
     gap: 32px;
     padding: 0 16px;
     height: 40px;
-    background-color: var(--secondary-background-color);
+    background-color: var(--sui-secondary-background-color);
     white-space: nowrap;
   }
 
@@ -110,12 +110,12 @@
     margin: auto 0 0;
 
     :global(button) {
-      font-size: var(--font-size--small);
+      font-size: var(--sui-font-size-small);
     }
   }
 
   h2 {
-    font-size: var(--font-size--default);
+    font-size: var(--sui-font-size-default);
     font-weight: normal;
   }
 

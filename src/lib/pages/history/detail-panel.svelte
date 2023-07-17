@@ -314,12 +314,12 @@
 
     .title {
       .platform {
-        color: var(--tertiary-foreground-color);
+        color: var(--sui-tertiary-foreground-color);
       }
 
       h2 {
         margin: 8px 0 0;
-        font-size: var(--font-size--x-large);
+        font-size: var(--sui-font-size-x-large);
         display: -webkit-box;
         overflow: hidden;
         -webkit-box-orient: vertical;
@@ -347,7 +347,7 @@
 
     :global(.view-item) {
       margin: 16px 0 0;
-      border: 1px solid var(--control-border-color);
+      border: 1px solid var(--sui-control-border-color);
       border-radius: 4px;
       padding: 16px;
     }
@@ -360,7 +360,7 @@
     .deleted-overlay {
       position: absolute;
       inset: -8px;
-      background-color: var(--secondary-background-color-translucent);
+      background-color: var(--sui-secondary-background-color-translucent);
       backdrop-filter: blur(4px);
       display: flex;
       flex-direction: column;
@@ -389,7 +389,7 @@
   section.row {
     display: flex;
     gap: 16px;
-    border-top: 1px solid var(--control-border-color);
+    border-top: 1px solid var(--sui-control-border-color);
     padding: 8px 0;
 
     h4 {
@@ -401,8 +401,8 @@
         vertical-align: bottom;
 
         :global(.icon) {
-          color: var(--secondary-foreground-color);
-          font-size: var(--font-size--large);
+          color: var(--sui-secondary-foreground-color);
+          font-size: var(--sui-font-size-large);
         }
       }
 
@@ -420,18 +420,18 @@
       border-width: 1px;
       border-style: solid;
       border-radius: 4px;
-      font-size: var(--font-size--small);
+      font-size: var(--sui-font-size-small);
 
       &.error {
-        border-color: var(--danger-border-color);
-        color: var(--danger-foreground-color);
-        background-color: var(--danger-background-color);
+        border-color: var(--sui-error-border-color);
+        color: var(--sui-error-foreground-color);
+        background-color: var(--sui-error-background-color);
       }
 
       &.warning {
-        border-color: var(--warning-border-color);
-        color: var(--warning-foreground-color);
-        background-color: var(--warning-background-color);
+        border-color: var(--sui-warning-border-color);
+        color: var(--sui-warning-foreground-color);
+        background-color: var(--sui-warning-background-color);
       }
     }
   }

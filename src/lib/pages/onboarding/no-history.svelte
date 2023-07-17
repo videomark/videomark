@@ -60,12 +60,12 @@
   }
 
   .toolbar-instruction {
-    background-color: var(--primary-background-color-translucent);
+    background-color: var(--sui-primary-background-color-translucent);
     border-radius: 8px;
     padding: 32px;
 
     h2 {
-      font-size: var(--font-size--xxx-large);
+      font-size: var(--sui-font-size-xxx-large);
     }
 
     img {

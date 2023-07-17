@@ -77,7 +77,7 @@
     flex-direction: column;
     overflow: hidden;
     border-radius: 4px;
-    background-color: var(--secondary-background-color);
+    background-color: var(--sui-secondary-background-color);
     box-shadow: 1px 1px 2px #0003;
 
     &:hover,
@@ -118,7 +118,7 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       object-fit: contain;
-      background-color: var(--video-background-color);
+      background-color: var(--sui-video-background-color);
       transition: all 0.5s;
     }
   }
@@ -143,9 +143,9 @@
   .meta {
     height: 32px;
     padding: 0 16px;
-    color: var(--tertiary-foreground-color);
-    background-color: var(--tertiary-background-color);
-    font-size: var(--font-size--small);
+    color: var(--sui-tertiary-foreground-color);
+    background-color: var(--sui-tertiary-background-color);
+    font-size: var(--sui-font-size-small);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -158,7 +158,7 @@
 
     .qoe {
       :global(.icon) {
-        font-size: var(--font-size--xx-large);
+        font-size: var(--sui-font-size-xx-large);
       }
     }
   }
@@ -172,7 +172,7 @@
     flex-direction: column;
     gap: 8px;
     padding: 16px;
-    background-color: var(--secondary-background-color-translucent);
+    background-color: var(--sui-secondary-background-color-translucent);
     opacity: 0;
     transition: all 0.5s;
     cursor: pointer;

@@ -22,7 +22,7 @@
     display: flow-root;
     margin: 4px 0;
     border-radius: 4px;
-    background-color: var(--secondary-background-color-translucent);
+    background-color: var(--sui-secondary-background-color-translucent);
   }
 
   .row {
@@ -39,7 +39,7 @@
       & + p {
         margin: 4px 0 0;
         font-size: smaller;
-        color: var(--secondary-foreground-color);
+        color: var(--sui-secondary-foreground-color);
       }
     }
 

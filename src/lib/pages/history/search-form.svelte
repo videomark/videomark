@@ -41,7 +41,7 @@
 
       :global(.sui.button.medium) {
         gap: 0;
-        --button--medium--padding: 0 8px;
+        --sui-button-medium-padding: 0 8px;
       }
     }
 
@@ -56,7 +56,7 @@
 
     :global(.search-bar) {
       width: 100%;
-      --input--medium--border-radius: 32px;
+      --sui-input-medium-border-radius: 32px;
     }
   }
 </style>

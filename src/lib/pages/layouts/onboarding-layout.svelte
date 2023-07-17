@@ -18,7 +18,7 @@
     gap: 32px;
     padding: 32px;
     height: 100%;
-    background-color: var(--primary-background-color);
+    background-color: var(--sui-primary-background-color);
 
     &::after {
       position: fixed;

@@ -31,9 +31,9 @@
     overflow: hidden;
     width: 100%;
     height: 8px;
-    border: 1px solid var(--control-border-color);
+    border: 1px solid var(--sui-control-border-color);
     border-radius: 4px;
-    background-color: var(--tertiary-background-color);
+    background-color: var(--sui-tertiary-background-color);
 
     .indicator {
       position: absolute;

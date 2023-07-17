@@ -102,12 +102,12 @@
     gap: 8px;
 
     :global(button .icon) {
-      font-size: var(--font-size--large);
+      font-size: var(--sui-font-size-large);
       font-variation-settings: 'FILL' 1;
     }
 
     :global(button[aria-pressed='true']) {
-      color: var(--primary-accent-color);
+      color: var(--sui-primary-accent-color);
       cursor: default;
     }
   }
@@ -124,8 +124,8 @@
   }
 
   .extra {
-    font-size: var(--font-size--small);
-    color: var(--tertiary-foreground-color);
+    font-size: var(--sui-font-size-small);
+    color: var(--sui-tertiary-foreground-color);
 
     :global(a) {
       color: inherit;

@@ -45,11 +45,11 @@
 
 <style lang="scss" global>
   :root {
-    --base-hue: 22 !important;
+    --sui-base-hue: 22 !important;
     --video-background-color: #111; // !hardcoded
   }
 
   :global(button.secondary) {
-    color: var(--highlight-foreground-color) !important;
+    color: var(--sui-highlight-foreground-color) !important;
   }
 </style>

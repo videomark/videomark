@@ -35,11 +35,11 @@
     margin: auto 0 0;
     padding: 0 16px;
     height: 40px;
-    background-color: var(--secondary-background-color);
+    background-color: var(--sui-secondary-background-color);
     white-space: nowrap;
 
     :global(button) {
-      font-size: var(--font-size--small);
+      font-size: var(--sui-font-size-small);
     }
   }
 </style>

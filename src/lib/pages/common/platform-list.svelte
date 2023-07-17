@@ -41,7 +41,7 @@
     text-align: center;
 
     :global(button) {
-      color: var(--tertiary-foreground-color) !important;
+      color: var(--sui-tertiary-foreground-color) !important;
     }
   }
 </style>
