@@ -32,7 +32,7 @@
     selectPage();
   });
 
-  initAppLocales();
+  initAppLocales(chrome.i18n.getUILanguage());
 </script>
 
 <svelte:window on:hashchange={() => selectPage()} />

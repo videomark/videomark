@@ -6,7 +6,7 @@ import ParaviTypeHandler from './modules/ParaviTypeHandler';
 import { qualityStatus } from './modules/Quality';
 import SessionData from './modules/SessionData';
 import UI from './modules/UI';
-import { jsonParseSafe } from './modules/Utils';
+import { getDataFromContentJs, jsonParseSafe } from './modules/Utils';
 import VideoData from './modules/VideoData';
 import YouTubeTypeHandler from './modules/YouTubeTypeHandler';
 
@@ -186,7 +186,8 @@ const remove_ui_all = () => {
 
   // --- UI --- //
   const platform = Config.get_video_platform();
-  const ui = new UI(Config.get_ui_target(platform), Config.get_style(platform));
+  const locale = await getDataFromContentJs('ui_locale');
+  const ui = new UI(locale, Config.get_ui_target(platform), Config.get_style(platform));
 
   // --- update video list --- //
   search_video_interval_id = window.setInterval(() => {

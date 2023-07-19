@@ -159,16 +159,44 @@ class BackgroundCommunicationPort {
 const communicationPort = new BackgroundCommunicationPort();
 
 const message_listener = async (event) => {
-  if (
-    event.source !== window ||
-    !event.data.type ||
-    !event.data.method ||
-    event.data.type !== 'FROM_SODIUM_JS'
-  ) {
+  const { type, method, timestamp, prop } = event.data;
+
+  if (event.source !== window || type !== 'FROM_SODIUM_JS' || !method) {
     return;
   }
 
-  switch (event.data.method) {
+  switch (method) {
+    case 'get_data': {
+      const detail = await (async () => {
+        if (prop === 'display_on_player') {
+          return communicationPort.getDisplayOnPlayer();
+        }
+
+        if (prop === 'platform_info') {
+          return communicationPort.getPlatformInfo();
+        }
+
+        if (prop === 'ip') {
+          return communicationPort.getIp(event.data.host);
+        }
+
+        if (prop === 'ui_locale') {
+          return chrome.i18n.getUILanguage();
+        }
+
+        return {};
+      })();
+
+      event.source.postMessage({
+        type: 'FROM_CONTENT_JS',
+        method,
+        timestamp,
+        detail,
+      });
+
+      break;
+    }
+
     case 'set_session': {
       const { session } = event.data;
 
@@ -224,39 +252,6 @@ const message_listener = async (event) => {
 
     case 'set_display_on_player': {
       communicationPort.setDisplayOnPlayer(event.data.enabled);
-      break;
-    }
-
-    case 'get_display_on_player': {
-      const displayOnPlayer = await communicationPort.getDisplayOnPlayer();
-
-      event.source.postMessage({
-        method: 'get_display_on_player',
-        type: 'CONTENT_SCRIPT_JS',
-        displayOnPlayer,
-      });
-      break;
-    }
-
-    case 'get_platform_info': {
-      const platformInfo = await communicationPort.getPlatformInfo();
-
-      event.source.postMessage({
-        method: 'get_platform_info',
-        type: 'CONTENT_SCRIPT_JS',
-        platformInfo,
-      });
-      break;
-    }
-
-    case 'get_ip': {
-      const ip = await communicationPort.getIp(event.data.host);
-
-      event.source.postMessage({
-        type: 'CONTENT_SCRIPT_JS',
-        host: event.data.host,
-        ip,
-      });
       break;
     }
 

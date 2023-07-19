@@ -9,7 +9,8 @@
   export let historyItem = {};
   export let horizontal = false;
 
-  $: ({ key, url, title, thumbnail, startTime, qoe, isLowQuality } = historyItem || {});
+  $: ({ key, url, title, thumbnail, startTime, stats } = historyItem || {});
+  $: ({ qoe, isLowQuality } = stats);
 </script>
 
 <div class="item" class:horizontal>

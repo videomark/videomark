@@ -30,6 +30,9 @@ export default defineConfig({
     svelte({
       preprocess: sveltePreprocess(),
       emitCss: false,
+      compilerOptions: {
+        customElement: true,
+      },
     }),
   ],
   base: '', // Use relative links in `index.html`

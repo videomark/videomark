@@ -2,6 +2,7 @@
 
 import msgpack from 'msgpack-lite';
 import { v4 as uuidv4 } from 'uuid';
+import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
 import { version } from '../../../../../package.json';
 import Config from './Config';
 import MainVideoChangeException from './MainVideoChangeException';
@@ -584,25 +585,9 @@ export default class SessionData {
   }
 
   async locationIp() {
-    const ip = await new Promise((resolve) => {
-      const listener = (event) => {
-        if (event.data.host !== this.location.host || event.data.type !== 'CONTENT_SCRIPT_JS') {
-          return;
-        }
+    const { host } = this.location;
 
-        window.removeEventListener('message', listener);
-        resolve(event.data.ip);
-      };
-
-      window.addEventListener('message', listener);
-      window.postMessage({
-        host: this.location.host,
-        method: 'get_ip',
-        type: 'FROM_SODIUM_JS',
-      });
-    });
-
-    this.hostToIp[this.location.host] = ip;
+    this.hostToIp[host] = await getDataFromContentJs('ip', { host });
   }
 
   altSessionMessage() {

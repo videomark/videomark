@@ -24,7 +24,7 @@ export const qualityStatus = ({ sessionId, videoId }) => {
     date,
     bitrate,
     throughput: getRealThroughput(throughput),
-    transfer: transferSize({ sessionId, videoId }),
+    transferSize: transferSize({ sessionId, videoId }),
     resolution,
     framerate,
     speed,
@@ -33,7 +33,7 @@ export const qualityStatus = ({ sessionId, videoId }) => {
     timing,
     startTime: startTime({ sessionId, videoId }),
     qoe,
-    alert: Number.isFinite(qoe) && isLowQuality({ droppedVideoFrames, totalVideoFrames }),
+    isLowQuality: Number.isFinite(qoe) && isLowQuality({ droppedVideoFrames, totalVideoFrames }),
   };
 };
 

@@ -1,18 +1,3 @@
-const sizeFormat = (bytes, exponent) => {
-  const divider = 1024 ** exponent;
-  // 整数部が4桁になったら小数部は省く
-  const fraction = bytes >= divider * 1000 ? 0 : 2;
-
-  return new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: fraction,
-    minimumFractionDigits: fraction,
-  }).format(bytes / divider);
-};
-
-export const megaSizeFormat = (bytes) => sizeFormat(bytes, 2);
-
-export const kiloSizeFormat = (bytes) => sizeFormat(bytes, 1);
-
 export const jsonParseSafe = (text, defaultValue = {}) => {
   try {
     const value = JSON.parse(text);
@@ -23,4 +8,37 @@ export const jsonParseSafe = (text, defaultValue = {}) => {
   } catch (e) {
     return defaultValue;
   }
+};
+
+/**
+ * コンテンツスクリプトからデータを取得。
+ * @param {string} prop プロパティ名。
+ * @param {{ [key: string]: any }} [extra] メッセージに追加で渡すデータ。
+ * @returns {Promise.<any>} 結果。
+ */
+export const getDataFromContentJs = async (prop, extra = {}) => {
+  const timestamp = Date.now();
+
+  return new Promise((resolve) => {
+    const listener = ({ data }) => {
+      if (
+        data.type === 'FROM_CONTENT_JS' &&
+        data.method === 'get_data' &&
+        data.timestamp === timestamp
+      ) {
+        window.removeEventListener('message', listener);
+        resolve(data.detail);
+      }
+    };
+
+    window.addEventListener('message', listener);
+
+    window.postMessage({
+      type: 'FROM_SODIUM_JS',
+      method: 'get_data',
+      timestamp,
+      prop,
+      ...extra,
+    });
+  });
 };

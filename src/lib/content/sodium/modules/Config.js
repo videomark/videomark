@@ -1,3 +1,5 @@
+import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
+
 /**
  * 動作設定
  */
@@ -7,22 +9,7 @@ export default class Config {
   }
 
   static async readPlatformInfo() {
-    this.mobile = await new Promise((resolve) => {
-      const listener = (event) => {
-        if (event.data.type !== 'CONTENT_SCRIPT_JS' || event.data.method !== 'get_platform_info') {
-          return;
-        }
-
-        window.removeEventListener('message', listener);
-        resolve(event.data.platformInfo.os === 'android');
-      };
-
-      window.addEventListener('message', listener);
-      window.postMessage({
-        method: 'get_platform_info',
-        type: 'FROM_SODIUM_JS',
-      });
-    });
+    this.mobile = (await getDataFromContentJs('platform_info')).os === 'android';
   }
 
   static isMobile() {
@@ -221,25 +208,7 @@ export default class Config {
   }
 
   static async readDisplayOnPlayerSetting() {
-    this.ui_enabled = await new Promise((resolve) => {
-      const listener = (event) => {
-        if (
-          event.data.type !== 'CONTENT_SCRIPT_JS' ||
-          event.data.method !== 'get_display_on_player'
-        ) {
-          return;
-        }
-
-        window.removeEventListener('message', listener);
-        resolve(event.data.displayOnPlayer);
-      };
-
-      window.addEventListener('message', listener);
-      window.postMessage({
-        method: 'get_display_on_player',
-        type: 'FROM_SODIUM_JS',
-      });
-    });
+    this.ui_enabled = await getDataFromContentJs('display_on_player');
   }
 
   static set_ui_enabled(enabled) {
