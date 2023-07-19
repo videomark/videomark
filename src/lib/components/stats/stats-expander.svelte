@@ -64,6 +64,7 @@
   </details>
 </div>
 
+<!-- svelte-ignore css-unused-selector -->
 <style lang="scss">
   @use 'node_modules/@sveltia/ui/package/styles/core.scss';
 
