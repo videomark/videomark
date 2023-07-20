@@ -88,7 +88,7 @@ export default class Status {
       this.#log.frameDrops.shift();
       this.#log.waitingTime.push(waiting);
       this.#log.waitingTime.shift();
-      this.#log.qoe.push(qoe);
+      this.#log.qoe.push(Number.isFinite(qoe) ? qoe : NaN);
       this.#log.qoe.shift();
     }
   }
