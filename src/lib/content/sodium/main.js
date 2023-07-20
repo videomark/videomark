@@ -2,7 +2,6 @@
 
 import Config from './modules/Config';
 import IIJTypeHandler from './modules/IIJTypeHandler';
-import ParaviTypeHandler from './modules/ParaviTypeHandler';
 import { qualityStatus } from './modules/Quality';
 import SessionData from './modules/SessionData';
 import UI from './modules/UI';
@@ -71,9 +70,6 @@ const remove_ui_all = () => {
 
   // --- YouTube Hook --- //
   await YouTubeTypeHandler.hook_youtube();
-
-  // --- Paravi Hook --- //
-  await ParaviTypeHandler.hook_paravi();
 
   // --- IIJ Hook --- //
   await IIJTypeHandler.hook_iij();

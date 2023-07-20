@@ -16,6 +16,7 @@ export const videoPlatforms = [
   },
   {
     id: 'paravi',
+    deprecated: true, // 2023 年 7 月で U-NEXT へ統合
     url: 'https://www.paravi.jp/',
     brandColor: '#004f99',
     host: /(^|\.)paravi\.jp$/,

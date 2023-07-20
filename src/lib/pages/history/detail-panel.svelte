@@ -1,5 +1,5 @@
 <script>
-  import { Button, Drawer, Group, Icon } from '@sveltia/ui';
+  import { Alert, Button, Drawer, Group, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
   import QualityBar from '$lib/pages/history/quality-bar.svelte';
   import { getHourlyQoe, getRegionalQoe } from '$lib/services/aggregations';
@@ -17,7 +17,7 @@
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
-  $: [{ platformId, url, title, thumbnail } = {}] = historyItems;
+  $: [{ platform, url, title, thumbnail } = {}] = historyItems;
 </script>
 
 <Drawer bind:open size="medium" closeOnBackdropClick={true}>
@@ -25,12 +25,21 @@
     {#if historyItems.length}
       <header>
         <div class="thumbnail">
-          <a href={url} target="_blank">
-            <img src={thumbnail} alt={$_('history.detail.playAgain')} />
-          </a>
+          {#if platform?.deprecated}
+            <img src={thumbnail} alt="" />
+            <div class="overlay">
+              <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
+                {$_('history.detail.platformDeprecated')}
+              </Alert>
+            </div>
+          {:else}
+            <a href={url} target="_blank">
+              <img src={thumbnail} alt={$_('history.detail.playAgain')} />
+            </a>
+          {/if}
         </div>
         <div class="title">
-          <div class="platform">{$_(`platforms.${platformId}`)}</div>
+          <div class="platform">{$_(`platforms.${platform?.id}`)}</div>
           <h2>{title}</h2>
         </div>
       </header>
@@ -103,17 +112,15 @@
                     {#if qoe === undefined || qoe === -1}
                       {$_('stats.quality.measuring')}
                     {:else if qoe === -2}
-                      <span class="alert error">
-                        <Icon name="error" />
+                      <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
                         {$_('stats.quality.error')}
-                      </span>
+                      </Alert>
                     {:else}
                       <QualityBar value={qoe} />
                       {#if isLowQuality}
-                        <span class="alert warning">
-                          <Icon name="warning" />
+                        <Alert type="warning" aria-live="off" --font-size="var(--font-size--small)">
                           {$_('stats.quality.frameDrops')}
-                        </span>
+                        </Alert>
                       {/if}
                     {/if}
                   </div>
@@ -295,8 +302,16 @@
 
     .thumbnail {
       flex: none;
+      position: relative;
       width: calc(50% - 8px);
       aspect-ratio: 16 / 9;
+
+      .overlay {
+        position: absolute;
+        inset: 8px;
+        display: flex;
+        align-items: center;
+      }
 
       a {
         display: block;
@@ -408,30 +423,6 @@
 
       & + div {
         flex: auto;
-      }
-    }
-
-    .alert {
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px;
-      border-width: 1px;
-      border-style: solid;
-      border-radius: 4px;
-      font-size: var(--sui-font-size-small);
-
-      &.error {
-        border-color: var(--sui-error-border-color);
-        color: var(--sui-error-foreground-color);
-        background-color: var(--sui-error-background-color);
-      }
-
-      &.warning {
-        border-color: var(--sui-warning-border-color);
-        color: var(--sui-warning-foreground-color);
-        background-color: var(--sui-warning-background-color);
       }
     }
   }

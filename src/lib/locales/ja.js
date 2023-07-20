@@ -171,6 +171,7 @@ export const strings = {
     },
     detail: {
       playAgain: 'もう一度見る',
+      platformDeprecated: '配信元のサービス終了により、この動画は再生できなくなりました。',
       viewStats: '統計データを表示',
       viewingHistory: '視聴履歴',
       delete: '削除',
