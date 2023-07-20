@@ -171,6 +171,7 @@ export const strings = {
     },
     detail: {
       playAgain: 'Play Again',
+      platformDeprecated: 'The video is no longer available as the platform has been deprecated.',
       viewStats: 'View Stats',
       viewingHistory: 'Viewing History',
       delete: 'Delete',

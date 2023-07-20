@@ -9,7 +9,6 @@ import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
 import NetflixTypeHandler from './NetflixTypeHandler';
 import NicoLiveTypeHandler from './NicoLiveTypeHandler';
 import NicoVideoTypeHandler from './NicoVideoTypeHandler';
-import ParaviTypeHandler from './ParaviTypeHandler';
 import TVerTypeHandler from './TVerTypeHandler';
 import YouTubeTypeHandler from './YouTubeTypeHandler';
 
@@ -20,12 +19,7 @@ export default class VideoHandler {
 
     const url = new URL(window.location.href);
 
-    if (ParaviTypeHandler.is_paravi_type()) {
-      this.handler = ParaviTypeHandler;
-      this.calQoeFlg = true;
-      this.service = 'paravi';
-      console.log('Paravi Type Handler');
-    } else if (TVerTypeHandler.is_tver_type()) {
+    if (TVerTypeHandler.is_tver_type()) {
       this.handler = TVerTypeHandler;
       this.calQoeFlg = true;
       this.service = 'tver';

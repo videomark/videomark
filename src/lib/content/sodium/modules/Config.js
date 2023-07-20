@@ -302,11 +302,6 @@ Config.video_platforms = [
     host: /(^|[^m]\.)youtube\.com$/,
   },
   {
-    // Paravi
-    id: 'paravi',
-    host: /(^|\.)paravi\.jp$/,
-  },
-  {
     // TVer
     id: 'tver',
     host: /(^|\.)tver\.jp$/,
@@ -422,22 +417,6 @@ Config.ui.tver = {
 }
 .vjs-user-inactive > #${Config.ui.id},
 .not-hover > #${Config.ui.id} {
-  opacity: 0;
-}`,
-};
-
-// Paravi ではコントロール非表示時に .(in)active を .controls に付与
-// .controls 要素は複数あるので .paravi-player 配下のものに限定する
-Config.ui.paravi = {
-  target: '.paravi-player .controls',
-  style: `#${Config.ui.id} {
-  position: absolute;
-  z-index: 1000001;
-  top: 12px;
-  left: 12px;
-  transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
-}
-.inactive > #${Config.ui.id} {
   opacity: 0;
 }`,
 };
