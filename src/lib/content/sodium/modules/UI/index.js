@@ -6,16 +6,17 @@ import Status from './Status';
  */
 export default class UI {
   /**
-   * @param {string} target CSS selector string
-   * @param {string} style CSS
+   * @param {string} locale UI ロケール。
+   * @param {string} target UI の挿入先を決定する CSS セレクタ。
+   * @param {string} style スタイルシート。
    */
-  constructor(target, style) {
+  constructor(locale, target, style) {
     this.target = target;
     this.style = style;
 
     // Inserted element
     this.element = null;
-    this.status = new Status();
+    this.status = new Status(locale);
   }
 
   update_status(state, qualityStatus) {

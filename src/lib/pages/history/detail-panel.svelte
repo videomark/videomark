@@ -11,6 +11,7 @@
   } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { openTab } from '$lib/services/navigation';
+  import { formatStats } from '$lib/services/stats';
 
   export let open = false;
   export let historyItems = [];
@@ -59,27 +60,10 @@
           {/if}
         </div>
         {#each historyItems as item (item.id)}
-          {@const {
-            key,
-            region = {},
-            startTime,
-            qoe,
-            isLowQuality,
-            transferSize,
-            qualityDetails,
-          } = item}
+          {@const { key, region = {}, startTime, stats } = item}
+          {@const { qoe, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
-          {@const {
-            bitrate,
-            resolution,
-            framerate,
-            speed,
-            droppedVideoFrames,
-            totalVideoFrames,
-            timing: { waiting = 0, pause = 0 } = {},
-            creationDate,
-          } = qualityDetails}
-          {@const playback = creationDate - startTime - pause}
+          {@const formattedStats = formatStats(locale, stats)}
           {@const deleted = $deletedHistoryItemKeys.includes(key)}
           <Group class="view-item">
             <div class="header">
@@ -98,7 +82,7 @@
               <div class="detail" inert={deleted || undefined}>
                 <section class="row">
                   <h4>
-                    {$_('stats.qoe')}
+                    {$_('stats.qoeWatching')}
                     <Button
                       on:click={() =>
                         openTab(
@@ -165,114 +149,14 @@
                     </section>
                   {/if}
                 {/await}
-                <section class="row">
-                  <h4>{$_('stats.bitrate')}</h4>
-                  <div>
-                    {#if bitrate > 0}
-                      {new Intl.NumberFormat(locale, {
-                        useGrouping: false,
-                        maximumFractionDigits: 0,
-                      }).format(bitrate / 1024)} kbps
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
-                <section class="row">
-                  <h4>{$_('stats.resolution')}</h4>
-                  <div>
-                    {#if resolution.width > 0 && resolution.height > 0}
-                      {resolution.width} × {resolution.height}
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
-                <section class="row">
-                  <h4>{$_('stats.frameRate')}</h4>
-                  <div>
-                    {#if framerate > 0}
-                      {new Intl.NumberFormat(locale, {
-                        useGrouping: false,
-                      }).format(framerate)} fps
-                      {#if speed > 1}
-                        × {speed}
-                      {/if}
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
-                <section class="row">
-                  <h4>{$_('stats.frameDrops')}</h4>
-                  <div>
-                    {#if Number.isFinite(droppedVideoFrames / totalVideoFrames)}
-                      {new Intl.NumberFormat(locale, {
-                        style: 'percent',
-                        useGrouping: false,
-                        maximumFractionDigits: 2,
-                      }).format(droppedVideoFrames / totalVideoFrames)}
-                      ({new Intl.NumberFormat(locale, {
-                        useGrouping: false,
-                      }).format(droppedVideoFrames)}
-                      / {new Intl.NumberFormat(locale, {
-                        useGrouping: false,
-                      }).format(totalVideoFrames)})
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
-                <section class="row">
-                  <h4>{$_('stats.waitingTime')}</h4>
-                  <div>
-                    {#if Number.isFinite(waiting / playback)}
-                      {new Intl.NumberFormat(locale, {
-                        style: 'unit',
-                        unit: 'second',
-                        useGrouping: false,
-                        maximumFractionDigits: 2,
-                      }).format(waiting / 1000)}
-                      ({new Intl.NumberFormat(locale, {
-                        style: 'percent',
-                        useGrouping: false,
-                        maximumFractionDigits: 2,
-                      }).format(waiting / playback)})
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
-                <section class="row">
-                  <h4>{$_('stats.playbackTime')}</h4>
-                  <div>
-                    {#if Number.isFinite(playback)}
-                      {new Intl.NumberFormat(locale, {
-                        style: 'unit',
-                        unit: 'second',
-                        useGrouping: false,
-                        maximumFractionDigits: 0,
-                      }).format(playback / 1000)}
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
-                <section class="row">
-                  <h4>{$_('stats.transferSize')}</h4>
-                  <div>
-                    {#if Number.isFinite(transferSize)}
-                      {new Intl.NumberFormat(locale, {
-                        style: 'unit',
-                        unit: 'megabyte',
-                        useGrouping: false,
-                        maximumFractionDigits: 2,
-                      }).format(transferSize / 1024 / 1024)}
-                    {:else}
-                      {$_('stats.dataMissing')}
-                    {/if}
-                  </div>
-                </section>
+                {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
+                  {#if prop !== 'qoe'}
+                    <section class="row">
+                      <h4>{$_(`stats.${prop}`)}</h4>
+                      <div>{displayValue || $_('stats.dataMissing')}</div>
+                    </section>
+                  {/if}
+                {/each}
               </div>
               <div class="deleted-overlay" inert={!deleted || undefined}>
                 <p>{$_('history.detail.deleted.description')}</p>

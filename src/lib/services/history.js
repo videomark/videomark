@@ -64,15 +64,17 @@ export const viewingHistory = writable(undefined, (set) => {
           location: url,
           thumbnail,
           start_time: startTime,
-          qoe,
+          qoe: finalQoe,
           region,
           transfer_size: transferSize,
           log = [],
         } = item;
 
         const platform = videoPlatforms.find(({ host }) => host.test(new URL(url).hostname));
-        const qualityDetails = log[log.length - 1]?.quality || {}; // 最後のデータのみ必要
-        const { droppedVideoFrames = 0, totalVideoFrames = 0 } = qualityDetails;
+        const latestStats = log.findLast((entry) => !!entry.quality)?.quality || {};
+        const provisionalQoe = log.findLast((entry) => !!entry.qoe)?.qoe || -1;
+        const qoe = Number.isFinite(finalQoe) ? finalQoe : provisionalQoe;
+        const { droppedVideoFrames = 0, totalVideoFrames = 0 } = latestStats;
 
         return {
           key,
@@ -85,11 +87,14 @@ export const viewingHistory = writable(undefined, (set) => {
           url,
           thumbnail,
           startTime,
-          qoe,
           region,
-          transferSize,
-          isLowQuality: !(droppedVideoFrames / totalVideoFrames <= 0.001),
-          qualityDetails,
+          stats: {
+            ...latestStats,
+            qoe,
+            isLowQuality: Number.isFinite(qoe) && droppedVideoFrames / totalVideoFrames > 0.001,
+            transferSize,
+            startTime,
+          },
         };
       })
       .sort((a, b) => b.startTime - a.startTime);

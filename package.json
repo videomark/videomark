@@ -50,7 +50,6 @@
   "dependencies": {
     "@sveltia/ui": "^0.6.0",
     "@videomark/sparkline": "github:videomark/sparkline",
-    "lit-html": "^2.7.5",
     "mpd-parser": "^1.1.1",
     "msgpack-lite": "^0.1.26",
     "uuid": "^9.0.0"

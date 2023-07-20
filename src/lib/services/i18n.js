@@ -4,10 +4,11 @@ import { get } from 'svelte/store';
 
 /**
  * 文字列を読み込んでロケールを初期化。
+ * @param {string} uiLocale ブラウザーの UI ロケール。
  * @see https://github.com/kaisermann/svelte-i18n/blob/main/docs/Getting%20Started.md
  * @see https://vitejs.dev/guide/features.html#glob-import
  */
-export const initAppLocales = () => {
+export const initAppLocales = (uiLocale) => {
   const modules = import.meta.glob('../locales/*.js', { eager: true });
 
   Object.entries(modules).forEach(([path, { strings }]) => {
@@ -18,7 +19,7 @@ export const initAppLocales = () => {
 
   const config = {
     fallbackLocale: 'en',
-    initialLocale: chrome.i18n.getUILanguage().split('-')[0] || 'en',
+    initialLocale: uiLocale.split('-')[0] || 'en',
   };
 
   initLocales(config);
