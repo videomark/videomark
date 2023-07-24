@@ -353,7 +353,7 @@ export default class SessionData {
       }
 
       try {
-        if (!Config.get_settings().disable_latest_qoe) {
+        if (Config.get_settings().show_latest_qoe_enabled) {
           qoe = await this.requestQoE(mainVideo);
         }
       } catch (e) {
@@ -412,7 +412,7 @@ export default class SessionData {
           let qoe;
 
           try {
-            if (!Config.get_settings().disable_latest_qoe) {
+            if (Config.get_settings().show_latest_qoe_enabled) {
               qoe = await this.requestQoE(mainVideo);
             }
           } catch (e) {

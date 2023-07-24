@@ -2,7 +2,7 @@ import { createStorageSync } from '$lib/services/storage';
 
 export const defaultSettings = {
   display_on_player: true,
-  disable_latest_qoe: false,
+  show_latest_qoe_enabled: true,
   expires_in: 30 * 24 * 60 * 60 * 1000,
   resolution_control: 2160,
   resolution_control_enabled: false,

@@ -206,7 +206,7 @@ export const strings = {
     },
   },
   settings: {
-    disable_latest_qoe: 'Stop measurements',
+    show_latest_qoe_enabled: 'Show latest QoE',
     title: 'Settings',
     backToHistory: 'Back to History',
     requirePageReload: 'Reload the page to reflect the change',
