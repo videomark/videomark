@@ -214,7 +214,7 @@ export default class SessionData {
 
     this.video = video;
   }
-
+  
   async start() {
     let mainVideo;
     let startTime;
@@ -353,7 +353,9 @@ export default class SessionData {
       }
 
       try {
-        qoe = await this.requestQoE(mainVideo);
+        if(!Config.get_settings().disable_requestqoe){
+          qoe = await this.requestQoE(mainVideo);
+        }
       } catch (e) {
         console.error(`VIDEOMARK: ${e}`);
       }
@@ -410,7 +412,9 @@ export default class SessionData {
           let qoe;
 
           try {
-            qoe = await this.requestQoE(mainVideo);
+            if(!Config.get_settings().disable_requestqoe){
+              qoe = await this.requestQoE(mainVideo);
+            }
           } catch (e) {
             console.error(`VIDEOMARK: ${e}`);
           }

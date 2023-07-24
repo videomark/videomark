@@ -151,6 +151,15 @@
       >
         <Switch bind:checked={$settings.display_on_player} />
       </SettingItem>
+      <SettingItem
+      title={$_('settings.disable_requestqoe')}
+      description={loadedSettings &&
+      loadedSettings.disable_requestqoe !== $settings.disable_requestqoe
+        ? $_('settings.requirePageReload')
+        : undefined}
+    >
+      <Switch bind:checked={$settings.disable_requestqoe} />
+    </SettingItem>
     </section>
     <section>
       <header>
