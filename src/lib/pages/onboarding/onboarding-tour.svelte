@@ -71,7 +71,7 @@
 
 <style lang="scss">
   h2 {
-    word-break: keep-all; // `<wbr>` 対応
+    word-break: keep-all; /* `<wbr>` 対応 */
   }
 
   .row {

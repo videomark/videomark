@@ -46,7 +46,7 @@
 <style lang="scss" global>
   :root {
     --sui-base-hue: 22 !important;
-    --video-background-color: #111; // !hardcoded
+    --video-background-color: #111; /* hardcoded */
   }
 
   :global(button.secondary) {
