@@ -206,7 +206,7 @@ export const strings = {
     },
   },
   settings: {
-    disable_requestqoe: 'Stop measurements',
+    disable_latest_qoe: 'Stop measurements',
     title: 'Settings',
     backToHistory: 'Back to History',
     requirePageReload: 'Reload the page to reflect the change',

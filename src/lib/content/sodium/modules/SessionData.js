@@ -214,7 +214,7 @@ export default class SessionData {
 
     this.video = video;
   }
-  
+
   async start() {
     let mainVideo;
     let startTime;
@@ -353,7 +353,7 @@ export default class SessionData {
       }
 
       try {
-        if(!Config.get_settings().disable_requestqoe){
+        if (!Config.get_settings().disable_latest_qoe) {
           qoe = await this.requestQoE(mainVideo);
         }
       } catch (e) {
@@ -412,7 +412,7 @@ export default class SessionData {
           let qoe;
 
           try {
-            if(!Config.get_settings().disable_requestqoe){
+            if (!Config.get_settings().disable_latest_qoe) {
               qoe = await this.requestQoE(mainVideo);
             }
           } catch (e) {

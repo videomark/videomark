@@ -206,7 +206,7 @@ export const strings = {
     },
   },
   settings: {
-    disable_requestqoe: '計測機能の停止',
+    disable_latest_qoe: '計測機能の停止',
     title: '設定',
     backToHistory: '履歴へ戻る',
     requirePageReload: 'ページを再読み込みすると変更が反映されます',
