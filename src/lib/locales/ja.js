@@ -206,6 +206,7 @@ export const strings = {
     },
   },
   settings: {
+    show_latest_qoe_enabled: '最新QoE値の表示',
     title: '設定',
     backToHistory: '履歴へ戻る',
     requirePageReload: 'ページを再読み込みすると変更が反映されます',

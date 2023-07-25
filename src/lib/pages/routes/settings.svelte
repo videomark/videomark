@@ -151,6 +151,15 @@
       >
         <Switch bind:checked={$settings.display_on_player} />
       </SettingItem>
+      <SettingItem
+        title={$_('settings.show_latest_qoe_enabled')}
+        description={loadedSettings &&
+        loadedSettings.show_latest_qoe_enabled !== $settings.show_latest_qoe_enabled
+          ? $_('settings.requirePageReload')
+          : undefined}
+      >
+        <Switch bind:checked={$settings.show_latest_qoe_enabled} />
+      </SettingItem>
     </section>
     <section>
       <header>

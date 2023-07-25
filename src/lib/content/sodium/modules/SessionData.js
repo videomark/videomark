@@ -353,7 +353,9 @@ export default class SessionData {
       }
 
       try {
-        qoe = await this.requestQoE(mainVideo);
+        if (Config.get_settings().show_latest_qoe_enabled) {
+          qoe = await this.requestQoE(mainVideo);
+        }
       } catch (e) {
         console.error(`VIDEOMARK: ${e}`);
       }
@@ -410,7 +412,9 @@ export default class SessionData {
           let qoe;
 
           try {
-            qoe = await this.requestQoE(mainVideo);
+            if (Config.get_settings().show_latest_qoe_enabled) {
+              qoe = await this.requestQoE(mainVideo);
+            }
           } catch (e) {
             console.error(`VIDEOMARK: ${e}`);
           }
