@@ -37,7 +37,7 @@
       maxVideoTTLs = [5, 10, 20, 30, 60] // min
         .map((min) => ({
           value: min * 60 * 1000, // msec
-          label: new Intl.NumberFormat('ja', { style: 'unit', unit: 'minute' }).format(min),
+          label: new Intl.NumberFormat($locale, { style: 'unit', unit: 'minute' }).format(min),
         }));
 
       resolutions = [0, 144, 240, 360, 480, 720, 1080, 1440, 2160].map((v) => ({
