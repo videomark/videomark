@@ -170,6 +170,7 @@ export const strings = {
       },
     },
     detail: {
+      switchToTab: 'Switch to Tab',
       playAgain: 'Play Again',
       platformDeprecated: 'The video is no longer available as the platform has been deprecated.',
       viewStats: 'View Stats',
