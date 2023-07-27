@@ -483,7 +483,7 @@ Config.ui.abematv = {
 
 // Amazon Prime Video
 Config.ui.amazonprimevideo = {
-  target: Config.isMobile() ? '#dv-web-player' : '.scalingUiContainerBottom',
+  target: Config.isMobile() ? '#dv-web-player' : '.atvwebplayersdk-overlays-container',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
