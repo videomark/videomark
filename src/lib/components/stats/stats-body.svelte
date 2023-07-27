@@ -17,7 +17,7 @@
   export let log = {};
 
   $: ({ isLowQuality } = stats);
-  $: formattedStats = formatStats(locale, stats);
+  $: formattedStats = formatStats($locale, stats);
 </script>
 
 <table>

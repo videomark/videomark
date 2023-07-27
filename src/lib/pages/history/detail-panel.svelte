@@ -63,7 +63,7 @@
           {@const { key, region = {}, startTime, stats } = item}
           {@const { qoe, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
-          {@const formattedStats = formatStats(locale, stats)}
+          {@const formattedStats = formatStats($locale, stats)}
           {@const deleted = $deletedHistoryItemKeys.includes(key)}
           <Group class="view-item">
             <div class="header">
