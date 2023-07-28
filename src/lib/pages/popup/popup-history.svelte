@@ -37,7 +37,7 @@
     </header>
     <div class="items">
       {#each playingVideos as historyItem (historyItem.id)}
-        <HistoryItem {historyItem} horizontal={true} />
+        <HistoryItem {historyItem} horizontal={true} playing={true} />
       {/each}
     </div>
   </section>

@@ -9,6 +9,12 @@
   export let historyItem = {};
   export let horizontal = false;
 
+  /**
+   * 指定された履歴の動画が再生中かどうか。
+   * @type {boolean}
+   */
+  export let playing = false;
+
   $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem || {});
   $: ({ qoe, isLowQuality } = stats);
 </script>
@@ -65,7 +71,11 @@
         }}
       >
         <Icon slot="start-icon" name="play_circle" />
-        {$_('history.detail.playAgain')}
+        {#if playing}
+          {$_('history.detail.switchToTab')}
+        {:else}
+          {$_('history.detail.playAgain')}
+        {/if}
       </Button>
     {/if}
     <Button
