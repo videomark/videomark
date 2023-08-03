@@ -202,6 +202,7 @@ export default class SessionData {
         video.push(new_video);
       } catch (err) {
         // どのタイプでもない
+        console.error(err);
       }
     });
 
