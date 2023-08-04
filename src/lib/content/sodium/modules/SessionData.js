@@ -201,7 +201,9 @@ export default class SessionData {
         set_max_bitrate(new_video);
         video.push(new_video);
       } catch (err) {
-        // どのタイプでもない
+        if (import.meta.env.MODE === 'development') {
+          console.error(err);
+        }
       }
     });
 
