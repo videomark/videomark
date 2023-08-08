@@ -33,7 +33,7 @@ export default class VideoHandler {
       this.handler = new NicoVideoTypeHandler(elm);
       this.service = 'nicovideo';
       console.log('NicoVideo Type Handler');
-    } else if (/live\.nicovideo\.jp/.test(url.host)) {
+    } else if (/live\d?\.nicovideo\.jp/.test(url.host)) {
       this.handler = new NicoLiveTypeHandler(elm);
       this.service = 'nicolive';
       console.log('NicoLive Type Handler');
