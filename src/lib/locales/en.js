@@ -73,7 +73,7 @@ export const strings = {
     navigation: {
       previous: 'Previous',
       next: 'Next',
-      start: 'Getting Started',
+      start: 'Get Started',
     },
     visualize: {
       title: 'Visualize video playback quality in numbers',

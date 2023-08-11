@@ -3,3 +3,6 @@
 .netlify/
 .DS_Store
 .*.swp
+/test-results/
+/playwright-report/
+/playwright/.cache/

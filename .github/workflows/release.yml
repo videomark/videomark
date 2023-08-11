@@ -22,7 +22,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }
       - name: Bump version
         run: |
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"

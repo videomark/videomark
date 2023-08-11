@@ -1,7 +1,8 @@
-name: lint
+name: tests
 on: pull_request
 jobs:
-  main:
+  e2e:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,13 +14,10 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install
-      - run: pnpm lint-report
-        continue-on-error: true
-      - run: pnpm run lint:cspell
-      - run: pnpm run lint:svelte
-      - uses: wearerequired/lint-action@v2
+      - run: pnpm exec playwright install --with-deps
+      - run: pnpm exec playwright test
+      - uses: actions/upload-artifact@v3
         with:
-          prettier: true
-          eslint: true
-          stylelint: true
-          stylelint_extensions: css,scss,svelte
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
