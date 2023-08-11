@@ -5,8 +5,8 @@ test.describe('拡張機能内ページ', () => {
     await acceptTerms({ page, extensionId });
   });
 
-  test('履歴ページ', async ({ page }) => {
-    await expect(new URL(page.url()).hash).toBe('#/history');
+  test('履歴ページ', async ({ page, extensionId }) => {
+    await openPage({ page, extensionId }, 'history');
     await expect(page.locator('h2').first()).toHaveText('Now let’s watch some videos');
   });
 

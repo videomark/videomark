@@ -9,8 +9,9 @@ export const test = base.extend({
     const pathToExtension = new URL('../dist/production', import.meta.url).pathname;
 
     const context = await chromium.launchPersistentContext('', {
-      headless: false,
+      headless: true,
       args: [
+        `--headless=new`,
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
       ],
@@ -55,4 +56,5 @@ export const acceptTerms = async ({ page, extensionId }) => {
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Get Started' }).click();
+  await expect(new URL(page.url()).hash).toBe('#/history');
 };
