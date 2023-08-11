@@ -1,6 +1,7 @@
 import { test as base, chromium } from '@playwright/test';
 
 /**
+ * 拡張機能テスト用に改変したテスト環境。
  * @see https://playwright.dev/docs/chrome-extensions
  */
 export const test = base.extend({
@@ -36,12 +37,11 @@ export const test = base.extend({
 export const { expect } = test;
 
 /**
- * QoE 取得のタイムアウトを 2 分間に設定。
- */
-export const timeout = 1000 * 60 * 2;
-
-/**
  * 拡張機能内ページを開く。
+ * @param {object} testArgs テスト変数の一部。
+ * @param {import('@playwright/test').Page} testArgs.page タブ操作メソッドを含むオブジェクト。
+ * @param {string} testArgs.extensionId 拡張機能 ID。
+ * @param {string} pageId URL ハッシュに含まれるページ ID。
  */
 export const openPage = async ({ page, extensionId }, pageId) => {
   await page.goto(`chrome-extension://${extensionId}/index.html#/${pageId}`);
@@ -49,6 +49,9 @@ export const openPage = async ({ page, extensionId }, pageId) => {
 
 /**
  * オンボーディングツアーを経て利用規約に同意。
+ * @param {object} testArgs テスト変数の一部。
+ * @param {import('@playwright/test').Page} testArgs.page タブ操作メソッドを含むオブジェクト。
+ * @param {string} testArgs.extensionId 拡張機能 ID。
  */
 export const acceptTerms = async ({ page, extensionId }) => {
   await openPage({ page, extensionId }, 'onboarding');
