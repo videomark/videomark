@@ -4,6 +4,9 @@
   "editor.formatOnSave": true,
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "eslint.validate": ["javascript", "svelte"],
+  "svelte.plugin.svelte.compilerWarnings": {
+    "missing-custom-element-compile-options": "ignore"
+  },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

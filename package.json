@@ -17,7 +17,7 @@
     "format": "prettier --plugin prettier-plugin-svelte --write .",
     "lint": "npm-run-all lint:*",
     "lint:cspell": "cspell --no-progress",
-    "lint:svelte": "svelte-check",
+    "lint:svelte": "svelte-check --compiler-warnings 'missing-custom-element-compile-options:ignore'",
     "lint:prettier": "prettier --check --plugin prettier-plugin-svelte .",
     "lint:eslint": "eslint .",
     "lint:stylelint": "stylelint '**/*.{css,scss,svelte}'",
