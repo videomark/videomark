@@ -13,7 +13,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install
-        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }
       - run: pnpm lint-report
         continue-on-error: true
       - run: pnpm run lint:cspell

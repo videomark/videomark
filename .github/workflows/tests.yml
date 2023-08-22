@@ -1,7 +1,8 @@
-name: build
-on: push
+name: tests
+on: pull_request
 jobs:
   main:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -12,9 +13,25 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      # Playwright バイナリをキャッシュ
+      # https://github.com/microsoft/playwright/issues/7249#issuecomment-1256878540
+      - uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
       - run: pnpm install
-        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }
       - run: pnpm build
+      - run: pnpm exec playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - run: pnpm exec playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+      - run: pnpm exec playwright test
+      - uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
   safari:
     # 拡張機能 v2 は Safari 対応未確認なので無効化
@@ -31,7 +48,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install
-        env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }
       - run: pnpm build-safari
       - uses: actions/upload-artifact@v3
         with:

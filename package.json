@@ -25,6 +25,7 @@
     "version": "bin/version"
   },
   "devDependencies": {
+    "@playwright/test": "^1.37.1",
     "@sveltejs/vite-plugin-svelte": "^2.4.5",
     "cspell": "^7.0.0",
     "eslint": "^8.47.0",
