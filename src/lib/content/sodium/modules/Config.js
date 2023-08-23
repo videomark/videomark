@@ -467,7 +467,7 @@ Config.ui.dtv = {
 
 // ABEMA
 Config.ui.abematv = {
-  target: `[class$=".com-tv-TVScreen__player-container"], .com-vod-VODScreen-container`,
+  target: `.com-tv-TVScreen__player-container, .com-vod-VODScreen-container`,
   style: `
     body:not(:hover) #${Config.ui.id} {
       opacity: 0;
