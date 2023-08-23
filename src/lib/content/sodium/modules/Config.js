@@ -467,18 +467,26 @@ Config.ui.dtv = {
 
 // ABEMA
 Config.ui.abematv = {
-  target: `[class$="com-tv-TVScreen"], .com-vod-VODScreen-container`,
-  style: `#${Config.ui.id} {
-  position: absolute;
-  z-index: 1000001;
-  top: 12px;
-  left: 12px;
-  transition: 200ms;
-}
-[class$="__player"] > .com-tv-TVScreen__overlay--cursor-hidden ~ #${Config.ui.id},
-.com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
-  opacity: 0;
-}`,
+  target: `[class$="com-tv-TVScreen__player-container"], .com-vod-VODScreen-container`,
+  style: `
+    body:not(:hover) #${Config.ui.id} {
+      opacity: 0;
+    }
+    #${Config.ui.id} {
+      position: absolute;
+      z-index: 1000001;
+      top: 12px;
+      left: 65px;
+      transition: 200ms;
+      opacity: 1;
+    }
+    .c-application-SideNavigation {
+      z-index: 1000002;
+    }
+    .com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
+      opacity: 0;
+    }
+  `,
 };
 
 // Amazon Prime Video
