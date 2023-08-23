@@ -1,14 +1,12 @@
 <script>
-  import { Button, Icon } from '@sveltia/ui';
-  import { _ } from 'svelte-i18n';
   import DetailPanel from '$lib/pages/history/detail-panel.svelte';
   import SearchForm from '$lib/pages/history/search-form.svelte';
   import SearchResults from '$lib/pages/history/search-results.svelte';
+  import SettingsButton from '$lib/pages/history/settings-button.svelte';
   import HistoryLayout from '$lib/pages/layouts/history-layout.svelte';
   import OnboardingLayout from '$lib/pages/layouts/onboarding-layout.svelte';
   import NoHistory from '$lib/pages/onboarding/no-history.svelte';
   import { viewingHistory } from '$lib/services/history';
-  import { openTab } from '$lib/services/navigation';
 
   let historyItems = [];
   let showDialog = false;
@@ -45,14 +43,12 @@
   {#if $viewingHistory.length}
     <HistoryLayout>
       <SearchForm slot="header" />
-      <Button slot="header-extras" class="ghost" on:click={() => openTab('#/settings')}>
-        <Icon slot="start-icon" name="settings" />
-        {$_('settings.title')}
-      </Button>
+      <SettingsButton slot="header-extras" />
       <SearchResults />
     </HistoryLayout>
   {:else}
     <OnboardingLayout>
+      <SettingsButton slot="header-extras" />
       <NoHistory />
     </OnboardingLayout>
   {/if}
