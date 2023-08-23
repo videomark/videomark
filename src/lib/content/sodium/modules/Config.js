@@ -467,21 +467,18 @@ Config.ui.dtv = {
 
 // ABEMA
 Config.ui.abematv = {
-  target: `[class$="com-tv-TVScreen__player-container"], .com-vod-VODScreen-container`,
+  target: `[class$=".com-tv-TVScreen__player-container"], .com-vod-VODScreen-container`,
   style: `
     body:not(:hover) #${Config.ui.id} {
       opacity: 0;
     }
     #${Config.ui.id} {
       position: absolute;
-      z-index: 1000001;
+      z-index: 11;
       top: 12px;
       left: 65px;
       transition: 200ms;
       opacity: 1;
-    }
-    .c-application-SideNavigation {
-      z-index: 1000002;
     }
     .com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
       opacity: 0;
