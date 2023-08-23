@@ -5,9 +5,21 @@ test.describe('拡張機能内ページ', () => {
     await acceptTerms({ page, extensionId });
   });
 
-  test('#/history を開いて履歴ページが表示される', async ({ page, extensionId }) => {
+  test('#/history を開いて履歴ページが表示され、設定ページへ遷移できる', async ({
+    page,
+    extensionId,
+  }) => {
+    // 履歴ページを開く
     await openPage({ page, extensionId }, 'history');
     await expect(page.locator('h2').first()).toHaveText('Now let’s watch some videos');
+
+    // 設定ページを開く
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await expect(page).toHaveURL(/#\/settings$/);
+
+    // 履歴ページへ戻る
+    await page.getByRole('button', { name: 'Back to History' }).click();
+    await expect(page).toHaveURL(/#\/history$/);
   });
 
   test('#/popup を開いてポップアップが表示される', async ({ page, extensionId }) => {

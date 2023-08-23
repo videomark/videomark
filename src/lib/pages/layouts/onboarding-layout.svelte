@@ -1,10 +1,18 @@
 <script>
+  import { Spacer } from '@sveltia/ui';
   import Wordmark from '$lib/pages/common/wordmark.svelte';
 </script>
 
 <div class="wrapper">
   <header>
     <h1><Wordmark /></h1>
+    <slot name="header" />
+    {#if $$slots['header-extras']}
+      <Spacer flex={true} />
+      <div class="extras">
+        <slot name="header-extras" />
+      </div>
+    {/if}
   </header>
   <div class="content">
     <slot />
