@@ -469,21 +469,20 @@ Config.ui.dtv = {
 Config.ui.abematv = {
   target: `.com-tv-TVScreen__player-container, .com-vod-VODScreen-container`,
   style: `
-    body:not(:hover) #${Config.ui.id} {
-      opacity: 0;
-    }
-    #${Config.ui.id} {
-      position: absolute;
-      z-index: 11;
-      top: 12px;
-      left: 65px;
-      transition: 200ms;
-      opacity: 1;
-    }
-    .com-vod-VODScreen-container--cursor-hidden > #${Config.ui.id} {
-      opacity: 0;
-    }
-  `,
+  #${Config.ui.id} {
+    position: absolute;
+    z-index: 1000001;
+    top: 12px;
+    left: 12px;
+    transition: 200ms;
+  }
+  .com-tv-TVScreen__player-container > #${Config.ui.id} {
+    z-index: 11;
+    left: 65px;
+  }
+  #${Config.ui.id}:not(:hover){
+    opacity: 0;
+  }`,
 };
 
 // Amazon Prime Video
