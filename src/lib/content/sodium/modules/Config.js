@@ -460,7 +460,7 @@ Config.ui.lemino = {
   left: 12px;
   transition: 200ms;
 }
-.controller-hidden > #${Config.ui.id} {
+#${Config.ui.id}:not(:hover){
   opacity: 0;
 }`,
 };
