@@ -1,6 +1,6 @@
 import GeneralTypeHandler from './GeneralTypeHandler';
 
-export default class LEMINOTypeHandler extends GeneralTypeHandler {
+export default class LeminoTypeHandler extends GeneralTypeHandler {
   get_video_title() {
     try {
       return document.querySelector('.titleDetailHeading_title').textContent;
