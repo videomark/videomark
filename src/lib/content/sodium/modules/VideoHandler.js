@@ -2,7 +2,7 @@ import AbemaTVLiveEventTypeHandler from './AbemaTVLiveEventTypeHandler';
 import AbemaTVLiveTypeHandler from './AbemaTVLiveTypeHandler';
 import AbemaTVVideoTypeHandler from './AbemaTVVideoTypeHandler';
 import AmazonPrimeVideoTypeHandler from './AmazonPrimeVideoTypeHandler';
-import DTVTypeHandler from './DTVTypeHandler';
+import LEMINOTypeHandler from './LEMINOTypeHandler';
 import FodTypeHandler from './FodTypeHandler';
 import IIJTypeHandler from './IIJTypeHandler';
 import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
@@ -45,10 +45,10 @@ export default class VideoHandler {
       this.handler = new NHKOndemandTypeHandler(elm);
       this.service = 'nhkondemand';
       console.log('NHK Ondemand Type Handler');
-    } else if (/\S+.video.dmkt-sp.jp/.test(url.host)) {
-      this.handler = new DTVTypeHandler(elm);
-      this.service = 'dtv';
-      console.log('dTV Type Handler');
+    } else if (url.host === 'lemino.docomo.ne.jp') {
+      this.handler = new LEMINOTypeHandler(elm);
+      this.service = 'Lemino';
+      console.log('Lemino Type Handler');
     } else if (url.host === 'abema.tv') {
       if (url.pathname.split('/').indexOf('video') >= 0) {
         this.handler = new AbemaTVVideoTypeHandler(elm);

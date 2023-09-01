@@ -52,10 +52,10 @@ export const videoPlatforms = [
     host: /(^|\.)nhk-ondemand\.jp$/,
   },
   {
-    id: 'dtv',
-    url: 'https://pc.video.dmkt-sp.jp/',
+    id: 'lemino',
+    url: 'https://lemino.docomo.ne.jp/',
     brandColor: '#CC6680',
-    host: /(^|\.)video\.dmkt-sp\.jp$/,
+    host: /^lemino\.docomo\.ne\.jp$/,
   },
   {
     id: 'abematv',
