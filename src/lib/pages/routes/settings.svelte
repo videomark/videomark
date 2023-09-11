@@ -123,9 +123,19 @@
       const expiresIn = 10 * 365 * 24 * 60 * 60 * 1000;
 
       await overwritePersonalSession(sessionId, expiresIn);
-      settings.update((_settings) => ({ ...(_settings ?? {}), expires_in: expiresIn }));
+
+      $settings.expires_in = expiresIn;
     }
   });
+
+  $: {
+    // 自動計測向けの初期設定
+    const bot = new URLSearchParams(window.location.search).get('bot') === 'true';
+
+    if ($settings.show_latest_qoe_enabled && bot) {
+      $settings.show_latest_qoe_enabled = false;
+    }
+  }
 
   $: $session.type = getSessionType($session.id);
   $: $session.expires = Date.now() + $settings.expires_in;
