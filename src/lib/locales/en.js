@@ -17,6 +17,7 @@ export const strings = {
     amazonprimevideo: 'Prime Video (Japan)',
     iijtwilightconcert: 'TWILIGHT CONCERT',
     gorin: 'gorin.jp',
+    lemino: 'Lemino',
   },
   subdivisions: {
     JP: {

@@ -327,9 +327,9 @@ Config.video_platforms = [
     host: /^www\.nhk-ondemand\.jp$/,
   },
   {
-    // dTV
-    id: 'dtv',
-    host: /\.video\.dmkt-sp\.jp$/,
+    // Lemino
+    id: 'lemino',
+    host: /^lemino\.docomo\.ne\.jp$/,
   },
   {
     // AbemaTV, Abemaビデオ
@@ -450,9 +450,9 @@ Config.ui.nhkondemand = {
 }`,
 };
 
-// dTV
-Config.ui.dtv = {
-  target: null,
+// Lemino
+Config.ui.lemino = {
+  target: `.fullscreen`,
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
@@ -460,7 +460,7 @@ Config.ui.dtv = {
   left: 12px;
   transition: 200ms;
 }
-.controller-hidden > #${Config.ui.id} {
+#${Config.ui.id}:not(:hover){
   opacity: 0;
 }`,
 };
