@@ -52,10 +52,11 @@ export const videoPlatforms = [
     host: /(^|\.)nhk-ondemand\.jp$/,
   },
   {
-    id: 'lemino',
-    url: 'https://lemino.docomo.ne.jp/',
+    id: 'dtv',
+    deprecated: true, // 2023 年 6 月 30 日でサービス終了、Leminoに移行
+    url: 'https://pc.video.dmkt-sp.jp/',
     brandColor: '#CC6680',
-    host: /^lemino\.docomo\.ne\.jp$/,
+    host: /(^|\.)video\.dmkt-sp\.jp$/,
   },
   {
     id: 'abematv',
@@ -81,5 +82,11 @@ export const videoPlatforms = [
     url: 'https://www.gorin.jp/',
     brandColor: '#40b8dc',
     host: /(^|\.)gorin\.jp$/,
+  },
+  {
+    id: 'lemino',
+    url: 'https://lemino.docomo.ne.jp/',
+    brandColor: '#CC6680',
+    host: /^lemino\.docomo\.ne\.jp$/,
   },
 ];
