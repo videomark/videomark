@@ -37,6 +37,7 @@
         "*://*.youtube.com/*",
         "*://*.nicovideo.jp/*",
         "*://*.fod.fujitv.co.jp/*",
+        "*://fod.fujitv.co.jp/*",
         "*://*.nhk-ondemand.jp/*",
         "*://lemino.docomo.ne.jp/*",
         "*://abema.tv/*",
