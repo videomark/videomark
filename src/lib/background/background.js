@@ -7,6 +7,7 @@ const permittedOrigins = [
   /^https:\/\/([a-z-]+\.)?youtube\.com$/,
   /^https:\/\/([a-z-]+\.)?tver\.jp$/,
   'https://i.fod.fujitv.co.jp',
+  'https://fod.fujitv.co.jp',
   'https://www.nicovideo.jp',
   /^https:\/\/live\d\.nicovideo\.jp$/,
   'https://www.nhk-ondemand.jp',

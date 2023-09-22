@@ -37,7 +37,7 @@ export default class VideoHandler {
       this.handler = new NicoLiveTypeHandler(elm);
       this.service = 'nicolive';
       console.log('NicoLive Type Handler');
-    } else if (url.host === 'i.fod.fujitv.co.jp') {
+    } else if (url.host === 'fod.fujitv.co.jp') {
       this.handler = new FodTypeHandler(elm);
       this.service = 'fod';
       console.log('Fod Type Handler');
