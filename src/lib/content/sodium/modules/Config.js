@@ -515,7 +515,7 @@ Config.ui.iijtwilightconcert = {
 
 // Netflix
 Config.ui.netflix = {
-  target: 'body',
+  target: '.watch-video',
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
