@@ -80,23 +80,22 @@ const initToolbarButton = async () => {
 
 initToolbarButton();
 
-chrome.runtime.onInstalled.addListener(() => {
-  (async () => {
-    const termsAgreed = await storage.get('AgreedTerm');
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+  if (reason === 'install') {
+    openTab('#/onboarding');
+  }
+
+  if (reason === 'update') {
+    const termsAgreed = (await storage.get('AgreedTerm')) || false;
     const version = await storage.get('version');
     const legacyVersion = version && version < SCHEMA_VERSION;
 
-    // 古いデータスキーマの場合は移行せずに破棄
+    // 古いデータスキーマの場合は移行せず、利用規約同意有無のみ残して破棄
     if (legacyVersion) {
       await storage.clear();
+      await storage.set('AgreedTerm', termsAgreed);
     }
-
-    if (termsAgreed && !legacyVersion) {
-      chrome.action.setPopup({ popup: '/index.html#/popup' });
-    } else {
-      openTab('#/onboarding');
-    }
-  })();
+  }
 });
 
 const getMasterDisplayOnPlayer = async () => {
