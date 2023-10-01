@@ -5,7 +5,7 @@
   "repository": "git@github.com:videomark/videomark.git",
   "license": "Apache-2.0",
   "private": true,
-  "packageManager": "pnpm@8.7.1",
+  "packageManager": "pnpm@8.8.0",
   "scripts": {
     "build": "bin/build",
     "build:watch": "MODE=production vite build --watch --outDir dist/production",
