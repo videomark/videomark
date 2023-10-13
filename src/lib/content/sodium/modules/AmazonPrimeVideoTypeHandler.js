@@ -16,9 +16,7 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
 
   get_video_title() {
     try {
-      return [...document.querySelectorAll('.contentTitlePanel > *')]
-        .map((e) => e.textContent)
-        .join(', ');
+      return document.querySelector('[class*="title-text"]').textContent;
     } catch (e) {
       return '';
     }
