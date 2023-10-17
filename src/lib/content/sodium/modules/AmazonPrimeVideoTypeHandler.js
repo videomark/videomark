@@ -17,7 +17,6 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
   get_video_title() {
     try {
       return document.querySelector('.atvwebplayersdk-title-text')?.textContent;
-      
     } catch (e) {
       return '';
     }
