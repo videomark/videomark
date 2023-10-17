@@ -227,7 +227,7 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
 
   get_video_title() {
     try {
-      return document.querySelector('.com-tv-SlotHeading__title').textContent;
+      return document.querySelector('[class="com-m-TextIcon--dark"]')?.textContent;
     } catch (e) {
       return '';
     }
