@@ -5,7 +5,7 @@
   "repository": "git@github.com:videomark/videomark.git",
   "license": "Apache-2.0",
   "private": true,
-  "packageManager": "pnpm@8.8.0",
+  "packageManager": "pnpm@8.10.2",
   "scripts": {
     "build": "bin/build",
     "build:watch": "MODE=production vite build --watch --outDir dist/production",
@@ -48,7 +48,7 @@
     "vite": "^4.5.0"
   },
   "dependencies": {
-    "@sveltia/ui": "^0.6.5",
+    "@sveltia/ui": "^0.7.0",
     "@videomark/sparkline": "github:videomark/sparkline",
     "mpd-parser": "^1.2.2",
     "msgpack-lite": "^0.1.26",
