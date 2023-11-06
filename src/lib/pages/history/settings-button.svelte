@@ -4,7 +4,7 @@
   import { openTab } from '$lib/services/navigation';
 </script>
 
-<Button class="ghost" on:click={() => openTab('#/settings')}>
+<Button variant="ghost" on:click={() => openTab('#/settings')}>
   <Icon slot="start-icon" name="settings" />
   {$_('settings.title')}
 </Button>

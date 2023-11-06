@@ -5,7 +5,7 @@
   export let dropdownLabel = '';
 </script>
 
-<Button class="ghost" label={buttonLabel} aria-haspopup="dialog">
+<Button variant="ghost" label={buttonLabel} aria-haspopup="dialog">
   <Icon slot="end-icon" name="arrow_drop_down" />
   <section slot="popup" class="popup">
     <header>

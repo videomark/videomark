@@ -10,7 +10,7 @@
 <Group class="buttons" aria-label={$_('platformList.title')}>
   <div class="buttons">
     {#each videoPlatforms.filter(({ experimental, deprecated }) => !(experimental || deprecated)) as { id, url } (id)}
-      <Button class="secondary pill close-popup" on:click={() => openTab(url)}>
+      <Button variant="secondary" pill class="close-popup" on:click={() => openTab(url)}>
         {$_(`platforms.${id}`)}
       </Button>
     {/each}
@@ -18,7 +18,8 @@
 </Group>
 <div class="limitations">
   <Button
-    class="link close-popup"
+    variant="link"
+    class="close-popup"
     on:click={() => openTab(`${SODIUM_MARKETING_SITE_URL}/${$locale}/spec`)}
   >
     {$_('platformList.limitations')}

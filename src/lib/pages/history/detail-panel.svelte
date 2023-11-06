@@ -50,7 +50,7 @@
           {#if historyItems.length > 1}
             <div>
               <Button
-                class="tertiary"
+                variant="tertiary"
                 label={$_('history.detail.deleteAll')}
                 on:click={() => deleteItemsLater(historyItems.map(({ key }) => key))}
               >
@@ -70,7 +70,8 @@
               <h3>{formatDateTime(startTime, { full: true })}</h3>
               <div>
                 <Button
-                  class="tertiary iconic"
+                  variant="tertiary"
+                  iconic
                   disabled={deleted}
                   on:click={() => deleteItemsLater([key])}
                 >
@@ -161,10 +162,10 @@
               <div class="deleted-overlay" inert={!deleted || undefined}>
                 <p>{$_('history.detail.deleted.description')}</p>
                 <div class="buttons">
-                  <Button class="tertiary" on:click={() => undoDeletingItems([key])}>
+                  <Button variant="tertiary" on:click={() => undoDeletingItems([key])}>
                     {$_('history.detail.deleted.restore')}
                   </Button>
-                  <Button class="tertiary" on:click={() => deleteItemsNow([key])}>
+                  <Button variant="tertiary" on:click={() => deleteItemsNow([key])}>
                     {$_('history.detail.deleted.deleteNow')}
                   </Button>
                 </div>

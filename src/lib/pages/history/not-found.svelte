@@ -12,7 +12,9 @@
   {#if searchTerms}
     <div>
       <Button
-        class="primary pill close-popup"
+        variant="primary"
+        pill
+        class="close-popup"
         on:click={() => {
           openTab(
             `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerms)}`,

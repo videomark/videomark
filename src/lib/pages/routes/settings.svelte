@@ -1,5 +1,14 @@
 <script>
-  import { Button, Checkbox, Dialog, Icon, Option, Select, Switch } from '@sveltia/ui';
+  import {
+    Button,
+    Checkbox,
+    CheckboxGroup,
+    Dialog,
+    Icon,
+    Option,
+    Select,
+    Switch,
+  } from '@sveltia/ui';
   import { onMount } from 'svelte';
   import { _, locale } from 'svelte-i18n';
   import HistoryLayout from '$lib/pages/layouts/history-layout.svelte';
@@ -143,7 +152,7 @@
 
 <HistoryLayout>
   <h1 slot="header">{$_('settings.title')}</h1>
-  <Button slot="header-extras" class="ghost" on:click={() => openTab('#/history')}>
+  <Button slot="header-extras" variant="ghost" on:click={() => openTab('#/history')}>
     <Icon slot="start-icon" name="arrow_back" />
     {$_('settings.backToHistory')}
   </Button>
@@ -216,7 +225,7 @@
       </SettingItem>
       <SettingItem title={$_('settings.clearData')}>
         <Button
-          class="tertiary"
+          variant="tertiary"
           on:click={() => {
             openResetDialog = true;
           }}
@@ -238,12 +247,7 @@
             bind:value={$settings.max_video_ttl}
           >
             {#each maxVideoTTLs as { label, value }}
-              <Option
-                class="secondary"
-                {label}
-                {value}
-                selected={value === $settings.max_video_ttl}
-              />
+              <Option {label} {value} selected={value === $settings.max_video_ttl} />
             {/each}
           </Select>
         </SettingItem>
@@ -373,26 +377,20 @@
 >
   <div class="dialog-content">
     <div class="description">{$_('settings.clearDialog.description')}</div>
-    <div>
+    <CheckboxGroup orientation="vertical">
       <Checkbox bind:checked={clearHistoryItems.settings}>
         {$_('settings.clearDialog.settings')}
       </Checkbox>
-    </div>
-    <div>
       <Checkbox bind:checked={clearHistoryItems.sessionId}>
         {$_('settings.clearDialog.sessionId')}
       </Checkbox>
-    </div>
-    <div>
       <Checkbox bind:checked={clearHistoryItems.history}>
         {$_('settings.clearDialog.history')}
       </Checkbox>
-    </div>
-    <div>
       <Checkbox disabled={clearHistoryItems.history} bind:checked={clearHistoryItems.graphCache}>
         {$_('settings.clearDialog.graphCache')}
       </Checkbox>
-    </div>
+    </CheckboxGroup>
   </div>
 </Dialog>
 

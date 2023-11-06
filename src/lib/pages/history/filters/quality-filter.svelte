@@ -88,7 +88,7 @@
   </div>
   <div class="row">
     <Button
-      class="link"
+      variant="link"
       on:click={() =>
         openTab(`${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`)}
     >

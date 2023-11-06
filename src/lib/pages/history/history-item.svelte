@@ -64,7 +64,8 @@
       </Alert>
     {:else}
       <Button
-        class="primary close-popup"
+        variant="primary"
+        class="close-popup"
         on:click={(event) => {
           openTab(url);
           event.stopPropagation();
@@ -79,7 +80,8 @@
       </Button>
     {/if}
     <Button
-      class="secondary close-popup"
+      variant="secondary"
+      class="close-popup"
       on:click={(event) => {
         const keys = $settings.show_duplicate_videos
           ? [key]

@@ -48,7 +48,8 @@
     <p class="action">
       {#if isLastPage}
         <Button
-          class="primary pill"
+          variant="primary"
+          pill
           on:click={() => {
             agreeTerms();
           }}
@@ -57,7 +58,8 @@
         </Button>
       {:else}
         <Button
-          class="primary pill"
+          variant="primary"
+          pill
           on:click={() => {
             currentIndex += 1;
           }}

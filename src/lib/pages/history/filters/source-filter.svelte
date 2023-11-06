@@ -16,7 +16,8 @@
   {#if $viewingHistorySources.length > 1}
     <div class="row">
       <Button
-        class="small tertiary"
+        variant="tertiary"
+        size="small"
         disabled={$searchCriteria.sources.length === platformIds.length}
         on:click={() => {
           $searchCriteria.sources = [...platformIds];
@@ -25,7 +26,8 @@
         {$_('_.selectAll')}
       </Button>
       <Button
-        class="small tertiary"
+        variant="tertiary"
+        size="small"
         disabled={!$searchCriteria.sources.length}
         on:click={() => {
           $searchCriteria.sources = [];

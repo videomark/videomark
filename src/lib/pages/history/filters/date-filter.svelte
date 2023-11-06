@@ -100,7 +100,7 @@
   <div class="row">
     <RadioGroup
       orientation="vertical"
-      on:select={({ detail: { value } }) => {
+      on:change={({ detail: { value } }) => {
         selectedDateRange = value;
       }}
     >
@@ -108,7 +108,7 @@
         <Radio
           label={$_(`history.search.filters.date.options.${value}`)}
           {value}
-          selected={selectedDateRange === value}
+          checked={selectedDateRange === value}
         />
       {/each}
     </RadioGroup>

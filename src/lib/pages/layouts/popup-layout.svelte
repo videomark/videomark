@@ -35,7 +35,7 @@
 >
   <header>
     <h1><Wordmark /></h1>
-    <Button class="ghost iconic close-popup" on:click={() => openTab('#/settings')}>
+    <Button variant="ghost" iconic class="close-popup" on:click={() => openTab('#/settings')}>
       <Icon slot="start-icon" name="settings" label={$_('settings.title')} />
     </Button>
   </header>

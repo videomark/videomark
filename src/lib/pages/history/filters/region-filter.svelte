@@ -13,7 +13,8 @@
   {#if $viewingHistoryRegions.length > 1}
     <div class="row">
       <Button
-        class="small tertiary"
+        variant="tertiary"
+        size="small"
         disabled={$searchCriteria.regions.length === $viewingHistoryRegions.length}
         on:click={() => {
           $searchCriteria.regions = [...$viewingHistoryRegions];
@@ -22,7 +23,8 @@
         {$_('_.selectAll')}
       </Button>
       <Button
-        class="small tertiary"
+        variant="tertiary"
+        size="small"
         disabled={!$searchCriteria.regions.length}
         on:click={() => {
           $searchCriteria.regions = [];
