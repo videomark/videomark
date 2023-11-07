@@ -1,9 +1,11 @@
 <script>
   import { Spacer } from '@sveltia/ui';
   import Wordmark from '$lib/pages/common/wordmark.svelte';
+
+  export let compact = false;
 </script>
 
-<div class="wrapper">
+<div class="wrapper" class:compact>
   <header>
     <h1><Wordmark /></h1>
     <slot name="header" />
@@ -23,8 +25,7 @@
   .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    padding: 32px;
+    overflow: hidden;
     height: 100%;
     background-color: var(--sui-primary-background-color);
 
@@ -39,15 +40,22 @@
       filter: grayscale(1) opacity(0.1);
       content: '';
     }
+
+    &.compact h1 {
+      @media (max-width: 767px) {
+        display: none;
+      }
+    }
   }
 
   header {
     z-index: 1;
     flex: none;
     display: flex;
-    gap: 16px 32px;
+    gap: 16px var(--page-padding);
     justify-content: flex-start;
     align-items: flex-start;
+    padding: var(--page-padding);
 
     @media (max-width: 1023px) {
       flex-wrap: wrap;
@@ -72,6 +80,7 @@
   .content {
     z-index: 1;
     flex: auto;
-    overflow: auto;
+    overflow-y: auto;
+    padding: 0 var(--page-padding) var(--page-padding);
   }
 </style>

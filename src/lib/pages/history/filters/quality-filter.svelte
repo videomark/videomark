@@ -92,7 +92,7 @@
       on:click={() =>
         openTab(`${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`)}
     >
-      <Icon name="help" />
+      <Icon name="help" slot="start-icon" />
       {$_('stats.whatIsQOE')}
     </Button>
   </div>

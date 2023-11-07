@@ -47,6 +47,14 @@
   :root {
     --sui-base-hue: 22 !important;
     --video-background-color: #111; /* hardcoded */
+
+    @media (max-width: 767px) {
+      --page-padding: 16px;
+    }
+
+    @media (min-width: 768px) {
+      --page-padding: 32px;
+    }
   }
 
   :global(button.secondary) {

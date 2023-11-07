@@ -11,6 +11,7 @@
   } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { openTab } from '$lib/services/navigation';
+  import { isSmallScreen } from '$lib/services/runtime';
   import { formatStats } from '$lib/services/stats';
 
   export let open = false;
@@ -21,7 +22,15 @@
   $: [{ platform, url, title, thumbnail } = {}] = historyItems;
 </script>
 
-<Drawer bind:open size="medium" closeOnBackdropClick={true}>
+<Drawer
+  bind:open
+  size="medium"
+  position={$isSmallScreen ? 'bottom' : 'right'}
+  closeOnBackdropClick={true}
+  on:close={() => {
+    window.location.replace('#/history');
+  }}
+>
   <div class="wrapper">
     {#if historyItems.length}
       <header>
@@ -207,7 +216,7 @@
         width: 100%;
         border-radius: 4px;
         aspect-ratio: 16 / 9;
-        object-fit: contain;
+        object-fit: cover;
         background-color: var(--video-background-color);
       }
     }
@@ -260,13 +269,13 @@
     .deleted-overlay {
       position: absolute;
       inset: -8px;
-      background-color: var(--sui-secondary-background-color-translucent);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 16px;
+      text-align: center;
       opacity: 1;
       transition: all 250ms;
 

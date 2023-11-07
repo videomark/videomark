@@ -1,4 +1,5 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
+import { isMobile } from '$lib/services/runtime';
 
 export const selectedPageName = writable();
 
@@ -13,6 +14,14 @@ export const openTab = async (url) => {
   if (isInternalPage) {
     // eslint-disable-next-line no-param-reassign
     url = chrome.runtime.getURL(url.replace(/^#/, '/index.html#'));
+
+    // モバイルの場合はポップアップも他の拡張機能内ページも同じ専用画面内で開く
+    if (get(isMobile)) {
+      // eslint-disable-next-line prefer-destructuring
+      window.location.hash = url.match(/(#.*)/)[1];
+
+      return;
+    }
   }
 
   const [currentTab] = await chrome.tabs.query({

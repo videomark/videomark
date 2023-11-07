@@ -42,11 +42,19 @@
   table {
     table-layout: fixed;
     font-size: var(--sui-font-size-small);
+
+    @media (max-width: 599px) {
+      font-size: var(--sui-font-size-x-small);
+    }
   }
 
   col {
     &:not(:last-child) {
       min-width: 120px;
+
+      @media (max-width: 599px) {
+        min-width: 80px;
+      }
     }
   }
 

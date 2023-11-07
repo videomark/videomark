@@ -28,17 +28,33 @@
   .row {
     display: flex;
     align-items: center;
-    margin: 12px 24px;
+    gap: 16px;
     min-height: 32px;
-    white-space: nowrap;
+
+    @media (max-width: 599px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 16px;
+    }
+
+    @media (min-width: 600px) and (max-width: 767px) {
+      margin: 12px 16px;
+    }
+
+    @media (min-width: 768px) {
+      margin: 12px 24px;
+    }
 
     h3 {
       font-weight: normal;
       font-size: inherit;
+      line-height: 1.5;
 
       & + p {
         margin: 4px 0 0;
         font-size: smaller;
+        white-space: nowrap;
         color: var(--sui-secondary-foreground-color);
       }
     }

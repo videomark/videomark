@@ -117,6 +117,8 @@ export const strings = {
     search: {
       input: 'Search History',
       filters: {
+        filters: 'Search Filters',
+        show_filters: 'Show Search Filters',
         date: {
           buttonLabel: 'Dates',
           dropdownLabel: 'Viewing Date Range',

@@ -85,6 +85,7 @@
 
     @media (max-width: 1023px) {
       flex-direction: column;
+      gap: 32px;
     }
 
     .col:last-of-type {
@@ -104,8 +105,12 @@
     gap: 8px;
 
     :global(button .icon) {
-      font-size: var(--sui-font-size-large);
+      font-size: 16px;
       font-variation-settings: 'FILL' 1;
+
+      @media (any-pointer: coarse) {
+        font-size: 24px;
+      }
     }
 
     :global(button[aria-pressed='true']) {

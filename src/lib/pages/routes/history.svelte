@@ -1,4 +1,5 @@
 <script>
+  import { tick } from 'svelte';
   import DetailPanel from '$lib/pages/history/detail-panel.svelte';
   import SearchForm from '$lib/pages/history/search-form.svelte';
   import SearchResults from '$lib/pages/history/search-results.svelte';
@@ -25,14 +26,15 @@
         historyItems = $viewingHistory.filter((item) => keys.includes(item.key));
         showDialog = !!historyItems.length;
       }
-
-      window.location.hash = '#/history';
     }
   };
 
   $: {
     if ($viewingHistory?.length) {
-      checkHash();
+      (async () => {
+        await tick();
+        checkHash();
+      })();
     }
   }
 </script>

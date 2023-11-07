@@ -39,6 +39,10 @@
     font-size: var(--sui-font-size-default);
     font-weight: bold;
 
+    @media (max-width: 599px) {
+      font-size: var(--sui-font-size-small);
+    }
+
     .label {
       display: inline-flex;
       gap: 4px;

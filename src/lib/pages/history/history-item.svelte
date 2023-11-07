@@ -1,5 +1,5 @@
 <script>
-  import { Alert, Button, Icon } from '@sveltia/ui';
+  import { Alert, Button, Icon, Spacer } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
@@ -17,15 +17,75 @@
 
   $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem || {});
   $: ({ qoe, isLowQuality } = stats);
+
+  const playAgain = () => {
+    if (!platform?.deprecated) {
+      openTab(url);
+    }
+  };
+
+  const viewStats = () => {
+    const keys = $settings.show_duplicate_videos
+      ? [key]
+      : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
+
+    openTab(`#/history/${keys.join(',')}`);
+  };
 </script>
 
 <div class="item" class:horizontal>
-  <div class="primary">
+  <div
+    class="primary hover"
+    tabindex="0"
+    role="button"
+    on:click|stopPropagation={() => {
+      playAgain();
+    }}
+    on:keydown={(event) => {
+      if (event.key === 'Enter') {
+        playAgain();
+      }
+    }}
+  >
     <div class="hero">
       <img class="thumbnail" src={thumbnail} alt="" />
     </div>
+    <div class="actions close-popup">
+      {#if platform?.deprecated}
+        <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
+          {$_('history.detail.platformDeprecated')}
+        </Alert>
+      {:else}
+        <Button
+          variant="primary"
+          size={horizontal ? 'small' : 'medium'}
+          class="close-popup play-again"
+        >
+          <Icon slot="start-icon" name="play_circle" />
+          <span class="label">
+            {#if playing}
+              {$_('history.detail.switchToTab')}
+            {:else}
+              {$_('history.detail.playAgain')}
+            {/if}
+          </span>
+        </Button>
+      {/if}
+    </div>
   </div>
-  <div class="secondary">
+  <div
+    class="secondary hover"
+    tabindex="0"
+    role="button"
+    on:click|stopPropagation={() => {
+      viewStats();
+    }}
+    on:keydown={(event) => {
+      if (event.key === 'Enter') {
+        viewStats();
+      }
+    }}
+  >
     <div class="body">
       <div class="title">{title}</div>
     </div>
@@ -33,6 +93,7 @@
       <div class="time">
         {formatDateTime(startTime)}
       </div>
+      <Spacer flex />
       <div class="qoe">
         {#if qoe === undefined || qoe === -1}
           <Icon name="hourglass_empty" label={$_('stats.quality.measuring')} />
@@ -48,52 +109,18 @@
         {/if}
       </div>
     </div>
-  </div>
-  <div
-    class="actions close-popup"
-    role="none"
-    on:click|stopPropagation={() => {
-      if (!platform?.deprecated) {
-        openTab(url);
-      }
-    }}
-  >
-    {#if platform?.deprecated}
-      <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
-        {$_('history.detail.platformDeprecated')}
-      </Alert>
-    {:else}
+    <div class="actions close-popup">
       <Button
-        variant="primary"
-        class="close-popup"
-        on:click={(event) => {
-          openTab(url);
-          event.stopPropagation();
-        }}
+        variant="secondary"
+        size={horizontal ? 'small' : 'medium'}
+        class="close-popup view-stats"
       >
-        <Icon slot="start-icon" name="play_circle" />
-        {#if playing}
-          {$_('history.detail.switchToTab')}
-        {:else}
-          {$_('history.detail.playAgain')}
-        {/if}
+        <Icon slot="start-icon" name="monitoring" />
+        <span class="label">
+          {$_('history.detail.viewStats')}
+        </span>
       </Button>
-    {/if}
-    <Button
-      variant="secondary"
-      class="close-popup"
-      on:click={(event) => {
-        const keys = $settings.show_duplicate_videos
-          ? [key]
-          : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
-
-        openTab(`#/history/${keys.join(',')}`);
-        event.stopPropagation();
-      }}
-    >
-      <Icon slot="start-icon" name="monitoring" />
-      {$_('history.detail.viewStats')}
-    </Button>
+    </div>
   </div>
 </div>
 
@@ -144,7 +171,7 @@
     .thumbnail {
       width: 100%;
       aspect-ratio: 16 / 9;
-      object-fit: contain;
+      object-fit: cover;
       background-color: var(--sui-video-background-color);
       transition: all 0.5s;
     }
@@ -168,14 +195,14 @@
   }
 
   .meta {
-    height: 32px;
+    min-height: 32px;
     padding: 0 16px;
     color: var(--sui-tertiary-foreground-color);
     background-color: var(--sui-tertiary-background-color);
     font-size: var(--sui-font-size-small);
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 16px;
 
     & > div {
       display: flex;
@@ -188,6 +215,10 @@
         font-size: var(--sui-font-size-xx-large);
       }
     }
+  }
+
+  .hover {
+    position: relative;
   }
 
   .actions {
@@ -204,13 +235,9 @@
     transition: all 0.5s;
     cursor: pointer;
 
-    .item:hover &,
-    .item:focus-within & {
+    .hover:hover &,
+    .hover:focus-within & {
       opacity: 1;
-    }
-
-    :global(button) {
-      white-space: nowrap;
     }
   }
 </style>

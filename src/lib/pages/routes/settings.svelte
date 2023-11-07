@@ -150,7 +150,7 @@
   $: $session.expires = Date.now() + $settings.expires_in;
 </script>
 
-<HistoryLayout>
+<HistoryLayout compact={true}>
   <h1 slot="header">{$_('settings.title')}</h1>
   <Button slot="header-extras" variant="ghost" on:click={() => openTab('#/history')}>
     <Icon slot="start-icon" name="arrow_back" />

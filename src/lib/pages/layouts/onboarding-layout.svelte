@@ -23,8 +23,7 @@
   .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    padding: 32px;
+    overflow: hidden;
     height: 100%;
     background-color: var(--sui-primary-background-color);
 
@@ -45,9 +44,10 @@
     z-index: 1;
     flex: none;
     display: flex;
-    gap: 32px;
+    gap: 16px var(--page-padding);
     justify-content: flex-start;
     align-items: center;
+    padding: var(--page-padding);
 
     h1 {
       margin: 0;
@@ -63,9 +63,10 @@
     flex: auto;
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 64px;
+    overflow-y: auto;
     margin: 0 auto;
+    padding: 0 var(--page-padding) var(--page-padding);
     max-width: 1024px;
     text-align: center;
 
