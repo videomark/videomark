@@ -10,18 +10,24 @@ export const selectedPageName = writable();
  */
 export const openTab = async (url) => {
   const isInternalPage = !url.startsWith('https:');
+  const _isMobile = get(isMobile);
 
   if (isInternalPage) {
     // eslint-disable-next-line no-param-reassign
     url = chrome.runtime.getURL(url.replace(/^#/, '/index.html#'));
 
     // モバイルの場合はポップアップも他の拡張機能内ページも同じ専用画面内で開く
-    if (get(isMobile)) {
+    if (_isMobile) {
       // eslint-disable-next-line prefer-destructuring
       window.location.hash = url.match(/(#.*)/)[1];
 
       return;
     }
+  } else if (_isMobile) {
+    // 拡張機能専用ページを閉じる
+    window.setTimeout(() => {
+      window.close();
+    }, 100);
   }
 
   const [currentTab] = await chrome.tabs.query({
