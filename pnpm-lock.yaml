@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@sveltia/ui':
-    specifier: ^0.7.3
-    version: 0.7.3
+    specifier: ^0.7.4
+    version: 0.7.4
   '@videomark/sparkline':
     specifier: github:videomark/sparkline
     version: github.com/videomark/sparkline/da263f1f1429787c606fe5885c9b85518472f4c2
@@ -1033,8 +1033,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltia/ui@0.7.3:
-    resolution: {integrity: sha512-IhBHzzcfYjcRYwq6OoUK5iRPeyGvids+fYZ/NRXUYHK4/OYcpZS2eOJ1cGHwjywI+qTAEn/gcscMOqVFTR3OCg==}
+  /@sveltia/ui@0.7.4:
+    resolution: {integrity: sha512-A9t8chr+OH0pjTqq78+LfWbZ1z0MKkSAJtsSph78YCBB0QWCqfP3qMvu3qm6o76hknIdAHERMjWoBpxo7DaKlQ==}
     dependencies:
       svelte: 4.2.2
     dev: false

@@ -48,7 +48,7 @@
     "vite": "^4.5.0"
   },
   "dependencies": {
-    "@sveltia/ui": "^0.7.3",
+    "@sveltia/ui": "^0.7.4",
     "@videomark/sparkline": "github:videomark/sparkline",
     "mpd-parser": "^1.2.2",
     "msgpack-lite": "^0.1.26",
