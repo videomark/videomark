@@ -1,4 +1,6 @@
+import { get } from 'svelte/store';
 import { openTab } from '$lib/services/navigation';
+import { isMobile } from '$lib/services/runtime';
 import { SCHEMA_VERSION, storage } from '$lib/services/storage';
 
 /** content_scripts の許可されているOriginかどうか判定 */
@@ -73,6 +75,8 @@ const initToolbarButton = async () => {
 
   if (termsAgreed) {
     chrome.action.setPopup({ popup: '/index.html#/popup' });
+  } else if (get(isMobile)) {
+    chrome.action.setPopup({ popup: '/index.html#/onboarding' });
   } else {
     chrome.action.onClicked.addListener(() => openTab('#/onboarding'));
   }
