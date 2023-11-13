@@ -15,9 +15,16 @@ export const openTab = async (url) => {
     url = chrome.runtime.getURL(url.replace(/^#/, '/index.html#'));
   }
 
-  const [currentTab] = await chrome.tabs.query({
-    currentWindow: true,
-    url: isInternalPage ? `${chrome.runtime.getURL('/')}*` : url,
+  const [currentTab] = await new Promise((resolve) => {
+    chrome.tabs.query(
+      {
+        currentWindow: true,
+        url: isInternalPage ? `${chrome.runtime.getURL('/')}*` : url,
+      },
+      (tabs) => {
+        resolve(tabs);
+      },
+    );
   });
 
   if (currentTab) {
