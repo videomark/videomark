@@ -23,7 +23,11 @@
 
   onMount(() => {
     (async () => {
-      const tabUrls = (await chrome.tabs.query({ currentWindow: true })).map(({ url }) => url);
+      const tabUrls = await new Promise((resolve) => {
+        chrome.tabs.query({ currentWindow: true }, (tabs) => {
+          resolve(tabs.map(({ url }) => url));
+        });
+      });
 
       playingVideos = history.filter((item) => tabUrls.includes(item.url));
     })();

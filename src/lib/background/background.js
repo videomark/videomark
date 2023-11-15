@@ -72,9 +72,9 @@ const initToolbarButton = async () => {
   const termsAgreed = await storage.get('AgreedTerm');
 
   if (termsAgreed) {
-    chrome.action.setPopup({ popup: '/index.html#/popup' });
+    (chrome.action ?? chrome.browserAction).setPopup({ popup: '/index.html#/popup' });
   } else {
-    chrome.action.onClicked.addListener(() => openTab('#/onboarding'));
+    (chrome.action ?? chrome.browserAction).onClicked.addListener(() => openTab('#/onboarding'));
   }
 };
 
@@ -165,7 +165,7 @@ const updateIcon = async (tabId, enabled) => {
   status.alive = enabled;
   await storage.set('tabStatus', { ...tabStatus, [tabId]: status });
 
-  chrome.action.setIcon({
+  (chrome.action ?? chrome.browserAction).setIcon({
     tabId,
     path: enabled ? '/images/icons/enabled.png' : '/images/icons/disabled.png',
   });
