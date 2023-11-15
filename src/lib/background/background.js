@@ -74,7 +74,7 @@ const initToolbarButton = async () => {
   if (termsAgreed) {
     (chrome.action ?? chrome.browserAction).setPopup({ popup: '/index.html#/popup' });
   } else {
-    chrome.action.onClicked.addListener(() => openTab('#/onboarding'));
+    (chrome.action ?? chrome.browserAction).onClicked.addListener(() => openTab('#/onboarding'));
   }
 };
 
