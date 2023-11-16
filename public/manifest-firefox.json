@@ -1,7 +1,7 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Web VideoMark",
-  "version": "2.6.1",
+  "version": "2.7.0",
   "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
   "author": "WebDINO Japan",
   "homepage_url": "http://videomark.webdino.org/",
@@ -33,12 +33,9 @@
     "webRequestBlocking",
     "storage",
     "unlimitedStorage",
-    "declarativeNetRequestWithHostAccess"
-  ],
-  "host_permissions": [
     "<all_urls>"
   ],
-  "action": {
+  "browser_action": {
     "default_icon": "images/icons/disabled.png"
   },
   "content_scripts": [
@@ -50,7 +47,7 @@
         "*://*.fod.fujitv.co.jp/*",
         "*://fod.fujitv.co.jp/*",
         "*://*.nhk-ondemand.jp/*",
-        "*://*.video.dmkt-sp.jp/*",
+        "*://lemino.docomo.ne.jp/*",
         "*://abema.tv/*",
         "*://*.amazon.co.jp/*",
         "*://pr.iij.ad.jp/*",
@@ -66,14 +63,7 @@
     "page": "background.html"
   },
   "web_accessible_resources": [
-    {
-      "resources": [
-        "scripts/sodium.js",
-        "assets/*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    }
+    "scripts/sodium.js",
+    "assets/*"
   ]
 }

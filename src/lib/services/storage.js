@@ -66,11 +66,19 @@ export class storage {
   }
 
   static async get(key) {
-    return (await this.localStorage.get([key]))[key];
+    return new Promise((resolve) => {
+      this.localStorage.get([key], (obj) => {
+        resolve(obj[key]);
+      });
+    });
   }
 
   static async getAll() {
-    return this.localStorage.get();
+    return new Promise((resolve) => {
+      this.localStorage.get(null, (obj) => {
+        resolve(obj);
+      });
+    });
   }
 
   static async set(key, value) {

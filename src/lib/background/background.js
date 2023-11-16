@@ -72,13 +72,14 @@ chrome.webRequest.onResponseStarted.addListener(
 
 const initToolbarButton = async () => {
   const termsAgreed = await storage.get('AgreedTerm');
+  const action = chrome.action ?? chrome.browserAction;
 
   if (termsAgreed) {
-    chrome.action.setPopup({ popup: '/index.html#/popup' });
+    action.setPopup({ popup: '/index.html#/popup' });
   } else if (get(isMobile)) {
-    chrome.action.setPopup({ popup: '/index.html#/onboarding' });
+    action.setPopup({ popup: '/index.html#/onboarding' });
   } else {
-    chrome.action.onClicked.addListener(() => openTab('#/onboarding'));
+    action.onClicked.addListener(() => openTab('#/onboarding'));
   }
 };
 
@@ -169,7 +170,7 @@ const updateIcon = async (tabId, enabled) => {
   status.alive = enabled;
   await storage.set('tabStatus', { ...tabStatus, [tabId]: status });
 
-  chrome.action.setIcon({
+  (chrome.action ?? chrome.browserAction).setIcon({
     tabId,
     path: enabled ? '/images/icons/enabled.png' : '/images/icons/disabled.png',
   });

@@ -13,7 +13,7 @@
 
   const agreeTerms = () => {
     storage.set('AgreedTerm', true);
-    chrome.action.setPopup({ popup: '/index.html#/popup' });
+    (chrome.action ?? chrome.browserAction).setPopup({ popup: '/index.html#/popup' });
     window.location.replace('#/history');
   };
 </script>
