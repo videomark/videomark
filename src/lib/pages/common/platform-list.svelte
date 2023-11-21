@@ -33,6 +33,7 @@
     gap: 8px;
 
     :global(button) {
+      margin: 0;
       width: calc(50% - 4px);
     }
   }

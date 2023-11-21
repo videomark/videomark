@@ -26,7 +26,7 @@
   bind:open
   size="medium"
   position={$isSmallScreen ? 'bottom' : 'right'}
-  closeOnBackdropClick={true}
+  lightDismiss={true}
   on:close={() => {
     window.location.replace('#/history');
   }}
@@ -38,7 +38,7 @@
           {#if platform?.deprecated}
             <img src={thumbnail} alt="" />
             <div class="overlay">
-              <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
+              <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
                 {$_('history.detail.platformDeprecated')}
               </Alert>
             </div>
@@ -94,25 +94,30 @@
                   <h4>
                     {$_('stats.qoeWatching')}
                     <Button
+                      aria-label={$_('stats.whatIsQOE')}
                       on:click={() =>
                         openTab(
                           `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
                         )}
                     >
-                      <Icon name="help" label={$_('stats.whatIsQOE')} />
+                      <Icon name="help" />
                     </Button>
                   </h4>
                   <div>
                     {#if qoe === undefined || qoe === -1}
                       {$_('stats.quality.measuring')}
                     {:else if qoe === -2}
-                      <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
+                      <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
                         {$_('stats.quality.error')}
                       </Alert>
                     {:else}
                       <QualityBar value={qoe} />
                       {#if isLowQuality}
-                        <Alert type="warning" aria-live="off" --font-size="var(--font-size--small)">
+                        <Alert
+                          status="warning"
+                          aria-live="off"
+                          --font-size="var(--font-size--small)"
+                        >
                           {$_('stats.quality.frameDrops')}
                         </Alert>
                       {/if}

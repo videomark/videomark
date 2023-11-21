@@ -36,12 +36,14 @@
     <p class="nav" role="navigation">
       {#each pages as page, index}
         <Button
+          size="small"
           pressed={index === currentIndex}
+          aria-label={$_(`onboarding.${page}.title`).replace('<wbr>', '')}
           on:click={() => {
             currentIndex = index;
           }}
         >
-          <Icon name="circle" label={$_(`onboarding.${page}.title`).replace('<wbr>', '')} />
+          <Icon name="circle" />
         </Button>
       {/each}
     </p>
@@ -102,7 +104,7 @@
   .nav {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 4px;
 
     :global(button .icon) {
       font-size: 16px;
