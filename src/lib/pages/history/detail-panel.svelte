@@ -73,9 +73,10 @@
                   variant="tertiary"
                   iconic
                   disabled={deleted}
+                  aria-label={$_('history.detail.delete')}
                   on:click={() => deleteItemsLater([key])}
                 >
-                  <Icon slot="start-icon" name="delete" label={$_('history.detail.delete')} />
+                  <Icon slot="start-icon" name="delete" />
                 </Button>
               </div>
             </div>
