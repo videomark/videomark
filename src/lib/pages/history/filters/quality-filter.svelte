@@ -100,6 +100,6 @@
 
 <style lang="scss">
   .input {
-    width: 80px;
+    --sui-textbox-singleline-min-width: 80px;
   }
 </style>

@@ -35,8 +35,14 @@
 >
   <header>
     <h1><Wordmark /></h1>
-    <Button variant="ghost" iconic class="close-popup" on:click={() => openTab('#/settings')}>
-      <Icon slot="start-icon" name="settings" label={$_('settings.title')} />
+    <Button
+      variant="ghost"
+      iconic
+      class="close-popup"
+      aria-label={$_('settings.title')}
+      on:click={() => openTab('#/settings')}
+    >
+      <Icon slot="start-icon" name="settings" />
     </Button>
   </header>
   <slot />

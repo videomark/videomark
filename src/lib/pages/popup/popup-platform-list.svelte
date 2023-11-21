@@ -33,7 +33,6 @@
     justify-content: space-between;
     gap: 32px;
     margin: auto 0 0;
-    padding: 0 16px;
     height: 40px;
     background-color: var(--sui-secondary-background-color);
     white-space: nowrap;

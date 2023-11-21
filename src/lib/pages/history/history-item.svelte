@@ -35,12 +35,12 @@
       </div>
       <div class="qoe">
         {#if qoe === undefined || qoe === -1}
-          <Icon name="hourglass_empty" label={$_('stats.quality.measuring')} />
+          <Icon name="hourglass_empty" aria-label={$_('stats.quality.measuring')} />
         {:else if qoe === -2}
-          <Icon name="error" label={$_('stats.quality.error')} />
+          <Icon name="error" aria-label={$_('stats.quality.error')} />
         {:else}
           {#if isLowQuality}
-            <Icon name="warning" label={$_('stats.quality.frameDrops')} />
+            <Icon name="warning" aria-label={$_('stats.quality.frameDrops')} />
           {:else}
             <Icon name="equalizer" />
           {/if}
@@ -59,7 +59,7 @@
     }}
   >
     {#if platform?.deprecated}
-      <Alert type="error" aria-live="off" --font-size="var(--font-size--small)">
+      <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
         {$_('history.detail.platformDeprecated')}
       </Alert>
     {:else}

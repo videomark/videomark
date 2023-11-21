@@ -92,6 +92,8 @@
   }
 
   header {
+    padding: 0 16px;
+
     :global(.search-bar) {
       --sui-input-medium-border-radius: 32px;
     }
@@ -104,7 +106,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 32px;
-    padding: 0 16px;
     height: 40px;
     background-color: var(--sui-secondary-background-color);
     white-space: nowrap;
