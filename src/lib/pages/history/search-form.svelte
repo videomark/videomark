@@ -18,11 +18,12 @@
     {#if $isSmallScreen}
       <Button
         iconic
+        aria-label={$_('history.search.filters.show_filters')}
         on:click={() => {
           showDrawer = !showDrawer;
         }}
       >
-        <Icon name="tune" label={$_('history.search.filters.show_filters')} />
+        <Icon name="tune" />
       </Button>
     {/if}
   </div>
