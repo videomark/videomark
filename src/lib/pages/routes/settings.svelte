@@ -13,7 +13,7 @@
   import { _, locale } from 'svelte-i18n';
   import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
-  import { openTab } from '$lib/services/navigation';
+  import { goBack } from '$lib/services/navigation';
   import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
   import { defaultSettings, settings } from '$lib/services/settings';
   import { storage } from '$lib/services/storage';
@@ -152,7 +152,7 @@
 
 <DefaultLayout compact={true}>
   <h1 slot="header">{$_('settings.title')}</h1>
-  <Button slot="header-extras" variant="ghost" on:click={() => openTab('#/history')}>
+  <Button slot="header-extras" variant="ghost" on:click={() => goBack('#/history')}>
     <Icon slot="start-icon" name="arrow_back" />
     {$_('settings.backToHistory')}
   </Button>

@@ -3,7 +3,7 @@
   import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
-  import { openTab } from '$lib/services/navigation';
+  import { goto, openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
 
   export let historyItem = {};
@@ -29,7 +29,11 @@
       ? [key]
       : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
 
-    openTab(`#/history/${keys.join(',')}`);
+    if (window.location.hash === '#/history') {
+      goto(`#/history/${keys.join(',')}`, { replaceState: true });
+    } else {
+      openTab(`#/history/${keys.join(',')}`);
+    }
   };
 </script>
 

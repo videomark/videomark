@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n';
   import PlatformList from '$lib/pages/common/platform-list.svelte';
   import { viewingHistory } from '$lib/services/history';
+  import { goBack } from '$lib/services/navigation';
 </script>
 
 <div class="platforms">
@@ -11,7 +12,7 @@
 </div>
 {#if $viewingHistory?.length}
   <footer>
-    <Button on:click={() => window.location.replace('#/popup')}>
+    <Button on:click={() => goBack('#/popup')}>
       <Icon slot="start-icon" name="arrow_back" />
       {$_('popup.backToHistory')}
     </Button>

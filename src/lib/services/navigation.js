@@ -51,3 +51,34 @@ export const openTab = async (url) => {
     await chrome.tabs.create({ url });
   }
 };
+
+/**
+ * URL ハッシュを更新して拡張機能内の別ページへ遷移。(Sveltia CMS の同名関数の簡易版)
+ * @param {string} newHash 新しい URL ハッシュ。
+ * @param {object} [options] オプション
+ * @param {boolean} [options.replaceState] 履歴ステートを書き換えるか。
+ */
+export const goto = (newHash, { replaceState = false } = {}) => {
+  const oldURL = window.location.hash;
+  const newURL = newHash;
+
+  if (replaceState) {
+    window.history.replaceState({ from: oldURL }, '', newURL);
+  } else {
+    window.history.pushState({ from: oldURL }, '', newURL);
+  }
+
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+};
+
+/**
+ * 前のページが該当ページあれば履歴を戻り、違う場合は単純に履歴を更新。(Sveltia CMS の同名関数の簡易版)
+ * @param {string} newHash 新しい URL ハッシュ。
+ */
+export const goBack = (newHash) => {
+  if (window.history.state?.from === newHash) {
+    window.history.back();
+  } else {
+    goto(newHash);
+  }
+};

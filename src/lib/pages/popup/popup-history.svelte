@@ -5,7 +5,7 @@
   import HistoryItem from '$lib/pages/history/history-item.svelte';
   import NotFound from '$lib/pages/history/not-found.svelte';
   import { viewingHistory } from '$lib/services/history';
-  import { openTab } from '$lib/services/navigation';
+  import { goto, openTab } from '$lib/services/navigation';
 
   let searchTerms = '';
   let playingVideos = [];
@@ -68,7 +68,7 @@
     <Icon name="history" />
     {$_('popup.seeAll')}
   </Button>
-  <Button on:click={() => window.location.replace('#/popup/platforms')}>
+  <Button on:click={() => goto('#/popup/platforms')}>
     <Icon name="subscriptions" />
     {$_('popup.compatiblePlatforms.title')}
   </Button>

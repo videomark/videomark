@@ -1,6 +1,7 @@
 <script>
   import { Button, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { goto } from '$lib/services/navigation';
   import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
@@ -14,7 +15,7 @@
   const agreeTerms = () => {
     storage.set('AgreedTerm', true);
     (chrome.action ?? chrome.browserAction).setPopup({ popup: '/index.html#/popup' });
-    window.location.replace('#/history');
+    goto('#/history', { replaceState: true });
   };
 </script>
 

@@ -10,7 +10,7 @@
     undoDeletingItems,
   } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
-  import { openTab } from '$lib/services/navigation';
+  import { goto, openTab } from '$lib/services/navigation';
   import { isSmallScreen } from '$lib/services/runtime';
   import { formatStats } from '$lib/services/stats';
 
@@ -28,7 +28,7 @@
   position={$isSmallScreen ? 'bottom' : 'right'}
   lightDismiss={true}
   on:close={() => {
-    window.location.replace('#/history');
+    goto('#/history', { replaceState: true });
   }}
 >
   <div class="wrapper">
