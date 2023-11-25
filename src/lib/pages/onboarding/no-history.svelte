@@ -34,23 +34,9 @@
 </div>
 
 <style lang="scss">
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 64px;
-    min-height: 400px;
-
-    @media (max-width: 1023px) {
-      flex-direction: column;
-    }
-
-    .col {
+  .col {
+    @media (min-width: 1024px) {
       width: calc(50% - 16px);
-
-      @media (max-width: 1023px) {
-        width: 100%;
-        max-width: 640px;
-      }
     }
   }
 

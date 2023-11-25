@@ -79,24 +79,14 @@
   }
 
   .row {
-    display: flex;
     flex-direction: row-reverse;
-    align-items: center;
-    gap: 64px;
-    min-height: 400px;
+  }
 
-    @media (max-width: 1023px) {
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .col:last-of-type {
-      flex: none;
-      width: 40%;
-
-      @media (max-width: 1023px) {
-        width: 100%;
-        max-width: 640px;
+  .col {
+    @media (min-width: 1024px) {
+      &:last-of-type {
+        flex: none;
+        width: 40%;
       }
     }
   }

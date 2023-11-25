@@ -59,3 +59,19 @@ export const isSmallScreen = readable(false, (set) => {
     set(query.matches);
   });
 });
+
+/**
+ * ポップアップが開かれているかどうかの判別。
+ * @returns {Promise<boolean>} 結果。モバイルでは `chrome.action.setPopup()` で指定されたページは拡張機能
+ * 専用ページで開かれるため、この結果は常に `false` となることに注意。
+ * @see https://stackoverflow.com/q/62844607
+ */
+export const isPopupOpen = async () => {
+  // Manifest v3
+  if (typeof chrome.runtime.getContexts === 'function') {
+    return !!(await chrome.runtime.getContexts({ contextTypes: ['POPUP'] })).length;
+  }
+
+  // Manifest v2
+  return !!chrome.extension.getViews({ type: 'popup' }).length;
+};

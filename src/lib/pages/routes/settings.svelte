@@ -11,7 +11,7 @@
   } from '@sveltia/ui';
   import { onMount } from 'svelte';
   import { _, locale } from 'svelte-i18n';
-  import HistoryLayout from '$lib/pages/layouts/history-layout.svelte';
+  import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
   import { openTab } from '$lib/services/navigation';
   import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
@@ -150,7 +150,7 @@
   $: $session.expires = Date.now() + $settings.expires_in;
 </script>
 
-<HistoryLayout compact={true}>
+<DefaultLayout compact={true}>
   <h1 slot="header">{$_('settings.title')}</h1>
   <Button slot="header-extras" variant="ghost" on:click={() => openTab('#/history')}>
     <Icon slot="start-icon" name="arrow_back" />
@@ -364,7 +364,7 @@
       </section>
     </details>
   </div>
-</HistoryLayout>
+</DefaultLayout>
 
 <Dialog
   title={$_('settings.clearDialog.title')}
