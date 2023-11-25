@@ -22,8 +22,10 @@ test.describe('拡張機能内ページ', () => {
     await expect(page).toHaveURL(/#\/history$/);
   });
 
-  test('#/popup を開いてポップアップが表示される', async ({ page, extensionId }) => {
+  // `#/popup` はブラウザーのタブで開いた場合 (モバイル) と実際のポップアップ (デスクトップ) で内容が異なり、後者の
+  // ためのテストはできないが、いずれも履歴がない場合は対応サイト一覧が表示されるので、ボタンの存在を確認する
+  test('#/popup を開いて対応サイト一覧が表示される', async ({ page, extensionId }) => {
     await openPage({ page, extensionId }, 'popup');
-    await expect(page.locator('p').first()).toContainText('Play any video you like');
+    await expect(page.getByRole('button', { name: 'YouTube' })).toBeVisible();
   });
 });
