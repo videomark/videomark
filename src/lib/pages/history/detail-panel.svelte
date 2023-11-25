@@ -198,7 +198,7 @@
     flex: none;
     display: flex;
     gap: 16px;
-    margin: 0 0 16px;
+    margin: 24px;
 
     .thumbnail {
       flex: none;
@@ -245,6 +245,7 @@
     & + :global(.sui.group) {
       flex: auto;
       overflow-y: auto;
+      padding: 0 24px 24px;
     }
   }
 
@@ -258,7 +259,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: 100%;
+    margin: -24px;
+    height: calc(100% + 48px);
 
     :global(.view-item) {
       margin: 16px 0 0;

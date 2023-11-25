@@ -1,5 +1,5 @@
 <script>
-  import { Alert, Button, Icon, Spacer } from '@sveltia/ui';
+  import { Alert, Button, Icon } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
@@ -93,7 +93,6 @@
       <div class="time">
         {formatDateTime(startTime)}
       </div>
-      <Spacer flex />
       <div class="qoe">
         {#if qoe === undefined || qoe === -1}
           <Icon name="hourglass_empty" aria-label={$_('stats.quality.measuring')} />
@@ -108,18 +107,18 @@
           {qoe}
         {/if}
       </div>
-    </div>
-    <div class="actions close-popup">
-      <Button
-        variant="secondary"
-        size={horizontal ? 'small' : 'medium'}
-        class="close-popup view-stats"
-      >
-        <Icon slot="start-icon" name="monitoring" />
-        <span class="label">
-          {$_('history.detail.viewStats')}
-        </span>
-      </Button>
+      <div class="actions close-popup">
+        <Button
+          variant="secondary"
+          size={horizontal ? 'small' : 'medium'}
+          class="close-popup view-stats"
+        >
+          <Icon slot="start-icon" name="monitoring" />
+          <span class="label">
+            {$_('history.detail.viewStats')}
+          </span>
+        </Button>
+      </div>
     </div>
   </div>
 </div>
@@ -133,13 +132,6 @@
     border-radius: 4px;
     background-color: var(--sui-secondary-background-color);
     box-shadow: 1px 1px 2px #0003;
-
-    &:hover,
-    &:active {
-      .primary .thumbnail {
-        transform: scale(110%);
-      }
-    }
 
     &.horizontal {
       flex-direction: row;
@@ -210,6 +202,10 @@
       align-items: center;
     }
 
+    .time {
+      flex: auto;
+    }
+
     .qoe {
       :global(.icon) {
         font-size: var(--sui-font-size-xx-large);
@@ -221,23 +217,62 @@
     position: relative;
   }
 
-  .actions {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-    background-color: var(--sui-secondary-background-color-translucent);
-    opacity: 0;
-    transition: all 0.5s;
-    cursor: pointer;
+  @media (pointer: fine) {
+    .item {
+      &:hover,
+      &:active {
+        .primary .thumbnail {
+          transform: scale(110%);
+        }
+      }
+    }
 
-    .hover:hover &,
-    .hover:focus-within & {
-      opacity: 1;
+    .actions {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      background-color: var(--sui-secondary-background-color-translucent);
+      opacity: 0;
+      transition: all 0.5s;
+      cursor: pointer;
+
+      .hover:hover &,
+      .hover:focus-within & {
+        opacity: 1;
+      }
+    }
+  }
+
+  @media (pointer: coarse) {
+    .primary {
+      .actions {
+        display: none;
+      }
+    }
+
+    .secondary {
+      .meta {
+        padding: 4px 4px 4px 16px;
+      }
+
+      .actions {
+        // Make the button small
+        :global(button) {
+          border-radius: var(--sui-button-small-border-radius);
+          padding: var(--sui-button-small-padding);
+          height: var(--sui-button-small-height);
+          font-size: var(--sui-font-size-small);
+
+          :global(.icon) {
+            font-size: var(--sui-font-size-large);
+          }
+        }
+      }
     }
   }
 </style>
