@@ -152,10 +152,4 @@
     text-transform: uppercase;
     background-color: transparent;
   }
-
-  :global(:root[data-theme='dark']) {
-    input[type='date']::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-    }
-  }
 </style>
