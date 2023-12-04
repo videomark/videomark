@@ -37,7 +37,7 @@ jobs:
           chrome-file: dist/videomark.zip
           firefox-file: dist/videomark-firefox.zip
       - name: Create Release Note
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const version = require("./package.json").version;
