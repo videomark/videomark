@@ -16,6 +16,10 @@ test.describe('拡張機能内ページ', () => {
     // 設定ページを開く
     await page.getByRole('button', { name: 'Settings' }).click();
     await expect(page).toHaveURL(/#\/settings$/);
+    // セッション ID が設定されていることを確認
+    await expect(page.locator('#setting-session-id-value')).toHaveText(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
 
     // 履歴ページへ戻る
     await page.getByRole('button', { name: 'Back to History' }).click();
