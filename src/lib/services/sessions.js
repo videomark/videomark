@@ -1,7 +1,13 @@
+import { get } from 'svelte/store';
 import { validate, version } from 'uuid';
+import { settings } from '$lib/services/settings';
 import { createStorageSync, storage } from '$lib/services/storage';
 
-export const session = createStorageSync('session', {});
+export const session = createStorageSync('session', {
+  id: window.crypto.randomUUID(),
+  type: 'social',
+  expires: Date.now() + get(settings).expires_in,
+});
 
 // NOTE: サーバー側で "_" が使えない
 const allowedPattern = /^[0-9A-Za-z.-]+$/;
