@@ -1,17 +1,19 @@
 <script>
+  /** @type {string} */
+  export let id;
   export let title = '';
   export let description = '';
 </script>
 
-<section>
+<section id={id ? `setting-${id}` : undefined}>
   <div class="row">
     <div>
-      <h3>{title}</h3>
+      <h3 id={id ? `setting-${id}-title` : undefined}>{title}</h3>
       {#if description}
         <p>{description}</p>
       {/if}
     </div>
-    <div>
+    <div id={id ? `setting-${id}-value` : undefined}>
       <slot />
     </div>
   </div>

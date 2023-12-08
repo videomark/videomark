@@ -208,7 +208,7 @@
           }
         }}
       >
-        <SettingItem title={$_('settings.sessionId')}>
+        <SettingItem id="session-id" title={$_('settings.sessionId')}>
           {$session.id || ''}
         </SettingItem>
       </div>
