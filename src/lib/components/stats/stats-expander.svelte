@@ -47,13 +47,17 @@
   />
 </svelte:head>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   role="button"
   tabindex="0"
   class="root"
-  on:click|stopPropagation={() => {
+  on:pointerdown|preventDefault|stopPropagation={() => {
     open = !open;
+  }}
+  on:keydown|preventDefault|stopPropagation={(event) => {
+    if (event.key === ' ') {
+      open = !open;
+    }
   }}
 >
   <details {open}>

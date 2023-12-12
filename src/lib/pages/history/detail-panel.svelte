@@ -10,7 +10,8 @@
     undoDeletingItems,
   } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
-  import { openTab } from '$lib/services/navigation';
+  import { goto, openTab } from '$lib/services/navigation';
+  import { isSmallScreen } from '$lib/services/runtime';
   import { formatStats } from '$lib/services/stats';
 
   export let open = false;
@@ -21,7 +22,15 @@
   $: [{ platform, url, title, thumbnail } = {}] = historyItems;
 </script>
 
-<Drawer bind:open size="medium" lightDismiss={true}>
+<Drawer
+  bind:open
+  size="medium"
+  position={$isSmallScreen ? 'bottom' : 'right'}
+  lightDismiss={true}
+  on:close={() => {
+    goto('#/history', { replaceState: true });
+  }}
+>
   <div class="wrapper">
     {#if historyItems.length}
       <header>
@@ -189,7 +198,7 @@
     flex: none;
     display: flex;
     gap: 16px;
-    margin: 0 0 16px;
+    margin: 24px;
 
     .thumbnail {
       flex: none;
@@ -213,7 +222,7 @@
         width: 100%;
         border-radius: 4px;
         aspect-ratio: 16 / 9;
-        object-fit: contain;
+        object-fit: cover;
         background-color: var(--video-background-color);
       }
     }
@@ -236,6 +245,7 @@
     & + :global(.sui.group) {
       flex: auto;
       overflow-y: auto;
+      padding: 0 24px 24px;
     }
   }
 
@@ -249,7 +259,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: 100%;
+    margin: -24px;
+    height: calc(100% + 48px);
 
     :global(.view-item) {
       margin: 16px 0 0;
@@ -266,13 +277,13 @@
     .deleted-overlay {
       position: absolute;
       inset: -8px;
-      background-color: var(--sui-secondary-background-color-translucent);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 16px;
+      text-align: center;
       opacity: 1;
       transition: all 250ms;
 

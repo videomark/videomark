@@ -3,7 +3,7 @@
   import { _ } from 'svelte-i18n';
   import { viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
-  import { openTab } from '$lib/services/navigation';
+  import { goto, openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
 
   export let historyItem = {};
@@ -17,15 +17,79 @@
 
   $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem || {});
   $: ({ qoe, isLowQuality } = stats);
+
+  const playAgain = () => {
+    if (!platform?.deprecated) {
+      openTab(url);
+    }
+  };
+
+  const viewStats = () => {
+    const keys = $settings.show_duplicate_videos
+      ? [key]
+      : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
+
+    if (window.location.hash === '#/history') {
+      goto(`#/history/${keys.join(',')}`, { replaceState: true });
+    } else {
+      openTab(`#/history/${keys.join(',')}`);
+    }
+  };
 </script>
 
 <div class="item" class:horizontal>
-  <div class="primary">
+  <div
+    class="primary hover"
+    tabindex="0"
+    role="button"
+    on:click|stopPropagation={() => {
+      playAgain();
+    }}
+    on:keydown={(event) => {
+      if (event.key === 'Enter') {
+        playAgain();
+      }
+    }}
+  >
     <div class="hero">
       <img class="thumbnail" src={thumbnail} alt="" />
     </div>
+    <div class="actions close-popup">
+      {#if platform?.deprecated}
+        <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
+          {$_('history.detail.platformDeprecated')}
+        </Alert>
+      {:else}
+        <Button
+          variant="primary"
+          size={horizontal ? 'small' : 'medium'}
+          class="close-popup play-again"
+        >
+          <Icon slot="start-icon" name="play_circle" />
+          <span class="label">
+            {#if playing}
+              {$_('history.detail.switchToTab')}
+            {:else}
+              {$_('history.detail.playAgain')}
+            {/if}
+          </span>
+        </Button>
+      {/if}
+    </div>
   </div>
-  <div class="secondary">
+  <div
+    class="secondary hover"
+    tabindex="0"
+    role="button"
+    on:click|stopPropagation={() => {
+      viewStats();
+    }}
+    on:keydown={(event) => {
+      if (event.key === 'Enter') {
+        viewStats();
+      }
+    }}
+  >
     <div class="body">
       <div class="title">{title}</div>
     </div>
@@ -47,53 +111,19 @@
           {qoe}
         {/if}
       </div>
+      <div class="actions close-popup">
+        <Button
+          variant="secondary"
+          size={horizontal ? 'small' : 'medium'}
+          class="close-popup view-stats"
+        >
+          <Icon slot="start-icon" name="monitoring" />
+          <span class="label">
+            {$_('history.detail.viewStats')}
+          </span>
+        </Button>
+      </div>
     </div>
-  </div>
-  <div
-    class="actions close-popup"
-    role="none"
-    on:click|stopPropagation={() => {
-      if (!platform?.deprecated) {
-        openTab(url);
-      }
-    }}
-  >
-    {#if platform?.deprecated}
-      <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
-        {$_('history.detail.platformDeprecated')}
-      </Alert>
-    {:else}
-      <Button
-        variant="primary"
-        class="close-popup"
-        on:click={(event) => {
-          openTab(url);
-          event.stopPropagation();
-        }}
-      >
-        <Icon slot="start-icon" name="play_circle" />
-        {#if playing}
-          {$_('history.detail.switchToTab')}
-        {:else}
-          {$_('history.detail.playAgain')}
-        {/if}
-      </Button>
-    {/if}
-    <Button
-      variant="secondary"
-      class="close-popup"
-      on:click={(event) => {
-        const keys = $settings.show_duplicate_videos
-          ? [key]
-          : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
-
-        openTab(`#/history/${keys.join(',')}`);
-        event.stopPropagation();
-      }}
-    >
-      <Icon slot="start-icon" name="monitoring" />
-      {$_('history.detail.viewStats')}
-    </Button>
   </div>
 </div>
 
@@ -106,13 +136,6 @@
     border-radius: 4px;
     background-color: var(--sui-secondary-background-color);
     box-shadow: 1px 1px 2px #0003;
-
-    &:hover,
-    &:active {
-      .primary .thumbnail {
-        transform: scale(110%);
-      }
-    }
 
     &.horizontal {
       flex-direction: row;
@@ -144,7 +167,7 @@
     .thumbnail {
       width: 100%;
       aspect-ratio: 16 / 9;
-      object-fit: contain;
+      object-fit: cover;
       background-color: var(--sui-video-background-color);
       transition: all 0.5s;
     }
@@ -168,19 +191,23 @@
   }
 
   .meta {
-    height: 32px;
+    min-height: 32px;
     padding: 0 16px;
     color: var(--sui-tertiary-foreground-color);
     background-color: var(--sui-tertiary-background-color);
     font-size: var(--sui-font-size-small);
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 16px;
 
     & > div {
       display: flex;
       gap: 4px;
       align-items: center;
+    }
+
+    .time {
+      flex: auto;
     }
 
     .qoe {
@@ -190,27 +217,66 @@
     }
   }
 
-  .actions {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-    background-color: var(--sui-secondary-background-color-translucent);
-    opacity: 0;
-    transition: all 0.5s;
-    cursor: pointer;
+  .hover {
+    position: relative;
+  }
 
-    .item:hover &,
-    .item:focus-within & {
-      opacity: 1;
+  @media (pointer: fine) {
+    .item {
+      &:hover,
+      &:active {
+        .primary .thumbnail {
+          transform: scale(110%);
+        }
+      }
     }
 
-    :global(button) {
-      white-space: nowrap;
+    .actions {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      background-color: var(--sui-secondary-background-color-translucent);
+      opacity: 0;
+      transition: all 0.5s;
+      cursor: pointer;
+
+      .hover:hover &,
+      .hover:focus-within & {
+        opacity: 1;
+      }
+    }
+  }
+
+  @media (pointer: coarse) {
+    .primary {
+      .actions {
+        display: none;
+      }
+    }
+
+    .secondary {
+      .meta {
+        padding: 4px 4px 4px 16px;
+      }
+
+      .actions {
+        // Make the button small
+        :global(button) {
+          border-radius: var(--sui-button-small-border-radius);
+          padding: var(--sui-button-small-padding);
+          height: var(--sui-button-small-height);
+          font-size: var(--sui-font-size-small);
+
+          :global(.icon) {
+            font-size: var(--sui-font-size-large);
+          }
+        }
+      }
     }
   }
 </style>

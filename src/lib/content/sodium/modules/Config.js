@@ -365,7 +365,7 @@ Config.ui = {
 };
 
 // デフォルトではvideoタグの親に挿入
-// :hoverに反応して不透明度を変える
+// デスクトップでは:hoverに反応して不透明度を変える
 Config.ui.general = {
   target: null,
   style: `#${Config.ui.id} {
@@ -374,9 +374,11 @@ Config.ui.general = {
   top: 12px;
   left: 12px;
 }
-#${Config.ui.id}:not(:hover) {
-  opacity: 0.5;
-  transition: 500ms;
+@media (any-pointer: fine) {
+  #${Config.ui.id}:not(:hover) {
+    opacity: 0.5;
+    transition: 500ms;
+  }
 }`,
 };
 
@@ -460,8 +462,10 @@ Config.ui.lemino = {
   left: 12px;
   transition: 200ms;
 }
-#${Config.ui.id}:not(:hover){
-  opacity: 0;
+@media (any-pointer: fine) {
+  #${Config.ui.id}:not(:hover){
+    opacity: 0;
+  }
 }`,
 };
 
@@ -480,8 +484,10 @@ Config.ui.abematv = {
     z-index: 11;
     left: 65px;
   }
-  #${Config.ui.id}:not(:hover){
-    opacity: 0;
+  @media (any-pointer: fine) {
+    #${Config.ui.id}:not(:hover){
+      opacity: 0;
+    }
   }`,
 };
 
@@ -507,9 +513,11 @@ Config.ui.iijtwilightconcert = {
   transform: translate(12px, calc(12px - 450px));
   width: fit-content;
 }
-#${Config.ui.id}:not(:hover) {
-  opacity: 0.5;
-  transition: 500ms;
+@media (any-pointer: fine) {
+  #${Config.ui.id}:not(:hover) {
+    opacity: 0.5;
+    transition: 500ms;
+  }
 }`,
 };
 
@@ -522,9 +530,11 @@ Config.ui.netflix = {
   top: 12em;
   left: 12px;
 }
-#${Config.ui.id}:not(:hover) {
-  opacity: 0.5;
-  transition: 500ms;
+@media (any-pointer: fine) {
+  #${Config.ui.id}:not(:hover) {
+    opacity: 0.5;
+    transition: 500ms;
+  }
 }`,
 };
 

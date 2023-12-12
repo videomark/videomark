@@ -1,5 +1,5 @@
 <script>
-  import { SearchBar, Toolbar } from '@sveltia/ui';
+  import { Button, Drawer, Icon, SearchBar, Toolbar } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import DateFilter from '$lib/pages/history/filters/date-filter.svelte';
   import QualityFilter from '$lib/pages/history/filters/quality-filter.svelte';
@@ -7,19 +7,49 @@
   import SourceFilter from '$lib/pages/history/filters/source-filter.svelte';
   import TimeFilter from '$lib/pages/history/filters/time-filter.svelte';
   import { searchCriteria } from '$lib/services/history';
+  import { isSmallScreen } from '$lib/services/runtime';
+
+  let showDrawer = false;
 </script>
 
 <div class="search" role="search">
   <div class="terms">
     <SearchBar placeholder={$_('history.search.input')} bind:value={$searchCriteria.terms} />
+    {#if $isSmallScreen}
+      <Button
+        iconic
+        aria-label={$_('history.search.filters.show_filters')}
+        on:click={() => {
+          showDrawer = !showDrawer;
+        }}
+      >
+        <Icon name="tune" />
+      </Button>
+    {/if}
   </div>
-  <Toolbar>
-    <DateFilter />
-    <SourceFilter />
-    <RegionFilter />
-    <QualityFilter />
-    <TimeFilter />
-  </Toolbar>
+  {#if $isSmallScreen}
+    <Drawer
+      bind:open={showDrawer}
+      size="medium"
+      position="bottom"
+      title={$_('history.search.filters.filters')}
+      keepContent={true}
+    >
+      <DateFilter />
+      <SourceFilter />
+      <RegionFilter />
+      <QualityFilter />
+      <TimeFilter />
+    </Drawer>
+  {:else}
+    <Toolbar aria-label={$_('history.search.filters.filters')}>
+      <DateFilter />
+      <SourceFilter />
+      <RegionFilter />
+      <QualityFilter />
+      <TimeFilter />
+    </Toolbar>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -31,7 +61,6 @@
     width: 560px;
 
     :global(.sui.toolbar) {
-      flex-wrap: wrap;
       justify-content: center;
       gap: 4px;
       width: 100%;
@@ -52,10 +81,13 @@
   }
 
   .terms {
+    display: flex;
+    gap: 8px;
+    align-items: center;
     width: 100%;
 
     :global(.search-bar) {
-      width: 100%;
+      flex: auto;
       --sui-input-medium-border-radius: 32px;
     }
   }

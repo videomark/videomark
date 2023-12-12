@@ -1,22 +1,34 @@
 <script>
   import { Button, Icon } from '@sveltia/ui';
+  import { isSmallScreen } from '$lib/services/runtime';
 
   export let buttonLabel = '';
   export let dropdownLabel = '';
 </script>
 
-<Button variant="ghost" label={buttonLabel} aria-haspopup="dialog">
-  <Icon slot="end-icon" name="arrow_drop_down" />
-  <section slot="popup" class="popup">
+{#if $isSmallScreen}
+  <!-- Shown in a Drawer -->
+  <section>
     <header>
       <h4>{dropdownLabel}</h4>
     </header>
     <slot />
   </section>
-</Button>
+{:else}
+  <!-- Shown in a Toolbar -->
+  <Button variant="ghost" label={buttonLabel} aria-haspopup="dialog">
+    <Icon slot="end-icon" name="arrow_drop_down" />
+    <section slot="popup">
+      <header>
+        <h4>{dropdownLabel}</h4>
+      </header>
+      <slot />
+    </section>
+  </Button>
+{/if}
 
 <style lang="scss">
-  .popup {
+  section {
     padding: 16px;
 
     header {
@@ -33,6 +45,10 @@
         flex: none;
         width: 64px;
       }
+    }
+
+    &:not(:first-of-type) {
+      margin-top: 16px;
     }
   }
 </style>

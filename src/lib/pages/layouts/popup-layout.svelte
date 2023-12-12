@@ -2,22 +2,29 @@
   import { Button, Icon } from '@sveltia/ui';
   import { onMount } from 'svelte';
   import { _ } from 'svelte-i18n';
-  import { openTab } from '$lib/services/navigation';
   import Wordmark from '$lib/pages/common/wordmark.svelte';
+  import { openTab } from '$lib/services/navigation';
+  import { isMobile } from '$lib/services/runtime';
 
-  // Adjust the popup size
+  // Adjust the popup size on desktop
+  const resizePopup = async () => {
+    if (!$isMobile) {
+      Object.assign(document.body.style, {
+        margin: 0,
+        width: '400px',
+        height: '600px', // = max height in Chrome
+      });
+
+      Object.assign(document.querySelector('.app-shell').style, {
+        position: 'relative',
+        overflow: 'hidden',
+        height: '100vh',
+      });
+    }
+  };
+
   onMount(() => {
-    Object.assign(document.body.style, {
-      margin: 0,
-      width: '400px',
-      height: '600px', // = max height in Chrome
-    });
-
-    Object.assign(document.querySelector('.app-shell').style, {
-      position: 'relative',
-      overflow: 'hidden',
-      height: '100vh',
-    });
+    resizePopup();
   });
 </script>
 
@@ -25,7 +32,7 @@
   class="wrapper"
   role="none"
   on:click|capture={(event) => {
-    if (event.target.matches('.close-popup')) {
+    if (!$isMobile && event.target.matches('.close-popup')) {
       // Close the popup (after waiting for a new tab being opened)
       window.setTimeout(() => {
         window.close();

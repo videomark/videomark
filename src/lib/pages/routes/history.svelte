@@ -1,11 +1,12 @@
 <script>
+  import { tick } from 'svelte';
   import DetailPanel from '$lib/pages/history/detail-panel.svelte';
   import SearchForm from '$lib/pages/history/search-form.svelte';
   import SearchResults from '$lib/pages/history/search-results.svelte';
   import SettingsButton from '$lib/pages/history/settings-button.svelte';
-  import HistoryLayout from '$lib/pages/layouts/history-layout.svelte';
-  import OnboardingLayout from '$lib/pages/layouts/onboarding-layout.svelte';
+  import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import NoHistory from '$lib/pages/onboarding/no-history.svelte';
+  import OnboardingWrapper from '$lib/pages/onboarding/onboarding-wrapper.svelte';
   import { viewingHistory } from '$lib/services/history';
 
   let historyItems = [];
@@ -25,32 +26,36 @@
         historyItems = $viewingHistory.filter((item) => keys.includes(item.key));
         showDialog = !!historyItems.length;
       }
-
-      window.location.hash = '#/history';
     }
   };
 
   $: {
     if ($viewingHistory?.length) {
-      checkHash();
+      (async () => {
+        await tick();
+        checkHash();
+      })();
     }
   }
 </script>
 
 <svelte:window on:hashchange={() => checkHash()} />
 
+<!-- 以下レイアウトが重複しているが、ひとつにしてネストさせると `slot` が使えないので別々のままにする -->
 {#if $viewingHistory}
   {#if $viewingHistory.length}
-    <HistoryLayout>
+    <DefaultLayout>
       <SearchForm slot="header" />
       <SettingsButton slot="header-extras" />
       <SearchResults />
-    </HistoryLayout>
+    </DefaultLayout>
   {:else}
-    <OnboardingLayout>
+    <DefaultLayout>
       <SettingsButton slot="header-extras" />
-      <NoHistory />
-    </OnboardingLayout>
+      <OnboardingWrapper>
+        <NoHistory />
+      </OnboardingWrapper>
+    </DefaultLayout>
   {/if}
 {/if}
 

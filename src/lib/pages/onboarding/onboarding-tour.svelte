@@ -1,6 +1,7 @@
 <script>
   import { Button, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { goto } from '$lib/services/navigation';
   import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
@@ -14,7 +15,7 @@
   const agreeTerms = () => {
     storage.set('AgreedTerm', true);
     (chrome.action ?? chrome.browserAction).setPopup({ popup: '/index.html#/popup' });
-    window.location.replace('#/history');
+    goto('#/history', { replaceState: true });
   };
 </script>
 
@@ -79,23 +80,14 @@
   }
 
   .row {
-    display: flex;
     flex-direction: row-reverse;
-    align-items: center;
-    gap: 64px;
-    min-height: 400px;
+  }
 
-    @media (max-width: 1023px) {
-      flex-direction: column;
-    }
-
-    .col:last-of-type {
-      flex: none;
-      width: 40%;
-
-      @media (max-width: 1023px) {
-        width: 100%;
-        max-width: 640px;
+  .col {
+    @media (min-width: 1024px) {
+      &:last-of-type {
+        flex: none;
+        width: 40%;
       }
     }
   }
@@ -106,8 +98,12 @@
     gap: 4px;
 
     :global(button .icon) {
-      font-size: var(--sui-font-size-large);
+      font-size: 16px;
       font-variation-settings: 'FILL' 1;
+
+      @media (any-pointer: coarse) {
+        font-size: 24px;
+      }
     }
 
     :global(button[aria-pressed='true']) {

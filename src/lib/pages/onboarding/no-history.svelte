@@ -1,14 +1,7 @@
 <script>
-  import { onMount } from 'svelte';
   import { _, json, locale } from 'svelte-i18n';
   import PlatformList from '$lib/pages/common/platform-list.svelte';
-  import { getBrowserName } from '$lib/services/runtime';
-
-  let browserName = 'chrome';
-
-  onMount(() => {
-    browserName = getBrowserName();
-  });
+  import { browserName, isMobile } from '$lib/services/runtime';
 </script>
 
 <div class="row">
@@ -19,43 +12,31 @@
     </section>
   </div>
   <div class="col">
-    <section class="toolbar-instruction {browserName}">
-      <h2>{$_('onboarding.addToToolbar.title')}</h2>
-      <div>
-        <img src="/images/onboarding/toolbar-{browserName}.{$locale}.png" alt="" />
-      </div>
-      <ol>
-        {#each $json(`onboarding.addToToolbar.${browserName}`) as step}
-          <li>
-            {@html step.replace(
-              /<icon (.+?)>(.+?)<\/icon>/,
-              '<span class="sui icon material-symbols-outlined" aria-label="$2">$1</span>',
-            )}
-          </li>
-        {/each}
-      </ol>
-    </section>
+    {#if !$isMobile}
+      <section class="toolbar-instruction {$browserName}">
+        <h2>{$_('onboarding.addToToolbar.title')}</h2>
+        <div>
+          <img src="/images/onboarding/toolbar-{$browserName}.{$locale}.png" alt="" />
+        </div>
+        <ol>
+          {#each $json(`onboarding.addToToolbar.${$browserName}`) as step}
+            <li>
+              {@html step.replace(
+                /<icon (.+?)>(.+?)<\/icon>/,
+                '<span class="sui icon material-symbols-outlined" aria-label="$2">$1</span>',
+              )}
+            </li>
+          {/each}
+        </ol>
+      </section>
+    {/if}
   </div>
 </div>
 
 <style lang="scss">
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 64px;
-    min-height: 400px;
-
-    @media (max-width: 1023px) {
-      flex-direction: column;
-    }
-
-    .col {
+  .col {
+    @media (min-width: 1024px) {
       width: calc(50% - 16px);
-
-      @media (max-width: 1023px) {
-        width: 100%;
-        max-width: 640px;
-      }
     }
   }
 

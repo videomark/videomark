@@ -117,6 +117,8 @@ export const strings = {
     search: {
       input: '履歴を検索',
       filters: {
+        filters: '検索フィルター',
+        show_filters: '検索フィルターを表示',
         date: {
           buttonLabel: '視聴日',
           dropdownLabel: '視聴期間',

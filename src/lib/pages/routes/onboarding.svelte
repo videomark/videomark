@@ -1,8 +1,11 @@
 <script>
-  import OnboardingLayout from '$lib/pages/layouts/onboarding-layout.svelte';
+  import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import OnboardingTour from '$lib/pages/onboarding/onboarding-tour.svelte';
+  import OnboardingWrapper from '$lib/pages/onboarding/onboarding-wrapper.svelte';
 </script>
 
-<OnboardingLayout>
-  <OnboardingTour />
-</OnboardingLayout>
+<DefaultLayout>
+  <OnboardingWrapper>
+    <OnboardingTour />
+  </OnboardingWrapper>
+</DefaultLayout>

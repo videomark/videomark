@@ -9,6 +9,10 @@
     "gecko": {
       "id": "videomark@webdino.org",
       "strict_min_version": "109.0"
+    },
+    "gecko_android": {
+      "id": "videomark@webdino.org",
+      "strict_min_version": "109.0"
     }
   },
   "options_ui": {
