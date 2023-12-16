@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import { isExtension, isVmBrowser } from '$lib/services/runtime';
 
 /**
  * 現在のデータスキーマバージョン。
@@ -7,67 +6,13 @@ import { isExtension, isVmBrowser } from '$lib/services/runtime';
 export const SCHEMA_VERSION = new Date('2019-07-18T00:00:00Z').getTime();
 
 /**
- * WebExtension Storage API のテスト用モック。
- */
-class mockStorage {
-  static data = {};
-
-  static get(keys, callback) {
-    if (Array.isArray(keys)) {
-      callback(Object.fromEntries(keys.map((key) => [key, this.data[key]])));
-    } else if (typeof keys === 'string') {
-      callback({ [keys]: this.data[keys] });
-    } else {
-      callback(this.data);
-    }
-  }
-
-  static set(obj, callback) {
-    Object.assign(this.data, obj);
-    callback();
-  }
-
-  static remove(keys, callback) {
-    if (Array.isArray(keys)) {
-      keys.forEach((key) => {
-        delete this.data[key];
-      });
-    } else if (typeof keys === 'string') {
-      delete this.data[keys];
-    }
-
-    callback();
-  }
-
-  static clear(callback) {
-    Object.keys(this.data).forEach((key) => {
-      delete this.data[key];
-    });
-
-    callback();
-  }
-}
-
-/**
  * Promise に対応させた WebExtension Storage API のラッパー。
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage
  */
 export class storage {
-  static get localStorage() {
-    if (isVmBrowser()) {
-      return sodium.storage.local;
-    }
-
-    if (isExtension()) {
-      return chrome.storage.local;
-    }
-
-    return mockStorage;
-  }
-
   static async get(key) {
     return new Promise((resolve) => {
-      this.localStorage.get([key], (obj) => {
+      chrome.storage.local.get([key], (obj) => {
         resolve(obj[key]);
       });
     });
@@ -75,26 +20,26 @@ export class storage {
 
   static async getAll() {
     return new Promise((resolve) => {
-      this.localStorage.get(null, (obj) => {
+      chrome.storage.local.get(null, (obj) => {
         resolve(obj);
       });
     });
   }
 
   static async set(key, value) {
-    return this.localStorage.set({ [key]: value });
+    return chrome.storage.local.set({ [key]: value });
   }
 
   static async setAll(obj) {
-    return this.localStorage.set(obj);
+    return chrome.storage.local.set(obj);
   }
 
   static async delete(key) {
-    return this.localStorage.remove([key]);
+    return chrome.storage.local.remove([key]);
   }
 
   static async clear() {
-    return this.localStorage.clear();
+    return chrome.storage.local.clear();
   }
 }
 

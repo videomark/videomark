@@ -1,16 +1,14 @@
-const isVMBrowser = Boolean(window.sodium);
-
 // content.js はモジュールではないので `import` が使えない。本来はビルド時にインライン化できるはずだが、Vite で
 // 共有モジュールの code splitting を無効化する方法がなく、共有されている `storage.js` は別ファイルとして生成
 // されてしまうので、`storage` はインポートせずに使う。 @see https://github.com/rollup/rollup/issues/2756
 const storage = {
   get: (keys) =>
     new Promise((resolve) => {
-      (isVMBrowser ? sodium : chrome).storage.local.get(keys, resolve);
+      chrome.storage.local.get(keys, resolve);
     }),
   set: (items) =>
     new Promise((resolve) => {
-      (isVMBrowser ? sodium : chrome).storage.local.set(items, resolve);
+      chrome.storage.local.set(items, resolve);
     }),
 };
 
@@ -116,42 +114,22 @@ class BackgroundCommunicationPort {
   }
 
   setAlive(alive) {
-    if (isVMBrowser) {
-      sodium.currentTab.alive = alive;
-    } else {
-      this.postMessage('setAlive', [alive]);
-    }
+    this.postMessage('setAlive', [alive]);
   }
 
   setDisplayOnPlayer(displayOnPlayer) {
-    if (isVMBrowser) {
-      sodium.currentTab.displayOnPlayer = displayOnPlayer;
-    } else {
-      this.postMessage('setDisplayOnPlayer', [displayOnPlayer]);
-    }
+    this.postMessage('setDisplayOnPlayer', [displayOnPlayer]);
   }
 
   async getDisplayOnPlayer() {
-    if (isVMBrowser) {
-      return sodium.currentTab.displayOnPlayer;
-    }
-
     return (await this.postMessage('getDisplayOnPlayer')).displayOnPlayer;
   }
 
   async getPlatformInfo() {
-    if (isVMBrowser) {
-      return { os: 'android' };
-    }
-
     return (await this.postMessage('getPlatformInfo')).platformInfo;
   }
 
   async getIp(host) {
-    if (isVMBrowser) {
-      return sodium.locationIp;
-    }
-
     return (await this.postMessage('getIp', [host])).ip;
   }
 }
@@ -259,26 +237,18 @@ const message_listener = async (event) => {
   }
 };
 
-if (isVMBrowser) {
+storage.get('AgreedTerm').then((value) => {
+  if (!value.AgreedTerm) {
+    return;
+  }
+
   window.addEventListener('message', message_listener);
-} else {
-  storage.get('AgreedTerm').then((value) => {
-    if (!('AgreedTerm' in value)) {
-      return;
-    }
 
-    if (!value.AgreedTerm) {
-      return;
-    }
-
-    window.addEventListener('message', message_listener);
-
-    inject_script({
-      script: chrome.runtime.getURL('/scripts/sodium.js'),
-      target: 'body',
-    });
+  inject_script({
+    script: chrome.runtime.getURL('/scripts/sodium.js'),
+    target: 'body',
   });
-}
+});
 
 chrome.runtime.onMessage.addListener((request /* , sender, sendResponse */) => {
   window.postMessage(request, '*');
