@@ -3,9 +3,9 @@ set -euo pipefail
 
 APP_NAME=WebVideoMark
 VERSION=$(node -pe 'require("./package.json").version')
-EXTENSION_ZIP=webvideomark-safari-extension.zip
+EXTENSION_ZIP=vm-${MODE}-safari.zip
 
-PUBLISH_DIR=dist/safari
+PUBLISH_DIR=dist/${MODE}-safari
 PROJECT_DIR=${PUBLISH_DIR}/${APP_NAME}
 DERIVED_DIR=${PUBLISH_DIR}/derived
 PRODUCT_DIR=${DERIVED_DIR}/Build/Products/Release
@@ -16,23 +16,26 @@ log() {
 
 cd -- "$(dirname -- "$0")/.."
 
-log "Working directory is: $(pwd)"
-log "BUILD START: webvideomark-safari-extension"
+log "Packaging Safari extension..."
 
-log cleanup
 rm -vrf -- "${PUBLISH_DIR}"
 
-log build
-echo yes | xcrun safari-web-extension-converter --copy-resources --no-open --project-location "${PUBLISH_DIR}" --app-name ${APP_NAME} dist/production
+echo yes | xcrun safari-web-extension-converter --copy-resources \
+  --project-location "${PUBLISH_DIR}" --app-name ${APP_NAME} dist/${MODE}-chrome
 
-plutil -replace "CFBundleShortVersionString" -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME}/Info.plist"
-plutil -replace "CFBundleVersion"            -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME}/Info.plist"
-plutil -replace "CFBundleShortVersionString" -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME} Extension/Info.plist"
-plutil -replace "CFBundleVersion"            -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME} Extension/Info.plist"
+plutil -replace "CFBundleShortVersionString" \
+  -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME}/Info.plist"
+plutil -replace "CFBundleVersion" \
+  -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME}/Info.plist"
+plutil -replace "CFBundleShortVersionString" \
+  -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME} Extension/Info.plist"
+plutil -replace "CFBundleVersion" \
+  -string "${VERSION}" "${PROJECT_DIR}/${APP_NAME} Extension/Info.plist"
 
-xcodebuild -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" -scheme ${APP_NAME} -configuration Release -derivedDataPath "${DERIVED_DIR}" build
+xcodebuild -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" -scheme ${APP_NAME} \
+  -configuration Release -derivedDataPath "${DERIVED_DIR}" build
 
 (cd -- "${PRODUCT_DIR}" && zip -r ${EXTENSION_ZIP} "${APP_NAME} Extension.appex" ${APP_NAME}.app)
 mv "${PRODUCT_DIR}/${EXTENSION_ZIP}" dist
 
-log "BUILD END: webvideomark-safari-extension"
+log "Build complete. Extension is available under ${PUBLISH_DIR} directory."
