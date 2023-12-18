@@ -16,8 +16,8 @@ const distPathFirefox = `${distPathTemp}-firefox`;
 
 /**
  * Load an existing JSON file, modify the content, and save the file.
- * @param {string} filePath
- * @param {(object) => void} update
+ * @param {string} filePath Absolute path to the JSON file.
+ * @param {(object) => void} update Function to update the JSON object.
  */
 const updateJSON = async (filePath, update) => {
   const obj = JSON.parse(await readFile(filePath));
@@ -28,8 +28,8 @@ const updateJSON = async (filePath, update) => {
 
 /**
  * Create a ZIP archive.
- * @param {string} directory
- * @param {string} archivePath
+ * @param {string} directory Absolute path to the directory to be archived.
+ * @param {string} archivePath Absolute path to the ZIP file.
  */
 const makeArchive = async (directory, archivePath) => {
   const archive = archiver('zip');
@@ -88,7 +88,8 @@ const packageFirefoxExtension = async () => {
 
 /**
  * Package an extension for different browsers by modifying the manifest file.
- * @returns {import('vite').Plugin}
+ * @returns {import('vite').Plugin} Vite plugin.
+ * @see https://vitejs.dev/guide/api-plugin
  * @see https://rollupjs.org/plugin-development/
  */
 export default function packageExtension() {
