@@ -14,12 +14,12 @@
  */
 
 /**
- * ホスト名パターンを正規表現に変換します。
+ * ホスト名パターンを正規表現に変換。
  * @param {string} origin ホスト名パターン。`*.youtube.com` のようにワイルドカードを含めることも可能。
  * @returns {RegExp} 正規表現。
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
  */
-const makeOriginRE = (origin) =>
+const makeHostRE = (origin) =>
   new RegExp(`^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/^\\*\\./, '(?:.+\\.)?')}$`);
 
 /**
@@ -117,7 +117,7 @@ export const videoPlatforms = [
   },
 ].map((platform) => ({
   ...platform,
-  hostREs: platform.hostREs ?? platform.hosts.map((o) => makeOriginRE(o)),
+  hostREs: platform.hostREs ?? platform.hosts.map((o) => makeHostRE(o)),
 }));
 
 /**
