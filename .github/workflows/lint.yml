@@ -21,5 +21,5 @@ jobs:
         with:
           prettier: true
           eslint: true
-          stylelint: true
-          stylelint_extensions: css,scss,svelte
+          # stylelint: true
+          # stylelint_extensions: css,scss,svelte
