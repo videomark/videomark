@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "Web VideoMark",
   "version": null,
-  "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
+  "default_locale": "en",
+  "description": "__MSG_extensionDescription__",
   "author": "WebDINO Japan",
   "homepage_url": "http://videomark.webdino.org/",
   "options_ui": {
