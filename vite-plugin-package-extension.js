@@ -6,7 +6,7 @@ import { createWriteStream } from 'fs';
 import { cp, readFile, rm, writeFile } from 'fs/promises';
 import path from 'path';
 import { version } from './package.json';
-import { videoPlatformOrigins } from './src/lib/services/video-platforms';
+import { videoPlatformHosts } from './src/lib/services/video-platforms';
 
 const mode = process.env.MODE || 'development';
 const distPath = path.resolve('./dist');
@@ -103,13 +103,13 @@ export default function packageExtension() {
 
         await updateJSON(`${distPathTemp}/manifest.json`, (obj) => {
           obj.version = version;
-          obj.content_scripts[0].matches = videoPlatformOrigins
-            .map((origin) => `${origin}/*`)
+          obj.content_scripts[0].matches = videoPlatformHosts
+            .map((host) => `https://${host}/*`)
             .sort();
         });
         await updateJSON(`${distPathTemp}/request_rules.json`, (obj) => {
-          obj[0].condition.initiatorDomains = videoPlatformOrigins
-            .map((origin) => origin.replace(/^https:\/\/(?:\*\.)?/, ''))
+          obj[0].condition.initiatorDomains = videoPlatformHosts
+            .map((host) => host.replace(/^\*\./, ''))
             .sort();
         });
         await Promise.all([packageChromeExtension(), packageFirefoxExtension()]);

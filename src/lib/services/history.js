@@ -70,7 +70,7 @@ export const viewingHistory = writable(undefined, (set) => {
           log = [],
         } = item;
 
-        const { origin } = new URL(url);
+        const { hostname } = new URL(url);
         const latestStats = log.findLast((entry) => !!entry.quality)?.quality || {};
         const provisionalQoe = log.findLast((entry) => !!entry.qoe)?.qoe || -1;
         const qoe = Number.isFinite(finalQoe) ? finalQoe : provisionalQoe;
@@ -81,7 +81,7 @@ export const viewingHistory = writable(undefined, (set) => {
           id,
           sessionId,
           viewingId: [id, sessionId].join('_'),
-          platform: videoPlatforms.find(({ originREs }) => originREs.some((re) => re.test(origin))),
+          platform: videoPlatforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname))),
           canCalc: calc === undefined || calc === true,
           title,
           url,

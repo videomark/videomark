@@ -225,13 +225,9 @@ export default class Config {
   }
 
   static get_video_platform() {
-    const { origin } = window.location;
+    const { hostname } = window.location;
 
-    const platform = this.video_platforms.find(({ originREs }) =>
-      originREs.some((re) => re.test(origin)),
-    );
-
-    return platform?.id;
+    return this.video_platforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname)))?.id;
   }
 
   static get_max_throughput_history_size() {
@@ -294,11 +290,11 @@ Config.video_platforms = [
   // モバイル向け YouTube Mobile はデスクトップ向けとスタイル、ターゲットを変えるため最初に追加
   {
     id: 'm_youtube_com',
-    originREs: [/^https:\/\/m\.youtube\.com$/],
+    hostREs: [/^m\.youtube\.com$/],
   },
   ...videoPlatforms
     .filter(({ deprecated }) => !deprecated)
-    .map(({ id, originREs }) => ({ id, originREs })),
+    .map(({ id, hostREs }) => ({ id, hostREs })),
 ];
 
 // 表示用

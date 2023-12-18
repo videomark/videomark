@@ -2,14 +2,15 @@ import { get } from 'svelte/store';
 import { openTab } from '$lib/services/navigation';
 import { isMobile } from '$lib/services/runtime';
 import { SCHEMA_VERSION, storage } from '$lib/services/storage';
-import { videoPlatformOriginREs } from '$lib/services/video-platforms';
+import { videoPlatformHostREs } from '$lib/services/video-platforms';
 
 /**
  * content_scripts の許可されているOriginかどうか判定
  * @param {string} origin
  * @return {boolean}
  */
-const isPermittedOrigin = (origin) => videoPlatformOriginREs.some((re) => re.test(origin));
+const isPermittedOrigin = (origin) =>
+  videoPlatformHostREs.some((re) => re.test(origin.replace('https://', '')));
 
 // `webRequestBlocking` パーミッションは Manifest v3 では使用不可。以下はまだ `declarativeNetRequest` が
 // 実装されていない Firefox 向け後方互換。 @see https://bugzilla.mozilla.org/1687755
