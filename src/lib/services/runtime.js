@@ -1,18 +1,6 @@
 import { readable } from 'svelte/store';
 
 /**
- * 現在の環境が Android 向けカスタムブラウザーであるかどうかの判定。
- * @returns {boolean} 結果。
- */
-export const isVmBrowser = () => 'sodium' in globalThis;
-
-/**
- * 現在の環境がブラウザー拡張機能であるかどうかの判定。
- * @returns {boolean} 結果。
- */
-export const isExtension = () => !isVmBrowser() && 'storage' in globalThis.chrome;
-
-/**
  * 現在の環境のブラウザー名を保持。
  * @type {import('svelte/store').Readable<'chrome' | 'safari' | 'firefox'>}
  */

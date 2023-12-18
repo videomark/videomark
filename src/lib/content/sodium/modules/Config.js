@@ -4,10 +4,6 @@ import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
  * 動作設定
  */
 export default class Config {
-  static isVMBrowser() {
-    return Boolean(window.sodium);
-  }
-
   static async readPlatformInfo() {
     this.mobile = (await getDataFromContentJs('platform_info')).os === 'android';
   }
@@ -571,24 +567,7 @@ Config.max_count_for_qoe = 20; // 27000ms
 // QoE制御
 Config.quality_control = false;
 
-if (Config.isVMBrowser()) {
-  window.sodium.storage.local.get('session', ({ session }) => {
-    Config.session = session || {};
-  });
-  window.sodium.storage.local.get('settings', ({ settings }) => {
-    Config.settings = settings || {};
-  });
-  window.sodium.storage.local.get('transfer_size', ({ transfer_size }) => {
-    Config.transfer_size = transfer_size || {};
-  });
-  window.sodium.storage.local.get('peak_time_limit', ({ peak_time_limit }) => {
-    Config.peak_time_limit = peak_time_limit || {};
-  });
-}
-
-const currentScript = Config.isVMBrowser()
-  ? null
-  : document.querySelector(`script[type="module"][src="${import.meta.url}"]`);
+const currentScript = document.querySelector(`script[type="module"][src="${import.meta.url}"]`);
 
 if (currentScript !== null) {
   // content_scriptsによって書き込まれるオブジェクトのデシリアライズ
