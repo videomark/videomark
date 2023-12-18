@@ -18,7 +18,7 @@
  * @returns {RegExp} 正規表現。
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
  */
-const escapeOriginRE = (origin) =>
+const makeOriginRE = (origin) =>
   new RegExp(
     `^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`.replace('//\\*\\.', '//(?:.+\\.)?'),
   );
@@ -121,7 +121,7 @@ export const videoPlatforms = [
   },
 ].map((platform) => ({
   ...platform,
-  originREs: platform.origins.map((o) => escapeOriginRE(o)),
+  originREs: platform.origins.map((o) => makeOriginRE(o)),
 }));
 
 /**
