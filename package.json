@@ -20,8 +20,7 @@
     "lint:prettier": "prettier --check --plugin prettier-plugin-svelte .",
     "lint:eslint": "eslint .",
     "lint:stylelint": "stylelint '**/*.{css,scss,svelte}'",
-    "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx .",
-    "version": "bin/version"
+    "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",
