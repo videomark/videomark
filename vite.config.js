@@ -1,7 +1,10 @@
-import path from 'path';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import path from 'path';
 import sveltePreprocess from 'svelte-preprocess';
 import { defineConfig } from 'vite';
+import packageExtension from './vite-plugin-package-extension';
+
+const mode = process.env.MODE || 'development';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,8 +15,8 @@ export default defineConfig({
     extensions: ['.js', '.svelte'],
   },
   build: {
-    // minify: process.env.MODE === 'production',
-    // sourcemap: process.env.MODE === 'production',
+    // minify: mode === 'production',
+    // sourcemap: mode === 'production',
     rollupOptions: {
       input: {
         pages: 'src/lib/pages/main.js',
@@ -25,6 +28,8 @@ export default defineConfig({
         entryFileNames: 'scripts/[name].js',
       },
     },
+    outDir: `./dist/${mode}`,
+    emptyOutDir: true,
   },
   plugins: [
     svelte({
@@ -34,9 +39,10 @@ export default defineConfig({
         customElement: true,
       },
     }),
+    packageExtension(),
   ],
   base: '', // Use relative links in `index.html`
   envDir: './config',
   envPrefix: 'SODIUM_',
-  mode: process.env.MODE || 'development',
+  mode,
 });

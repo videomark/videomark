@@ -1,14 +1,10 @@
 #!/bin/bash
-# extension に含まれる manifest.json のバージョンアップ
-# 要: jq
+# package.json のバージョンアップ。拡張機能に含まれる manifest.json の version はビルド時に package.json から
+# コピーされるので、ここでは変更不要。
 set -euo pipefail
 cd -- "$(dirname -- "$0")/.."
 export VIDEOMARK_VERSION=${VIDEOMARK_VERSION:-$(node -pe 'require("./package.json").version')}
 version() {
-  echo "$(jq .version=env.VIDEOMARK_VERSION public/manifest.json)" \
-    >public/manifest.json
-  echo "$(jq .version=env.VIDEOMARK_VERSION public/manifest-firefox.json)" \
-    >public/manifest-firefox.json
   echo "${VIDEOMARK_VERSION}"
 }
 version

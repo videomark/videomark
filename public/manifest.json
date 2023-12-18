@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Web VideoMark",
-  "version": "3.0.0",
+  "version": null,
   "description": "Web VideoMark 拡張機能 - 動画配信サービス視聴時の品質情報を計測します。",
   "author": "WebDINO Japan",
   "homepage_url": "http://videomark.webdino.org/",
@@ -32,19 +32,7 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://*.tver.jp/*",
-        "*://*.youtube.com/*",
-        "*://*.nicovideo.jp/*",
-        "*://*.fod.fujitv.co.jp/*",
-        "*://fod.fujitv.co.jp/*",
-        "*://*.nhk-ondemand.jp/*",
-        "*://lemino.docomo.ne.jp/*",
-        "*://abema.tv/*",
-        "*://*.amazon.co.jp/*",
-        "*://pr.iij.ad.jp/*",
-        "*://*.netflix.com/*"
-      ],
+      "matches": [],
       "js": [
         "scripts/content.js"
       ],

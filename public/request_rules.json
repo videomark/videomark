@@ -7,20 +7,7 @@
       "responseHeaders": [{ "header": "Timing-Allow-Origin", "operation": "set", "value": "*" }]
     },
     "condition": {
-      "initiatorDomains": [
-        "youtube.com",
-        "tver.jp",
-        "i.fod.fujitv.co.jp",
-        "fod.fujitv.co.jp",
-        "nicovideo.jp",
-        "www.nhk-ondemand.jp",
-        "lemino.docomo.ne.jp",
-        "abema.tv",
-        "ds-linear-abematv.akamaized.net",
-        "abema-tv.com",
-        "www.amazon.co.jp",
-        "pr.iij.ad.jp"
-      ]
+      "initiatorDomains": []
     }
   }
 ]

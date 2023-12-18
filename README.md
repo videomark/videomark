@@ -37,9 +37,7 @@ pnpm build
 
 ## Development
 
-`pnpm build:watch` を実行すると、ローカルで行った変更が随時自動的に `dist/production-chrome` へビルドされます。反映にはページの再読み込みが必要です。この方法は Chrome のみ有効です。
-
-Firefox ではマニフェストに互換性がなく、ビルド時にファイルの差し替えを行っているため、逐次 `pnpm build` を実行する必要があります。
+`pnpm build:watch` を実行すると、ローカルで行った変更の差分が随時自動的に `dist/production-*` へビルドされます。反映にはページの再読み込みが必要です。ファイルによっては再度 `pnpm build` を実行しないと更新されない場合もあります。
 
 ## Directories
 
