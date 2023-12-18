@@ -6,8 +6,9 @@
  * @property {string} brandColor ブランドカラー。
  * @property {string[]} origins サービスのオリジンリスト。`manifest.json` や `request_rules.json` など複数
  * 箇所で利用され、自動的に正規表現やドメインのみの表記に変換されます。サブドメインが複数ある場合はワイルドカードを使う
- * ことも可能です。例えば `*.youtube.com` は `youtube.com` とそのサブドメインすべてに一致します。
- * @property {RegExp[]} originREs `origins` を正規表現に変換したリスト。
+ * ことも可能。例えば `*.youtube.com` は `youtube.com` とそのサブドメインすべてに一致します。
+ * @property {RegExp[]} originREs 正規表現で表したサービスのオリジンリスト。`origins` のワイルドカード表記より
+ * 細かい設定が可能。指定されていない場合は `origins` を自動的に正規表現に変換して使用。
  * @property {boolean} [deprecated] 廃止されたサービスは `true`。
  * @property {boolean} [experimental] 試験的に対応しているサービスは `true`。
  */
@@ -70,6 +71,7 @@ export const videoPlatforms = [
     url: 'https://live.nicovideo.jp/',
     brandColor: '#444444',
     origins: ['https://*.nicovideo.jp'],
+    originREs: [/^https:\/\/live\d\.nicovideo\.jp$/],
   },
   {
     id: 'nhkondemand',
@@ -121,7 +123,7 @@ export const videoPlatforms = [
   },
 ].map((platform) => ({
   ...platform,
-  originREs: platform.origins.map((o) => makeOriginRE(o)),
+  originREs: platform.originREs ?? platform.origins.map((o) => makeOriginRE(o)),
 }));
 
 /**
