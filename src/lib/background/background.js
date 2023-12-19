@@ -2,24 +2,7 @@ import { get } from 'svelte/store';
 import { openTab } from '$lib/services/navigation';
 import { isMobile } from '$lib/services/runtime';
 import { SCHEMA_VERSION, storage } from '$lib/services/storage';
-
-/** content_scripts の許可されているOriginかどうか判定 */
-// Declarative Net Request API 向けの `request_rules.json` と同期すること
-const permittedOrigins = [
-  /^https:\/\/([a-z-]+\.)?youtube\.com$/,
-  /^https:\/\/([a-z-]+\.)?tver\.jp$/,
-  'https://i.fod.fujitv.co.jp',
-  'https://fod.fujitv.co.jp',
-  'https://www.nicovideo.jp',
-  /^https:\/\/live\d\.nicovideo\.jp$/,
-  'https://www.nhk-ondemand.jp',
-  /^https:\/\/[a-z-]+\.video\.dmkt-sp\.jp$/,
-  'https://abema.tv',
-  /^https:\/\/ds-linear-abematv\.akamaized\.net$/,
-  /^https:\/\/[a-z0-9.-]\.abema-tv\.com$/,
-  'https://www.amazon.co.jp',
-  /^https?:\/\/pr\.iij\.ad\.jp$/,
-];
+import { videoPlatformHostREs } from '$lib/services/video-platforms';
 
 /**
  * content_scripts の許可されているOriginかどうか判定
@@ -27,9 +10,7 @@ const permittedOrigins = [
  * @return {boolean}
  */
 const isPermittedOrigin = (origin) =>
-  permittedOrigins.some((stringOrRegExp) =>
-    typeof stringOrRegExp === 'string' ? stringOrRegExp === origin : stringOrRegExp.test(origin),
-  );
+  videoPlatformHostREs.some((re) => re.test(origin.replace('https://', '')));
 
 // `webRequestBlocking` パーミッションは Manifest v3 では使用不可。以下はまだ `declarativeNetRequest` が
 // 実装されていない Firefox 向け後方互換。 @see https://bugzilla.mozilla.org/1687755

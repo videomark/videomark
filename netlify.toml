@@ -1,18 +1,18 @@
 [build]
   publish = "dist"
-  command = "bin/build"
+  command = "pnpm build"
 [[redirects]]
   from = "/"
-  to = "/videomark.zip"
+  to = "/vm-production-chrome.zip"
 [[redirects]]
   from = "/prod"
-  to = "/videomark.zip"
+  to = "/vm-production-chrome.zip"
 [[redirects]]
   from = "/dev"
-  to = "/videomark-dev.zip"
+  to = "/vm-development-chrome.zip"
 [[redirects]]
   from = "/prod-xpi"
-  to = "/videomark-firefox.xpi"
+  to = "/vm-production-firefox.xpi"
 [[redirects]]
   from = "/dev-xpi"
-  to = "/videomark-dev-firefox.xpi"
+  to = "/vm-development-firefox.xpi"

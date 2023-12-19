@@ -34,8 +34,8 @@ jobs:
         with:
           # see also https://github.com/PlasmoHQ/bpp#readme
           keys: ${{ secrets.BPP_KEYS }}
-          chrome-file: dist/videomark.zip
-          firefox-file: dist/videomark-firefox.zip
+          chrome-file: dist/vm-production-chrome.zip
+          firefox-file: dist/vm-production-firefox.xpi
       - name: Create Release Note
         uses: actions/github-script@v7
         with:

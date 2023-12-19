@@ -22,14 +22,22 @@ pnpm build
 
 ## Install
 
-1. Chrome のメニューで「その他のツール」から「拡張機能」を選択
-2. 「拡張機能」タブの「デベロッパーモード」を有効化
-3. 「パッケージ化されていない拡張機能を読み込む」をクリック
-4. このリポジトリに配置される `dist/production` ディレクトリを選択
+### Chrome
+
+1. ツールバーの 3 点メニューを開き、「拡張機能」から「拡張機能を管理」を選択
+1. 「拡張機能」タブが開いたら「デベロッパーモード」を有効化
+1. 「パッケージ化されていない拡張機能を読み込む」をクリック
+1. このリポジトリ以下の `dist/production-chrome` ディレクトリを選択
+
+### Firefox
+
+1. `about:debugging#/runtime/this-firefox` を開く
+1. 「一時的なアドオンを読み込む」をクリック
+1. このリポジトリ以下の `dist/production-firefox/manifest.json` ファイルを選択
 
 ## Development
 
-`pnpm run build:watch` を実行すると、ローカルで行った変更が随時自動的に `dist/production` へビルドされます。反映にはページの再読み込みが必要です。
+`pnpm build:watch` を実行すると、ローカルで行った変更の差分が随時自動的に `dist/production-*` へビルドされます。反映にはページの再読み込みが必要です。ファイルによっては再度 `pnpm build` を実行しないと更新されない場合もあります。
 
 ## Directories
 

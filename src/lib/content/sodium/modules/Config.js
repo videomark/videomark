@@ -1,4 +1,5 @@
 import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
+import { videoPlatforms } from '$lib/services/video-platforms';
 
 /**
  * 動作設定
@@ -224,10 +225,9 @@ export default class Config {
   }
 
   static get_video_platform() {
-    const matcher = this.video_platform_matcher(window.location);
-    const match = this.video_platforms.find(matcher);
+    const { hostname } = window.location;
 
-    return match && match.id;
+    return this.video_platforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname)))?.id;
   }
 
   static get_max_throughput_history_size() {
@@ -287,72 +287,15 @@ Config.event_type_names = [
 
 // 動画配信サービス
 Config.video_platforms = [
+  // モバイル向け YouTube Mobile はデスクトップ向けとスタイル、ターゲットを変えるため最初に追加
   {
-    // YouTube Mobile
     id: 'm_youtube_com',
-    host: /^m\.youtube\.com$/,
+    hostREs: [/^m\.youtube\.com$/],
   },
-  {
-    // YouTube
-    id: 'youtube',
-    host: /(^|[^m]\.)youtube\.com$/,
-  },
-  {
-    // TVer
-    id: 'tver',
-    host: /(^|\.)tver\.jp$/,
-  },
-  {
-    // FOD
-    id: 'fod',
-    host: /^(i\.)?fod\.fujitv\.co\.jp$/,
-  },
-  {
-    // ニコニコ動画
-    id: 'nicovideo',
-    host: /^www\.nicovideo\.jp$/,
-  },
-  {
-    // ニコニコ生放送
-    id: 'nicolive',
-    host: /^live\d\.nicovideo\.jp$/,
-  },
-  {
-    // NHKオンデマンド
-    id: 'nhkondemand',
-    host: /^www\.nhk-ondemand\.jp$/,
-  },
-  {
-    // Lemino
-    id: 'lemino',
-    host: /^lemino\.docomo\.ne\.jp$/,
-  },
-  {
-    // AbemaTV, Abemaビデオ
-    id: 'abematv',
-    host: /^abema\.tv$/,
-  },
-  {
-    // Amazon Prime Video
-    id: 'amazonprimevideo',
-    host: /^www\.amazon\.co\.jp$/,
-  },
-  {
-    // IIJ TWILIGHT CONCERT
-    id: 'iijtwilightconcert',
-    host: /^pr\.iij\.ad\.jp$/,
-  },
-  {
-    // Netflix
-    id: 'netflix',
-    host: /(^|\.)netflix\.com$/,
-  },
+  ...videoPlatforms
+    .filter(({ deprecated }) => !deprecated)
+    .map(({ id, hostREs }) => ({ id, hostREs })),
 ];
-
-Config.video_platform_matcher =
-  ({ host }) =>
-  (platform) =>
-    platform.host.test(host);
 
 // 表示用
 Config.ui = {

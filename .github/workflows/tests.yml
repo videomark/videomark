@@ -51,5 +51,5 @@ jobs:
       - run: pnpm build-safari
       - uses: actions/upload-artifact@v3
         with:
-          name: webvideomark-safari-extension.zip
-          path: dist/webvideomark-safari-extension.zip
+          name: vm-production-safari.zip
+          path: dist/vm-production-safari.zip
