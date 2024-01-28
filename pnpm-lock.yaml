@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@sveltia/ui':
-    specifier: ^0.10.4
-    version: 0.10.4
+    specifier: ^0.10.5
+    version: 0.10.5
   '@videomark/sparkline':
     specifier: github:videomark/sparkline
     version: github.com/videomark/sparkline/da263f1f1429787c606fe5885c9b85518472f4c2
@@ -26,8 +26,8 @@ devDependencies:
     specifier: ^1.41.1
     version: 1.41.1
   '@sveltejs/vite-plugin-svelte':
-    specifier: ^3.0.1
-    version: 3.0.1(svelte@4.2.9)(vite@5.0.12)
+    specifier: ^3.0.2
+    version: 3.0.2(svelte@4.2.9)(vite@5.0.12)
   archiver:
     specifier: ^6.0.1
     version: 6.0.1
@@ -74,8 +74,8 @@ devDependencies:
     specifier: ^14.0.0
     version: 14.0.0(postcss@8.4.33)(stylelint@16.2.0)
   stylelint-scss:
-    specifier: ^6.0.0
-    version: 6.0.0(stylelint@16.2.0)
+    specifier: ^6.1.0
+    version: 6.1.0(stylelint@16.2.0)
   svelte:
     specifier: ^4.2.9
     version: 4.2.9
@@ -1120,7 +1120,7 @@ packages:
     dev: true
     optional: true
 
-  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.9)(vite@5.0.12):
+  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.9)(vite@5.0.12):
     resolution: {integrity: sha512-gjr9ZFg1BSlIpfZ4PRewigrvYmHWbDrq2uvvPB1AmTWKuM+dI1JXQSUu2pIrYLb/QncyiIGkFDFKTwJ0XqQZZg==}
     engines: {node: ^18.0.0 || >=20}
     peerDependencies:
@@ -1128,7 +1128,7 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.9)(vite@5.0.12)
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.9)(vite@5.0.12)
       debug: 4.3.4
       svelte: 4.2.9
       vite: 5.0.12(sass@1.70.0)
@@ -1136,14 +1136,14 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/vite-plugin-svelte@3.0.1(svelte@4.2.9)(vite@5.0.12):
-    resolution: {integrity: sha512-CGURX6Ps+TkOovK6xV+Y2rn8JKa8ZPUHPZ/NKgCxAmgBrXReavzFl8aOSCj3kQ1xqT7yGJj53hjcV/gqwDAaWA==}
+  /@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.9)(vite@5.0.12):
+    resolution: {integrity: sha512-MpmF/cju2HqUls50WyTHQBZUV3ovV/Uk8k66AN2gwHogNAG8wnW8xtZDhzNBsFJJuvmq1qnzA5kE7YfMJNFv2Q==}
     engines: {node: ^18.0.0 || >=20}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.9)(vite@5.0.12)
+      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.9)(vite@5.0.12)
       debug: 4.3.4
       deepmerge: 4.3.1
       kleur: 4.1.5
@@ -1156,8 +1156,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltia/ui@0.10.4:
-    resolution: {integrity: sha512-vNv0PS6VOR/ACW1vDcPai66Y3qKwdLjRVZ19VNi8z1wxJDI960zE5wda7OquqEQuIQKdnn6qW1vlFf6rVloQtg==}
+  /@sveltia/ui@0.10.5:
+    resolution: {integrity: sha512-vRXm6y+lcpvGrTYE7qWuz5Lvtq6LU17Cs9NeVkmoTJFtlbhluLa4UyUVmJbeYeMJb+UIoj/pxJYs93jtnj3DRw==}
     dependencies:
       svelte: 4.2.9
     dev: false
@@ -4154,7 +4154,7 @@ packages:
       postcss-scss: 4.0.9(postcss@8.4.33)
       stylelint: 16.2.0
       stylelint-config-recommended: 14.0.0(stylelint@16.2.0)
-      stylelint-scss: 6.0.0(stylelint@16.2.0)
+      stylelint-scss: 6.1.0(stylelint@16.2.0)
     dev: true
 
   /stylelint-config-recommended@14.0.0(stylelint@16.2.0):
@@ -4166,8 +4166,8 @@ packages:
       stylelint: 16.2.0
     dev: true
 
-  /stylelint-scss@6.0.0(stylelint@16.2.0):
-    resolution: {integrity: sha512-N1xV/Ef5PNRQQt9E45unzGvBUN1KZxCI8B4FgN/pMfmyRYbZGVN4y9qWlvOMdScU17c8VVCnjIHTVn38Bb6qSA==}
+  /stylelint-scss@6.1.0(stylelint@16.2.0):
+    resolution: {integrity: sha512-kCfK8TQzthGwb4vaZniZgxRsVbCM4ZckmT1b/H5m4FU3I8Dz0id9llKsy1NMp3XXqC8+OPD4rVKtUbSxXlJb5g==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       stylelint: ^16.0.2
@@ -4175,7 +4175,7 @@ packages:
       known-css-properties: 0.29.0
       postcss-media-query-parser: 0.2.3
       postcss-resolve-nested-selector: 0.1.1
-      postcss-selector-parser: 6.0.13
+      postcss-selector-parser: 6.0.15
       postcss-value-parser: 4.2.0
       stylelint: 16.2.0
     dev: true
