@@ -15,7 +15,7 @@ jobs:
           cache: pnpm
       # Playwright バイナリをキャッシュ
       # https://github.com/microsoft/playwright/issues/7249#issuecomment-1256878540
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
