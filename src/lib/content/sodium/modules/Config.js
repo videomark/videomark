@@ -224,9 +224,7 @@ export default class Config {
     return this.ui_enabled;
   }
 
-  static get_video_platform() {
-    const { hostname } = window.location;
-
+  static get_video_platform(hostname = window.location.hostname) {
     return this.video_platforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname)))?.id;
   }
 
@@ -510,7 +508,10 @@ Config.max_count_for_qoe = 20; // 27000ms
 // QoE制御
 Config.quality_control = false;
 
-const currentScript = document.querySelector(`script[type="module"][src="${import.meta.url}"]`);
+const currentScript =
+  typeof document === 'object' // Vitest 内で例外が投げられるのを回避するためのチェック
+    ? document.querySelector(`script[type="module"][src="${import.meta.url}"]`)
+    : null;
 
 if (currentScript !== null) {
   // content_scriptsによって書き込まれるオブジェクトのデシリアライズ

@@ -45,4 +45,10 @@ export default defineConfig({
   envDir: './config',
   envPrefix: 'SODIUM_',
   mode,
+  test: {
+    exclude: [
+      '**/node_modules/**',
+      '**/tests/**', // Playwright
+    ],
+  },
 });

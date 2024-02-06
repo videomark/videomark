@@ -14,13 +14,15 @@
  */
 
 /**
- * ホスト名パターンを正規表現に変換。
+ * ホスト名パターンを正規表現に変換。正規表現用のエスケープを適用した後、さらにワイルドカード部分を変換。
  * @param {string} origin ホスト名パターン。`*.youtube.com` のようにワイルドカードを含めることも可能。
  * @returns {RegExp} 正規表現。
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
  */
-const makeHostRE = (origin) =>
-  new RegExp(`^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/^\\*\\./, '(?:.+\\.)?')}$`);
+export const makeHostRE = (origin) =>
+  new RegExp(
+    `^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/^\\\*\\\./, '(?:.+\\.)?')}$`,
+  );
 
 /**
  * すべての動画プラットフォームのリスト。表示名は `/src/locales` 以下でローカライズ可能です。
@@ -69,7 +71,7 @@ export const videoPlatforms = [
     url: 'https://live.nicovideo.jp/',
     brandColor: '#444444',
     hosts: ['*.nicovideo.jp'],
-    hostREs: [/^live\d\.nicovideo\.jp$/],
+    hostREs: [/^live\d?\.nicovideo\.jp$/],
   },
   {
     id: 'nhkondemand',
