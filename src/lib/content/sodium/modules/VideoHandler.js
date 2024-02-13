@@ -71,7 +71,7 @@ export default class VideoHandler {
       this.handler = new AmazonPrimeVideoTypeHandler(elm);
       this.service = 'amazonprimevideo';
       console.log('Amazon Prime Video Type Handler');
-    } else if (url.host === 'pr.iij.ad.jp') {
+    } else if (/^(?:pr|www)\.iij\.ad\.jp$/.test(url.host)) {
       this.handler = new IIJTypeHandler(elm);
       this.calQoeFlg = true;
       this.service = 'iijtwilightconcert';

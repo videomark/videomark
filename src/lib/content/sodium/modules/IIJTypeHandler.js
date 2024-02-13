@@ -1,42 +1,52 @@
-import { parse } from 'mpd-parser';
-
+import { Parser as ManifestParser } from 'm3u8-parser';
 import Config from './Config';
-
 import GeneralTypeHandler from './GeneralTypeHandler';
-
 import ResourceTiming from './ResourceTiming';
-
-const IIJ_MPD_PATH = 'https://twilightconcert.live.ipcasting.jp/twi/dash.mpd';
 
 export default class IIJTypeHandler extends GeneralTypeHandler {
   static async hook_iij() {
-    const { host } = new URL(window.location.href);
-
-    if (host !== 'pr.iij.ad.jp') {
+    if (!/^(?:pr|www)\.iij\.ad\.jp$/.test(window.location.host)) {
       return;
     }
 
-    /* MPD 取得のタイミングがホックより早いため自分で取得を行う */
+    // `<source>` からマニフェスト URL を取得し、解像度ごとのサブマニフェストも含めて内容を取得
     try {
-      const ret = await fetch(IIJ_MPD_PATH);
-      const body = await ret.text();
-      /* mpd-parser で parse すると framerate が失われるため予め値を取得する */
-      let fps;
+      /** @type {string | undefined} */
+      const manifestUrl = document.querySelector('video source[type="application/x-mpegURL"]')?.src;
 
-      try {
-        const {
-          groups: { frameRate },
-        } = /frameRate="(?<frameRate>\S+)"/.exec(body);
-
-        const [frame, unit] = frameRate.split('/');
-
-        fps = Math.floor(Number(frame) / Number(unit));
-      } catch (e) {
-        fps = -1;
+      if (!manifestUrl) {
+        throw new Error('Manifest URL not found');
       }
 
-      IIJTypeHandler.sodiumAdaptiveFmts = parse(body, IIJ_MPD_PATH);
-      IIJTypeHandler.sodiumAdaptiveFmts.framerate = fps;
+      const manifestUrlBase = manifestUrl.split('/').slice(0, -1).join('/');
+      /** @see https://www.npmjs.com/package/m3u8-parser */
+      const parser = new ManifestParser();
+
+      parser.push(await (await fetch(manifestUrl)).text());
+      parser.end();
+
+      const { manifest } = parser;
+
+      await Promise.all(
+        manifest.playlists.map(async (playlist, index) => {
+          const uri = `${manifestUrlBase}/${playlist.uri}`;
+          const subParser = new ManifestParser();
+
+          subParser.push(await (await fetch(uri)).text());
+          subParser.end();
+
+          Object.assign(manifest.playlists[index], subParser.manifest, {
+            uri,
+            segments: subParser.manifest.segments.map((s) => ({
+              ...s,
+              uri: `${manifestUrlBase}/${s.uri}`,
+            })),
+          });
+        }),
+      );
+
+      IIJTypeHandler.sodiumAdaptiveFmts = manifest;
+      IIJTypeHandler.sodiumAdaptiveFmts.framerate = manifest.playlists[0].attributes['FRAME-RATE'];
     } catch (e) {
       console.warn(`VIDEOMARK: IIJ failed to get adaptive formats ${e}`);
     }
@@ -191,63 +201,32 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
 
   static play_list_form_adaptive_fmts() {
     try {
-      const {
-        mediaGroups: {
-          AUDIO: {
-            audio: {
-              main: { playlists: audio },
-            },
-          },
-        },
-        playlists: video,
-      } = IIJTypeHandler.sodiumAdaptiveFmts;
+      const { playlists = [] } = IIJTypeHandler.sodiumAdaptiveFmts ?? {};
 
-      const videoRepArray = video.map((e) => {
+      return playlists.map((e, index) => {
         const {
           attributes: {
-            NAME: representationId,
+            'FRAME-RATE': fps,
             BANDWIDTH: bps,
-            CODECS: codec,
+            CODECS: codecs,
             RESOLUTION: { width: videoWidth, height: videoHeight },
           },
-          segments: [{ duration: chunkDuration, resolvedUri: serverIp }],
+          segments: [{ duration, uri }],
         } = e;
 
         return {
           type: 'video',
-          representationId,
+          representationId: String(index + 1),
           bps,
           videoWidth,
           videoHeight,
           container: 'mp4',
-          codec,
-          fps: IIJTypeHandler.sodiumAdaptiveFmts.framerate,
-          chunkDuration: chunkDuration * 1000,
-          serverIp: new URL(serverIp).host,
+          codec: codecs.split(',')[0],
+          fps,
+          chunkDuration: duration * 1000,
+          serverIp: new URL(uri).host,
         };
       });
-
-      const audioRepArray = audio.map((e) => {
-        const {
-          attributes: { NAME: representationId, BANDWIDTH: bps, CODECS: codec },
-          segments: [{ duration: chunkDuration, resolvedUri: serverIp }],
-        } = e;
-
-        return {
-          type: 'audio',
-          representationId,
-          bps,
-          videoWidth: -1,
-          videoHeight: -1,
-          container: 'mp4',
-          codec,
-          fps: -1,
-          chunkDuration: chunkDuration * 1000,
-          serverIp: new URL(serverIp).host,
-        };
-      });
-
-      return videoRepArray.concat(audioRepArray);
     } catch (e) {
       console.warn(`VIDEOMARK: IIJ failed to get adaptive formats ${e}`);
 
@@ -260,17 +239,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
   }
 
   get_bitrate() {
-    try {
-      const video = this.get_video_bitrate();
-
-      const { bps: audio } = this.get_play_list_info().find(
-        (e) => e.videoHeight === -1 && e.videoHeight === -1 && e.type === 'audio',
-      );
-
-      return video + audio;
-    } catch (e) {
-      return -1;
-    }
+    return this.get_video_bitrate();
   }
 
   get_video_bitrate() {
@@ -286,7 +255,7 @@ export default class IIJTypeHandler extends GeneralTypeHandler {
   }
 
   get_framerate() {
-    return IIJTypeHandler.sodiumAdaptiveFmts.framerate;
+    return IIJTypeHandler.sodiumAdaptiveFmts?.framerate ?? -1;
   }
 
   get_video_title() {
