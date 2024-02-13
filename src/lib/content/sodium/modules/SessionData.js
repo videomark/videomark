@@ -176,6 +176,11 @@ export default class SessionData {
     const video = [];
 
     Array.from(elms).forEach((elm) => {
+      // 表示されていない要素は無視
+      if (!elm.offsetWidth) {
+        return;
+      }
+
       // 有効期限内かつソースの変わらない既存の要素はそのまま
       const v = this.video.find(
         (e) =>
