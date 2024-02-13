@@ -102,7 +102,7 @@ export const videoPlatforms = [
     id: 'iijtwilightconcert',
     experimental: true,
     brandColor: '#CCB42B',
-    hosts: ['*.iij.ad.jp'],
+    hosts: ['pr.iij.ad.jp'],
   },
   {
     id: 'gorin',

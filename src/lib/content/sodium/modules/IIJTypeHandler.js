@@ -5,7 +5,9 @@ import ResourceTiming from './ResourceTiming';
 
 export default class IIJTypeHandler extends GeneralTypeHandler {
   static async hook_iij() {
-    if (!/^(?:pr|www)\.iij\.ad\.jp$/.test(window.location.host)) {
+    const { host } = new URL(window.location.href);
+
+    if (host !== 'pr.iij.ad.jp') {
       return;
     }
 
