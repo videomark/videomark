@@ -108,7 +108,7 @@
           {:else}
             <Icon name="equalizer" />
           {/if}
-          {qoe}
+          {qoe.toFixed(2)}
         {/if}
       </div>
       <div class="actions close-popup">

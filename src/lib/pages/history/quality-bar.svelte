@@ -15,7 +15,7 @@
       style:background-color="hsl({percent}, 70%, 40%)"
     />
   </div>
-  <div class="number">{value}</div>
+  <div class="number">{value.toFixed(2)}</div>
 </div>
 
 <style lang="scss">
