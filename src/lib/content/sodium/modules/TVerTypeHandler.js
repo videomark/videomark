@@ -1,6 +1,33 @@
 export default class TVerTypeHandler {
+  /**
+   * video.js 動画プレイヤーへの参照。
+   * @type {object}
+   */
+  static get #videoPlayer() {
+    if (!videojs?.getPlayers) {
+      return undefined;
+    }
+
+    const players = videojs.getPlayers();
+    const [key] = Object.keys(players);
+
+    if (!key) {
+      return undefined;
+    }
+
+    return players[key];
+  }
+
+  /**
+   * 再生中の動画スラッグ。内部的な UUID ではなく URL `https://tver.jp/episodes/XXXXX` から取得。
+   * @type {string}
+   */
+  static get #videoSlug() {
+    return window.location.pathname.split('/').pop();
+  }
+
   static get_duration() {
-    const duration = videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].duration();
+    const duration = this.#videoPlayer.duration();
 
     return duration && Number.isFinite(duration) ? duration : -1;
   }
@@ -36,7 +63,7 @@ export default class TVerTypeHandler {
   }
 
   static get_receive_buffer() {
-    return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].bufferedEnd();
+    return this.#videoPlayer.bufferedEnd();
   }
 
   static get_framerate() {
@@ -61,28 +88,34 @@ export default class TVerTypeHandler {
       return -1;
     }
 
-    return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].currentTime();
+    return this.#videoPlayer.currentTime();
+  }
+
+  static get_video_title() {
+    return this.#videoPlayer.mediainfo.name;
+  }
+
+  static get_video_thumbnail() {
+    return `https://statics.tver.jp/images/content/thumbnail/episode/small/${this.#videoSlug}.jpg`;
   }
 
   static is_main_video(video) {
-    return !videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].ima3.el.contains(video);
+    return !this.#videoPlayer.ima3.el.contains(video);
   }
 
   static is_cm() {
-    const adVideoNodeList = videojs
-      .getPlayers()
-      [Object.keys(videojs.getPlayers())[0]].ima3.el.getElementsByTagName('video');
+    const adVideoNodeList = this.#videoPlayer.ima3.el.getElementsByTagName('video');
 
     return Array.from(adVideoNodeList).some((e) => e.parentNode.style.display === 'block');
   }
 
   static get_playlists() {
-    if (videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls) {
-      return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls.selectPlaylist();
+    if (this.#videoPlayer.tech_.hls) {
+      return this.#videoPlayer.tech_.hls.selectPlaylist();
     }
 
-    if (videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.vhs) {
-      return videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.vhs.playlists.media_;
+    if (this.#videoPlayer.tech_.vhs) {
+      return this.#videoPlayer.tech_.vhs.playlists.media_;
     }
 
     return null;
@@ -91,19 +124,12 @@ export default class TVerTypeHandler {
   static is_tver_type() {
     try {
       if (
-        videojs &&
-        videojs.getPlayers instanceof Function &&
-        Object.keys(videojs.getPlayers()).length !== 0 &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].ima3 &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].ima3.el &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_ &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].tech_.hls
-          .selectPlaylist instanceof Function &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].bufferedEnd instanceof
-          Function &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].duration instanceof Function &&
-        videojs.getPlayers()[Object.keys(videojs.getPlayers())[0]].currentTime instanceof Function
+        !!this.#videoPlayer &&
+        !!this.#videoPlayer.ima3?.el &&
+        !!this.#videoPlayer.tech_?.hls?.selectPlaylist &&
+        !!this.#videoPlayer.bufferedEnd &&
+        !!this.#videoPlayer.duration &&
+        !!this.#videoPlayer.currentTime
       ) {
         return true;
       }
