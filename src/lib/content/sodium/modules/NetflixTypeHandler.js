@@ -8,6 +8,30 @@ class NetflixTypeHandler extends GeneralTypeHandler {
     this.elm = elm;
   }
 
+  /**
+   * 再生中の動画 ID。
+   * @type {number}
+   */
+  get #videoId() {
+    return this.get_id_by_video_holder();
+  }
+
+  /**
+   * Netflix 内部の動画メタデータ。
+   * @type {object}
+   */
+  get #videoMetadata() {
+    return netflix.appContext.state.playerApp.getAPI().getActiveVideoMetadata(this.#videoId);
+  }
+
+  /**
+   * Netflix の UI ロケール。例: `ja`。
+   * @type {string}
+   */
+  get #locale() {
+    return netflix.appContext.state.discoveryApp.getAPI().geo.getLocaleLanguage();
+  }
+
   get_duration() {
     const [, { Duration: duration }] = netflix.player.getMostRecentPlaybackDiagnosticGroups();
 
@@ -82,12 +106,62 @@ class NetflixTypeHandler extends GeneralTypeHandler {
     return Number.parseFloat(position);
   }
 
+  /**
+   * 動画のタイトルを取得。シーズン、エピソードなども必要に応じて付加する。
+   * @returns {string} タイトル。
+   */
   get_video_title() {
-    return 'Netflix';
+    const metadata = this.#videoMetadata;
+    /** @type {string} */
+    const showTitle = metadata.getTitle();
+
+    /**
+     * @type {{
+     * SEASON_ABR: string,
+     * EPISODE: number,
+     * TITLE: string,
+     * showEpisodeNumbers: boolean
+     * }}
+     */
+    const {
+      SEASON_ABR: seasonLabel, // ローカライズ済み、例「シーズン1」または空文字列
+      EPISODE: episodeNumber,
+      TITLE: episodeTitle,
+      showEpisodeNumbers,
+    } = metadata.getEpisodeTitleWithSeasonLabelData();
+
+    if (!episodeTitle) {
+      // タイトルのみ (映画)
+      return showTitle;
+    }
+
+    if (!showEpisodeNumbers) {
+      return `${showTitle}: ${episodeTitle}`;
+    }
+
+    if (seasonLabel) {
+      // シーズン付き、例「ハイキュー!! シーズン4-1: 自己紹介」
+      return `${showTitle} ${seasonLabel}-${episodeNumber}: ${episodeTitle}`;
+    }
+
+    const episodePrefix = this.#locale === 'ja' ? 'エピソード' : 'Episode';
+
+    // シーズンなし、例「忍びの家 House of Ninjas エピソード 1: The Offer - 指令 -」
+    return `${showTitle} ${episodePrefix} ${episodeNumber}: ${episodeTitle}`;
   }
 
+  /**
+   * 動画のサムネイル URL を取得。
+   * @returns {string} URL。
+   */
   get_video_thumbnail() {
-    return 'https://assets.nflxext.com/en_us/pages/wiplayer/logo_v3.svg';
+    const metadata = this.#videoMetadata;
+
+    return (
+      metadata.getEpisodeThumbnail()?.url ??
+      metadata.toVideoData().artwork[0]?.url ??
+      'https://assets.nflxext.com/en_us/pages/wiplayer/logo_v3.svg'
+    );
   }
 
   get_id_by_video_holder() {
@@ -117,6 +191,14 @@ class NetflixTypeHandler extends GeneralTypeHandler {
 
   get_service() {
     return this.service;
+  }
+
+  /**
+   * トラッキング ID などを外した正規 URL を取得。
+   * @returns {string} URL。
+   */
+  get_alt_location() {
+    return `https://www.netflix.com/watch/${this.#videoId}`;
   }
 
   is_main_video() {
