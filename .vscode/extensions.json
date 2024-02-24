@@ -6,6 +6,8 @@
     "esbenp.prettier-vscode",
     "stylelint.vscode-stylelint",
     "svelte.svelte-vscode",
-    "ms-playwright.playwright"
+    "ms-playwright.playwright",
+    "github.vscode-github-actions",
+    "vitest.explorer"
   ]
 }
