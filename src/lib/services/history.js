@@ -71,6 +71,15 @@ export const viewingHistory = writable(undefined, (set) => {
         } = item;
 
         const { hostname } = new URL(url);
+
+        /** @type {number[]} */
+        const throughputList = log
+          .filter((entry) => !!entry.quality?.throughput.length)
+          .map((entry) => entry.quality.throughput[0].throughput);
+
+        const averageThroughput =
+          throughputList.reduce((acc, cur) => acc + cur, 0) / throughputList.length;
+
         const latestStats = log.findLast((entry) => !!entry.quality)?.quality || {};
         const provisionalQoe = log.findLast((entry) => !!entry.qoe)?.qoe || -1;
         const qoe = Number.isFinite(finalQoe) ? finalQoe : provisionalQoe;
@@ -90,6 +99,7 @@ export const viewingHistory = writable(undefined, (set) => {
           region,
           stats: {
             ...latestStats,
+            throughput: averageThroughput,
             qoe,
             isLowQuality: Number.isFinite(qoe) && droppedVideoFrames / totalVideoFrames > 0.001,
             transferSize,

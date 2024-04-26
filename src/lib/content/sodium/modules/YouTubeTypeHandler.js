@@ -253,8 +253,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                   responseStart,
                 };
 
+                //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
                 setTimeout(() => {
-                  //  playerオブジェクトがない可能性がある、XHR後のバッファロード処理があるため、1000ms スリープする
+                  const itag = YouTubeTypeHandler.get_representation().video;
+
                   YouTubeTypeHandler.add_throughput_history({
                     downloadTime,
                     throughput,
@@ -264,7 +266,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                     end,
                     endUnplayedBufferSize: this.sodiumEndUnplayedBuffer,
                     timings,
-                    itag: url.searchParams.get('itag'),
+                    itag,
                   });
                   console.log(
                     `VIDEOMARK: load [URL: ${
@@ -279,9 +281,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                       this.sodiumEndUnplayedBuffer
                     }, throughput: ${throughput}, timings: ${JSON.stringify(
                       timings,
-                    )}, itag: ${JSON.stringify(
-                      url.searchParams.get('itag'),
-                    )}, id: ${url.searchParams.get('id')}]`,
+                    )}, itag: ${itag}, id: ${url.searchParams.get('id')}]`,
                   );
                 }, 1000);
               }
@@ -345,11 +345,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
       const startUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
       // @ts-ignore
       const res = await fetch(...args);
+      const clonedRes = res.clone();
       // TODO: fetch() の resolve されるタイミングはresponseEndのタイミングではないので要修正
       const endUnplayedBufferSize = YouTubeTypeHandler.get_unplayed_buffer_size();
 
       //  playerオブジェクトがない可能性がある、バッファロード処理があるため待機
-      setTimeout(() => {
+      setTimeout(async () => {
         /** @type {PerformanceResourceTiming | undefined} */
         const resource = ResourceTiming.find(url.href);
 
@@ -357,8 +358,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
           return;
         }
 
-        const downloadSize = Number(res.headers.get('content-length') || 0);
-        const itag = url.searchParams.get('itag');
+        const downloadSize = (await clonedRes.blob()).size;
+        const itag = YouTubeTypeHandler.get_representation().video;
 
         const throughput = createThroughput({
           resource,

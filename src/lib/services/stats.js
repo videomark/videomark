@@ -122,7 +122,7 @@ export const formatStats = (locale, details) => {
 
   return {
     bitrate: isValidNumber(bitrate) ? `${formatKiloSize(locale, bitrate)} kbps` : null,
-    throughput: isValidNumber(throughput) ? `${formatKiloSize(locale, throughput)} kbps` : null,
+    throughput: isValidNumber(throughput) ? `${formatMegaSize(locale, throughput)} Mbps` : null,
     transferSize: isValidNumber(transferSize) ? `${formatMegaSize(locale, transferSize)} MB` : null,
     resolution:
       isValidNumber(videoWidth) && isValidNumber(videoHeight)
