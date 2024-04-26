@@ -15,6 +15,8 @@ export default defineConfig({
     extensions: ['.js', '.svelte'],
   },
   build: {
+    target: 'es2022',
+    chunkSizeWarningLimit: 1000,
     // minify: mode === 'production',
     // sourcemap: mode === 'production',
     rollupOptions: {
