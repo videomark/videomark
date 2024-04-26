@@ -38,7 +38,7 @@
           {#if platform?.deprecated}
             <img src={thumbnail} alt="" />
             <div class="overlay">
-              <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
+              <Alert status="error" aria-live="off" --font-size="var(--sui-font-size-small)">
                 {$_('history.detail.platformDeprecated')}
               </Alert>
             </div>
@@ -108,7 +108,11 @@
                     {#if qoe === undefined || qoe === -1}
                       {$_('stats.quality.measuring')}
                     {:else if qoe === -2}
-                      <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
+                      <Alert
+                        status="error"
+                        aria-live="off"
+                        --font-size="var(--sui-font-size-small)"
+                      >
                         {$_('stats.quality.error')}
                       </Alert>
                     {:else}
@@ -117,7 +121,7 @@
                         <Alert
                           status="warning"
                           aria-live="off"
-                          --font-size="var(--font-size--small)"
+                          --font-size="var(--sui-font-size-small)"
                         >
                           {$_('stats.quality.frameDrops')}
                         </Alert>
@@ -253,6 +257,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    h3 {
+      font-size: var(--sui-font-size-large);
+    }
   }
 
   .wrapper {
@@ -312,10 +320,14 @@
     h4 {
       flex: none;
       width: calc(50% - 8px);
+      font-size: var(--sui-font-size-default);
       font-weight: normal;
 
       :global(button) {
-        vertical-align: bottom;
+        padding: 0;
+        width: var(--sui-font-size-large);
+        height: var(--sui-font-size-large);
+        vertical-align: middle;
 
         :global(.icon) {
           color: var(--sui-secondary-foreground-color);

@@ -56,7 +56,7 @@
     </div>
     <div class="actions close-popup">
       {#if platform?.deprecated}
-        <Alert status="error" aria-live="off" --font-size="var(--font-size--small)">
+        <Alert status="error" aria-live="off" --font-size="var(--sui-font-size-small)">
           {$_('history.detail.platformDeprecated')}
         </Alert>
       {:else}

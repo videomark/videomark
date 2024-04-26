@@ -33,6 +33,10 @@
 
     header {
       margin: 0 0 12px;
+
+      h4 {
+        font-size: var(--sui-font-size-default);
+      }
     }
 
     :global(.row) {
