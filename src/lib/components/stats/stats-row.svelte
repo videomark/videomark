@@ -26,10 +26,10 @@
   export let chartData = [];
 </script>
 
-{#if displayValue !== null}
+{#if displayValue !== null || chartData.some(Boolean)}
   <tr>
     <th scope="row">{label}</th>
-    <td>{displayValue}</td>
+    <td>{displayValue ?? '–'}</td>
     <td>
       <StatsChart {prop} {chartData} />
     </td>
