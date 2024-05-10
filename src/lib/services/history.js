@@ -74,7 +74,7 @@ export const viewingHistory = writable(undefined, (set) => {
 
         /** @type {number[]} */
         const throughputList = log
-          .filter((entry) => !!entry.quality?.throughput.length)
+          .filter((entry) => !!entry.quality?.throughput?.length)
           .map((entry) => entry.quality.throughput[0].throughput);
 
         const averageThroughput =
