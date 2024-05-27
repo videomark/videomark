@@ -23,10 +23,10 @@
     "lint-report": "eslint --output-file eslint_report.json --format json --ext .js,.jsx ."
   },
   "devDependencies": {
-    "@playwright/test": "^1.44.0",
+    "@playwright/test": "^1.44.1",
     "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "archiver": "^7.0.1",
-    "cspell": "^8.8.1",
+    "cspell": "^8.8.3",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
@@ -38,7 +38,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-svelte": "^3.2.3",
     "sass": "^1.77.2",
-    "stylelint": "^16.5.0",
+    "stylelint": "^16.6.0",
     "stylelint-config-recommended-scss": "^14.0.0",
     "stylelint-scss": "^6.3.0",
     "svelte": "^4.2.17",
@@ -49,7 +49,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "@sveltia/ui": "^0.15.1",
+    "@sveltia/ui": "^0.15.2",
     "@videomark/sparkline": "github:videomark/sparkline",
     "m3u8-parser": "^7.1.0",
     "msgpack-lite": "^0.1.26",
