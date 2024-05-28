@@ -17,14 +17,6 @@ export default class Config {
     return this.isMobile() && window.screen.orientation.type.startsWith('portrait');
   }
 
-  static get_collect_interval() {
-    return this.collect_interval;
-  }
-
-  static get_search_video_interval() {
-    return this.search_video_interval;
-  }
-
   static get_fluent_url() {
     return this.fluent_url;
   }
@@ -244,11 +236,9 @@ export default class Config {
   }
 }
 
-// playback quality の取得インターバル(ミリ秒単位)
-Config.collect_interval = 1 * 1000;
-
-// videoタグ検索インターバル(ミリ秒単位)
-Config.search_video_interval = 1 * 1000;
+// video タグ検索と playback quality 取得のインターバル (ミリ秒単位)
+// 元々この 2 つは別々だったが、どちらもデフォルト 1 秒間隔なので統合した
+Config.mainUpdaterInterval = 1000;
 
 /** 最大計測単位のデフォルト値(ミリ秒単位) */
 Config.default_max_video_ttl = 60 * 60 * 1000;

@@ -20,7 +20,10 @@
     const [, args] = window.location.hash.match(/^#\/history\/(.+)$/) || [];
 
     if (args) {
-      const keys = args.split(',').filter((arg) => arg.match(/^\d+$/));
+      const keys = args
+        .split(',')
+        .filter((arg) => arg.match(/^\d+$/))
+        .map((key) => Number(key));
 
       if (keys.length) {
         historyItems = $viewingHistory.filter((item) => keys.includes(item.key));

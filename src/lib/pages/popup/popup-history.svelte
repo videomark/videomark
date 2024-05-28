@@ -13,7 +13,7 @@
   $: history = $viewingHistory
     // Remove duplicates
     .filter((item, index, arr) => arr.findIndex(({ url }) => url === item.url) === index);
-  $: previousVideos = history.filter(({ id }) => !playingVideos.find((v) => v.id === id));
+  $: previousVideos = history.filter(({ key }) => !playingVideos.find((v) => v.key === key));
   $: searchResults = previousVideos
     .filter(({ title }) =>
       searchTerms ? title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase()) : true,
@@ -40,7 +40,7 @@
       <h2>{$_('popup.playing')}</h2>
     </header>
     <div class="items">
-      {#each playingVideos as historyItem (historyItem.id)}
+      {#each playingVideos as historyItem (historyItem.key)}
         <HistoryItem {historyItem} horizontal={true} playing={true} />
       {/each}
     </div>
@@ -54,7 +54,7 @@
     </header>
     {#if searchResults.length}
       <div class="items">
-        {#each searchResults as historyItem (historyItem.id)}
+        {#each searchResults as historyItem (historyItem.key)}
           <HistoryItem {historyItem} horizontal={true} />
         {/each}
       </div>
