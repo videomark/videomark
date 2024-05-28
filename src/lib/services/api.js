@@ -67,13 +67,13 @@ export const fetchViewerRegion = async (videoId, sessionId) => {
 };
 
 /**
- * 与えられた ID に該当する動画の最終 QoE 値を取得。
+ * 与えられた ID リストに該当する動画の最終 QoE 値を取得。
  * @param {{ videoId: string, sessionId: string }[]} ids 動画再生・セッション ID のリスト。
  * @returns {Promise.<object[]>} 結果。
  */
-export const fetchFinalQoe = async (ids) =>
+export const fetchFinalQoeValues = async (ids) =>
   sendRequest('api/fixed_qoe', {
-    ids: ids.map(({ videoId, sessionId }) => ({ video_id: videoId, session_id: sessionId })),
+    ids: ids.map(({ playbackId, sessionId }) => ({ video_id: playbackId, session_id: sessionId })),
   });
 
 /**
@@ -84,5 +84,5 @@ export const fetchFinalQoe = async (ids) =>
 export const deleteHistoryItems = async (ids) =>
   sendRequest(
     'ctrl/erasure',
-    ids.map(({ videoId, sessionId }) => ({ video: videoId, session: sessionId })),
+    ids.map(({ playbackId, sessionId }) => ({ video: playbackId, session: sessionId })),
   );

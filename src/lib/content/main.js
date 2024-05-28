@@ -1,44 +1,11 @@
-// content.js はモジュールではないので `import` が使えない。本来はビルド時にインライン化できるはずだが、Vite で
-// 共有モジュールの code splitting を無効化する方法がなく、共有されている `storage.js` は別ファイルとして生成
-// されてしまうので、`storage` はインポートせずに使う。 @see https://github.com/rollup/rollup/issues/2756
-const storage = {
-  get: (keys) =>
-    new Promise((resolve) => {
-      chrome.storage.local.get(keys, resolve);
-    }),
-  set: (items) =>
-    new Promise((resolve) => {
-      chrome.storage.local.set(items, resolve);
-    }),
-};
-
-const state = {};
-
-const useId = async (viewingId) => {
-  if (typeof state[viewingId] === 'string' || Number.isFinite(state[viewingId])) {
-    return state[viewingId];
-  }
-
-  const { index = [] } = await storage.get('index');
-  const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
-
-  await storage.set({ index: [...index, id] });
-  state[viewingId] = id;
-
-  return state[viewingId];
-};
+import { storage } from '$lib/services/storage';
 
 const save_transfer_size = async (transfer_diff) => {
   if (!transfer_diff) {
     return;
   }
 
-  let { transfer_size } = await storage.get('transfer_size');
-
-  if (!transfer_size) {
-    transfer_size = {};
-  }
-
+  const transfer_size = (await storage.get('transfer_size')) ?? {};
   const now = new Date();
 
   const month = `${now.getFullYear()}-${new Intl.NumberFormat('en-US', {
@@ -48,18 +15,13 @@ const save_transfer_size = async (transfer_diff) => {
   const size = (transfer_size[month] || 0) + transfer_diff;
 
   transfer_size[month] = size;
-  storage.set({ transfer_size });
+  storage.set('transfer_size', transfer_size);
 };
 
 const save_quota_limit_started = async (limit_started) => {
-  let { transfer_size } = await storage.get('transfer_size');
+  const transfer_size = (await storage.get('transfer_size')) ?? {};
 
-  if (!transfer_size) {
-    transfer_size = {};
-  }
-
-  transfer_size.limit_started = limit_started;
-  storage.set({ transfer_size });
+  storage.set('transfer_size', { ...transfer_size, limit_started });
 };
 
 const save_peak_time_limit = async (peak_time_limit) => {
@@ -67,7 +29,7 @@ const save_peak_time_limit = async (peak_time_limit) => {
     return;
   }
 
-  storage.set({ peak_time_limit });
+  storage.set('peak_time_limit', peak_time_limit);
 };
 
 const save_settings = async (new_settings) => {
@@ -75,10 +37,9 @@ const save_settings = async (new_settings) => {
     return;
   }
 
-  let { settings } = await storage.get('settings');
+  const settings = (await storage.get('settings')) ?? {};
 
-  settings = { ...settings, ...new_settings };
-  storage.set({ settings });
+  storage.set('settings', { ...settings, ...new_settings });
 };
 
 const inject_script = async (opt) => {
@@ -89,20 +50,15 @@ const inject_script = async (opt) => {
   script.setAttribute('type', 'module');
   script.setAttribute('src', opt.script);
 
-  const { session, settings, transfer_size, peak_time_limit } = await storage.get([
-    'session',
-    'settings',
-    'transfer_size',
-    'peak_time_limit',
-  ]);
+  const session = await storage.get('session');
 
   if (session !== undefined) {
     script.dataset.session = new URLSearchParams({ ...session }).toString();
   }
 
-  script.dataset.settings = JSON.stringify(settings || {});
-  script.dataset.transfer_size = JSON.stringify(transfer_size || {});
-  script.dataset.peak_time_limit = JSON.stringify(peak_time_limit || {});
+  script.dataset.settings = JSON.stringify((await storage.get('settings')) ?? {});
+  script.dataset.transfer_size = JSON.stringify((await storage.get('transfer_size')) ?? {});
+  script.dataset.peak_time_limit = JSON.stringify((await storage.get('peak_time_limit')) ?? {});
 
   return target.appendChild(script);
 };
@@ -115,6 +71,10 @@ class BackgroundCommunicationPort {
 
   setAlive(alive) {
     this.postMessage('setAlive', [alive]);
+  }
+
+  updateHistory(data) {
+    this.postMessage('updateHistory', [data]);
   }
 
   setDisplayOnPlayer(displayOnPlayer) {
@@ -178,20 +138,12 @@ const message_listener = async (event) => {
     case 'set_session': {
       const { session } = event.data;
 
-      await storage.set({ session });
+      await storage.set('session', session);
       break;
     }
 
-    case 'set_video': {
-      if (!event.data.id || !event.data.video) {
-        return;
-      }
-
-      const id = await useId(event.data.id);
-
-      await storage.set({
-        [id]: event.data.video,
-      });
+    case 'update_history': {
+      communicationPort.updateHistory(event.data);
       break;
     }
 
@@ -237,8 +189,8 @@ const message_listener = async (event) => {
   }
 };
 
-storage.get('AgreedTerm').then((value) => {
-  if (!value.AgreedTerm) {
+storage.get('AgreedTerm').then((agreed) => {
+  if (!agreed) {
     return;
   }
 
