@@ -11,6 +11,9 @@ importers:
       '@sveltia/ui':
         specifier: ^0.15.13
         version: 0.15.13(svelte@4.2.18)
+      '@sveltia/utils':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@videomark/sparkline':
         specifier: github:videomark/sparkline
         version: https://codeload.github.com/videomark/sparkline/tar.gz/da263f1f1429787c606fe5885c9b85518472f4c2

@@ -4,6 +4,7 @@
   import QualityBar from '$lib/pages/history/quality-bar.svelte';
   import { getHourlyQoe, getRegionalQoe } from '$lib/services/aggregations';
   import {
+    completeViewingHistoryItem,
     deleteItemsLater,
     deleteItemsNow,
     deletedHistoryItemKeys,
@@ -19,7 +20,21 @@
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
+  const completeHistory = () => {
+    historyItems.forEach(async (historyItem) => {
+      if (!('transferSize' in historyItem.stats)) {
+        await completeViewingHistoryItem(historyItem);
+      }
+    });
+  };
+
   $: [{ platform, url, title, thumbnail } = {}] = historyItems;
+
+  $: {
+    if (open) {
+      completeHistory();
+    }
+  }
 </script>
 
 <Drawer
@@ -68,7 +83,7 @@
             </div>
           {/if}
         </div>
-        {#each historyItems as item (item.id)}
+        {#each historyItems as item (item.key)}
           {@const { key, region = {}, startTime, stats } = item}
           {@const { qoe, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
