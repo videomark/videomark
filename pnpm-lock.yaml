@@ -829,6 +829,9 @@ packages:
   '@sveltia/ui@0.15.7':
     resolution: {integrity: sha512-4TvIxrSL1K82mSy+IudROs2pzaQY2g89phnk2x2XbZCF/FVFqtqQ+85JbFEcU9NtzlvX85Yhpopc8guXmZk2Ow==}
 
+  '@sveltia/utils@0.3.0':
+    resolution: {integrity: sha512-HsWJzzTS0uMjJ6YhNQ1//P/1Z5CUojtRWwzM2rl3fzxuXs03rwIiodUanw4QCCSVNTMXKXUrv3Bl/ruz8iZVqA==}
+
   '@sveltia/utils@0.4.0':
     resolution: {integrity: sha512-ppMqiGeGyQEdzE26kVWfLY5TOlYduYRgS+wBJfPVURkShwwGCoPTBQiPBUiTwVgoL67xsziLO2wz32TWgx/liQ==}
 
@@ -3497,6 +3500,10 @@ snapshots:
       '@sveltia/utils': 0.4.0
       lexical: 0.16.0
       svelte: 4.2.18
+
+  '@sveltia/utils@0.3.0':
+    dependencies:
+      base32-encode: 2.0.0
 
   '@sveltia/utils@0.4.0':
     dependencies:
