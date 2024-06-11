@@ -422,7 +422,7 @@ Config.ui.abematv = {
     left: 65px;
   }
   @media (any-pointer: fine) {
-    #${Config.ui.id}:not(:hover){
+    :is(.com-tv-TVScreen__player-container, .com-vod-VODScreen-container):not(:hover) > #${Config.ui.id} {
       opacity: 0;
     }
   }`,

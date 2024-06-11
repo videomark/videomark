@@ -267,18 +267,10 @@ export default class VideoHandler {
   }
 
   get_total_frames(video) {
-    if (this.handler instanceof AbemaTVLiveTypeHandler) {
-      return this.handler.get_total_frames();
-    }
-
     return video.getVideoPlaybackQuality().totalVideoFrames;
   }
 
   get_dropped_frames(video) {
-    if (this.handler instanceof AbemaTVLiveTypeHandler) {
-      return this.handler.get_dropped_frames();
-    }
-
     return video.getVideoPlaybackQuality().droppedVideoFrames;
   }
 
