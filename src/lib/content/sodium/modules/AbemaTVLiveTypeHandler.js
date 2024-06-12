@@ -51,22 +51,9 @@ const REPRESENTATION_TABLE = {
   },
 };
 
-let current;
-
-function equal_videos(a, b) {
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  return !Array.from(a).find((e, i) => e !== b[i]);
-}
-
 function get_representation() {
   const default_representation = REPRESENTATION_TABLE[DEFAULT_REPRESENTATION_KEY];
-
-  const v = /** @type {HTMLVideoElement} */ (
-    document.querySelector('video[style*="display: block"]')
-  );
+  const v = /** @type {HTMLVideoElement} */ (document.querySelector('video'));
 
   if (!v) {
     return default_representation;
@@ -156,14 +143,8 @@ function createThroughputInfo() {
 
 /* あまり有用な情報は取り出せない */
 export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
-  constructor() {
-    super(null);
-
-    if (current && equal_videos(current, document.querySelectorAll('video'))) {
-      throw new Error('ignore this video');
-    }
-
-    current = document.querySelectorAll('video');
+  constructor(elm) {
+    super(elm);
     this.start_time = Date.now();
   }
 
@@ -178,20 +159,12 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
     return DURATION;
   }
 
-  /* CM 時の resolution を判定可能にするため width, height は表示中の video から取得する */
-  /* ただし、CM 時の video の resolution が REPRESENTATION_TABLE に含まれている場合判断することはできない */
   get_video_width() {
-    return /** @type {HTMLVideoElement} */ (
-      document.querySelector('video[style*="display: block"]')
-    ).videoWidth;
+    return /** @type {HTMLVideoElement} */ (this.elm).videoWidth;
   }
 
-  /* CM 時の resolution を判定可能にするため width, height は表示中の video から取得する */
-  /* ただし、CM 時の video の resolution が REPRESENTATION_TABLE に含まれている場合判断することはできない */
   get_video_height() {
-    return /** @type {HTMLVideoElement} */ (
-      document.querySelector('video[style*="display: block"]')
-    ).videoHeight;
+    return /** @type {HTMLVideoElement} */ (this.elm).videoHeight;
   }
 
   /* 表示中の video の height が REPRESENTATION_TABLE にない場合 DEFAULT_REPRESENTATION_KEY の値を返す */
@@ -226,17 +199,16 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
   }
 
   get_video_title() {
-    try {
-      return document.querySelector('[class="com-m-TextIcon--dark"]')?.textContent;
-    } catch (e) {
-      return '';
-    }
+    return /** @type {HTMLSpanElement} */ (document.querySelector('.com-m-TextIcon--dark'))
+      ?.textContent;
   }
 
   get_video_thumbnail() {
-    return `https://hayabusa.io/abema/channels/logo/${
-      window.location.pathname.split('/').slice(-1)[0]
-    }?format=png&height=48&quality=30&version=20200413&width=128&background=black`;
+    const image = /** @type {HTMLImageElement} */ (
+      document.querySelector('.com-tv-LinearFooter__logo img')
+    );
+
+    return image?.srcset?.match(/https\S+/g)?.pop();
   }
 
   get_id_by_video_holder() {
@@ -244,39 +216,12 @@ export default class AbemaTVLiveTypeHandler extends GeneralTypeHandler {
     return '';
   }
 
-  get_total_frames() {
-    return Array.from(document.querySelectorAll('video')).reduce(
-      (acc, cur) => acc + cur.getVideoPlaybackQuality().totalVideoFrames,
-      0,
-    );
-  }
-
-  get_dropped_frames() {
-    return Array.from(document.querySelectorAll('video')).reduce(
-      (acc, cur) => acc + cur.getVideoPlaybackQuality().droppedVideoFrames,
-      0,
-    );
-  }
-
   is_main_video() {
     return true;
   }
 
   is_cm() {
-    const v = /** @type {HTMLVideoElement} */ (
-      document.querySelector('video[style*="display: block"]')
-    );
-
-    if (!v) {
-      return true;
-    }
-
-    const k = Object.keys(REPRESENTATION_TABLE).find((e) => e === String(v.videoHeight));
-
-    if (!k) {
-      return true;
-    }
-
+    // CM は生放送に組み込まれていて判別が難しいため無視する
     return false;
   }
 
