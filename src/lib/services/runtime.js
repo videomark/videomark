@@ -57,7 +57,12 @@ export const isSmallScreen = readable(false, (set) => {
 export const isPopupOpen = async () => {
   // Manifest v3
   if (typeof chrome.runtime.getContexts === 'function') {
-    return !!(await chrome.runtime.getContexts({ contextTypes: ['POPUP'] })).length;
+    const contexts = await chrome.runtime.getContexts({ contextTypes: ['POPUP'] });
+
+    // Firefox では `undefined` が返されることがあるため要判定
+    if (Array.isArray(contexts)) {
+      return !!contexts.length;
+    }
   }
 
   // Manifest v2
