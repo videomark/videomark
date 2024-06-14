@@ -16,7 +16,9 @@ const isPermittedOrigin = (origin) =>
 // 実装されていない Firefox 向け後方互換。 @see https://bugzilla.mozilla.org/1687755
 if (typeof chrome.declarativeNetRequest === 'undefined') {
   chrome.webRequest.onHeadersReceived.addListener(
-    ({ initiator, responseHeaders }) => {
+    // Firefox の古いバージョンは Chrome と同じ `initiator` を実装しているが、新しいバージョンでは `originUrl`
+    // に置き換わっているので、両方に対応する
+    ({ originUrl, initiator = new URL(originUrl).origin, responseHeaders }) => {
       const additionalHeaders = [
         isPermittedOrigin(initiator) && {
           name: 'Timing-Allow-Origin',
