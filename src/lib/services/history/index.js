@@ -1,7 +1,8 @@
 import { derived, get, writable } from 'svelte/store';
-import { deleteHistoryItems, fetchFinalQoe, fetchViewerRegion } from '$lib/services/api';
-import { createStorageSync, storage } from '$lib/services/storage';
-import { videoPlatforms } from './video-platforms';
+import { deleteHistoryItems, fetchFinalQoeValues, fetchViewerRegion } from '$lib/services/api';
+import { historyRecordsDB, historyStatsDB } from '$lib/services/history/database';
+import { createStorageSync } from '$lib/services/storage';
+import { videoPlatforms } from '../video-platforms';
 
 // 保持する最大履歴アイテム数
 const maxItems = 10000;
@@ -43,73 +44,45 @@ export const searchCriteria = writable({
 
 /**
  * 閲覧履歴リストのステート。
+ * @type {import('svelte/store').Writable<any[]>}
  */
 export const viewingHistory = writable(undefined, (set) => {
   // ステートを初期化
   (async () => {
-    const storageData = (await storage.getAll()) || {};
-
-    if (!storageData) {
-      return;
-    }
-
-    const _viewingHistory = Object.entries(storageData)
-      .filter(([key]) => key.match(/^\d+$/) && (storageData.index || []).includes(Number(key)))
-      .map(([key, item]) => {
+    const _viewingHistory = await Promise.all(
+      (await historyRecordsDB.entries()).map(async ([key, item]) => {
         const {
-          video_id: id, // 同じ動画でも再生するたびに異なる
-          session_id: sessionId,
-          calc,
+          playbackId,
+          sessionId,
+          calculable = true,
           title,
           location: url,
           thumbnail,
-          start_time: startTime,
-          qoe: finalQoe,
+          startTime,
+          qoe,
           region,
-          transfer_size: transferSize,
-          log = [],
         } = item;
 
         const { hostname } = new URL(url);
 
-        /** @type {number[]} */
-        const throughputList = log
-          .filter((entry) => !!entry.quality?.throughput?.length)
-          .map((entry) => entry.quality.throughput[0].throughput);
-
-        const averageThroughput =
-          throughputList.reduce((acc, cur) => acc + cur, 0) / throughputList.length;
-
-        const latestStats = log.findLast((entry) => !!entry.quality)?.quality || {};
-        const provisionalQoe = log.findLast((entry) => !!entry.qoe)?.qoe || -1;
-        const qoe = Number.isFinite(finalQoe) ? finalQoe : provisionalQoe;
-        const { droppedVideoFrames = 0, totalVideoFrames = 0 } = latestStats;
-
         return {
           key,
-          id,
+          playbackId,
           sessionId,
-          viewingId: [id, sessionId].join('_'),
+          viewingId: [playbackId, sessionId].join('_'),
           platform: videoPlatforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname))),
-          canCalc: calc === undefined || calc === true,
+          calculable,
           title,
           url,
           thumbnail,
           startTime,
           region,
-          stats: {
-            ...latestStats,
-            throughput: averageThroughput,
-            qoe,
-            isLowQuality: Number.isFinite(qoe) && droppedVideoFrames / totalVideoFrames > 0.001,
-            transferSize,
-            startTime,
-          },
+          stats: { qoe },
         };
-      })
-      .sort((a, b) => b.startTime - a.startTime);
+      }),
+    );
 
-    set(_viewingHistory);
+    set(_viewingHistory.sort((a, b) => b.startTime - a.startTime));
 
     // eslint-disable-next-line no-use-before-define
     await deleteScheduledItems();
@@ -119,6 +92,43 @@ export const viewingHistory = writable(undefined, (set) => {
 
   return () => undefined;
 });
+
+/**
+ * 閲覧履歴リストアイテムの統計データをすべて取得して完成させる。
+ * @param {any} historyItem 履歴アイテム。
+ */
+export const completeViewingHistoryItem = async (historyItem) => {
+  const { key, stats } = historyItem;
+  const { logs, transferSize } = await historyStatsDB.get(key);
+
+  /** @type {number[]} */
+  const throughputList = logs
+    .filter((entry) => !!entry.quality?.throughput?.length)
+    .map((entry) => entry.quality.throughput[0].throughput);
+
+  const averageThroughput =
+    throughputList.reduce((acc, cur) => acc + cur, 0) / throughputList.length;
+
+  const latestStats = logs.findLast(({ quality }) => !!quality)?.quality ?? {};
+  const provisionalQoe = logs.findLast(({ qoe }) => typeof qoe === 'number')?.qoe ?? -1;
+  const qoe = Number.isFinite(stats.qoe) ? stats.qoe : provisionalQoe;
+  const { droppedVideoFrames = 0, totalVideoFrames = 0 } = latestStats;
+  const isLowQuality = Number.isFinite(qoe) && droppedVideoFrames / totalVideoFrames > 0.001;
+
+  viewingHistory.update((historyItems) => {
+    const index = historyItems.findIndex((item) => item.key === key);
+
+    Object.assign(historyItems[index].stats, {
+      ...latestStats,
+      throughput: averageThroughput,
+      qoe,
+      isLowQuality,
+      transferSize,
+    });
+
+    return historyItems;
+  });
+};
 
 /**
  * 閲覧履歴の地域リストのステート。
@@ -246,7 +256,7 @@ export const deleteItemsNow = async (targetKeys) => {
   const request = targetKeys
     .map((key) => items.find((entry) => entry.key === key))
     .filter(Boolean)
-    .map(({ id, sessionId }) => ({ videoId: id, sessionId }));
+    .map(({ playbackId, sessionId }) => ({ playbackId, sessionId }));
 
   if (!request.length) {
     return;
@@ -254,20 +264,10 @@ export const deleteItemsNow = async (targetKeys) => {
 
   try {
     await deleteHistoryItems(request);
-
-    // index の更新
-    await storage.set(
-      'index',
-      ((await storage.get('index')) || []).filter((key) => !targetKeys.includes(key)),
-    );
-
     deletedHistoryItemKeys.update((keys) => keys.filter((key) => !targetKeys.includes(key)));
-
-    targetKeys.forEach(async (key) => {
-      await storage.delete(String(key));
-    });
-
     viewingHistory.update((history) => history.filter(({ key }) => !targetKeys.includes(key)));
+    await historyRecordsDB.deleteEntries(targetKeys);
+    await historyStatsDB.deleteEntries(targetKeys);
   } catch (ex) {
     // eslint-disable-next-line no-console
     console.error(`VIDEOMARK: ${ex}`);
@@ -294,26 +294,68 @@ export const deleteScheduledItems = async () => {
  * キャッシュされていない QoE 値と地域のデータを追加。
  */
 const addMissingData = async () => {
-  get(viewingHistory).forEach(async ({ key, id, sessionId, qoe, canCalc, region }, index) => {
-    if ((qoe === undefined || qoe === -1) && canCalc) {
-      // eslint-disable-next-line no-param-reassign
-      [{ qoe } = {}] = (await fetchFinalQoe([{ videoId: id, sessionId }])) || [];
-    }
+  const _viewingHistory = get(viewingHistory);
+  const newValueMap = Object.fromEntries(_viewingHistory.map(({ key }) => [key, {}]));
 
-    if (!region) {
-      // eslint-disable-next-line no-param-reassign
-      region = await fetchViewerRegion(id, sessionId);
-    }
+  const missingQoeValueItems = _viewingHistory.filter(
+    ({ stats: { qoe }, calculable }) => (qoe === undefined || qoe === -1) && calculable,
+  );
 
-    if (qoe || region) {
-      viewingHistory.update((history) => {
-        Object.assign(history[index], { qoe, region });
+  const missingRegionItems = _viewingHistory.filter(({ region }) => !region);
 
-        return history;
+  if (missingQoeValueItems.length) {
+    try {
+      // 最終 QoE 値は複数まとめて取得可能
+      const results = await fetchFinalQoeValues(
+        missingQoeValueItems.map(({ playbackId, sessionId }) => ({ playbackId, sessionId })),
+      );
+
+      missingQoeValueItems.forEach(({ key }, index) => {
+        newValueMap[key].qoe = results[index]?.qoe ?? -2;
       });
+    } catch (ex) {
+      // eslint-disable-next-line no-console
+      console.error(`VIDEOMARK: Failed to retrieve final QoE values; ${ex}`);
+    }
+  }
 
-      // ストレージの内容も更新
-      await storage.set(key, { ...(await storage.get(key)), qoe, region });
+  if (missingRegionItems.length) {
+    try {
+      // 地域は 1 件ずつしか取れないため for ループで順番に取得
+      // eslint-disable-next-line no-restricted-syntax
+      for (const { key, playbackId, sessionId } of missingRegionItems) {
+        // eslint-disable-next-line no-await-in-loop
+        newValueMap[key].region = await fetchViewerRegion(playbackId, sessionId);
+      }
+    } catch (ex) {
+      // eslint-disable-next-line no-console
+      console.error(`VIDEOMARK: Failed to retrieve viewing regions; ${ex}`);
+    }
+  }
+
+  // メモリキャッシュを更新
+  viewingHistory.update((history) => {
+    Object.entries(newValueMap).forEach(([key, obj]) => {
+      if (Object.keys(obj).length) {
+        const historyItem = history.find((item) => item.key === key);
+
+        if (historyItem) {
+          Object.assign(historyItem, obj);
+        }
+      }
+    });
+
+    return history;
+  });
+
+  // ストレージの内容も更新
+  Object.entries(newValueMap).forEach(async ([key, obj]) => {
+    if (Object.keys(obj).length) {
+      const historyItem = await historyRecordsDB.get(key);
+
+      if (historyItem) {
+        await historyRecordsDB.set(key, { ...historyItem, ...obj });
+      }
     }
   });
 };

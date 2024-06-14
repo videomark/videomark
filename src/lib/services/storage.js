@@ -35,7 +35,7 @@ export class storage {
   }
 
   static async delete(key) {
-    return chrome.storage.local.remove([key]);
+    return chrome.storage.local.remove(Array.isArray(key) ? key : [key]);
   }
 
   static async clear() {

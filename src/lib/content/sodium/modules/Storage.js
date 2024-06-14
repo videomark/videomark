@@ -1,11 +1,11 @@
 export class Storage {
   constructor({ sessionId, videoId }) {
     this.sessionId = sessionId;
-    this.videoId = videoId;
-    this.cache = {
-      session_id: this.sessionId,
-      video_id: this.videoId,
-    };
+    // `videoId` は再生するたびに固有の ID なので、分かりやすいように `playbackId` に変更した
+    // @todo プロパティ名をすべて `playbackId` に統一
+    this.playbackId = videoId;
+    this.recordCache = {};
+    this.statCache = {};
     this.initialized = false;
     this.id = null;
   }
@@ -24,18 +24,42 @@ export class Storage {
       this.initialized = true;
     }
 
-    Object.assign(this.cache, attributes);
+    const { sessionId, playbackId } = this;
+    const record = {};
+    const stat = {};
+
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (['logs', 'transferSize'].includes(key)) {
+        stat[key] = value;
+      } else if (this.recordCache[key] !== value) {
+        // キャッシュと比較し変更があった場合のみ保存
+        record[key] = value;
+      }
+    });
+
+    if (Object.keys(record).length) {
+      Object.assign(this.recordCache, record);
+      this.#postMessage({ sessionId, playbackId, ...this.recordCache });
+    }
+
+    if (Object.keys(stat).length) {
+      Object.assign(this.statCache, stat);
+      this.#postMessage({ ...this.statCache });
+    }
+
+    return { sessionId, playbackId, ...this.recordCache, ...this.statCache };
+  }
+
+  #postMessage(data) {
     window.postMessage(
       {
         type: 'FROM_SODIUM_JS',
-        method: 'set_video',
+        method: 'update_history',
         id: this.id,
-        video: this.cache,
+        data,
       },
       '*',
     );
-
-    return this.cache;
   }
 }
 

@@ -46,11 +46,11 @@ const latest = (log, key) => {
 export const latestQoE = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
 
-  if (storage.cache === undefined) {
+  if (storage.statCache === undefined) {
     return NaN;
   }
 
-  const { value } = latest(storage.cache.log, 'qoe');
+  const { value } = latest(storage.statCache.logs, 'qoe');
 
   return value === null ? NaN : value;
 };
@@ -58,11 +58,11 @@ export const latestQoE = ({ sessionId, videoId }) => {
 export const latestQuality = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
 
-  if (storage.cache === undefined) {
+  if (storage.statCache === undefined) {
     return '';
   }
 
-  const { date, value } = latest(storage.cache.log, 'quality');
+  const { date, value } = latest(storage.statCache.logs, 'quality');
 
   return value === null ? {} : { date, ...value };
 };
@@ -82,11 +82,11 @@ export const getRealThroughput = (list) => {
 export const startTime = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
 
-  if (storage.cache === undefined) {
+  if (storage.recordCache === undefined) {
     return NaN;
   }
 
-  const time = storage.cache.start_time;
+  const time = storage.recordCache.startTime;
 
   return time >= 0 ? time : NaN;
 };
@@ -94,11 +94,11 @@ export const startTime = ({ sessionId, videoId }) => {
 export const transferSize = ({ sessionId, videoId }) => {
   const storage = useStorage({ sessionId, videoId });
 
-  if (storage.cache === undefined) {
+  if (storage.statCache === undefined) {
     return NaN;
   }
 
-  const size = storage.cache.transfer_size;
+  const size = storage.statCache.transferSize;
 
   return size >= 0 ? size : NaN;
 };

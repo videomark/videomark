@@ -1,7 +1,9 @@
 <script>
   import { Alert, Button, Icon } from '@sveltia/ui';
+  import { waitForVisibility } from '@sveltia/utils/element';
+  import { onMount } from 'svelte';
   import { _ } from 'svelte-i18n';
-  import { viewingHistory } from '$lib/services/history';
+  import { completeViewingHistoryItem, viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { goto, openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
@@ -14,6 +16,11 @@
    * @type {boolean}
    */
   export let playing = false;
+
+  /**
+   * @type {HTMLElement}
+   */
+  let itemWrapper;
 
   $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem || {});
   $: ({ qoe, isLowQuality } = stats);
@@ -35,9 +42,19 @@
       openTab(`#/history/${keys.join(',')}`);
     }
   };
+
+  onMount(() => {
+    (async () => {
+      await waitForVisibility(itemWrapper);
+
+      if (!('transferSize' in historyItem.stats)) {
+        await completeViewingHistoryItem(historyItem);
+      }
+    })();
+  });
 </script>
 
-<div class="item" class:horizontal>
+<div class="item" class:horizontal bind:this={itemWrapper}>
   <div
     class="primary hover"
     tabindex="0"
@@ -52,7 +69,7 @@
     }}
   >
     <div class="hero">
-      <img class="thumbnail" src={thumbnail} alt="" />
+      <img loading="lazy" class="thumbnail" src={thumbnail} alt="" />
     </div>
     <div class="actions close-popup">
       {#if platform?.deprecated}
