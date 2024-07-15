@@ -70,6 +70,7 @@
 
 <!-- svelte-ignore css-unused-selector -->
 <style lang="scss">
+  // stylelint-disable scss/load-partial-extension
   @use 'node_modules/@sveltia/ui/package/styles/core.scss';
 
   :host {
