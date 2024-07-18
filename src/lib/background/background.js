@@ -70,7 +70,7 @@ const initToolbarButton = async () => {
 initToolbarButton();
 
 /**
- *  過去の閲覧履歴データを、プロパティ名を一部変更しつつ、拡張機能ストレージから IndexedDB へ移行。
+ * 過去の閲覧履歴データを、プロパティ名を一部変更しつつ、拡張機能ストレージから IndexedDB へ移行。
  * @param {Record<string, any>} storageData ストレージに保管されている旧来のデータ。
  */
 const migrateStorageData = async (storageData) => {
@@ -169,17 +169,17 @@ const getMasterDisplayOnPlayer = async () => {
 
 const state = {};
 
-const useId = async (viewingId) => {
+const getStorageKey = async (viewingId) => {
   if (typeof state[viewingId] === 'string' || Number.isFinite(state[viewingId])) {
     return state[viewingId];
   }
 
   const keys = (await historyRecordsDB.keys()) ?? [];
-  const id = !keys.length ? 0 : keys.sort((a, b) => a - b).pop() + 1;
+  const key = !keys.length ? 0 : keys.sort((a, b) => a - b).pop() + 1;
 
-  state[viewingId] = id;
+  state[viewingId] = key;
 
-  return id;
+  return key;
 };
 
 const communicator = {
@@ -192,7 +192,7 @@ const communicator = {
       return;
     }
 
-    const key = await useId(id);
+    const key = await getStorageKey(id);
 
     if ('logs' in data || 'transferSize' in data) {
       await historyStatsDB.set(key, data);
