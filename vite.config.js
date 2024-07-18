@@ -23,8 +23,7 @@ export default defineConfig({
       input: {
         pages: 'src/lib/pages/main.js',
         background: 'src/lib/background/background.js',
-        'content/module-loader': 'src/lib/content/module-loader.js',
-        'content/main': 'src/lib/content/main.js',
+        content: 'src/lib/content/content.js',
         sodium: 'src/lib/content/sodium/main.js',
       },
       output: {
