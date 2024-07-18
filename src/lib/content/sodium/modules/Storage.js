@@ -11,7 +11,7 @@ export class Storage {
   }
 
   get viewingId() {
-    return `${this.sessionId}_${this.videoId}`;
+    return `${this.sessionId}_${this.playbackId}`;
   }
 
   async init() {
