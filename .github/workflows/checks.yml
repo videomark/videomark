@@ -1,4 +1,4 @@
-name: lint
+name: checks
 on: pull_request
 jobs:
   main:
@@ -15,8 +15,8 @@ jobs:
       - run: pnpm install
       - run: pnpm lint-report
         continue-on-error: true
-      - run: pnpm run lint:cspell
-      - run: pnpm run lint:svelte
+      - run: pnpm run check:cspell
+      - run: pnpm run check:svelte
       - uses: wearerequired/lint-action@v2
         with:
           prettier: true
