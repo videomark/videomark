@@ -243,6 +243,7 @@
         overflow: hidden;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 5;
+        line-clamp: 5;
       }
     }
 
