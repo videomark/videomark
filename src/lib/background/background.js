@@ -1,4 +1,5 @@
 import { get } from 'svelte/store';
+import { historyRecordsDB, historyStatsDB } from '$lib/services/history/database';
 import { openTab } from '$lib/services/navigation';
 import { isMobile } from '$lib/services/runtime';
 import { SCHEMA_VERSION, storage } from '$lib/services/storage';
@@ -68,20 +69,94 @@ const initToolbarButton = async () => {
 
 initToolbarButton();
 
+/**
+ * 過去の閲覧履歴データを、プロパティ名を一部変更しつつ、拡張機能ストレージから IndexedDB へ移行。
+ * @param {Record<string, any>} storageData ストレージに保管されている旧来のデータ。
+ */
+const migrateStorageData = async (storageData) => {
+  const legacyRecords = Object.entries(storageData).filter(([sKey]) => sKey.match(/^\d+$/));
+  /** @type {[string, any][]} */
+  const historyRecords = [];
+  /** @type {[string, any][]} */
+  const historyStats = [];
+
+  legacyRecords.forEach(([sKey, value]) => {
+    const key = Number(sKey);
+
+    const {
+      // historyRecordsDB へ移行
+      session_id: sessionId,
+      video_id: playbackId,
+      user_agent: userAgent,
+      location,
+      media_size: mediaSize,
+      domain_name: domain,
+      start_time: startTime,
+      end_time: endTime,
+      thumbnail,
+      title,
+      calc: calculable,
+      qoe,
+      // historyStatsDB へ移行
+      transfer_size: transferSize,
+      log: logs,
+    } = value;
+
+    historyRecords.push([
+      key,
+      {
+        sessionId,
+        playbackId,
+        userAgent,
+        location,
+        mediaSize,
+        domain,
+        startTime,
+        endTime,
+        thumbnail,
+        title,
+        calculable,
+        qoe,
+      },
+    ]);
+
+    historyStats.push([
+      key,
+      {
+        transferSize,
+        logs,
+      },
+    ]);
+  });
+
+  // 全件まとめて保存
+  await Promise.all([
+    historyRecordsDB.saveEntries(historyRecords),
+    historyStatsDB.saveEntries(historyStats),
+  ]);
+
+  // ストレージ内のデータを削除
+  await storage.delete(['index', ...legacyRecords.map(([sKey]) => sKey)]);
+};
+
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   if (reason === 'install') {
     openTab('#/onboarding');
   }
 
   if (reason === 'update') {
-    const termsAgreed = (await storage.get('AgreedTerm')) || false;
-    const version = await storage.get('version');
+    const storageData = (await storage.getAll()) || {};
+    const { version, AgreedTerm: termsAgreed = false } = storageData;
     const legacyVersion = version && version < SCHEMA_VERSION;
 
     // 古いデータスキーマの場合は移行せず、利用規約同意有無のみ残して破棄
     if (legacyVersion) {
       await storage.clear();
       await storage.set('AgreedTerm', termsAgreed);
+    }
+
+    if (storageData.index) {
+      migrateStorageData(storageData);
     }
   }
 });
@@ -92,10 +167,38 @@ const getMasterDisplayOnPlayer = async () => {
   return settings === null || settings.display_on_player === null || settings.display_on_player;
 };
 
+const state = {};
+
+const getStorageKey = async (viewingId) => {
+  if (typeof state[viewingId] === 'string' || Number.isFinite(state[viewingId])) {
+    return state[viewingId];
+  }
+
+  const keys = (await historyRecordsDB.keys()) ?? [];
+  const key = !keys.length ? 0 : keys.sort((a, b) => a - b).pop() + 1;
+
+  state[viewingId] = key;
+
+  return key;
+};
+
 const communicator = {
   setAlive: async (tab, alive) => {
     // eslint-disable-next-line no-use-before-define
     updateIcon(tab.id, alive);
+  },
+  updateHistory: async (tab, { id, data }) => {
+    if (!id || !data) {
+      return;
+    }
+
+    const key = await getStorageKey(id);
+
+    if ('logs' in data || 'transferSize' in data) {
+      await historyStatsDB.set(key, data);
+    } else {
+      await historyRecordsDB.set(key, data);
+    }
   },
   setDisplayOnPlayer: async (tab, displayOnPlayer) => {
     const tabStatus = (await storage.get('tabStatus')) || {};

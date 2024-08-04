@@ -12,22 +12,6 @@ const storage = {
     }),
 };
 
-const state = {};
-
-const useId = async (viewingId) => {
-  if (typeof state[viewingId] === 'string' || Number.isFinite(state[viewingId])) {
-    return state[viewingId];
-  }
-
-  const { index = [] } = await storage.get('index');
-  const id = index.length === 0 ? 0 : index.slice(-1)[0] + 1;
-
-  await storage.set({ index: [...index, id] });
-  state[viewingId] = id;
-
-  return state[viewingId];
-};
-
 const save_transfer_size = async (transfer_diff) => {
   if (!transfer_diff) {
     return;
@@ -117,6 +101,10 @@ class BackgroundCommunicationPort {
     this.postMessage('setAlive', [alive]);
   }
 
+  updateHistory(data) {
+    this.postMessage('updateHistory', [data]);
+  }
+
   setDisplayOnPlayer(displayOnPlayer) {
     this.postMessage('setDisplayOnPlayer', [displayOnPlayer]);
   }
@@ -182,16 +170,8 @@ const message_listener = async (event) => {
       break;
     }
 
-    case 'set_video': {
-      if (!event.data.id || !event.data.video) {
-        return;
-      }
-
-      const id = await useId(event.data.id);
-
-      await storage.set({
-        [id]: event.data.video,
-      });
+    case 'update_history': {
+      communicationPort.updateHistory(event.data);
       break;
     }
 

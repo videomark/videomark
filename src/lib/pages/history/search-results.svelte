@@ -10,7 +10,7 @@
 
 {#if $searchResults.length}
   <div class="grid">
-    {#each $searchResults as historyItem, index (historyItem.id)}
+    {#each $searchResults as historyItem, index (historyItem.key)}
       {@const firstIndex = $searchResults.findIndex(({ url }) => url === historyItem.url)}
       {#if showDuplicates || firstIndex === index}
         <HistoryItem {historyItem} />

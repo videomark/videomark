@@ -80,8 +80,7 @@ const remove_ui_all = () => {
   await Config.readPlatformInfo();
 
   let active_frame_id;
-  let search_video_interval_id;
-  let collect_interval_id;
+  let mainUpdaterIntervalId;
 
   // --- UI event --- //
   window.addEventListener('message', (event) => {
@@ -161,8 +160,7 @@ const remove_ui_all = () => {
 
     // 状態監視を停止する
     if (data.method === 'clear_interval') {
-      window.clearInterval(search_video_interval_id);
-      window.clearInterval(collect_interval_id);
+      window.clearInterval(mainUpdaterIntervalId);
 
       if (Config.isMobile()) {
         window.screen.orientation.removeEventListener('change', remove_ui_all);
@@ -185,19 +183,18 @@ const remove_ui_all = () => {
   const locale = await getDataFromContentJs('ui_locale');
   const ui = new UI(locale, Config.get_ui_target(platform), Config.get_style(platform));
 
-  // --- update video list --- //
-  search_video_interval_id = window.setInterval(() => {
-    // video の検索と保持しているvideoの更新
-    const elms = document.getElementsByTagName('video');
+  /**
+   * 監視中の動画リストとオーバーレイ UI の更新。
+   */
+  mainUpdaterIntervalId = window.setInterval(() => {
+    // video の検索と保持している video リストの更新
+    session.set_video_elms(document.querySelectorAll('video'));
 
-    session.set_video_elms(elms);
-    update_alive(session.get_video_availability());
-  }, Config.get_search_video_interval());
+    const videoAvailability = session.get_video_availability();
 
-  // --- update latest qoe view element --- //
-  collect_interval_id = window.setInterval(() => {
-    // --- update quality info --- //
-    if (!session.get_video_availability()) {
+    update_alive(videoAvailability);
+
+    if (!videoAvailability) {
       return;
     }
 
@@ -234,7 +231,7 @@ const remove_ui_all = () => {
       sessionId: session.get_session_id(),
       videoId: video.get_video_id(),
     });
-  }, Config.get_collect_interval());
+  }, Config.mainUpdaterInterval);
 
   // --- main loop --- //
   session.start();
