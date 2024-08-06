@@ -96,6 +96,12 @@ export default class TVerTypeHandler {
   }
 
   static get_video_thumbnail() {
+    const ogImage = document.querySelector('meta[property="og:image"]')?.content ?? '';
+
+    if (ogImage && ogImage !== 'https://tver.jp/img/ogimg.png') {
+      return ogImage;
+    }
+
     return `https://statics.tver.jp/images/content/thumbnail/episode/small/${this.#videoSlug}.jpg`;
   }
 
