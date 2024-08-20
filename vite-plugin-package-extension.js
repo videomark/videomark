@@ -20,7 +20,7 @@ const distPathFirefox = `${distPathTemp}-firefox`;
  * @param {(object) => void} update Function to update the JSON object.
  */
 const updateJSON = async (filePath, update) => {
-  const obj = JSON.parse(await readFile(filePath));
+  const obj = JSON.parse(await readFile(filePath, 'utf-8'));
 
   update(obj);
   await writeFile(filePath, JSON.stringify(obj, null, 2));
@@ -99,6 +99,13 @@ export default function packageExtension() {
       async: true,
       sequential: true,
       handler: async () => {
+        if ((await readFile(`${distPathTemp}/scripts/sodium.js`, 'utf-8')).includes('innerHTML')) {
+          throw new Error(
+            `sodium.js contains innerHTML, which may cause a problem on YouTube due to CSP ` +
+              `require-trusted-types-for 'script'.`,
+          );
+        }
+
         console.log('Packaging started.');
 
         await updateJSON(`${distPathTemp}/manifest.json`, (obj) => {
