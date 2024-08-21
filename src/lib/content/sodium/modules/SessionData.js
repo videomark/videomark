@@ -509,23 +509,25 @@ export default class SessionData {
     });
 
     const [prevResource, resource] = this.resource.collect();
+    const { transferSize } = resource;
 
     await storage.save({
-      user_agent: this.userAgent,
+      userAgent: this.userAgent,
       location:
         this.alt_location ||
         video.video_handler.get_alt_location(this.location.href) ||
         this.location.href,
-      transfer_size: resource.transferSize,
-      media_size: video.get_media_size(),
-      domain_name: video.get_domain_name(),
-      start_time: video.get_start_time(),
-      end_time: -1,
+      mediaSize: video.get_media_size(),
+      domain: video.get_domain_name(),
+      startTime: video.get_start_time(),
+      endTime: -1,
       thumbnail: this.alt_thumbnail || video.get_thumbnail(),
       title: video.get_title(),
-      calc: video.is_calculable(),
-      log: [
-        ...(storage.cache.log || []).filter((a) => !('qoe' in a)),
+      calculable: video.is_calculable(),
+      // 以下のプロパティは頻繁に更新される
+      transferSize,
+      logs: [
+        ...(storage.statCache.logs || []).filter((a) => !('qoe' in a)),
         ...video.get_latest_qoe(),
         {
           date: Date.now(),
@@ -541,7 +543,7 @@ export default class SessionData {
         .slice(-Config.max_log),
     });
 
-    await saveTransferSize(resource.transferSize - prevResource.transferSize);
+    await saveTransferSize(transferSize - prevResource.transferSize);
   }
 
   /**
