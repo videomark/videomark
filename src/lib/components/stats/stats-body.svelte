@@ -22,9 +22,9 @@
 
 <table>
   <colgroup>
-    <col />
-    <col />
-    <col />
+    {#each ['key', 'value', 'chart'] as className}
+      <col class={className} />
+    {/each}
   </colgroup>
   {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
     <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={log[prop]} />
