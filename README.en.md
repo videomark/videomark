@@ -1,5 +1,3 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/0d2a4ed0-102a-47db-8291-c241d66a909b/deploy-status)](https://app.netlify.com/sites/sodium-extension/deploys)
-
 # Web VideoMark Project
 
 ## Environment
