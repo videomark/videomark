@@ -10,7 +10,7 @@
   let currentResultGroups = 1; // number of "groups" to be rendered
 
   function renderScroll() {
-    setTimeout(() => currentResultGroups++, 1000); // delay is to debug!!
+    currentResultGroups++;
     console.log(currentResultGroups);
   }
 
@@ -24,7 +24,6 @@
 </script>
 
 {#if $subSearchResults.length}
-  <button on:click={renderScroll}>test</button>
   <div class="grid">
     {#each $subSearchResults as historyItem, index (historyItem.key)}
       {@const firstIndex = $subSearchResults.findIndex(({ url }) => url === historyItem.url)}
