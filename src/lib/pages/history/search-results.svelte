@@ -33,8 +33,9 @@
       {/if}
     {/each}
   </div>
-  <!-- Loading -->
-  <div class="loading" use:scroll on:infiniteScroll={renderScroll}></div>
+  {#if $subSearchResults.length < $searchResults.length}
+    <div class="loading" use:scroll on:infiniteScroll={renderScroll}></div>
+  {/if}
 {:else}
   <NotFound {searchTerms} />
 {/if}
@@ -47,8 +48,18 @@
   }
 
   .loading {
-    height: 10px;
-    border-radius: 100%;
-    animation: spin;
+    margin: auto;
+    margin-top: 16px;
+    border: 4px dotted var(--sui-tertiary-foreground-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 4s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(1turn);
+    }
   }
 </style>
