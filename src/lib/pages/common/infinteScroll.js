@@ -1,7 +1,7 @@
 // TODO: find correct place for this function
 /** @type {import('svelte/action').Action}  */
 export default function scroll(node) {
-  const options = { threshold: 1 };
+  const options = { threshold: 1 }; // threshold: 1 = entire object must be visible to trigger
 
   const callback = (entries) => {
     entries.forEach((e) => {
@@ -17,6 +17,7 @@ export default function scroll(node) {
 
   return {
     destory() {
+      // destroying the observer when the component is no longer loaded
       observer.destory();
     },
   };

@@ -6,18 +6,17 @@
   import { derived } from 'svelte/store';
   import HistoryItem from './history-item.svelte';
 
-  const resultGroupSize = 15; // could be moved to a settings parameter?
+  const resultGroupSize = 50; // could be moved to a settings parameter?
   let currentResultGroups = 1; // number of "groups" to be rendered
 
   function renderScroll() {
-    currentResultGroups++;
-    console.log(currentResultGroups);
+    if (resultGroupSize * currentResultGroups < $searchResults.length) currentResultGroups++;
   }
 
   $: showDuplicates = $settings.show_duplicate_videos;
   $: searchTerms = $searchCriteria.terms.trim();
 
-  // creating a smaller array from $searchResults
+  // creating a smaller dreived array from $searchResults
   $: subSearchResults = derived(searchResults, ($searchResults) =>
     $searchResults.slice(0, resultGroupSize * currentResultGroups),
   );
