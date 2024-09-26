@@ -9,10 +9,6 @@
   const resultGroupSize = 50; // constant number of results in each rendered group
   let currentResultGroups = 1; // number of groups to be rendered
 
-  function renderScroll() {
-    if (resultGroupSize * currentResultGroups < $searchResults.length) currentResultGroups++;
-  }
-
   $: showDuplicates = $settings.show_duplicate_videos;
   $: searchTerms = $searchCriteria.terms.trim();
 
@@ -20,6 +16,10 @@
   $: subSearchResults = derived(searchResults, ($searchResults) =>
     $searchResults.slice(0, resultGroupSize * currentResultGroups),
   );
+
+  const renderScroll = () => {
+    if (resultGroupSize * currentResultGroups < $searchResults.length) currentResultGroups++;
+  };
 </script>
 
 {#if $subSearchResults.length}
