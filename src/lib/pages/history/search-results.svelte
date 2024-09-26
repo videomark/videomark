@@ -1,5 +1,5 @@
 <script>
-  import scroll from '$lib/pages/common/infinteScroll';
+  import scroll from '$lib/pages/common/infiniteScroll';
   import NotFound from '$lib/pages/history/not-found.svelte';
   import { searchCriteria, searchResults } from '$lib/services/history';
   import { settings } from '$lib/services/settings';
@@ -12,7 +12,7 @@
   $: showDuplicates = $settings.show_duplicate_videos;
   $: searchTerms = $searchCriteria.terms.trim();
 
-  // creating a smaller dreived array from $searchResults
+  // creating a smaller derived array from $searchResults
   $: subSearchResults = derived(searchResults, ($searchResults) =>
     $searchResults.slice(0, resultGroupSize * currentResultGroups),
   );
