@@ -6,8 +6,8 @@
   import { derived } from 'svelte/store';
   import HistoryItem from './history-item.svelte';
 
-  const resultGroupSize = 50; // could be moved to a settings parameter?
-  let currentResultGroups = 1; // number of "groups" to be rendered
+  const resultGroupSize = 50; // constant number of results in each rendered group
+  let currentResultGroups = 1; // number of groups to be rendered
 
   function renderScroll() {
     if (resultGroupSize * currentResultGroups < $searchResults.length) currentResultGroups++;
@@ -48,7 +48,7 @@
   .loading {
     margin: auto;
     margin-top: 16px;
-    border: 4px dotted var(--sui-tertiary-foreground-color);
+    border: 4px dotted var(--sui-secondary-foreground-color);
     border-radius: 50%;
     width: 40px;
     height: 40px;
