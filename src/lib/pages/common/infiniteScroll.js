@@ -16,9 +16,9 @@ export default function scroll(node) {
   observer.observe(node);
 
   return {
-    destory() {
+    destroy() {
       // destroying the observer when the component is no longer loaded
-      observer.destory();
+      observer.destroy();
     },
   };
 }
