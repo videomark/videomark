@@ -1,7 +1,7 @@
 <script>
-  import scroll from '$lib/pages/common/infiniteScroll';
   import NotFound from '$lib/pages/history/not-found.svelte';
   import { searchCriteria, searchResults } from '$lib/services/history';
+  import scroll from '$lib/services/infinite-scroll';
   import { settings } from '$lib/services/settings';
   import { derived } from 'svelte/store';
   import HistoryItem from './history-item.svelte';
