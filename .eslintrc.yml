@@ -20,10 +20,6 @@ globals:
   process: readonly
 overrides:
   - files:
-      - '*.svelte'
-      - '*.svelte.js'
-    parser: svelte-eslint-parser
-  - files:
       - src/lib/content/**/*.js
     rules:
       camelcase: off # FIXME
