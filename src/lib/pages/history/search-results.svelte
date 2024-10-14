@@ -1,9 +1,9 @@
 <script>
+  import { derived } from 'svelte/store';
   import NotFound from '$lib/pages/history/not-found.svelte';
   import { searchCriteria, searchResults } from '$lib/services/history';
   import scroll from '$lib/services/infinite-scroll';
   import { settings } from '$lib/services/settings';
-  import { derived } from 'svelte/store';
   import HistoryItem from './history-item.svelte';
 
   const resultGroupSize = 50; // constant number of results in each rendered group
@@ -18,7 +18,9 @@
   );
 
   const renderScroll = () => {
-    if (resultGroupSize * currentResultGroups < $searchResults.length) currentResultGroups++;
+    if (resultGroupSize * currentResultGroups < $searchResults.length) {
+      currentResultGroups += 1;
+    }
   };
 </script>
 
