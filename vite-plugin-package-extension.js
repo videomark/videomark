@@ -63,8 +63,8 @@ const packageFirefoxExtension = async () => {
     Object.assign(obj, {
       // Add Firefox-specific settings
       browser_specific_settings: {
-        gecko: { id: 'videomark@webdino.org', strict_min_version: '109.0' },
-        gecko_android: { id: 'videomark@webdino.org', strict_min_version: '109.0' },
+        gecko: { id: 'videomark@webdino.org', strict_min_version: '125.0' },
+        gecko_android: { id: 'videomark@webdino.org', strict_min_version: '125.0' },
       },
       // Downgrade to MV2
       manifest_version: 2,
