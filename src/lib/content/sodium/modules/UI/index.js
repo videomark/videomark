@@ -78,6 +78,21 @@ export default class UI {
 
     this.element = e('div')();
     this.element.id = Config.get_ui_id();
+    this.element.popover = 'manual';
+
+    const callback = (_mutationList, observer) => {
+      if (this.element) {
+        console.log('code is executed', this.element);
+        this.element.showPopover();
+        observer.disconnect();
+      }
+    };
+
+    const observer = new MutationObserver(callback);
+
+    console.log('this.element', this.element);
+    observer.observe(document.body, { attributes: true, childList: true });
+    // todo: this isn't working because the element doesn't exist yet, need to detect when this.element is attached
     this.element.attachShadow({ mode: 'open' });
     this.status.attach(this.element.shadowRoot);
   }
@@ -102,6 +117,7 @@ export default class UI {
 
     this.init_element(`#${Config.get_ui_id()} {
   position: fixed;
+  background-color: white;
   width: 100%;
   top: ${minTop}px;
   z-index: 1000001;

@@ -316,11 +316,10 @@ Config.ui.m_youtube_com = {
 };
 
 // YouTube
+// TODO: use this updated style as baseline for all other platforms
 Config.ui.youtube = {
   target: '#movie_player',
   style: `#${Config.ui.id} {
-  position: absolute;
-  z-index: 1000001;
   top: 12px;
   left: 12px;
   transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
