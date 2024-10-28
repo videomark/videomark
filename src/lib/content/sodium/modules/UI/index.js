@@ -81,18 +81,16 @@ export default class UI {
     this.element.popover = 'manual';
 
     const callback = (_mutationList, observer) => {
+      // opening the popover once it loads in the DOM + disconnecting the observer
       if (this.element) {
-        console.log('code is executed', this.element);
         this.element.showPopover();
         observer.disconnect();
       }
     };
 
-    const observer = new MutationObserver(callback);
+    const observer = new MutationObserver(callback); // manually opening the popover once it has attached to the DOM
 
-    console.log('this.element', this.element);
     observer.observe(document.body, { attributes: true, childList: true });
-    // todo: this isn't working because the element doesn't exist yet, need to detect when this.element is attached
     this.element.attachShadow({ mode: 'open' });
     this.status.attach(this.element.shadowRoot);
   }

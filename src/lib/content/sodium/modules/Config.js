@@ -297,7 +297,6 @@ Config.ui.general = {
   target: null,
   style: `#${Config.ui.id} {
   position: absolute;
-  z-index: 1000001;
   top: 12px;
   left: 12px;
 }
@@ -320,8 +319,10 @@ Config.ui.m_youtube_com = {
 Config.ui.youtube = {
   target: '#movie_player',
   style: `#${Config.ui.id} {
-  top: 12px;
-  left: 12px;
+  position: absolute;
+  inset: unset;
+  margin-top: 12px;
+  margin-left: 12px;
   transition: .5s cubic-bezier(0.4, 0.09, 0, 1.6);
 }
 .ytp-fullscreen > #${Config.ui.id} {
@@ -452,7 +453,6 @@ Config.ui.netflix = {
   target: '.watch-video',
   style: `#${Config.ui.id} {
   position: absolute;
-  z-index: 1000001;
   top: 12em;
   left: 12px;
 }
