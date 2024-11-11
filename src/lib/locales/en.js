@@ -238,13 +238,6 @@ export const strings = {
       title: 'Clear Data',
       description:
         'All selected items will be erased. Even if the history is cleared, anonymous data stored on the server will remain.',
-      timeRange: 'Time Range',
-      timeRangeOptions: {
-        all: 'All',
-        lastHour: 'Last Hour',
-        lastWeek: 'Last Week',
-        lastMonth: 'Last Month',
-      },
       settings: 'Settings',
       sessionId: 'Session ID',
       history: 'Viewing history',
