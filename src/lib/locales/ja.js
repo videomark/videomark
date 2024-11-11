@@ -239,6 +239,14 @@ export const strings = {
       description:
         '選択した項目がすべて消去されます。履歴を消去してもサーバーに保存されている匿名データは残ります。',
       settings: '設定',
+      // TODO: !!! Need proper Japanese Translations, these are placeholders or borrowed from history.search.filters.date.options !!!
+      timeRange: 'Time Range',
+      timeRangeOptions: {
+        all: 'すべて',
+        lastHour: 'Last Hour',
+        lastWeek: '先週',
+        lastMonth: '先月',
+      },
       sessionId: 'セッション ID',
       history: '視聴履歴',
       graphCache: '統計グラフのキャッシュ',
