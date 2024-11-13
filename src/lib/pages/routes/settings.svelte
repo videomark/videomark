@@ -1,10 +1,4 @@
 <script>
-  import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
-  import SettingItem from '$lib/pages/settings/setting-item.svelte';
-  import { goBack } from '$lib/services/navigation';
-  import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
-  import { defaultSettings, settings } from '$lib/services/settings';
-  import { storage } from '$lib/services/storage';
   import {
     Button,
     Checkbox,
@@ -17,6 +11,12 @@
   } from '@sveltia/ui';
   import { onMount } from 'svelte';
   import { _, locale } from 'svelte-i18n';
+  import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
+  import SettingItem from '$lib/pages/settings/setting-item.svelte';
+  import { goBack } from '$lib/services/navigation';
+  import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
+  import { defaultSettings, settings } from '$lib/services/settings';
+  import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
@@ -28,6 +28,7 @@
   let resolutions = [];
   let bitrates = [];
   let quotaMarks = [];
+  let timeRanges = [];
 
   $: {
     if ($locale) {
@@ -75,14 +76,16 @@
                 useGrouping: false,
               }).format(v),
       }));
+
+      timeRanges = [0, 1, 24, 168, 730].map((v, index) => ({
+        value: v,
+        label: Object.entries($_(`settings.clearDialog.timeRangeOptions`))[index][1],
+      }));
     }
   }
 
-  //TODO: this could probably be offloaded somewhere else? Good enough for dev
-  const
-
   const clearHistoryItems = {
-    range: $_('setting.sclearDialog.timeRange'),
+    range: 0,
     settings: false,
     sessionId: false,
     graphCache: false,
@@ -385,19 +388,10 @@
       <Select
         position="bottom-right"
         label={$_('settings.clearDialog.timeRange')}
-        bind:value={$settings.browser_quota_bitrate}
-        disabled={!$settings.control_by_traffic_volume}
-        on:change={({ detail: { value } }) => {
-          $settings.control_by_browser_quota = value > 0;
-        }}
+        bind:value={clearHistoryItems.range}
       >
-        {#each bitrates.slice(1) as { value, label } (value)}
-          <Option
-            {label}
-            {value}
-            selected={value ===
-              ($settings.control_by_browser_quota ? $settings.browser_quota_bitrate : 0)}
-          />
+        {#each timeRanges as { value, label } (value)}
+          <Option {label} {value} selected={value === clearHistoryItems.range} />
         {/each}
       </Select>
     </SettingItem>

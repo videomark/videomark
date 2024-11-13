@@ -242,6 +242,7 @@ export const strings = {
       timeRangeOptions: {
         all: 'All',
         lastHour: 'Last Hour',
+        lastDay: 'Last Day',
         lastWeek: 'Last Week',
         lastMonth: 'Last Month',
       },

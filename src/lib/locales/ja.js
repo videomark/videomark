@@ -244,6 +244,7 @@ export const strings = {
       timeRangeOptions: {
         all: 'すべて',
         lastHour: 'Last Hour',
+        lastDay: 'Last Day',
         lastWeek: '先週',
         lastMonth: '先月',
       },
