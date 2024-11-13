@@ -290,3 +290,6 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
   await storage.set('tabStatus', tabStatus);
   // `chrome.action.setIcon()` は余計なエラーが出るので不要
 });
+
+// Setting the uninstall URL
+chrome.runtime.setUninstallURL('https://videomark.webdino.org/offboarding');
