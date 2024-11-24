@@ -92,6 +92,8 @@
     history: false,
   };
 
+  $: console.log(clearHistoryItems); // dev
+
   $: {
     if (clearHistoryItems.history) {
       clearHistoryItems.graphCache = true;
