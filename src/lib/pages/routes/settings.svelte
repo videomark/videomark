@@ -116,6 +116,7 @@
     }
 
     if (clearHistoryItems.history) {
+      // this code doesn't seem to actually clear viewing history(?)
       const storageCache = await storage.getAll();
       const baseKeys = ['version', 'session', 'settings', 'AgreedTerm'];
 
