@@ -14,6 +14,7 @@
   import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
   import { viewingHistory } from '$lib/services/history';
+  import { deleteItemsNow } from '$lib/services/history/index';
   import { goBack } from '$lib/services/navigation';
   import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
   import { defaultSettings, settings } from '$lib/services/settings';
@@ -117,23 +118,20 @@
     }
 
     if (clearHistoryItems.history) {
-      // TODO: using deleteItemsNow() to properly clear history
-      let filtered;
+      let filteredKeys;
 
-      // getting keys within selected history time range
+      // getting keys within selected time range
       if (clearHistoryItems.range === 0) {
-        filtered = $viewingHistory.map(({ key }) => key); // all keys
+        filteredKeys = $viewingHistory.map(({ key }) => key); // all keys
       } else {
-        filtered = $viewingHistory
-          .filter(
-            (item) =>
-              (Math.abs(Date.now() - new Date(item.startTime)) / (1000 * 60 * 60)).toFixed(1) <=
-              clearHistoryItems.range,
-          )
-          .map(({ key }) => key);
+        filteredKeys = $viewingHistory.filter(
+          (item) =>
+            (Math.abs(Date.now() - new Date(item.startTime)) / (1000 * 60 * 60)).toFixed(1) <=
+            clearHistoryItems.range,
+        );
       }
 
-      filtered.forEach();
+      deleteItemsNow(filteredKeys);
     }
   };
 
