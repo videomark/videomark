@@ -13,10 +13,10 @@
   import { _, locale } from 'svelte-i18n';
   import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
+  import { viewingHistory } from '$lib/services/history';
   import { goBack } from '$lib/services/navigation';
   import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
   import { defaultSettings, settings } from '$lib/services/settings';
-  import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
@@ -77,6 +77,7 @@
               }).format(v),
       }));
 
+      // each time range is represented in hours, 0 = all
       timeRanges = [0, 1, 24, 168, 730].map((v, index) => ({
         value: v,
         label: Object.entries($_(`settings.clearDialog.timeRangeOptions`))[index][1],
@@ -116,18 +117,23 @@
     }
 
     if (clearHistoryItems.history) {
-      // this code doesn't seem to actually clear viewing history(?)
-      const storageCache = await storage.getAll();
-      const baseKeys = ['version', 'session', 'settings', 'AgreedTerm'];
+      // TODO: using deleteItemsNow() to properly clear history
+      let filtered;
 
-      Object.keys(storageCache).forEach((key) => {
-        if (!baseKeys.includes(key)) {
-          delete storageCache[key];
-        }
-      });
+      // getting keys within selected history time range
+      if (clearHistoryItems.range === 0) {
+        filtered = $viewingHistory.map(({ key }) => key); // all keys
+      } else {
+        filtered = $viewingHistory
+          .filter(
+            (item) =>
+              (Math.abs(Date.now() - new Date(item.startTime)) / (1000 * 60 * 60)).toFixed(1) <=
+              clearHistoryItems.range,
+          )
+          .map(({ key }) => key);
+      }
 
-      await storage.clear();
-      await storage.setAll(storageCache);
+      filtered.forEach();
     }
   };
 

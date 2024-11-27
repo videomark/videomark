@@ -242,9 +242,9 @@ export const strings = {
       timeRangeOptions: {
         all: 'All',
         lastHour: 'Last Hour',
-        lastDay: 'Last Day',
-        lastWeek: 'Last Week',
-        lastMonth: 'Last Month',
+        lastDay: 'Last 24 Hours',
+        lastWeek: 'Last 7 Days',
+        lastMonth: 'Last 4 Weeks',
       },
       settings: 'Settings',
       sessionId: 'Session ID',
