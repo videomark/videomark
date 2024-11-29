@@ -10,7 +10,7 @@
     Switch,
   } from '@sveltia/ui';
   import { onMount } from 'svelte';
-  import { _, locale } from 'svelte-i18n';
+  import { _, json, locale } from 'svelte-i18n';
   import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
   import { viewingHistory } from '$lib/services/history';
@@ -81,7 +81,7 @@
       // each time range is represented in hours, 0 = all
       timeRanges = [0, 1, 24, 168, 730].map((v, index) => ({
         value: v,
-        label: Object.entries($_(`settings.clearDialog.timeRangeOptions`))[index][1],
+        label: Object.entries($json('settings.clearDialog.timeRangeOptions'))[index][1].toString(),
       }));
     }
   }
@@ -93,8 +93,6 @@
     graphCache: false,
     history: false,
   };
-
-  $: console.log(clearHistoryItems); // dev
 
   $: {
     if (clearHistoryItems.history) {
