@@ -81,7 +81,7 @@
       // each time range is represented in hours, 0 = all
       timeRanges = [0, 1, 24, 168, 672].map((v, index) => ({
         value: v,
-        label: Object.entries($json('settings.clearDialog.timeRangeOptions'))[index][1].toString(),
+        label: Object.entries($json('settings.clearDialog.timeRangeOptions'))[index][1],
       }));
     }
   }
