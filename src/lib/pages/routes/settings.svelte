@@ -122,11 +122,13 @@
       if (clearHistoryItems.range === 0) {
         filteredKeys = $viewingHistory.map(({ key }) => key); // all keys
       } else {
-        filteredKeys = $viewingHistory.filter(
-          (item) =>
-            (Math.abs(Date.now() - new Date(item.startTime)) / (1000 * 60 * 60)).toFixed(1) <=
-            clearHistoryItems.range,
-        );
+        filteredKeys = $viewingHistory
+          .filter(
+            (item) =>
+              (Math.abs(Date.now() - new Date(item.startTime)) / (1000 * 60 * 60)).toFixed(1) <=
+              clearHistoryItems.range,
+          )
+          .map(({ key }) => key);
       }
 
       deleteItemsNow(filteredKeys);
