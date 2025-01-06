@@ -358,7 +358,7 @@ Config.ui.fod = {
 // ニコニコ動画ではコメントより前面になるよう配置
 Config.ui.nicovideo = {
   ...Config.ui.general,
-  target: '.VideoContainer',
+  target: '[data-name="stage"]',
 };
 
 // TODO: ニコニコ生放送
