@@ -37,7 +37,7 @@
     "postcss-html": "^1.7.0",
     "prettier": "^3.4.2",
     "prettier-plugin-svelte": "^3.3.2",
-    "sass": "^1.83.0",
+    "sass": "^1.83.1",
     "stylelint": "^16.12.0",
     "stylelint-config-recommended-scss": "^14.1.0",
     "stylelint-scss": "^6.10.0",
@@ -54,7 +54,7 @@
     "@videomark/sparkline": "github:videomark/sparkline",
     "m3u8-parser": "^7.2.0",
     "msgpack-lite": "^0.1.26",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.4"
   },
   "pnpm": {
     "overrides": {
