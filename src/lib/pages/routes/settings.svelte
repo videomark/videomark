@@ -10,13 +10,14 @@
     Switch,
   } from '@sveltia/ui';
   import { onMount } from 'svelte';
-  import { _, locale } from 'svelte-i18n';
+  import { _, json, locale } from 'svelte-i18n';
   import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
+  import { viewingHistory } from '$lib/services/history';
+  import { deleteItemsNow } from '$lib/services/history/index';
   import { goBack } from '$lib/services/navigation';
   import { getSessionType, overwritePersonalSession, session } from '$lib/services/sessions';
   import { defaultSettings, settings } from '$lib/services/settings';
-  import { storage } from '$lib/services/storage';
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
@@ -28,6 +29,7 @@
   let resolutions = [];
   let bitrates = [];
   let quotaMarks = [];
+  let timeRanges = [];
 
   $: {
     if ($locale) {
@@ -75,10 +77,17 @@
                 useGrouping: false,
               }).format(v),
       }));
+
+      // each time range is represented in hours, 0 == all
+      timeRanges = [0, 1, 24, 168, 672].map((v, index) => ({
+        value: v,
+        label: Object.entries($json('settings.clearDialog.timeRangeOptions'))[index][1],
+      }));
     }
   }
 
   const clearHistoryItems = {
+    range: 0,
     settings: false,
     sessionId: false,
     graphCache: false,
@@ -107,17 +116,22 @@
     }
 
     if (clearHistoryItems.history) {
-      const storageCache = await storage.getAll();
-      const baseKeys = ['version', 'session', 'settings', 'AgreedTerm'];
+      let filteredKeys;
 
-      Object.keys(storageCache).forEach((key) => {
-        if (!baseKeys.includes(key)) {
-          delete storageCache[key];
-        }
-      });
+      // getting keys within selected time range
+      if (clearHistoryItems.range === 0) {
+        filteredKeys = $viewingHistory.map(({ key }) => key); // all keys
+      } else {
+        filteredKeys = $viewingHistory
+          .filter(
+            (item) =>
+              (Math.abs(Date.now() - new Date(item.startTime)) / (1000 * 60 * 60)).toFixed(1) <=
+              clearHistoryItems.range,
+          )
+          .map(({ key }) => key);
+      }
 
-      await storage.clear();
-      await storage.setAll(storageCache);
+      deleteItemsNow(filteredKeys);
     }
   };
 
@@ -377,6 +391,17 @@
 >
   <div class="dialog-content">
     <div class="description">{$_('settings.clearDialog.description')}</div>
+    <SettingItem class="time-range" title={$_('settings.clearDialog.timeRange')}>
+      <Select
+        position="bottom-right"
+        label={$_('settings.clearDialog.timeRange')}
+        bind:value={clearHistoryItems.range}
+      >
+        {#each timeRanges as { value, label } (value)}
+          <Option {label} {value} selected={value === clearHistoryItems.range} />
+        {/each}
+      </Select>
+    </SettingItem>
     <CheckboxGroup orientation="vertical">
       <Checkbox bind:checked={clearHistoryItems.settings}>
         {$_('settings.clearDialog.settings')}
@@ -447,12 +472,8 @@
   }
 
   .dialog-content {
-    div {
-      margin: 0 0 8px;
-
-      &.description {
-        margin: 0 0 16px;
-      }
+    :global(.time-range) {
+      margin: 16px 0 !important;
     }
   }
 </style>
