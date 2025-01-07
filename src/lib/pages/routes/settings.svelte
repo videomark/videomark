@@ -391,7 +391,7 @@
 >
   <div class="dialog-content">
     <div class="description">{$_('settings.clearDialog.description')}</div>
-    <SettingItem title={$_('settings.clearDialog.timeRange')}>
+    <SettingItem class="time-range" title={$_('settings.clearDialog.timeRange')}>
       <Select
         position="bottom-right"
         label={$_('settings.clearDialog.timeRange')}
@@ -472,12 +472,8 @@
   }
 
   .dialog-content {
-    div {
-      margin: 0 0 8px;
-
-      &.description {
-        margin: 0 0 16px;
-      }
+    :global(.time-range) {
+      margin: 16px 0 !important;
     }
   }
 </style>

@@ -5,7 +5,7 @@
   export let description = '';
 </script>
 
-<section id={id ? `setting-${id}` : undefined}>
+<section id={id ? `setting-${id}` : undefined} {...$$restProps}>
   <div class="row">
     <div>
       <h3 id={id ? `setting-${id}-title` : undefined}>{title}</h3>
