@@ -238,7 +238,6 @@ export const strings = {
       title: 'データの消去',
       description:
         '選択した項目がすべて消去されます。履歴を消去してもサーバーに保存されている匿名データは残ります。',
-      settings: '設定',
       timeRange: '期間',
       timeRangeOptions: {
         all: '全期間',
@@ -247,6 +246,7 @@ export const strings = {
         lastWeek: '過去 7 日間',
         lastMonth: '過去 4 週間',
       },
+      settings: '設定',
       sessionId: 'セッション ID',
       history: '視聴履歴',
       graphCache: '統計グラフのキャッシュ',
