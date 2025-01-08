@@ -398,7 +398,7 @@ Config.ui.lemino = {
 
 // ABEMA
 Config.ui.abematv = {
-  target: `.com-tv-TVScreen__player-container, .com-vod-VODScreen-container`,
+  target: `.c-tv-NowOnAirContainer .com-tv-TVScreen, .com-vod-VODScreen-container`,
   style: `
   #${Config.ui.id} {
     position: absolute;
@@ -411,8 +411,15 @@ Config.ui.abematv = {
     z-index: 11;
     left: 65px;
   }
+  .c-tv-NowOnAirContainer .com-tv-TVScreen #${Config.ui.id} {
+    top: 76px;
+    left: 72px;
+  }
+  .c-tv-NowOnAirContainer__news-container--sidenav-expanded ~ .com-tv-TVScreen #${Config.ui.id} {
+    left: 196px;
+  }
   @media (any-pointer: fine) {
-    :is(.com-tv-TVScreen__player-container, .com-vod-VODScreen-container):not(:hover) > #${Config.ui.id} {
+    :is(.com-tv-TVScreen, .com-vod-VODScreen-container):not(:hover) > #${Config.ui.id} {
       opacity: 0;
     }
   }`,
