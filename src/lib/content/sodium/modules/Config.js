@@ -353,6 +353,12 @@ Config.ui.tver = {
 Config.ui.fod = {
   ...Config.ui.general,
   target: '#fod_player, #video_container',
+  // 左上動画タイトルと被るので右上に表示
+  style: `#${Config.ui.id} {
+    position: absolute;
+    inset: 12px 12px auto auto;
+    z-index: 1000001;
+  }`,
 };
 
 // ニコニコ動画ではコメントより前面になるよう配置
