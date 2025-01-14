@@ -358,6 +358,13 @@ Config.ui.fod = {
     position: absolute;
     inset: 12px 12px auto auto;
     z-index: 1000001;
+    transition: 200ms;
+  }
+  @media (any-pointer: fine) {
+    #fod_player:not(:hover) #${Config.ui.id},
+    #video_container:not(:hover) #${Config.ui.id} {
+      opacity: 0;
+    }
   }`,
 };
 
