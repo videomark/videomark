@@ -14,38 +14,41 @@ export default class FodTypeHandler extends GeneralTypeHandler {
     this.adObserver = new AdObserver(this, elm, ['style']);
   }
 
-  get_video_title() {
+  /**
+   * Parsed JSON-LD content.
+   * @type {Record<string, string>}
+   */
+  get json_ld() {
     try {
-      return document.querySelector('#header_banner').textContent;
-    } catch (e) {
-      return '';
+      return JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
+    } catch {
+      return {};
     }
+  }
+
+  get_video_title() {
+    return this.json_ld.name || document.title;
   }
 
   get_video_thumbnail() {
-    return null; // for fallback
+    return (
+      this.json_ld.thumbnailUrl ||
+      document.querySelector('meta[property="og:image"][data-rh]')?.content ||
+      null
+    );
   }
 
   is_main_video(video) {
-    const [main] = Array.from(document.querySelectorAll('video'));
+    const player = /** @type {HTMLVideoElement} */ (
+      document.querySelector('video[fpkey="videoPlayer"][src]')
+    );
 
-    return video === main;
+    return video === player && !!player.videoHeight;
   }
 
   is_cm() {
-    try {
-      const [
-        {
-          style: { visibility: main },
-        },
-        {
-          style: { visibility: cm },
-        },
-      ] = Array.from(document.querySelectorAll('video'));
-
-      return main === 'hidden' && cm === 'visible';
-    } catch {
-      return false;
-    }
+    return /** @type {HTMLVideoElement[]} */ ([
+      ...document.querySelectorAll('video[title="Advertisement"]'),
+    ]).some((video) => !!video.videoHeight);
   }
 }
