@@ -382,15 +382,15 @@ Config.ui.nhkondemand = {
 // Lemino
 Config.ui.lemino = {
   target: `.fullscreen`,
+  // 左上動画タイトルと被るので右上に表示
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
-  top: 12px;
-  left: 12px;
+  inset: 12px 60px auto auto;
   transition: 200ms;
 }
 @media (any-pointer: fine) {
-  #${Config.ui.id}:not(:hover){
+  .fullscreen:not(:hover) #${Config.ui.id} {
     opacity: 0;
   }
 }`,
