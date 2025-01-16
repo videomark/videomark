@@ -51,7 +51,7 @@
   role="button"
   tabindex="0"
   class="root"
-  on:pointerdown|preventDefault|stopPropagation={() => {
+  on:click|preventDefault|stopPropagation={() => {
     open = !open;
   }}
   on:keydown|preventDefault|stopPropagation={(event) => {
