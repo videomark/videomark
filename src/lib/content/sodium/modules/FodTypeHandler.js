@@ -33,7 +33,8 @@ export default class FodTypeHandler extends GeneralTypeHandler {
   get_video_thumbnail() {
     return (
       this.json_ld.thumbnailUrl ||
-      document.querySelector('meta[property="og:image"][data-rh]')?.content ||
+      /** @type {HTMLMetaElement} */ (document.querySelector('meta[property="og:image"][data-rh]'))
+        ?.content ||
       null
     );
   }
