@@ -19,8 +19,6 @@
   /** @type {HistoryItem[]} */
   export let historyItems = [];
 
-  $: console.info({ historyItems });
-
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
   const completeHistory = () => {
