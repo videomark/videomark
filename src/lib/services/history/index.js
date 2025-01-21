@@ -17,14 +17,11 @@ export const validQualityStatuses = ['pending', 'complete', 'error', 'unavailabl
 
 /**
  * QoE 値から計測・計算ステータスを取得する。
- * @param {HistoryItem} historyItem 履歴アイテム。
+ * @param {HistoryItemStats} stats 履歴アイテムの統計情報。
  * @returns {QualityStatus} ステータス。
  */
-export const getQualityStatus = (historyItem) => {
-  const {
-    calculable,
-    stats: { finalQoe },
-  } = historyItem;
+export const getQualityStatus = (stats) => {
+  const { calculable, finalQoe } = stats;
 
   if (!calculable) {
     return 'unavailable';
@@ -83,13 +80,13 @@ export const viewingHistory = writable(undefined, (set) => {
           sessionId,
           viewingId: [playbackId, sessionId].join('_'),
           platform: videoPlatforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname))),
-          calculable,
           title,
           url,
           thumbnail,
           startTime,
           region,
           stats: {
+            calculable,
             finalQoe: Number.isFinite(qoe) ? qoe : undefined,
           },
         };
@@ -214,17 +211,11 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
   const searchTerms = terms.trim();
 
   return historyItems.filter((historyItem) => {
-    const {
-      title,
-      platform,
-      startTime,
-      region,
-      stats: { finalQoe },
-    } = historyItem;
-
+    const { title, platform, startTime, region, stats } = historyItem;
     const { country = '', subdivision = '' } = region ?? {};
     const hasRegion = !!(country && subdivision);
-    const qualityStatus = getQualityStatus(historyItem);
+    const qualityStatus = getQualityStatus(stats);
+    const { finalQoe } = stats;
     const date = new Date(startTime);
 
     return (
@@ -323,8 +314,8 @@ const addMissingData = async () => {
   const newValueMap = Object.fromEntries(_viewingHistory.map(({ key }) => [key, {}]));
 
   const missingQoeValueItems = _viewingHistory.filter(
-    ({ stats: { finalQoe }, calculable }) =>
-      (finalQoe === undefined || finalQoe === -1) && calculable,
+    ({ stats: { calculable, finalQoe } }) =>
+      calculable && (finalQoe === undefined || finalQoe === -1),
   );
 
   const missingRegionItems = _viewingHistory.filter(({ region }) => !region);

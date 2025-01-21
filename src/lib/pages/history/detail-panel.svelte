@@ -85,8 +85,8 @@
           {/if}
         </div>
         {#each historyItems as item (item.key)}
-          {@const { key, region = {}, startTime, calculable, stats } = item}
-          {@const { provisionalQoe, finalQoe, isLowQuality } = stats}
+          {@const { key, region = {}, startTime, stats } = item}
+          {@const { calculable, provisionalQoe, finalQoe, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
           {@const formattedStats = formatStats($locale, stats)}
           {@const deleted = $deletedHistoryItemKeys.includes(key)}

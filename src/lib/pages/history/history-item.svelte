@@ -23,8 +23,8 @@
    */
   let itemWrapper;
 
-  $: ({ key, platform, url, title, thumbnail, startTime, calculable, stats } = historyItem);
-  $: ({ provisionalQoe, finalQoe, isLowQuality } = stats);
+  $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem);
+  $: ({ calculable, provisionalQoe, finalQoe, isLowQuality } = stats);
 
   const playAgain = () => {
     if (!platform?.deprecated) {

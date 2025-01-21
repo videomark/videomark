@@ -28,13 +28,13 @@
  * @property {object | undefined} region 視聴地域。
  * @property {string} region.country 国コード。
  * @property {string} region.subdivision 日本の都道府県あるいは各国の州コード。
- * @property {boolean} calculable 当該プラットフォームにおいて QoE 値を計算可能かどうか。
  * @property {HistoryItemStats} stats 統計情報。
  */
 
 /**
  * 視聴履歴アイテムの統計情報。
  * @typedef {object} HistoryItemStats
+ * @property {boolean} calculable 当該プラットフォームにおいて QoE 値を計算可能かどうか。
  * @property {number | undefined} provisionalQoe 暫定 QoE 値。
  * @property {number | undefined} finalQoe 確定 QoE 値。通常は正の値だが、`-1` は計算未完了、`-2` は何らかの
  * 理由による取得エラーを表す。
