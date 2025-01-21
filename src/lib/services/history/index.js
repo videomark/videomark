@@ -105,7 +105,7 @@ export const completeViewingHistoryItem = async (historyItem) => {
     stats: { finalQoe },
   } = historyItem;
 
-  const { logs, transferSize } = await historyStatsDB.get(key);
+  const { logs = [], transferSize = 0 } = (await historyStatsDB.get(key)) ?? {};
 
   /** @type {number[]} */
   const throughputList = logs
