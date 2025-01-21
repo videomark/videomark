@@ -67,7 +67,7 @@ export const fetchViewerRegion = async (videoId, sessionId) => {
 };
 
 /**
- * 与えられた ID リストに該当する動画の最終 QoE 値を取得。
+ * 与えられた ID リストに該当する動画の確定 QoE 値を取得。
  * @param {{ videoId: string, sessionId: string }[]} ids 動画再生・セッション ID のリスト。
  * @returns {Promise.<object[]>} 結果。
  */

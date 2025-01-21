@@ -203,10 +203,11 @@ export const strings = {
     dataMissing: 'データ不足',
     quality: {
       measuringShort: '計測中...',
-      measuring: 'QoE 値を計測または計算中です',
-      error: '計測データ不足のため QoE 値が得られませんでした',
-      frameDrops: 'フレームドロップが発生したため実際の体感品質とは異なる可能性があります',
-      frameDropsShort: '実際の体感品質とは異なる可能性があります',
+      measuring: 'QoE 値を計測または計算中です。',
+      provisional: 'これは暫定 QoE 値です。確定値は計算中です。',
+      error: '計測データ不足のため QoE 値が得られませんでした。',
+      frameDrops: 'フレームドロップが発生したため実際の体感品質とは異なる可能性があります。',
+      frameDropsShort: '実際の体感品質とは異なる可能性があります。',
     },
   },
   settings: {

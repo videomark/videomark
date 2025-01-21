@@ -8,6 +8,7 @@
   import { goto, openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
 
+  /** @type {HistoryItem} */
   export let historyItem = {};
   export let horizontal = false;
 
@@ -22,8 +23,8 @@
    */
   let itemWrapper;
 
-  $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem || {});
-  $: ({ qoe, isLowQuality } = stats);
+  $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem);
+  $: ({ provisionalQoe, finalQoe, isLowQuality } = stats);
 
   const playAgain = () => {
     if (!platform?.deprecated) {
@@ -115,9 +116,12 @@
         {formatDateTime(startTime)}
       </div>
       <div class="qoe">
-        {#if qoe === undefined || qoe === -1}
+        {#if finalQoe === undefined || finalQoe === -1}
           <Icon name="hourglass_empty" aria-label={$_('stats.quality.measuring')} />
-        {:else if qoe === -2}
+          {#if Number.isFinite(provisionalQoe)}
+            {provisionalQoe.toFixed(2)}
+          {/if}
+        {:else if finalQoe === -2}
           <Icon name="error" aria-label={$_('stats.quality.error')} />
         {:else}
           {#if isLowQuality}
@@ -125,7 +129,7 @@
           {:else}
             <Icon name="equalizer" />
           {/if}
-          {qoe.toFixed(2)}
+          {finalQoe.toFixed(2)}
         {/if}
       </div>
       <div class="actions close-popup">

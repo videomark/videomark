@@ -16,7 +16,10 @@
   import { formatStats } from '$lib/services/stats';
 
   export let open = false;
+  /** @type {HistoryItem[]} */
   export let historyItems = [];
+
+  $: console.info({ historyItems });
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
@@ -85,7 +88,7 @@
         </div>
         {#each historyItems as item (item.key)}
           {@const { key, region = {}, startTime, stats } = item}
-          {@const { qoe, isLowQuality } = stats}
+          {@const { provisionalQoe, finalQoe, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
           {@const formattedStats = formatStats($locale, stats)}
           {@const deleted = $deletedHistoryItemKeys.includes(key)}
@@ -120,9 +123,20 @@
                     </Button>
                   </h4>
                   <div>
-                    {#if qoe === undefined || qoe === -1}
-                      {$_('stats.quality.measuring')}
-                    {:else if qoe === -2}
+                    {#if finalQoe === undefined || finalQoe === -1}
+                      {#if Number.isFinite(provisionalQoe)}
+                        <QualityBar value={provisionalQoe} />
+                        <Alert
+                          status="warning"
+                          aria-live="off"
+                          --font-size="var(--sui-font-size-small)"
+                        >
+                          {$_('stats.quality.provisional')}
+                        </Alert>
+                      {:else}
+                        {$_('stats.quality.measuring')}
+                      {/if}
+                    {:else if finalQoe === -2}
                       <Alert
                         status="error"
                         aria-live="off"
@@ -131,7 +145,7 @@
                         {$_('stats.quality.error')}
                       </Alert>
                     {:else}
-                      <QualityBar value={qoe} />
+                      <QualityBar value={finalQoe} />
                       {#if isLowQuality}
                         <Alert
                           status="warning"

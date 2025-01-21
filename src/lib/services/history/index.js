@@ -44,7 +44,7 @@ export const searchCriteria = writable({
 
 /**
  * 閲覧履歴リストのステート。
- * @type {import('svelte/store').Writable<any[]>}
+ * @type {import('svelte/store').Writable<HistoryItem[]>}
  */
 export const viewingHistory = writable(undefined, (set) => {
   // ステートを初期化
@@ -77,7 +77,9 @@ export const viewingHistory = writable(undefined, (set) => {
           thumbnail,
           startTime,
           region,
-          stats: { qoe },
+          stats: {
+            finalQoe: Number.isFinite(qoe) ? qoe : undefined,
+          },
         };
       }),
     );
@@ -95,10 +97,14 @@ export const viewingHistory = writable(undefined, (set) => {
 
 /**
  * 閲覧履歴リストアイテムの統計データをすべて取得して完成させる。
- * @param {any} historyItem 履歴アイテム。
+ * @param {HistoryItem} historyItem 履歴アイテム。
  */
 export const completeViewingHistoryItem = async (historyItem) => {
-  const { key, stats } = historyItem;
+  const {
+    key,
+    stats: { finalQoe },
+  } = historyItem;
+
   const { logs, transferSize } = await historyStatsDB.get(key);
 
   /** @type {number[]} */
@@ -110,10 +116,9 @@ export const completeViewingHistoryItem = async (historyItem) => {
     throughputList.reduce((acc, cur) => acc + cur, 0) / throughputList.length;
 
   const latestStats = logs.findLast(({ quality }) => !!quality)?.quality ?? {};
-  const provisionalQoe = logs.findLast(({ qoe }) => typeof qoe === 'number')?.qoe ?? -1;
-  const qoe = Number.isFinite(stats.qoe) ? stats.qoe : provisionalQoe;
+  const provisionalQoe = logs.findLast(({ qoe }) => typeof qoe === 'number')?.qoe;
   const { droppedVideoFrames = 0, totalVideoFrames = 0 } = latestStats;
-  const isLowQuality = Number.isFinite(qoe) && droppedVideoFrames / totalVideoFrames > 0.001;
+  const isLowQuality = Number.isFinite(finalQoe) && droppedVideoFrames / totalVideoFrames > 0.001;
 
   viewingHistory.update((historyItems) => {
     const index = historyItems.findIndex((item) => item.key === key);
@@ -121,7 +126,7 @@ export const completeViewingHistoryItem = async (historyItem) => {
     Object.assign(historyItems[index].stats, {
       ...latestStats,
       throughput: averageThroughput,
-      qoe,
+      provisionalQoe,
       isLowQuality,
       transferSize,
     });
@@ -197,10 +202,17 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
   const searchTerms = terms.trim();
 
   return historyItems.filter((historyItem) => {
-    const { title, platform, startTime, qoe, region } = historyItem;
+    const {
+      title,
+      platform,
+      startTime,
+      region,
+      stats: { finalQoe },
+    } = historyItem;
+
     const { country = '', subdivision = '' } = region ?? {};
     const hasRegion = !!(country && subdivision);
-    const qualityStatus = getQualityStatus(qoe);
+    const qualityStatus = getQualityStatus(finalQoe);
     const date = new Date(startTime);
 
     return (
@@ -213,8 +225,8 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
       sources.includes(platform?.id) &&
       // 品質
       qualityStatuses.includes(qualityStatus) &&
-      (qualityStatus !== 'complete' || lowestQoe <= qoe) &&
-      (qualityStatus !== 'complete' || qoe <= highestQoe) &&
+      (qualityStatus !== 'complete' || lowestQoe <= finalQoe) &&
+      (qualityStatus !== 'complete' || finalQoe <= highestQoe) &&
       // 地域
       ((hasRegion && regions.includes(`${country}-${subdivision}`)) ||
         (!hasRegion && regions.includes('unknown'))) &&
@@ -298,20 +310,21 @@ const addMissingData = async () => {
   const newValueMap = Object.fromEntries(_viewingHistory.map(({ key }) => [key, {}]));
 
   const missingQoeValueItems = _viewingHistory.filter(
-    ({ stats: { qoe }, calculable }) => (qoe === undefined || qoe === -1) && calculable,
+    ({ stats: { finalQoe }, calculable }) =>
+      (finalQoe === undefined || finalQoe === -1) && calculable,
   );
 
   const missingRegionItems = _viewingHistory.filter(({ region }) => !region);
 
   if (missingQoeValueItems.length) {
     try {
-      // 最終 QoE 値は複数まとめて取得可能
+      // 確定 QoE 値は複数まとめて取得可能
       const results = await fetchFinalQoeValues(
         missingQoeValueItems.map(({ playbackId, sessionId }) => ({ playbackId, sessionId })),
       );
 
       missingQoeValueItems.forEach(({ key }, index) => {
-        newValueMap[key].qoe = results[index]?.qoe ?? -2;
+        newValueMap[key].finalQoe = results[index]?.finalQoe ?? -2;
       });
     } catch (ex) {
       // eslint-disable-next-line no-console
