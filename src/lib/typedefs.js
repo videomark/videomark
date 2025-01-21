@@ -41,3 +41,8 @@
  * @property {number} transferSize 転送データ量。
  * @property {boolean} isLowQuality QoE が低品質かどうか。
  */
+
+/**
+ * 視聴履歴アイテムの最終 QoE 値取得状況。
+ * @typedef {'pending' | 'complete' | 'error' | 'unavailable'} QualityStatus
+ */

@@ -153,9 +153,10 @@ export const strings = {
           buttonLabel: 'Quality',
           dropdownLabel: 'QoE Value Range and Statuses',
           status: {
-            progress: 'Calculating',
+            pending: 'Calculating',
             complete: 'Calculated',
             error: 'Error',
+            unavailable: 'Unavailable',
           },
           input: {
             min: 'Min.',
@@ -202,6 +203,7 @@ export const strings = {
     transferSize: 'Transfer Size',
     dataMissing: 'Data unavailable',
     quality: {
+      unavailable: 'QoE rating is not available for this video platform.',
       measuringShort: 'Measuring...',
       measuring: 'QoE value is being measured or calculated.',
       provisional: 'This is a provisional QoE value. The final value is being calculated.',

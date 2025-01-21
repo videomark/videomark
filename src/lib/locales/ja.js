@@ -153,9 +153,10 @@ export const strings = {
           buttonLabel: '品質',
           dropdownLabel: 'QoE 値の範囲とステータス',
           status: {
-            progress: '計算中',
+            pending: '計算中',
             complete: '計算済み',
             error: 'エラー',
+            unavailable: '非対応',
           },
           input: {
             min: '最小値',
@@ -202,6 +203,7 @@ export const strings = {
     transferSize: '通信量',
     dataMissing: 'データ不足',
     quality: {
+      unavailable: 'この動画サービスは QoE 評価に対応していません。',
       measuringShort: '計測中...',
       measuring: 'QoE 値を計測または計算中です。',
       provisional: 'これは暫定 QoE 値です。確定値は計算中です。',

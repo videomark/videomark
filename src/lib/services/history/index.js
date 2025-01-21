@@ -9,20 +9,30 @@ const maxItems = 10000;
 
 /**
  * 有効な計測・計算ステータスのリスト。
+ * @type {QualityStatus}
  */
-export const validQualityStatuses = ['progress', 'complete', 'error'];
+export const validQualityStatuses = ['pending', 'complete', 'error', 'unavailable'];
 
 /**
  * QoE 値から計測・計算ステータスを取得する。
- * @param {(number | undefined)} qoe QuE 値。
- * @returns {('progress' | 'complete' | 'error')} ステータス。
+ * @param {HistoryItem} historyItem 履歴アイテム。
+ * @returns {QualityStatus} ステータス。
  */
-export const getQualityStatus = (qoe) => {
-  if (qoe === undefined || qoe === -1) {
-    return 'progress';
+export const getQualityStatus = (historyItem) => {
+  const {
+    calculable,
+    stats: { finalQoe },
+  } = historyItem;
+
+  if (!calculable) {
+    return 'unavailable';
   }
 
-  if (qoe === -2) {
+  if (finalQoe === undefined || finalQoe === -1) {
+    return 'pending';
+  }
+
+  if (finalQoe === -2) {
     return 'error';
   }
 
@@ -212,7 +222,7 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
 
     const { country = '', subdivision = '' } = region ?? {};
     const hasRegion = !!(country && subdivision);
-    const qualityStatus = getQualityStatus(finalQoe);
+    const qualityStatus = getQualityStatus(historyItem);
     const date = new Date(startTime);
 
     return (

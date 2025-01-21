@@ -23,7 +23,7 @@
    */
   let itemWrapper;
 
-  $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem);
+  $: ({ key, platform, url, title, thumbnail, startTime, calculable, stats } = historyItem);
   $: ({ provisionalQoe, finalQoe, isLowQuality } = stats);
 
   const playAgain = () => {
@@ -116,7 +116,9 @@
         {formatDateTime(startTime)}
       </div>
       <div class="qoe">
-        {#if finalQoe === undefined || finalQoe === -1}
+        {#if !calculable}
+          <!--  -->
+        {:else if finalQoe === undefined || finalQoe === -1}
           <Icon name="hourglass_empty" aria-label={$_('stats.quality.measuring')} />
           {#if Number.isFinite(provisionalQoe)}
             {provisionalQoe.toFixed(2)}

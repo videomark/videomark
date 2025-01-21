@@ -85,7 +85,7 @@
           {/if}
         </div>
         {#each historyItems as item (item.key)}
-          {@const { key, region = {}, startTime, stats } = item}
+          {@const { key, region = {}, startTime, calculable, stats } = item}
           {@const { provisionalQoe, finalQoe, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
           {@const formattedStats = formatStats($locale, stats)}
@@ -121,7 +121,9 @@
                     </Button>
                   </h4>
                   <div>
-                    {#if finalQoe === undefined || finalQoe === -1}
+                    {#if !calculable}
+                      {$_('stats.quality.unavailable')}
+                    {:else if finalQoe === undefined || finalQoe === -1}
                       {#if Number.isFinite(provisionalQoe)}
                         <QualityBar value={provisionalQoe} />
                         <Alert
