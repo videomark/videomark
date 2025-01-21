@@ -109,7 +109,7 @@ export const formatStats = (locale, details) => {
     creationDate,
     startTime,
     timing: { waiting, pause } = {},
-    qoe,
+    finalQoE,
   } = details;
 
   const dropRate =
@@ -139,6 +139,6 @@ export const formatStats = (locale, details) => {
       ? `${formatFloat(locale, waiting / 1e3)} / ${formatSec(locale, playing / 1e3)}
         (${formatPercent(locale, waitingRate)})`
       : null,
-    qoe: isValidNumber(qoe) ? qoe.toFixed(2) : null,
+    qoe: isValidNumber(finalQoE) ? finalQoE.toFixed(2) : null,
   };
 };

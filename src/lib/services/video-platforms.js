@@ -1,19 +1,4 @@
 /**
- * 動画プラットフォームのプロパティ。
- * @typedef {object} VideoPlatform
- * @property {string} id 固有の ID。
- * @property {string} url サービス URL。
- * @property {string} brandColor ブランドカラー。
- * @property {string[]} hosts サービスのホスト名リスト。`manifest.json` や `request_rules.json` など複数
- * 箇所で利用され、自動的に正規表現やドメインのみの表記に変換されます。サブドメインが複数ある場合はワイルドカードを使う
- * ことも可能。例えば `*.youtube.com` は `youtube.com` とそのサブドメインすべてに一致します。
- * @property {RegExp[]} hostREs 正規表現で表したサービスのホスト名リスト。`hosts` のワイルドカード表記より細かい
- * 設定が可能。指定されていない場合は `hosts` を自動的に正規表現に変換して使用。
- * @property {boolean} [deprecated] 廃止されたサービスは `true`。
- * @property {boolean} [experimental] 試験的に対応しているサービスは `true`。
- */
-
-/**
  * ホスト名パターンを正規表現に変換。正規表現用のエスケープを適用した後、さらにワイルドカード部分を変換。
  * @param {string} origin ホスト名パターン。`*.youtube.com` のようにワイルドカードを含めることも可能。
  * @returns {RegExp} 正規表現。

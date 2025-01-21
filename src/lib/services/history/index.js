@@ -6,23 +6,32 @@ import { videoPlatforms } from '../video-platforms';
 
 // 保持する最大履歴アイテム数
 const maxItems = 10000;
+// 確定 QoE の計算待ちタイムアウト (1 時間)
+const qoeCalcTimeout = 1000 * 60 * 60;
 
 /**
  * 有効な計測・計算ステータスのリスト。
+ * @type {QualityStatus}
  */
-export const validQualityStatuses = ['progress', 'complete', 'error'];
+export const validQualityStatuses = ['pending', 'complete', 'error', 'unavailable'];
 
 /**
  * QoE 値から計測・計算ステータスを取得する。
- * @param {(number | undefined)} qoe QuE 値。
- * @returns {('progress' | 'complete' | 'error')} ステータス。
+ * @param {HistoryItemStats} stats 履歴アイテムの統計情報。
+ * @returns {QualityStatus} ステータス。
  */
-export const getQualityStatus = (qoe) => {
-  if (qoe === undefined || qoe === -1) {
-    return 'progress';
+export const getQualityStatus = (stats) => {
+  const { calculable, finalQoe } = stats;
+
+  if (!calculable) {
+    return 'unavailable';
   }
 
-  if (qoe === -2) {
+  if (finalQoe === undefined || finalQoe === -1) {
+    return 'pending';
+  }
+
+  if (finalQoe === -2) {
     return 'error';
   }
 
@@ -44,13 +53,13 @@ export const searchCriteria = writable({
 
 /**
  * 閲覧履歴リストのステート。
- * @type {import('svelte/store').Writable<any[]>}
+ * @type {import('svelte/store').Writable<HistoryItem[]>}
  */
 export const viewingHistory = writable(undefined, (set) => {
   // ステートを初期化
   (async () => {
     const _viewingHistory = await Promise.all(
-      (await historyRecordsDB.entries()).map(async ([key, item]) => {
+      (await historyRecordsDB.entries()).map(async ([sKey, item]) => {
         const {
           playbackId,
           sessionId,
@@ -66,18 +75,20 @@ export const viewingHistory = writable(undefined, (set) => {
         const { hostname } = new URL(url);
 
         return {
-          key,
+          key: Number(sKey),
           playbackId,
           sessionId,
           viewingId: [playbackId, sessionId].join('_'),
           platform: videoPlatforms.find(({ hostREs }) => hostREs.some((re) => re.test(hostname))),
-          calculable,
           title,
           url,
           thumbnail,
           startTime,
           region,
-          stats: { qoe },
+          stats: {
+            calculable,
+            finalQoe: Number.isFinite(qoe) ? qoe : undefined,
+          },
         };
       }),
     );
@@ -95,11 +106,15 @@ export const viewingHistory = writable(undefined, (set) => {
 
 /**
  * 閲覧履歴リストアイテムの統計データをすべて取得して完成させる。
- * @param {any} historyItem 履歴アイテム。
+ * @param {HistoryItem} historyItem 履歴アイテム。
  */
 export const completeViewingHistoryItem = async (historyItem) => {
-  const { key, stats } = historyItem;
-  const { logs, transferSize } = await historyStatsDB.get(key);
+  const {
+    key,
+    stats: { finalQoe },
+  } = historyItem;
+
+  const { logs = [], transferSize = 0 } = (await historyStatsDB.get(key)) ?? {};
 
   /** @type {number[]} */
   const throughputList = logs
@@ -110,10 +125,9 @@ export const completeViewingHistoryItem = async (historyItem) => {
     throughputList.reduce((acc, cur) => acc + cur, 0) / throughputList.length;
 
   const latestStats = logs.findLast(({ quality }) => !!quality)?.quality ?? {};
-  const provisionalQoe = logs.findLast(({ qoe }) => typeof qoe === 'number')?.qoe ?? -1;
-  const qoe = Number.isFinite(stats.qoe) ? stats.qoe : provisionalQoe;
+  const provisionalQoe = logs.findLast(({ qoe }) => typeof qoe === 'number')?.qoe;
   const { droppedVideoFrames = 0, totalVideoFrames = 0 } = latestStats;
-  const isLowQuality = Number.isFinite(qoe) && droppedVideoFrames / totalVideoFrames > 0.001;
+  const isLowQuality = Number.isFinite(finalQoe) && droppedVideoFrames / totalVideoFrames > 0.001;
 
   viewingHistory.update((historyItems) => {
     const index = historyItems.findIndex((item) => item.key === key);
@@ -121,7 +135,7 @@ export const completeViewingHistoryItem = async (historyItem) => {
     Object.assign(historyItems[index].stats, {
       ...latestStats,
       throughput: averageThroughput,
-      qoe,
+      provisionalQoe,
       isLowQuality,
       transferSize,
     });
@@ -197,10 +211,11 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
   const searchTerms = terms.trim();
 
   return historyItems.filter((historyItem) => {
-    const { title, platform, startTime, qoe, region } = historyItem;
+    const { title, platform, startTime, region, stats } = historyItem;
     const { country = '', subdivision = '' } = region ?? {};
     const hasRegion = !!(country && subdivision);
-    const qualityStatus = getQualityStatus(qoe);
+    const qualityStatus = getQualityStatus(stats);
+    const { finalQoe } = stats;
     const date = new Date(startTime);
 
     return (
@@ -213,8 +228,8 @@ export const searchResults = derived([searchCriteria, viewingHistory], (states) 
       sources.includes(platform?.id) &&
       // 品質
       qualityStatuses.includes(qualityStatus) &&
-      (qualityStatus !== 'complete' || lowestQoe <= qoe) &&
-      (qualityStatus !== 'complete' || qoe <= highestQoe) &&
+      (qualityStatus !== 'complete' || lowestQoe <= finalQoe) &&
+      (qualityStatus !== 'complete' || finalQoe <= highestQoe) &&
       // 地域
       ((hasRegion && regions.includes(`${country}-${subdivision}`)) ||
         (!hasRegion && regions.includes('unknown'))) &&
@@ -294,24 +309,33 @@ export const deleteScheduledItems = async () => {
  * キャッシュされていない QoE 値と地域のデータを追加。
  */
 const addMissingData = async () => {
+  const now = Date.now();
   const _viewingHistory = get(viewingHistory);
   const newValueMap = Object.fromEntries(_viewingHistory.map(({ key }) => [key, {}]));
 
   const missingQoeValueItems = _viewingHistory.filter(
-    ({ stats: { qoe }, calculable }) => (qoe === undefined || qoe === -1) && calculable,
+    ({ stats: { calculable, finalQoe } }) =>
+      calculable && (finalQoe === undefined || finalQoe === -1),
   );
 
   const missingRegionItems = _viewingHistory.filter(({ region }) => !region);
 
   if (missingQoeValueItems.length) {
     try {
-      // 最終 QoE 値は複数まとめて取得可能
+      // 確定 QoE 値は複数まとめて取得可能
       const results = await fetchFinalQoeValues(
         missingQoeValueItems.map(({ playbackId, sessionId }) => ({ playbackId, sessionId })),
       );
 
-      missingQoeValueItems.forEach(({ key }, index) => {
-        newValueMap[key].qoe = results[index]?.qoe ?? -2;
+      missingQoeValueItems.forEach(({ key, startTime }, index) => {
+        let qoe = results[index]?.qoe ?? -2;
+
+        // 1 時間以上経っても結果が得られない場合はエラー扱いとする
+        if (qoe === -1 && now - startTime > qoeCalcTimeout) {
+          qoe = -2;
+        }
+
+        newValueMap[key].qoe = qoe;
       });
     } catch (ex) {
       // eslint-disable-next-line no-console
@@ -335,12 +359,21 @@ const addMissingData = async () => {
 
   // メモリキャッシュを更新
   viewingHistory.update((history) => {
-    Object.entries(newValueMap).forEach(([key, obj]) => {
+    Object.entries(newValueMap).forEach(([sKey, obj]) => {
       if (Object.keys(obj).length) {
+        const key = Number(sKey);
         const historyItem = history.find((item) => item.key === key);
 
         if (historyItem) {
-          Object.assign(historyItem, obj);
+          const { qoe, region } = obj;
+
+          if (qoe !== undefined) {
+            historyItem.stats.finalQoe = qoe;
+          }
+
+          if (region !== undefined) {
+            historyItem.region = region;
+          }
         }
       }
     });
@@ -349,8 +382,9 @@ const addMissingData = async () => {
   });
 
   // ストレージの内容も更新
-  Object.entries(newValueMap).forEach(async ([key, obj]) => {
+  Object.entries(newValueMap).forEach(async ([sKey, obj]) => {
     if (Object.keys(obj).length) {
+      const key = Number(sKey);
       const historyItem = await historyRecordsDB.get(key);
 
       if (historyItem) {

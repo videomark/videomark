@@ -153,9 +153,10 @@ export const strings = {
           buttonLabel: 'Quality',
           dropdownLabel: 'QoE Value Range and Statuses',
           status: {
-            progress: 'Calculating',
+            pending: 'Calculating',
             complete: 'Calculated',
             error: 'Error',
+            unavailable: 'Unavailable',
           },
           input: {
             min: 'Min.',
@@ -202,11 +203,13 @@ export const strings = {
     transferSize: 'Transfer Size',
     dataMissing: 'Data unavailable',
     quality: {
+      unavailable: 'QoE rating is not available for this video platform.',
       measuringShort: 'Measuring...',
       measuring: 'QoE value is being measured or calculated.',
-      error: 'We could not retrieve QoE values due to the lack of measurement data.',
-      frameDrops: 'Actual quality of experience may differ due to frame drops',
-      frameDropsShort: 'Actual quality of experience  may differ',
+      provisional: 'This is a provisional QoE value. The final value is being calculated.',
+      error: 'QoE value could not be retrieved due to missing measurement data or other reasons.',
+      frameDrops: 'Actual quality of experience may differ due to frame drops.',
+      frameDropsShort: 'Actual quality of experience  may differ.',
     },
   },
   settings: {

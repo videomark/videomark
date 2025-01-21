@@ -9,6 +9,7 @@
   import OnboardingWrapper from '$lib/pages/onboarding/onboarding-wrapper.svelte';
   import { viewingHistory } from '$lib/services/history';
 
+  /** @type {HistoryItem[]} */
   let historyItems = [];
   let showDialog = false;
 

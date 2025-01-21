@@ -153,9 +153,10 @@ export const strings = {
           buttonLabel: '品質',
           dropdownLabel: 'QoE 値の範囲とステータス',
           status: {
-            progress: '計算中',
+            pending: '計算中',
             complete: '計算済み',
             error: 'エラー',
+            unavailable: '非対応',
           },
           input: {
             min: '最小値',
@@ -202,11 +203,13 @@ export const strings = {
     transferSize: '通信量',
     dataMissing: 'データ不足',
     quality: {
+      unavailable: 'この動画サービスは QoE 評価に対応していません。',
       measuringShort: '計測中...',
-      measuring: 'QoE 値を計測または計算中です',
-      error: '計測データ不足のため QoE 値が得られませんでした',
-      frameDrops: 'フレームドロップが発生したため実際の体感品質とは異なる可能性があります',
-      frameDropsShort: '実際の体感品質とは異なる可能性があります',
+      measuring: 'QoE 値を計測または計算中です。',
+      provisional: 'これは暫定 QoE 値です。確定値は計算中です。',
+      error: '計測データ不足あるいはその他の理由により QoE 値を取得できませんでした。',
+      frameDrops: 'フレームドロップが発生したため実際の体感品質とは異なる可能性があります。',
+      frameDropsShort: '実際の体感品質とは異なる可能性があります。',
     },
   },
   settings: {

@@ -175,7 +175,7 @@ const getStorageKey = async (viewingId) => {
   }
 
   const keys = (await historyRecordsDB.keys()) ?? [];
-  const key = !keys.length ? 0 : keys.sort((a, b) => a - b).pop() + 1;
+  const key = !keys.length ? 0 : keys.sort((a, b) => Number(a) - Number(b)).pop() + 1;
 
   state[viewingId] = key;
 
