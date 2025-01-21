@@ -206,8 +206,8 @@ export const strings = {
       measuring: 'QoE value is being measured or calculated.',
       provisional: 'This is a provisional QoE value. The final value is being calculated.',
       error: 'We could not retrieve QoE values due to the lack of measurement data.',
-      frameDrops: 'Actual quality of experience may differ due to frame drops',
-      frameDropsShort: 'Actual quality of experience  may differ',
+      frameDrops: 'Actual quality of experience may differ due to frame drops.',
+      frameDropsShort: 'Actual quality of experience  may differ.',
     },
   },
   settings: {
