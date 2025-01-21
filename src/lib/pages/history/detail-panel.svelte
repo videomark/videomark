@@ -60,7 +60,7 @@
               </Alert>
             </div>
           {:else}
-            <a href={url} target="_blank" title={$_('history.detail.playAgain')}>
+            <a href={url} target="_blank" aria-label={$_('history.detail.playAgain')}>
               <VideoThumbnail src={thumbnail} />
             </a>
           {/if}
