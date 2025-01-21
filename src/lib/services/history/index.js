@@ -50,7 +50,7 @@ export const viewingHistory = writable(undefined, (set) => {
   // ステートを初期化
   (async () => {
     const _viewingHistory = await Promise.all(
-      (await historyRecordsDB.entries()).map(async ([key, item]) => {
+      (await historyRecordsDB.entries()).map(async ([sKey, item]) => {
         const {
           playbackId,
           sessionId,
@@ -66,7 +66,7 @@ export const viewingHistory = writable(undefined, (set) => {
         const { hostname } = new URL(url);
 
         return {
-          key,
+          key: Number(sKey),
           playbackId,
           sessionId,
           viewingId: [playbackId, sessionId].join('_'),
@@ -324,7 +324,7 @@ const addMissingData = async () => {
       );
 
       missingQoeValueItems.forEach(({ key }, index) => {
-        newValueMap[key].finalQoe = results[index]?.finalQoe ?? -2;
+        newValueMap[key].qoe = results[index]?.qoe ?? -2;
       });
     } catch (ex) {
       // eslint-disable-next-line no-console
@@ -348,12 +348,21 @@ const addMissingData = async () => {
 
   // メモリキャッシュを更新
   viewingHistory.update((history) => {
-    Object.entries(newValueMap).forEach(([key, obj]) => {
+    Object.entries(newValueMap).forEach(([sKey, obj]) => {
       if (Object.keys(obj).length) {
+        const key = Number(sKey);
         const historyItem = history.find((item) => item.key === key);
 
         if (historyItem) {
-          Object.assign(historyItem, obj);
+          const { qoe, region } = obj;
+
+          if (qoe !== undefined) {
+            historyItem.stats.finalQoe = qoe;
+          }
+
+          if (region !== undefined) {
+            historyItem.region = region;
+          }
         }
       }
     });
@@ -362,8 +371,9 @@ const addMissingData = async () => {
   });
 
   // ストレージの内容も更新
-  Object.entries(newValueMap).forEach(async ([key, obj]) => {
+  Object.entries(newValueMap).forEach(async ([sKey, obj]) => {
     if (Object.keys(obj).length) {
+      const key = Number(sKey);
       const historyItem = await historyRecordsDB.get(key);
 
       if (historyItem) {
