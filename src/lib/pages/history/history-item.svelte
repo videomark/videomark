@@ -3,6 +3,7 @@
   import { waitForVisibility } from '@sveltia/utils/element';
   import { onMount } from 'svelte';
   import { _ } from 'svelte-i18n';
+  import VideoThumbnail from '$lib/pages/history/video-thumbnail.svelte';
   import { completeViewingHistoryItem, viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { goto, openTab } from '$lib/services/navigation';
@@ -70,7 +71,7 @@
     }}
   >
     <div class="hero">
-      <img loading="lazy" class="thumbnail" src={thumbnail} alt="" />
+      <VideoThumbnail src={thumbnail} />
     </div>
     <div class="actions close-popup">
       {#if platform?.deprecated}
@@ -186,14 +187,6 @@
     position: relative;
     overflow: hidden;
     aspect-ratio: 16 / 9;
-
-    .thumbnail {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      background-color: var(--sui-video-background-color);
-      transition: all 0.5s;
-    }
   }
 
   .body {
@@ -249,7 +242,7 @@
     .item {
       &:hover,
       &:active {
-        .primary .thumbnail {
+        .primary :global(.thumbnail) {
           transform: scale(110%);
         }
       }
