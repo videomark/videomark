@@ -6,6 +6,8 @@ import { videoPlatforms } from '../video-platforms';
 
 // 保持する最大履歴アイテム数
 const maxItems = 10000;
+// 確定 QoE の計算待ちタイムアウト (1 時間)
+const qoeCalcTimeout = 1000 * 60 * 60;
 
 /**
  * 有効な計測・計算ステータスのリスト。
@@ -316,6 +318,7 @@ export const deleteScheduledItems = async () => {
  * キャッシュされていない QoE 値と地域のデータを追加。
  */
 const addMissingData = async () => {
+  const now = Date.now();
   const _viewingHistory = get(viewingHistory);
   const newValueMap = Object.fromEntries(_viewingHistory.map(({ key }) => [key, {}]));
 
@@ -333,8 +336,15 @@ const addMissingData = async () => {
         missingQoeValueItems.map(({ playbackId, sessionId }) => ({ playbackId, sessionId })),
       );
 
-      missingQoeValueItems.forEach(({ key }, index) => {
-        newValueMap[key].qoe = results[index]?.qoe ?? -2;
+      missingQoeValueItems.forEach(({ key, startTime }, index) => {
+        let qoe = results[index]?.qoe ?? -2;
+
+        // 1 時間以上経っても結果が得られない場合はエラー扱いとする
+        if (qoe === -1 && now - startTime > qoeCalcTimeout) {
+          qoe = -2;
+        }
+
+        newValueMap[key].qoe = qoe;
       });
     } catch (ex) {
       // eslint-disable-next-line no-console

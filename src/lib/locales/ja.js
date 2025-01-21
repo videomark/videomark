@@ -207,7 +207,7 @@ export const strings = {
       measuringShort: '計測中...',
       measuring: 'QoE 値を計測または計算中です。',
       provisional: 'これは暫定 QoE 値です。確定値は計算中です。',
-      error: '計測データ不足のため QoE 値が得られませんでした。',
+      error: '計測データ不足あるいはその他の理由により QoE 値を取得できませんでした。',
       frameDrops: 'フレームドロップが発生したため実際の体感品質とは異なる可能性があります。',
       frameDropsShort: '実際の体感品質とは異なる可能性があります。',
     },
