@@ -2,6 +2,7 @@
   import { Alert, Button, Drawer, Group, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
   import QualityBar from '$lib/pages/history/quality-bar.svelte';
+  import VideoThumbnail from '$lib/pages/history/video-thumbnail.svelte';
   import { getHourlyQoe, getRegionalQoe } from '$lib/services/aggregations';
   import {
     completeViewingHistoryItem,
@@ -52,15 +53,15 @@
       <header>
         <div class="thumbnail">
           {#if platform?.deprecated}
-            <img src={thumbnail} alt="" />
+            <VideoThumbnail src={thumbnail} />
             <div class="overlay">
               <Alert status="error" aria-live="off" --font-size="var(--sui-font-size-small)">
                 {$_('history.detail.platformDeprecated')}
               </Alert>
             </div>
           {:else}
-            <a href={url} target="_blank">
-              <img src={thumbnail} alt={$_('history.detail.playAgain')} />
+            <a href={url} target="_blank" aria-label={$_('history.detail.playAgain')}>
+              <VideoThumbnail src={thumbnail} />
             </a>
           {/if}
         </div>
@@ -250,13 +251,8 @@
         display: block;
       }
 
-      img {
-        display: block;
-        width: 100%;
+      :global(.thumbnail) {
         border-radius: 4px;
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
-        background-color: var(--video-background-color);
       }
     }
 
