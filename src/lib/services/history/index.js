@@ -184,7 +184,7 @@ export const viewingHistoryRegions = derived([viewingHistory], ([history], set) 
   }
 
   const newRegions = currentRegions.length
-    ? regions.filter((r) => currentRegions.includes(r))
+    ? regions.filter((r) => !currentRegions.includes(r))
     : regions;
 
   // 検索条件が上書きされるのを防ぐため、新たに追加された地域のみ条件に追加
