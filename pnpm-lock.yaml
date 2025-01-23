@@ -20,6 +20,9 @@ importers:
       '@videomark/sparkline':
         specifier: github:videomark/sparkline
         version: https://codeload.github.com/videomark/sparkline/tar.gz/da263f1f1429787c606fe5885c9b85518472f4c2
+      fast-equals:
+        specifier: ^5.2.2
+        version: 5.2.2
       m3u8-parser:
         specifier: ^7.2.0
         version: 7.2.0

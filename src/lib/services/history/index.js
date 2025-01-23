@@ -1,3 +1,4 @@
+import { deepEqual } from 'fast-equals';
 import { derived, get, writable } from 'svelte/store';
 import { deleteHistoryItems, fetchFinalQoeValues, fetchViewerRegion } from '$lib/services/api';
 import { historyRecordsDB, historyStatsDB } from '$lib/services/history/database';
@@ -146,8 +147,10 @@ export const completeViewingHistoryItem = async (historyItem) => {
 
 /**
  * 閲覧履歴の地域リストのステート。
+ * @type {import('svelte/store').Readable<string[]>}
  */
-export const viewingHistoryRegions = derived([viewingHistory], ([history]) => {
+export const viewingHistoryRegions = derived([viewingHistory], ([history], set) => {
+  const currentRegions = get(viewingHistoryRegions) ?? [];
   const regions = [];
   let hasUnknown = false;
 
@@ -175,25 +178,51 @@ export const viewingHistoryRegions = derived([viewingHistory], ([history]) => {
     regions.push('unknown');
   }
 
-  searchCriteria.update((criteria) => ({ ...criteria, regions }));
+  // 地域は `addMissingData` で後から追加される場合があるので、ストアの内容と比較
+  if (deepEqual(currentRegions, regions)) {
+    return;
+  }
 
-  return regions;
+  const newRegions = currentRegions.length
+    ? regions.filter((r) => currentRegions.includes(r))
+    : regions;
+
+  // 検索条件が上書きされるのを防ぐため、新たに追加された地域のみ条件に追加
+  if (newRegions.length) {
+    searchCriteria.update((criteria) => ({
+      ...criteria,
+      regions: [...criteria.regions, ...newRegions],
+    }));
+  }
+
+  set(regions);
 });
 
 /**
  * 閲覧履歴の配信元リストのステート。
+ * @type {import('svelte/store').Readable<string[]>}
  */
-export const viewingHistorySources = derived([viewingHistory], ([history]) => {
+export const viewingHistorySources = derived([viewingHistory], ([history], set) => {
+  const currentSources = get(viewingHistorySources) ?? [];
+
+  // 配信元は地域と異なり後から追加されることはないので、ストアが満たされていれば更新しない
+  // @todo 動画再生時に検索結果を自動的に追加する仕様に変更した場合、配信元が後から追加されることがありうるので、
+  // その際は地域と同じく `deepEqual` を使った判定に置き換えること
+  if (currentSources?.length) {
+    return;
+  }
+
   const sources = [...new Set(history.map(({ platform }) => platform?.id))];
 
   sources.sort();
   searchCriteria.update((criteria) => ({ ...criteria, sources }));
 
-  return sources;
+  set(sources);
 });
 
 /**
  * 閲覧履歴の検索結果のステート。
+ * @type {import('svelte/store').Readable<HistoryItem[]>}
  */
 export const searchResults = derived([searchCriteria, viewingHistory], (states) => {
   const [criteria, historyItems] = states;
