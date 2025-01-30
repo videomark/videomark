@@ -5,7 +5,10 @@ class NetflixTypeHandler extends GeneralTypeHandler {
   /** @param {HTMLVideoElement} elm */
   constructor(elm) {
     super(elm);
-    this.elm = elm;
+
+    if (!this.is_main_video(elm)) {
+      throw new Error('video is not main');
+    }
   }
 
   /**
@@ -158,8 +161,8 @@ class NetflixTypeHandler extends GeneralTypeHandler {
     const metadata = this.#videoMetadata;
 
     return (
-      metadata.getEpisodeThumbnail()?.url ??
-      metadata.toVideoData().artwork[0]?.url ??
+      metadata._video.stills?.[0]?.url ??
+      metadata._video.artwork?.[0]?.url ??
       'https://assets.nflxext.com/en_us/pages/wiplayer/logo_v3.svg'
     );
   }
