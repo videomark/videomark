@@ -431,6 +431,10 @@ Config.ui.abematv = {
   .c-tv-NowOnAirContainer__news-container--sidenav-expanded ~ .com-tv-TVScreen #${Config.ui.id} {
     left: 196px;
   }
+  /* ミニプレーヤー内ではオーバーレイが見切れるので非表示に */
+  .com-vod-VODMiniPlayerWrapper__player--mini #${Config.ui.id} {
+    display: none;
+  }
   @media (any-pointer: fine) {
     :is(.com-tv-TVScreen, .com-vod-VODScreen-container):not(:hover) > #${Config.ui.id} {
       opacity: 0;
