@@ -12,7 +12,7 @@ export default class AbemaTVVideoTypeHandler extends GeneralTypeHandler {
       throw new Error('video is not main');
     }
 
-    const target = document.querySelector('.c-vod-EpisodePlayerContainer-screen');
+    const target = document.querySelector('.com-vod-VODScreen-container');
 
     this.adObserver = new AdObserver(this, target);
   }

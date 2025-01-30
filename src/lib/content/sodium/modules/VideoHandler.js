@@ -50,16 +50,18 @@ export default class VideoHandler {
       this.service = 'lemino';
       console.log('Lemino Type Handler');
     } else if (url.host === 'abema.tv') {
-      if (url.pathname.split('/').indexOf('video') >= 0) {
+      const { segment } = url.pathname.match(/^\/(?<segment>.+?)\//)?.groups ?? {};
+
+      if (segment === 'channels' || segment === 'video') {
         this.handler = new AbemaTVVideoTypeHandler(elm);
         this.service = 'abematv_video';
         console.log('Abema TV Video Type Handler');
-      } else if (url.pathname.split('/').some((name) => name === 'now-on-air')) {
+      } else if (segment === 'now-on-air') {
         this.handler = new AbemaTVLiveTypeHandler(elm);
         this.service = 'abematv_live';
         this.calQoeFlg = true;
         console.log('Abema TV Live Type Handler');
-      } else if (url.pathname.split('/').some((name) => name === 'live-event')) {
+      } else if (segment === 'live-event') {
         this.handler = new AbemaTVLiveEventTypeHandler(elm);
         this.service = 'abematv_live_event';
         this.calQoeFlg = true;
