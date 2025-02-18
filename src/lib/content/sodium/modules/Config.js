@@ -395,11 +395,11 @@ Config.ui.nhkondemand = {
 // Lemino
 Config.ui.lemino = {
   target: `.fullscreen`,
-  // 左上動画タイトルと被るので右上に表示
+  // 左上動画タイトルと被るので右上「閉じる」ボタン下に表示
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
-  inset: 12px 60px auto auto;
+  inset: 60px 16px auto auto;
   transition: 200ms;
 }
 @media (any-pointer: fine) {
