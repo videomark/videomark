@@ -44,15 +44,14 @@ export default class AbemaTVVideoTypeHandler extends GeneralTypeHandler {
     }
   }
 
+  /**
+   * 広告が再生中かどうかの判定。広告自体は `iframe` で挿入されており、本編再生中も削除されないが、以下のいずれかの
+   * クラスが本編動画のラッパー `div` に対して追加されることを確認済み:
+   * `.c-vod-EpisodePlayerContainer-screen--playing-ad` (オンデマンド)
+   * `.c-tv-TimeshiftPlayerContainerView--playing-ad` (見逃し視聴)
+   * @returns {boolean} 判定結果。
+   */
   is_cm() {
-    try {
-      const ad = Array.from(
-        document.querySelectorAll('.c-vod-EpisodePlayerContainer-screen--playing-ad'),
-      );
-
-      return ad.length !== 0;
-    } catch (e) {
-      return false;
-    }
+    return !!document.querySelector('[class*="--playing-ad"]');
   }
 }
