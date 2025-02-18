@@ -12,10 +12,7 @@ export default class LeminoTypeHandler extends GeneralTypeHandler {
   }
 
   is_main_video(video) {
-    return (
-      video ===
-      /** @type {HTMLVideoElement} */ (document.querySelector('video:not([title="Advertisement"])'))
-    );
+    return video.matches('[src^="blob:"]:not([title="Advertisement"])');
   }
 
   is_cm() {
