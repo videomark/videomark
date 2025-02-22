@@ -1,148 +1,181 @@
-export default class TVerTypeHandler {
+import GeneralTypeHandler from './GeneralTypeHandler';
+
+export default class TVerLiveTypeHandler extends GeneralTypeHandler {
   /**
-   * video.js 動画プレイヤーへの参照。
    * @type {object}
    */
-  static get #videoPlayer() {
-    if (!videojs?.getPlayers) {
-      return undefined;
-    }
-
-    const players = videojs.getPlayers();
-    const [key] = Object.keys(players);
-
-    if (!key) {
-      return undefined;
-    }
-
-    return players[key];
+  get #player() {
+    return window.streaksplayer.getPlayers().vjs_video_3;
   }
 
   /**
-   * 再生中の動画スラッグ。内部的な UUID ではなく URL `https://tver.jp/episodes/XXXXX` から取得。
-   * @type {string}
+   * @type {object | undefined}
    */
-  static get #videoSlug() {
-    return window.location.pathname.split('/').pop();
+  get #qualityLevel() {
+    return this.#player.qualityLevels().levels_.find(({ enabled }) => enabled);
   }
 
-  static get_duration() {
-    const duration = this.#videoPlayer.duration();
-
-    return duration && Number.isFinite(duration) ? duration : -1;
+  /**
+   * @type {boolean}
+   */
+  get #isLive() {
+    return window.location.pathname.startsWith('/live/');
   }
 
-  static get_video_width() {
-    const play_list = TVerTypeHandler.get_playlists();
+  /**
+   * @returns {number}
+   */
+  get_duration() {
+    const duration = this.#player.duration();
 
-    const {
-      attributes: {
-        RESOLUTION: { width },
-      },
-    } = play_list;
+    if (duration && Number.isFinite(duration)) {
+      return duration;
+    }
 
-    return width;
-  }
-
-  static get_video_height() {
-    const play_list = TVerTypeHandler.get_playlists();
-
-    const {
-      attributes: {
-        RESOLUTION: { height },
-      },
-    } = play_list;
-
-    return height;
-  }
-
-  static get_bitrate() {
-    const play_list = TVerTypeHandler.get_playlists();
-
-    return play_list.attributes.BANDWIDTH;
-  }
-
-  static get_receive_buffer() {
-    return this.#videoPlayer.bufferedEnd();
-  }
-
-  static get_framerate() {
     return -1;
   }
 
-  static get_segment_domain() {
-    const play_list = TVerTypeHandler.get_playlists();
-    const { segments } = play_list;
+  /**
+   * @returns {number}
+   */
+  get_video_width() {
+    return this.#qualityLevel?.width ?? this.elm.videoWidth;
+  }
 
-    if (!segments) {
-      return null;
+  /**
+   * @returns {number}
+   */
+  get_video_height() {
+    return this.#qualityLevel?.height ?? this.elm.videoHeight;
+  }
+
+  /**
+   * @returns {number}
+   */
+  get_bitrate() {
+    return this.#qualityLevel?.bitrate ?? -1;
+  }
+
+  /**
+   * @returns {number}
+   */
+  get_framerate() {
+    return this.#qualityLevel?.representation.frameRate ?? -1;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get_segment_domain() {
+    const url = this.#qualityLevel?.representation.playlist.resolvedUri;
+
+    if (url) {
+      return new URL(url).hostname;
     }
 
-    const last = segments[segments.length - 1];
-
-    return new URL(last.resolvedUri).hostname;
+    return document.domain;
   }
 
-  static get_current_time(video) {
-    if (!TVerTypeHandler.is_main_video(video)) {
-      return -1;
-    }
+  /**
+   * @returns {string}
+   */
+  get_video_title() {
+    const containerText = document.querySelector('[class^="titles_container__"]')?.innerText;
 
-    return this.#videoPlayer.currentTime();
-  }
+    if (containerText) {
+      const [series, title] = containerText.split('\n');
 
-  static get_video_title() {
-    return this.#videoPlayer.mediainfo.name;
-  }
-
-  static get_video_thumbnail() {
-    const ogImage = document.querySelector('meta[property="og:image"]')?.content ?? '';
-
-    if (ogImage && ogImage !== 'https://tver.jp/img/ogimg.png') {
-      return ogImage;
-    }
-
-    return `https://statics.tver.jp/images/content/thumbnail/episode/small/${this.#videoSlug}.jpg`;
-  }
-
-  static is_main_video(video) {
-    return !this.#videoPlayer.ima3.el.contains(video);
-  }
-
-  static is_cm() {
-    const adVideoNodeList = this.#videoPlayer.ima3.el.getElementsByTagName('video');
-
-    return Array.from(adVideoNodeList).some((e) => e.parentNode.style.display === 'block');
-  }
-
-  static get_playlists() {
-    if (this.#videoPlayer.tech_.hls) {
-      return this.#videoPlayer.tech_.hls.selectPlaylist();
-    }
-
-    if (this.#videoPlayer.tech_.vhs) {
-      return this.#videoPlayer.tech_.vhs.playlists.media_;
-    }
-
-    return null;
-  }
-
-  static is_tver_type() {
-    try {
-      if (
-        !!this.#videoPlayer &&
-        !!this.#videoPlayer.ima3?.el &&
-        !!this.#videoPlayer.tech_?.hls?.selectPlaylist &&
-        !!this.#videoPlayer.bufferedEnd &&
-        !!this.#videoPlayer.duration &&
-        !!this.#videoPlayer.currentTime
-      ) {
-        return true;
+      if (series === title) {
+        return title;
       }
 
-      return false;
-    } catch (e) {
-      return false;
+      return [series, title].join(' – ');
     }
+
+    return document.title;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get_video_thumbnail() {
+    const id = this.get_id_by_video_holder();
+    const type = this.#isLive ? 'live' : 'episode';
+
+    if (id) {
+      return `https://statics.tver.jp/images/content/thumbnail/${type}/small/${id}.jpg`;
+    }
+
+    return document.querySelector('meta[property="og:image"]')?.content ?? '';
+  }
+
+  /**
+   * @returns {string | undefined}
+   */
+  get_id_by_video_holder() {
+    const id = window.location.pathname.match(/^\/(?:episodes|live\/(?:special|simul))\/(.+)/)?.[1];
+
+    if (id) {
+      return id;
+    }
+
+    // リアルタイム配信のうち各局のトップページでは URL から ID を取得できないので、コンテンツ内から取得
+    const episodeURL = document.querySelector('a[class^="episode-row_container"]')?.href;
+
+    if (episodeURL) {
+      return episodeURL.split('/').pop();
+    }
+
+    return undefined;
+  }
+
+  /**
+   * @returns {object}
+   */
+  get_codec_info() {
+    const { codecs } = this.#qualityLevel?.representation ?? {};
+
+    if (!codecs) {
+      return {};
+    }
+
+    return {
+      audio: { container: null, codec: codecs.audio },
+      video: { container: null, codec: codecs.video },
+    };
+  }
+
+  /**
+   * @returns {object}
+   */
+  get_representation() {
+    const {
+      bitrate,
+      representation: { bandwidth, codecs, frameRate, width, height },
+    } = this.#qualityLevel;
+
+    return {
+      bandwidth,
+      codec: codecs.video,
+      framerate: frameRate,
+      height,
+      width,
+      bitrate,
+    };
+  }
+
+  /**
+   * @param {HTMLVideoElement} video
+   * @returns {boolean}
+   */
+  is_main_video(video) {
+    return video.matches('#vjs_video_3:not(.vjs-paused) video');
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  is_cm() {
+    return !!document.querySelector('#vjs_video_3.vjs-ad-playing');
   }
 }

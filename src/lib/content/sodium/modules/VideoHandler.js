@@ -2,9 +2,9 @@ import AbemaTVLiveEventTypeHandler from './AbemaTVLiveEventTypeHandler';
 import AbemaTVLiveTypeHandler from './AbemaTVLiveTypeHandler';
 import AbemaTVVideoTypeHandler from './AbemaTVVideoTypeHandler';
 import AmazonPrimeVideoTypeHandler from './AmazonPrimeVideoTypeHandler';
-import LeminoTypeHandler from './LeminoTypeHandler';
 import FodTypeHandler from './FodTypeHandler';
 import IIJTypeHandler from './IIJTypeHandler';
+import LeminoTypeHandler from './LeminoTypeHandler';
 import NHKOndemandTypeHandler from './NHKOndemandTypeHandler';
 import NetflixTypeHandler from './NetflixTypeHandler';
 import NicoLiveTypeHandler from './NicoLiveTypeHandler';
@@ -19,16 +19,16 @@ export default class VideoHandler {
 
     const url = new URL(window.location.href);
 
-    if (TVerTypeHandler.is_tver_type()) {
-      this.handler = TVerTypeHandler;
-      this.calQoeFlg = true;
-      this.service = 'tver';
-      console.log('TVer Type Handler');
-    } else if (YouTubeTypeHandler.is_youtube_type()) {
+    if (YouTubeTypeHandler.is_youtube_type()) {
       this.handler = new YouTubeTypeHandler(elm);
       this.calQoeFlg = true;
       this.service = 'youtube';
       console.log('YouTube Type Handler');
+    } else if (url.host === 'tver.jp') {
+      this.handler = new TVerTypeHandler(elm);
+      this.calQoeFlg = true;
+      this.service = 'tver';
+      console.log('TVer Type Handler');
     } else if (url.host === 'www.nicovideo.jp') {
       this.handler = new NicoVideoTypeHandler(elm);
       this.service = 'nicovideo';
