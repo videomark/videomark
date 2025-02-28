@@ -21,17 +21,17 @@
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
-  let openResetDialog = false;
-  let loadedSettings;
-  let expiries = [];
+  let openResetDialog = $state(false);
+  let loadedSettings = $state();
+  let expiries = $state([]);
   /** 動画の最大計測単位(ミリ秒単位) */
-  let maxVideoTTLs = [];
-  let resolutions = [];
-  let bitrates = [];
-  let quotaMarks = [];
-  let timeRanges = [];
+  let maxVideoTTLs = $state([]);
+  let resolutions = $state([]);
+  let bitrates = $state([]);
+  let quotaMarks = $state([]);
+  let timeRanges = $state([]);
 
-  $: {
+  $effect(() => {
     if ($locale) {
       expiries = [0, 1, 30, 365].map((v) => ({
         value: v * 24 * 60 * 60 * 1000,
@@ -84,21 +84,21 @@
         label: Object.entries($json('settings.clearDialog.timeRangeOptions'))[index][1],
       }));
     }
-  }
+  });
 
-  const clearHistoryItems = {
+  const clearHistoryItems = $state({
     range: 0,
     settings: false,
     sessionId: false,
     graphCache: false,
     history: false,
-  };
+  });
 
-  $: {
+  $effect(() => {
     if (clearHistoryItems.history) {
       clearHistoryItems.graphCache = true;
     }
-  }
+  });
 
   const clearHistory = async () => {
     if (clearHistoryItems.settings) {
@@ -151,25 +151,46 @@
     }
   });
 
-  $: {
+  $effect(() => {
     // 自動計測向けの初期設定
     const bot = new URLSearchParams(window.location.search).get('bot') === 'true';
 
     if ($settings.show_latest_qoe_enabled && bot) {
       $settings.show_latest_qoe_enabled = false;
     }
-  }
+  });
 
-  $: $session.type = getSessionType($session.id);
-  $: $session.expires = Date.now() + $settings.expires_in;
+  $effect(() => {
+    const type = getSessionType($session.id);
+
+    // Prevent infinite loop
+    if ($session.type !== type) {
+      $session.type = type;
+    }
+  });
+
+  $effect(() => {
+    const expires = Date.now() + $settings.expires_in;
+
+    // Prevent infinite loop
+    if ($session.expires !== expires) {
+      $session.expires = expires;
+    }
+  });
 </script>
 
 <DefaultLayout compact={true}>
-  <h1 slot="header">{$_('settings.title')}</h1>
-  <Button slot="header-extras" variant="ghost" on:click={() => goBack('#/history')}>
-    <Icon slot="start-icon" name="arrow_back" />
-    {$_('settings.backToHistory')}
-  </Button>
+  {#snippet header()}
+    <h1>{$_('settings.title')}</h1>
+  {/snippet}
+  {#snippet headerExtras()}
+    <Button variant="ghost" onclick={() => goBack('#/history')}>
+      {#snippet startIcon()}
+        <Icon name="arrow_back" />
+      {/snippet}
+      {$_('settings.backToHistory')}
+    </Button>
+  {/snippet}
   <div class="settings">
     <section>
       <header>
@@ -208,7 +229,7 @@
       </header>
       <div
         role="none"
-        on:click={(e) => {
+        onclick={(e) => {
           // 自動計測向けのセッション ID の設定機能
           if (e.detail === 3) {
             // eslint-disable-next-line no-alert
@@ -240,7 +261,7 @@
       <SettingItem title={$_('settings.clearData')}>
         <Button
           variant="tertiary"
-          on:click={() => {
+          onclick={() => {
             openResetDialog = true;
           }}
         >
@@ -290,7 +311,7 @@
                 value === ($settings.resolution_control_enabled ? $settings.resolution_control : 0),
             )?.label}
             bind:value={$settings.resolution_control}
-            on:change={({ detail: { value } }) => {
+            onChange={({ detail: { value } }) => {
               $settings.resolution_control_enabled = value > 0;
             }}
           >
@@ -312,7 +333,7 @@
                 value === ($settings.bitrate_control_enabled ? $settings.bitrate_control : 0),
             )?.label}
             bind:value={$settings.bitrate_control}
-            on:change={({ detail: { value } }) => {
+            onChange={({ detail: { value } }) => {
               $settings.bitrate_control_enabled = value > 0;
             }}
           >
@@ -334,7 +355,7 @@
                 value === ($settings.control_by_traffic_volume ? $settings.browser_quota : 0),
             )?.label}
             bind:value={$settings.browser_quota}
-            on:change={({ detail: { value } }) => {
+            onChange={({ detail: { value } }) => {
               $settings.control_by_traffic_volume = value > 0;
             }}
           >
@@ -358,7 +379,7 @@
             )?.label}
             bind:value={$settings.browser_quota_bitrate}
             disabled={!$settings.control_by_traffic_volume}
-            on:change={({ detail: { value } }) => {
+            onChange={({ detail: { value } }) => {
               $settings.control_by_browser_quota = value > 0;
             }}
           >
@@ -385,7 +406,7 @@
   bind:open={openResetDialog}
   okLabel={$_('settings.clearDialog.confirm')}
   okDisabled={!Object.values(clearHistoryItems).some((v) => v)}
-  on:ok={() => {
+  onOk={() => {
     clearHistory();
   }}
 >

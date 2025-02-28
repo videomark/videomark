@@ -16,6 +16,8 @@
     settings: Settings,
   };
 
+  const CurrentPage = $derived(pages[$selectedPageName]);
+
   const selectPage = () => {
     const [, pageName] =
       window.location.hash.match(new RegExp(`^#\\/(${Object.keys(pages).join('|')})\\b`)) || [];
@@ -35,11 +37,11 @@
   initAppLocales(chrome.i18n.getUILanguage());
 </script>
 
-<svelte:window on:hashchange={() => selectPage()} />
+<svelte:window onhashchange={() => selectPage()} />
 
 {#if !$isLoading && $locale}
   <AppShell>
-    <svelte:component this={pages[$selectedPageName]} />
+    <CurrentPage />
   </AppShell>
 {/if}
 

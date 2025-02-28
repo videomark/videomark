@@ -5,19 +5,21 @@
   import { formatStats } from '$lib/services/stats';
 
   /**
-   * 最新の統計情報。
-   * @type {{ [key: string]: number | { [key: string]: number } }}
+   * @typedef {Object} Props
+   * @property {{ [key: string]: number | { [key: string]: number } }} [stats] - 最新の統計情報。
+   * @property {{ [key: string]: number[] }} [log] - これまでの統計情報。
    */
-  export let stats = {};
 
-  /**
-   * これまでの統計情報。
-   * @type {{ [key: string]: number[] }}
-   */
-  export let log = {};
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    stats = {},
+    log = {},
+    /* eslint-enable prefer-const */
+  } = $props();
 
-  $: ({ isLowQuality } = stats);
-  $: formattedStats = formatStats($locale, stats);
+  const { isLowQuality } = $derived(stats);
+  const formattedStats = $derived(formatStats($locale, stats));
 </script>
 
 <table>

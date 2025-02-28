@@ -3,40 +3,46 @@ import { historyRecordsDB, historyStatsDB } from '$lib/services/history/database
 import { openTab } from '$lib/services/navigation';
 import { isMobile } from '$lib/services/runtime';
 import { SCHEMA_VERSION, storage } from '$lib/services/storage';
-import { videoPlatformHostREs } from '$lib/services/video-platforms';
+import { videoPlatformHosts } from '$lib/services/video-platforms';
 
-/**
- * content_scripts の許可されているOriginかどうか判定
- * @param {string} origin
- * @return {boolean}
- */
-const isPermittedOrigin = (origin) =>
-  videoPlatformHostREs.some((re) => re.test(origin.replace('https://', '')));
+(async () => {
+  if ((await chrome.declarativeNetRequest.getDynamicRules()).length) {
+    return;
+  }
 
-// `webRequestBlocking` パーミッションは Manifest v3 では使用不可。以下はまだ `declarativeNetRequest` が
-// 実装されていない Firefox 向け後方互換。 @see https://bugzilla.mozilla.org/1687755
-if (typeof chrome.declarativeNetRequest === 'undefined') {
-  chrome.webRequest.onHeadersReceived.addListener(
-    // Firefox の古いバージョンは Chrome と同じ `initiator` を実装しているが、新しいバージョンでは `originUrl`
-    // に置き換わっているので、両方に対応する
-    ({ originUrl, initiator = new URL(originUrl).origin, responseHeaders }) => {
-      const additionalHeaders = [
-        isPermittedOrigin(initiator) && {
-          name: 'Timing-Allow-Origin',
-          value: initiator,
+  await chrome.declarativeNetRequest.updateDynamicRules({
+    addRules: [
+      {
+        id: 1,
+        priority: 1,
+        action: {
+          type: 'modifyHeaders',
+          responseHeaders: [{ header: 'Timing-Allow-Origin', operation: 'set', value: '*' }],
         },
-      ].filter(Boolean);
-
-      return { responseHeaders: [...responseHeaders, ...additionalHeaders] };
-    },
-    { urls: ['<all_urls>'] },
-    // Chrome 79 以降では、`blocking`、`responseHeaders` に加えて `extraHeaders` オプションが必要。ただし、
-    // これを付けると Firefox でリスナー自体が動作しなくなるため注意が必要。
-    // @see https://groups.google.com/a/chromium.org/g/extensions-dev/c/WAycYvTuZno
-    // @see https://stackoverflow.com/q/66265032
-    Object.values(chrome.webRequest.OnHeadersReceivedOptions),
-  );
-}
+        condition: {
+          initiatorDomains: videoPlatformHosts.map((host) => host.replace(/^\*\./, '')),
+        },
+      },
+      // Svelte が出力するコードに `innerHTML` が含まれることがあり、これが YouTube で設定されている
+      // `Content-Security-Policy: require-trusted-types-for 'script'` に抵触し、「This document
+      // requires 'TrustedHTML' assignment」というエラーを生む原因となる。これを回避するため CSP を削除する。
+      // @see https://github.com/sveltejs/svelte/issues/10826
+      // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for
+      {
+        id: 2,
+        priority: 1,
+        action: {
+          type: 'modifyHeaders',
+          responseHeaders: [{ header: 'Content-Security-Policy', operation: 'remove' }],
+        },
+        condition: {
+          urlFilter: 'https://*.youtube.com',
+          resourceTypes: ['main_frame'],
+        },
+      },
+    ],
+  });
+})();
 
 chrome.webRequest.onResponseStarted.addListener(
   async (details) => {

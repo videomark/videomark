@@ -116,13 +116,3 @@ export const videoPlatformHosts = videoPlatforms
   .map(({ hosts }) => hosts)
   .flat(1)
   .sort();
-
-/**
- * 現在対応している動画プラットフォームのホスト名正規表現リスト。
- * @type {RegExp[]}
- */
-export const videoPlatformHostREs = videoPlatforms
-  .filter(({ deprecated }) => !deprecated)
-  .map(({ hostREs }) => hostREs)
-  .flat(1)
-  .sort();

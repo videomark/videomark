@@ -74,23 +74,25 @@
     $searchCriteria.dateRange[1] = end ? getYMD(end) : '';
   };
 
-  let selectedDateRange = 'all';
-  let startDateInput;
-  let endDateInput;
+  let selectedDateRange = $state('all');
+  let startDateInput = $state();
+  let endDateInput = $state();
 
-  $: {
+  $effect(() => {
     if (endDateInput && $searchCriteria.dateRange) {
       [endDateInput.min] = $searchCriteria.dateRange;
     }
-  }
+  });
 
-  $: {
+  $effect(() => {
     if (startDateInput && $searchCriteria.dateRange) {
       [, startDateInput.max] = $searchCriteria.dateRange;
     }
-  }
+  });
 
-  $: updateDateRange(selectedDateRange);
+  $effect(() => {
+    updateDateRange(selectedDateRange);
+  });
 </script>
 
 <FilterItem
@@ -100,7 +102,7 @@
   <div class="row">
     <RadioGroup
       orientation="vertical"
-      on:change={({ detail: { value } }) => {
+      onChange={({ detail: { value } }) => {
         selectedDateRange = value;
       }}
     >
@@ -123,7 +125,7 @@
           type="date"
           bind:this={startDateInput}
           bind:value={$searchCriteria.dateRange[0]}
-          on:click|stopPropagation
+          onclick={(event) => event.stopPropagation()}
         />
       </div>
     </div>
@@ -136,7 +138,7 @@
           type="date"
           bind:this={endDateInput}
           bind:value={$searchCriteria.dateRange[1]}
-          on:click|stopPropagation
+          onclick={(event) => event.stopPropagation()}
         />
       </div>
     </div>

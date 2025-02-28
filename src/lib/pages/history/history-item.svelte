@@ -9,23 +9,29 @@
   import { goto, openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
 
-  /** @type {HistoryItem} */
-  export let historyItem = {};
-  export let horizontal = false;
-
   /**
-   * 指定された履歴の動画が再生中かどうか。
-   * @type {boolean}
+   * @typedef {Object} Props
+   * @property {HistoryItem} [historyItem] - 履歴アイテム。
+   * @property {boolean} [horizontal] - レイアウトを横並びにするかどうか。
+   * @property {boolean} [playing] - 指定された履歴の動画が再生中かどうか。
    */
-  export let playing = false;
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    historyItem = {},
+    horizontal = false,
+    playing = false,
+    /* eslint-enable prefer-const */
+  } = $props();
 
   /**
    * @type {HTMLElement}
    */
-  let itemWrapper;
+  let itemWrapper = $state();
 
-  $: ({ key, platform, url, title, thumbnail, startTime, stats } = historyItem);
-  $: ({ calculable, provisionalQoe, finalQoe, isLowQuality } = stats);
+  const { key, platform, url, title, thumbnail, startTime, stats } = $derived(historyItem);
+  const { calculable, provisionalQoe, finalQoe, isLowQuality } = $derived(stats);
 
   const playAgain = () => {
     if (!platform?.deprecated) {
@@ -61,10 +67,11 @@
     class="primary hover"
     tabindex="0"
     role="button"
-    on:click|stopPropagation={() => {
+    onclick={(event) => {
+      event.stopPropagation();
       playAgain();
     }}
-    on:keydown={(event) => {
+    onkeydown={(event) => {
       if (event.key === 'Enter') {
         playAgain();
       }
@@ -84,7 +91,9 @@
           size={horizontal ? 'small' : 'medium'}
           class="close-popup play-again"
         >
-          <Icon slot="start-icon" name="play_circle" />
+          {#snippet startIcon()}
+            <Icon name="play_circle" />
+          {/snippet}
           <span class="label">
             {#if playing}
               {$_('history.detail.switchToTab')}
@@ -100,10 +109,11 @@
     class="secondary hover"
     tabindex="0"
     role="button"
-    on:click|stopPropagation={() => {
+    onclick={(event) => {
+      event.stopPropagation();
       viewStats();
     }}
-    on:keydown={(event) => {
+    onkeydown={(event) => {
       if (event.key === 'Enter') {
         viewStats();
       }
@@ -141,7 +151,9 @@
           size={horizontal ? 'small' : 'medium'}
           class="close-popup view-stats"
         >
-          <Icon slot="start-icon" name="monitoring" />
+          {#snippet startIcon()}
+            <Icon name="monitoring" />
+          {/snippet}
           <span class="label">
             {$_('history.detail.viewStats')}
           </span>

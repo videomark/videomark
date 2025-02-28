@@ -6,7 +6,9 @@
   import { toggleListItem } from '$lib/services/utils';
   import { videoPlatforms } from '$lib/services/video-platforms';
 
-  $: platformIds = videoPlatforms.filter(({ experimental }) => !experimental).map(({ id }) => id);
+  const platformIds = $derived(
+    videoPlatforms.filter(({ experimental }) => !experimental).map(({ id }) => id),
+  );
 </script>
 
 <FilterItem
@@ -19,7 +21,7 @@
         variant="tertiary"
         size="small"
         disabled={$searchCriteria.sources.length === platformIds.length}
-        on:click={() => {
+        onclick={() => {
           $searchCriteria.sources = [...platformIds];
         }}
       >
@@ -29,7 +31,7 @@
         variant="tertiary"
         size="small"
         disabled={!$searchCriteria.sources.length}
-        on:click={() => {
+        onclick={() => {
           $searchCriteria.sources = [];
         }}
       >
@@ -44,7 +46,7 @@
           value={source}
           disabled={!$viewingHistorySources.includes(source)}
           checked={$searchCriteria.sources.includes(source)}
-          on:change={({ detail: { checked } }) => {
+          onChange={({ detail: { checked } }) => {
             $searchCriteria.sources = toggleListItem($searchCriteria.sources, source, checked);
           }}
         >
