@@ -32,12 +32,7 @@
   });
 </script>
 
-<!--
-  ホストされているドキュメントとウェブコンポーネントの両方で CSS を読み込むことで、ウェブコンポーネント内でフォントが
-  読み込まれない問題を回避。
-  @see https://github.com/google/material-design-icons/issues/1165
--->
-<svelte:head>
+{#snippet stylesheets()}
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Mono&display=swap"
@@ -46,16 +41,18 @@
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
   />
+{/snippet}
+
+<!--
+  ホストされているドキュメントとウェブコンポーネントの両方で CSS を読み込むことで、ウェブコンポーネント内でフォントが
+  読み込まれない問題を回避。
+  @see https://github.com/google/material-design-icons/issues/1165
+-->
+<svelte:head>
+  {@render stylesheets()}
 </svelte:head>
 
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Mono&display=swap"
-/>
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
-/>
+{@render stylesheets()}
 
 <div
   role="button"
