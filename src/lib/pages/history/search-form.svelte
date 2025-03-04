@@ -9,8 +9,16 @@
   import { searchCriteria } from '$lib/services/history';
   import { isSmallScreen } from '$lib/services/runtime';
 
-  let showDrawer = false;
+  let showDrawer = $state(false);
 </script>
+
+{#snippet filters()}
+  <DateFilter />
+  <SourceFilter />
+  <RegionFilter />
+  <QualityFilter />
+  <TimeFilter />
+{/snippet}
 
 <div class="search" role="search">
   <div class="terms">
@@ -19,7 +27,7 @@
       <Button
         iconic
         aria-label={$_('history.search.filters.show_filters')}
-        on:click={() => {
+        onclick={() => {
           showDrawer = !showDrawer;
         }}
       >
@@ -35,19 +43,11 @@
       title={$_('history.search.filters.filters')}
       keepContent={true}
     >
-      <DateFilter />
-      <SourceFilter />
-      <RegionFilter />
-      <QualityFilter />
-      <TimeFilter />
+      {@render filters()}
     </Drawer>
   {:else}
     <Toolbar aria-label={$_('history.search.filters.filters')}>
-      <DateFilter />
-      <SourceFilter />
-      <RegionFilter />
-      <QualityFilter />
-      <TimeFilter />
+      {@render filters()}
     </Toolbar>
   {/if}
 </div>

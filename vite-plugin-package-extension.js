@@ -82,7 +82,6 @@ const packageFirefoxExtension = async () => {
       declarative_net_request: undefined,
     });
   });
-  await rm(`${distPathFirefox}/request_rules.json`);
   await makeArchive(distPathFirefox, `${distPath}/vm-${mode}-firefox.xpi`);
 };
 
@@ -99,24 +98,12 @@ export default function packageExtension() {
       async: true,
       sequential: true,
       handler: async () => {
-        if ((await readFile(`${distPathTemp}/scripts/sodium.js`, 'utf-8')).includes('innerHTML')) {
-          throw new Error(
-            `sodium.js contains innerHTML, which may cause a problem on YouTube due to CSP ` +
-              `require-trusted-types-for 'script'.`,
-          );
-        }
-
         console.log('Packaging started.');
 
         await updateJSON(`${distPathTemp}/manifest.json`, (obj) => {
           obj.version = version;
           obj.content_scripts[0].matches = videoPlatformHosts
             .map((host) => `https://${host}/*`)
-            .sort();
-        });
-        await updateJSON(`${distPathTemp}/request_rules.json`, (obj) => {
-          obj[0].condition.initiatorDomains = videoPlatformHosts
-            .map((host) => host.replace(/^\*\./, ''))
             .sort();
         });
         await Promise.all([packageChromeExtension(), packageFirefoxExtension()]);

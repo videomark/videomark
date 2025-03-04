@@ -5,7 +5,7 @@ export default function scroll(node) {
   const callback = (entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) {
-        e.target.dispatchEvent(new CustomEvent('infiniteScroll'));
+        e.target.dispatchEvent(new CustomEvent('InfiniteScroll'));
       }
     });
   };

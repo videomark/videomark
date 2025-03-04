@@ -10,8 +10,8 @@
   import { viewingHistory } from '$lib/services/history';
 
   /** @type {HistoryItem[]} */
-  let historyItems = [];
-  let showDialog = false;
+  let historyItems = $state([]);
+  let showDialog = $state(false);
 
   /**
    * 現在の URL ハッシュを確認して、動画キーが見つかった場合は統計データ詳細パネルを開く。動画キーをハッシュの一部と
@@ -33,34 +33,36 @@
     }
   };
 
-  $: {
+  $effect(() => {
     if ($viewingHistory?.length) {
       (async () => {
         await tick();
         checkHash();
       })();
     }
-  }
+  });
 </script>
 
-<svelte:window on:hashchange={() => checkHash()} />
+<svelte:window onhashchange={() => checkHash()} />
 
-<!-- 以下レイアウトが重複しているが、ひとつにしてネストさせると `slot` が使えないので別々のままにする -->
 {#if $viewingHistory}
-  {#if $viewingHistory.length}
-    <DefaultLayout>
-      <SearchForm slot="header" />
-      <SettingsButton slot="header-extras" />
+  <DefaultLayout>
+    {#snippet header()}
+      {#if $viewingHistory.length}
+        <SearchForm />
+      {/if}
+    {/snippet}
+    {#snippet headerExtras()}
+      <SettingsButton />
+    {/snippet}
+    {#if $viewingHistory.length}
       <SearchResults />
-    </DefaultLayout>
-  {:else}
-    <DefaultLayout>
-      <SettingsButton slot="header-extras" />
+    {:else}
       <OnboardingWrapper>
         <NoHistory />
       </OnboardingWrapper>
-    </DefaultLayout>
-  {/if}
+    {/if}
+  </DefaultLayout>
 {/if}
 
 <DetailPanel bind:open={showDialog} {historyItems} />

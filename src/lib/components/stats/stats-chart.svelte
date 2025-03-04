@@ -2,30 +2,32 @@
   import sparkline from '@videomark/sparkline';
 
   /**
-   * プロパティ名。例: `bitrate`
-   * @type {string}
+   * @typedef {Object} Props
+   * @property {string} [prop] - プロパティ名。例: `bitrate`
+   * @property {number[]} [chartData] - チャートに表示する一連のデータ。
    */
-  export let prop = '';
 
-  /**
-   * チャートに表示する一連のデータ。
-   * @type {number[]}
-   */
-  export let chartData = [];
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    prop = '',
+    chartData = [],
+    /* eslint-enable prefer-const */
+  } = $props();
 
   /**
    * チャートを表示する SVG 要素。
    * @type {SVGElement}
    */
-  let chartElement;
+  let chartElement = $state();
 
-  $: chartOptions = { qoe: { min: 1.0, max: 5.0 } }[prop];
+  const chartOptions = $derived({ qoe: { min: 1.0, max: 5.0 } }[prop]);
 
-  $: {
+  $effect(() => {
     if (chartElement && chartData.length) {
       sparkline(chartElement, chartData, chartOptions);
     }
-  }
+  });
 </script>
 
 <svg role="none" data-prop={prop} bind:this={chartElement} />

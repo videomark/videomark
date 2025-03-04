@@ -1,5 +1,4 @@
 <script>
-  import { derived } from 'svelte/store';
   import NotFound from '$lib/pages/history/not-found.svelte';
   import { searchCriteria, searchResults } from '$lib/services/history';
   import scroll from '$lib/services/infinite-scroll';
@@ -7,15 +6,12 @@
   import HistoryItem from './history-item.svelte';
 
   const resultGroupSize = 50; // constant number of results in each rendered group
-  let currentResultGroups = 1; // number of groups to be rendered
+  let currentResultGroups = $state(1); // number of groups to be rendered
 
-  $: showDuplicates = $settings.show_duplicate_videos;
-  $: searchTerms = $searchCriteria.terms.trim();
-
+  const showDuplicates = $derived($settings.show_duplicate_videos);
+  const searchTerms = $derived($searchCriteria.terms.trim());
   // creating a smaller derived array from $searchResults
-  $: subSearchResults = derived(searchResults, ($searchResults) =>
-    $searchResults.slice(0, resultGroupSize * currentResultGroups),
-  );
+  const subSearchResults = $derived($searchResults.slice(0, resultGroupSize * currentResultGroups));
 
   const renderScroll = () => {
     if (resultGroupSize * currentResultGroups < $searchResults.length) {
@@ -24,17 +20,17 @@
   };
 </script>
 
-{#if $subSearchResults.length}
+{#if subSearchResults.length}
   <div class="grid">
-    {#each $subSearchResults as historyItem, index (historyItem.key)}
-      {@const firstIndex = $subSearchResults.findIndex(({ url }) => url === historyItem.url)}
+    {#each subSearchResults as historyItem, index (historyItem.key)}
+      {@const firstIndex = subSearchResults.findIndex(({ url }) => url === historyItem.url)}
       {#if showDuplicates || firstIndex === index}
         <HistoryItem {historyItem} />
       {/if}
     {/each}
   </div>
-  {#if $subSearchResults.length < $searchResults.length}
-    <div class="loading" use:scroll on:infiniteScroll={renderScroll}></div>
+  {#if subSearchResults.length < $searchResults.length}
+    <div class="loading" use:scroll onInfiniteScroll={renderScroll}></div>
   {/if}
 {:else}
   <NotFound {searchTerms} />

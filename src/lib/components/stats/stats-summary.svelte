@@ -3,15 +3,25 @@
   import { _ } from 'svelte-i18n';
 
   /**
-   * 最新の統計情報。
-   * @type {{ [key: string]: number | { [key: string]: number } }}
+   * @typedef {Object} Props
+   * @property {{ [key: string]: number | { [key: string]: number } }} [stats] - 最新の統計情報。
    */
-  export let stats = {};
 
-  $: ({ qoe } = stats);
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    stats = {},
+    /* eslint-enable prefer-const */
+  } = $props();
+
+  const qoe = $derived(stats.qoe);
 </script>
 
-<summary on:click|preventDefault>
+<summary
+  onclick={(event) => {
+    event.preventDefault();
+  }}
+>
   <div class="label">
     {#if Number.isFinite(qoe)}
       <span class="qoe">{qoe.toFixed(2)}</span>

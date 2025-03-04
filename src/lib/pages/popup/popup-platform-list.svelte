@@ -12,8 +12,10 @@
 </div>
 {#if $viewingHistory?.length}
   <footer>
-    <Button on:click={() => goBack('#/popup')}>
-      <Icon slot="start-icon" name="arrow_back" />
+    <Button onclick={() => goBack('#/popup')}>
+      {#snippet startIcon()}
+        <Icon name="arrow_back" />
+      {/snippet}
       {$_('popup.backToHistory')}
     </Button>
   </footer>

@@ -39,6 +39,7 @@ export default defineConfig({
       emitCss: false,
       compilerOptions: {
         customElement: true,
+        runes: true,
       },
     }),
     packageExtension(),

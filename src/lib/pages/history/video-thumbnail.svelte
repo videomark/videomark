@@ -1,6 +1,15 @@
 <script>
-  /** @type {string | undefined} */
-  export let src;
+  /**
+   * @typedef {Object} Props
+   * @property {string} [src] - サムネイルとして表示する画像の URL。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    src = $bindable(),
+    /* eslint-enable prefer-const */
+  } = $props();
 </script>
 
 {#if src}
@@ -9,7 +18,7 @@
     {src}
     alt=""
     class="thumbnail"
-    on:error={() => {
+    onerror={() => {
       src = '';
     }}
   />

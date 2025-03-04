@@ -16,9 +16,19 @@
   import { isSmallScreen } from '$lib/services/runtime';
   import { formatStats } from '$lib/services/stats';
 
-  export let open = false;
-  /** @type {HistoryItem[]} */
-  export let historyItems = [];
+  /**
+   * @typedef {Object} Props
+   * @property {boolean} [open] - パネルが開かれているかどうか。
+   * @property {HistoryItem[]} [historyItems] - 履歴アイテムのリスト。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    open = $bindable(false),
+    historyItems = [],
+    /* eslint-enable prefer-const */
+  } = $props();
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
@@ -30,13 +40,13 @@
     });
   };
 
-  $: [{ platform, url, title, thumbnail } = {}] = historyItems;
+  const [{ platform, url, title, thumbnail } = {}] = $derived(historyItems);
 
-  $: {
+  $effect(() => {
     if (open) {
       completeHistory();
     }
-  }
+  });
 </script>
 
 <Drawer
@@ -44,7 +54,7 @@
   size="medium"
   position={$isSmallScreen ? 'bottom' : 'right'}
   lightDismiss={true}
-  on:close={() => {
+  onClose={() => {
     goto('#/history', { replaceState: true });
   }}
 >
@@ -78,9 +88,11 @@
               <Button
                 variant="tertiary"
                 label={$_('history.detail.deleteAll')}
-                on:click={() => deleteItemsLater(historyItems.map(({ key }) => key))}
+                onclick={() => deleteItemsLater(historyItems.map(({ key }) => key))}
               >
-                <Icon slot="start-icon" name="delete_sweep" />
+                {#snippet startIcon()}
+                  <Icon name="delete_sweep" />
+                {/snippet}
               </Button>
             </div>
           {/if}
@@ -100,9 +112,11 @@
                   iconic
                   disabled={deleted}
                   aria-label={$_('history.detail.delete')}
-                  on:click={() => deleteItemsLater([key])}
+                  onclick={() => deleteItemsLater([key])}
                 >
-                  <Icon slot="start-icon" name="delete" />
+                  {#snippet startIcon()}
+                    <Icon name="delete" />
+                  {/snippet}
                 </Button>
               </div>
             </div>
@@ -113,7 +127,7 @@
                     {$_('stats.qoeWatching')}
                     <Button
                       aria-label={$_('stats.whatIsQOE')}
-                      on:click={() =>
+                      onclick={() =>
                         openTab(
                           `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
                         )}
@@ -211,10 +225,10 @@
               <div class="deleted-overlay" inert={!deleted || undefined}>
                 <p>{$_('history.detail.deleted.description')}</p>
                 <div class="buttons">
-                  <Button variant="tertiary" on:click={() => undoDeletingItems([key])}>
+                  <Button variant="tertiary" onclick={() => undoDeletingItems([key])}>
                     {$_('history.detail.deleted.restore')}
                   </Button>
-                  <Button variant="tertiary" on:click={() => deleteItemsNow([key])}>
+                  <Button variant="tertiary" onclick={() => deleteItemsNow([key])}>
                     {$_('history.detail.deleted.deleteNow')}
                   </Button>
                 </div>
@@ -363,6 +377,9 @@
 
       & + div {
         flex: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
       }
     }
   }

@@ -16,7 +16,7 @@
         variant="tertiary"
         size="small"
         disabled={$searchCriteria.regions.length === $viewingHistoryRegions.length}
-        on:click={() => {
+        onclick={() => {
           $searchCriteria.regions = [...$viewingHistoryRegions];
         }}
       >
@@ -26,7 +26,7 @@
         variant="tertiary"
         size="small"
         disabled={!$searchCriteria.regions.length}
-        on:click={() => {
+        onclick={() => {
           $searchCriteria.regions = [];
         }}
       >
@@ -40,7 +40,7 @@
         <Checkbox
           value={region}
           checked={$searchCriteria.regions.includes(region)}
-          on:change={({ detail: { checked } }) => {
+          onChange={({ detail: { checked } }) => {
             $searchCriteria.regions = toggleListItem($searchCriteria.regions, region, checked);
           }}
         >

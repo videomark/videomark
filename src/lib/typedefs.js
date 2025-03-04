@@ -4,9 +4,9 @@
  * @property {string} id 固有の ID。
  * @property {string} url サービス URL。
  * @property {string} brandColor ブランドカラー。
- * @property {string[]} hosts サービスのホスト名リスト。`manifest.json` や `request_rules.json` など複数
- * 箇所で利用され、自動的に正規表現やドメインのみの表記に変換される。サブドメインが複数ある場合はワイルドカードを使うこ
- * とも可能。例えば `*.youtube.com` は `youtube.com` とそのサブドメインすべてに一致する。
+ * @property {string[]} hosts サービスのホスト名リスト。`manifest.json` や declarativeNetRequest API など
+ * 複数箇所で利用され、自動的にドメインのみの表記にも変換される。サブドメインが複数ある場合はワイルドカードを使うことも
+ * 可能。例えば `*.youtube.com` は `youtube.com` とそのサブドメインすべてに一致する。
  * @property {RegExp[]} hostREs 正規表現で表したサービスのホスト名リスト。`hosts` のワイルドカード表記より細かい
  * 設定が可能。指定されていない場合は `hosts` を自動的に正規表現に変換して使用。
  * @property {boolean} [deprecated] 廃止されたサービスは `true`。

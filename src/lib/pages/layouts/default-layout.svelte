@@ -2,27 +2,44 @@
   import { Spacer } from '@sveltia/ui';
   import Wordmark from '$lib/pages/common/wordmark.svelte';
 
-  export let compact = false;
+  /**
+   * @typedef {Object} Props
+   * @property {boolean} [compact] - コンパクトなレイアウトを使用するかどうか。
+   * @property {import('svelte').Snippet} [header] - ヘッダーに表示するコンテンツ。
+   * @property {import('svelte').Snippet} [headerExtras] - ヘッダーに付加するコンテンツ。
+   * @property {import('svelte').Snippet} [children] - メインコンテンツ。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    compact = false,
+    header = undefined,
+    headerExtras = undefined,
+    children = undefined,
+    /* eslint-enable prefer-const */
+  } = $props();
 </script>
 
 <div class="wrapper" class:compact>
   <header>
     <h1><Wordmark /></h1>
-    <slot name="header" />
-    {#if $$slots['header-extras']}
+    {@render header?.()}
+    {#if headerExtras}
       <Spacer flex={true} />
       <div class="extras">
-        <slot name="header-extras" />
+        {@render headerExtras()}
       </div>
     {/if}
   </header>
   <div class="content">
-    <slot />
+    {@render children?.()}
   </div>
 </div>
 
 <style lang="scss">
   .wrapper {
+    flex: auto;
     display: flex;
     flex-direction: column;
     overflow: hidden;

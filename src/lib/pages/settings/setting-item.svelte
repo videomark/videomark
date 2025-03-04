@@ -1,11 +1,26 @@
 <script>
-  /** @type {string} */
-  export let id;
-  export let title = '';
-  export let description = '';
+  /**
+   * @typedef {Object} Props
+   * @property {string} id - 設定項目 ID。
+   * @property {string} [title] - タイトル。
+   * @property {string} [description] - 説明文。
+   * @property {string} [class] - セクションに付加するクラス名。
+   * @property {import('svelte').Snippet} [children] - メインコンテンツ。
+   */
+
+  /** @type {Props & Record<string, any>} */
+  let {
+    /* eslint-disable prefer-const */
+    id,
+    title = '',
+    description = '',
+    class: className = undefined,
+    children = undefined,
+    /* eslint-enable prefer-const */
+  } = $props();
 </script>
 
-<section id={id ? `setting-${id}` : undefined} {...$$restProps}>
+<section id={id ? `setting-${id}` : undefined} class={className}>
   <div class="row">
     <div>
       <h3 id={id ? `setting-${id}-title` : undefined}>{title}</h3>
@@ -14,7 +29,7 @@
       {/if}
     </div>
     <div id={id ? `setting-${id}-value` : undefined}>
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 </section>

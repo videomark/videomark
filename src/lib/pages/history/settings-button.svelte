@@ -8,7 +8,11 @@
   variant="ghost"
   iconic
   aria-label={$_('settings.title')}
-  on:click={() => goto('#/settings')}
+  onclick={() => {
+    goto('#/settings');
+  }}
 >
-  <Icon slot="start-icon" name="settings" />
+  {#snippet startIcon()}
+    <Icon name="settings" />
+  {/snippet}
 </Button>

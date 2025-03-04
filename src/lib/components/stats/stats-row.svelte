@@ -2,28 +2,22 @@
   import StatsChart from '$lib/components/stats/stats-chart.svelte';
 
   /**
-   * プロパティ名。例: `bitrate`
-   * @type {string}
+   * @typedef {Object} Props
+   * @property {string} [prop] - プロパティ名。例: `bitrate`
+   * @property {string} [label] - ラベル。例: "ビットレート"
+   * @property {string} [displayValue] - 表示する値。例: "1,234 kbps"
+   * @property {number[]} [chartData] - チャートに表示する一連のデータ。
    */
-  export let prop = '';
 
-  /**
-   * ラベル。例: "ビットレート"
-   * @type {string}
-   */
-  export let label = '';
-
-  /**
-   * 表示する値。例: "1,234 kbps"
-   * @type {string}
-   */
-  export let displayValue = '';
-
-  /**
-   * チャートに表示する一連のデータ。
-   * @type {number[]}
-   */
-  export let chartData = [];
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    prop = '',
+    label = '',
+    displayValue = '',
+    chartData = [],
+    /* eslint-enable prefer-const */
+  } = $props();
 </script>
 
 {#if displayValue !== null || chartData.some(Boolean)}

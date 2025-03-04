@@ -1,5 +1,19 @@
+<script>
+  /**
+   * @typedef {Object} Props
+   * @property {import('svelte').Snippet} [children] - メインコンテンツ。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    children = undefined,
+    /* eslint-enable prefer-const */
+  } = $props();
+</script>
+
 <div class="onboarding">
-  <slot />
+  {@render children?.()}
 </div>
 
 <style lang="scss">

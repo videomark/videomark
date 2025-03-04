@@ -3,7 +3,17 @@
   import { _ } from 'svelte-i18n';
   import { openTab } from '$lib/services/navigation';
 
-  export let searchTerms = '';
+  /**
+   * @typedef {Object} Props
+   * @property {string} [searchTerms] - 検索キーワード。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    searchTerms = '',
+    /* eslint-enable prefer-const */
+  } = $props();
 </script>
 
 <div class="not-found">
@@ -15,7 +25,7 @@
         variant="primary"
         pill
         class="close-popup"
-        on:click={() => {
+        onclick={() => {
           openTab(
             `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerms)}`,
           );

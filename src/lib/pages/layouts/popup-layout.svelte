@@ -6,6 +6,18 @@
   import { openTab } from '$lib/services/navigation';
   import { isMobile } from '$lib/services/runtime';
 
+  /**
+   * @typedef {Object} Props
+   * @property {import('svelte').Snippet} [children] - メインコンテンツ。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    children = undefined,
+    /* eslint-enable prefer-const */
+  } = $props();
+
   // Adjust the popup size on desktop
   const resizePopup = async () => {
     if (!$isMobile) {
@@ -31,7 +43,7 @@
 <div
   class="wrapper"
   role="none"
-  on:click|capture={(event) => {
+  onclickcapture={(event) => {
     if (!$isMobile && event.target.matches('.close-popup')) {
       // Close the popup (after waiting for a new tab being opened)
       window.setTimeout(() => {
@@ -47,16 +59,19 @@
       iconic
       class="close-popup"
       aria-label={$_('settings.title')}
-      on:click={() => openTab('#/settings')}
+      onclick={() => openTab('#/settings')}
     >
-      <Icon slot="start-icon" name="settings" />
+      {#snippet startIcon()}
+        <Icon name="settings" />
+      {/snippet}
     </Button>
   </header>
-  <slot />
+  {@render children?.()}
 </div>
 
 <style lang="scss">
   .wrapper {
+    flex: auto;
     display: flex;
     flex-direction: column;
     overflow: hidden;
