@@ -29,7 +29,7 @@
     {/each}
   </colgroup>
   {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
-    <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={log[prop]} />
+    <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={[...log[prop]]} />
   {/each}
 </table>
 
