@@ -10,9 +10,10 @@ export const test = base.extend({
     const pathToExtension = new URL('../dist/production-chrome', import.meta.url).pathname;
 
     const context = await chromium.launchPersistentContext('', {
-      headless: true,
+      // Opt-in to new headless
+      // https://github.com/microsoft/playwright/issues/33566
+      channel: 'chromium',
       args: [
-        `--headless=new`,
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
       ],

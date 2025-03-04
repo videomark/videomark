@@ -22,7 +22,9 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
       - run: pnpm install
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps
+      # Opt-in to new headless
+      # https://github.com/microsoft/playwright/issues/33566
+      - run: pnpm exec playwright install --with-deps --no-shell
         if: steps.playwright-cache.outputs.cache-hit != 'true'
       - run: pnpm exec playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
