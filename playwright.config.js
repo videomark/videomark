@@ -16,7 +16,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Opt-in to new headless
+        // https://github.com/microsoft/playwright/issues/33566
+        channel: 'chromium',
+      },
     },
     {
       name: 'firefox',
