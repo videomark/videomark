@@ -6,11 +6,12 @@
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
   const pages = ['visualize', 'dropdown', 'history', 'privacy'];
-  let currentIndex = 0;
 
-  $: currentPage = pages[currentIndex];
-  $: isLastPage = currentIndex === pages.length - 1;
-  $: imageExtension = currentPage === 'privacy' ? 'svg' : `${$locale}.png`;
+  let currentIndex = $state(0);
+
+  const currentPage = $derived(pages[currentIndex]);
+  const isLastPage = $derived(currentIndex === pages.length - 1);
+  const imageExtension = $derived(currentPage === 'privacy' ? 'svg' : `${$locale}.png`);
 
   const agreeTerms = () => {
     storage.set('AgreedTerm', true);
@@ -40,7 +41,7 @@
           size="small"
           pressed={index === currentIndex}
           aria-label={$_(`onboarding.${page}.title`).replace('<wbr>', '')}
-          on:click={() => {
+          onclick={() => {
             currentIndex = index;
           }}
         >
@@ -53,7 +54,7 @@
         <Button
           variant="primary"
           pill
-          on:click={() => {
+          onclick={() => {
             agreeTerms();
           }}
         >
@@ -63,7 +64,7 @@
         <Button
           variant="primary"
           pill
-          on:click={() => {
+          onclick={() => {
             currentIndex += 1;
           }}
         >

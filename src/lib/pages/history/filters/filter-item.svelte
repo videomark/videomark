@@ -2,8 +2,21 @@
   import { Button, Icon } from '@sveltia/ui';
   import { isSmallScreen } from '$lib/services/runtime';
 
-  export let buttonLabel = '';
-  export let dropdownLabel = '';
+  /**
+   * @typedef {Object} Props
+   * @property {string} [buttonLabel] - ボタン上に表示するラベル。
+   * @property {string} [dropdownLabel] - ドロップダウンリスト内に表示するラベル。
+   * @property {import('svelte').Snippet} [children] - ドロップダウンリスト内に表示するコンテンツ。
+   */
+
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    buttonLabel = '',
+    dropdownLabel = '',
+    children = undefined,
+    /* eslint-enable prefer-const */
+  } = $props();
 </script>
 
 {#if $isSmallScreen}
@@ -12,18 +25,22 @@
     <header>
       <h4>{dropdownLabel}</h4>
     </header>
-    <slot />
+    {@render children?.()}
   </section>
 {:else}
   <!-- Shown in a Toolbar -->
   <Button variant="ghost" label={buttonLabel} aria-haspopup="dialog">
-    <Icon slot="end-icon" name="arrow_drop_down" />
-    <section slot="popup">
-      <header>
-        <h4>{dropdownLabel}</h4>
-      </header>
-      <slot />
-    </section>
+    {#snippet endIcon()}
+      <Icon name="arrow_drop_down" />
+    {/snippet}
+    {#snippet popup()}
+      <section>
+        <header>
+          <h4>{dropdownLabel}</h4>
+        </header>
+        {@render children?.()}
+      </section>
+    {/snippet}
   </Button>
 {/if}
 

@@ -1,10 +1,18 @@
 <script>
   /**
-   * QoE 値。最小 1、最大 5。棒グラフは直感的に見て分かりやすいように 0 起点としている。
+   * @typedef {Object} Props
+   * @property {number} [value] - QoE 値。最小 1、最大 5。棒グラフは直感的に見て分かりやすいように 0 起点と
+   * している。
    */
-  export let value = 5;
 
-  $: percent = Number.parseInt(value * 20, 10);
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    value = 5,
+    /* eslint-enable prefer-const */
+  } = $props();
+
+  const percent = $derived(Number.parseInt(value * 20, 10));
 </script>
 
 <div class="base">
@@ -13,7 +21,7 @@
       class="indicator"
       style:width="{percent}%"
       style:background-color="hsl({percent}, 70%, 40%)"
-    />
+    ></div>
   </div>
   <div class="number">{value.toFixed(2)}</div>
 </div>

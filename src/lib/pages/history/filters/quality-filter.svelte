@@ -8,8 +8,8 @@
 
   const { SODIUM_MARKETING_SITE_URL } = import.meta.env;
 
-  let minInputValue = '';
-  let maxInputValue = '';
+  let minInputValue = $state('');
+  let maxInputValue = $state('');
 
   const onSliderUpdate = () => {
     const minValue = $searchCriteria.qualityRange[0].toFixed(2);
@@ -32,9 +32,17 @@
     }
   };
 
-  $: onSliderUpdate($searchCriteria.qualityRange);
-  $: onInputValueUpdate(0, minInputValue);
-  $: onInputValueUpdate(1, maxInputValue);
+  $effect(() => {
+    onSliderUpdate($searchCriteria.qualityRange);
+  });
+
+  $effect(() => {
+    onInputValueUpdate(0, minInputValue);
+  });
+
+  $effect(() => {
+    onInputValueUpdate(1, maxInputValue);
+  });
 </script>
 
 <FilterItem
@@ -73,7 +81,7 @@
         <Checkbox
           value={status}
           checked={$searchCriteria.qualityStatuses.includes(status)}
-          on:change={({ detail: { checked } }) => {
+          onChange={({ detail: { checked } }) => {
             $searchCriteria.qualityStatuses = toggleListItem(
               $searchCriteria.qualityStatuses,
               status,
@@ -89,10 +97,12 @@
   <div class="row">
     <Button
       variant="link"
-      on:click={() =>
+      onclick={() =>
         openTab(`${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`)}
     >
-      <Icon name="help" slot="start-icon" />
+      {#snippet startIcon()}
+        <Icon name="help" />
+      {/snippet}
       {$_('stats.whatIsQOE')}
     </Button>
   </div>

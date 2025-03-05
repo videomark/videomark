@@ -7,19 +7,27 @@
   import { viewingHistory } from '$lib/services/history';
   import { goto, openTab } from '$lib/services/navigation';
 
-  let searchTerms = '';
-  let playingVideos = [];
+  let searchTerms = $state('');
+  let playingVideos = $state([]);
 
-  $: history = $viewingHistory
-    // Remove duplicates
-    .filter((item, index, arr) => arr.findIndex(({ url }) => url === item.url) === index);
-  $: previousVideos = history.filter(({ key }) => !playingVideos.find((v) => v.key === key));
-  $: searchResults = previousVideos
-    .filter(({ title }) =>
-      searchTerms ? title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase()) : true,
-    )
-    // Use the latest 10 items
-    .slice(0, 10);
+  const history = $derived(
+    $viewingHistory
+      // Remove duplicates
+      .filter((item, index, arr) => arr.findIndex(({ url }) => url === item.url) === index),
+  );
+
+  const previousVideos = $derived(
+    history.filter(({ key }) => !playingVideos.find((v) => v.key === key)),
+  );
+
+  const searchResults = $derived(
+    previousVideos
+      .filter(({ title }) =>
+        searchTerms ? title.toLocaleLowerCase().includes(searchTerms.toLocaleLowerCase()) : true,
+      )
+      // Use the latest 10 items
+      .slice(0, 10),
+  );
 
   onMount(() => {
     (async () => {
@@ -64,11 +72,11 @@
   </section>
 {/if}
 <footer>
-  <Button class="close-popup" on:click={() => openTab('#/history')}>
+  <Button class="close-popup" onclick={() => openTab('#/history')}>
     <Icon name="history" />
     {$_('popup.seeAll')}
   </Button>
-  <Button on:click={() => goto('#/popup/platforms')}>
+  <Button onclick={() => goto('#/popup/platforms')}>
     <Icon name="subscriptions" />
     {$_('popup.compatiblePlatforms.title')}
   </Button>

@@ -5,7 +5,7 @@
   import PopupPlatformList from '$lib/pages/popup/popup-platform-list.svelte';
   import { viewingHistory } from '$lib/services/history';
 
-  let currentPage = 'history';
+  let currentPage = $state('history');
 
   const checkHash = () => {
     currentPage = window.location.hash === '#/popup/platforms' ? 'platforms' : 'history';
@@ -16,7 +16,7 @@
   });
 </script>
 
-<svelte:window on:hashchange={() => checkHash()} />
+<svelte:window onhashchange={() => checkHash()} />
 
 <PopupLayout>
   {#if $viewingHistory}

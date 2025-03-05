@@ -6,55 +6,67 @@
   import { initAppLocales } from '$lib/services/i18n';
 
   /**
-   * UI ロケール。
-   * @type {string}
+   * @typedef {Object} Props
+   * @property {string} [locale] - UI ロケール。
+   * @property {{ [key: string]: number | { [key: string]: number } }} [stats] - 最新の統計情報。
+   * @property {{ [key: string]: number[] }} [log] - これまでの統計情報。
    */
-  export let locale = '';
 
-  /**
-   * 最新の統計情報。
-   * @type {{ [key: string]: number | { [key: string]: number } }}
-   */
-  export let stats = {};
-
-  /**
-   * これまでの統計情報。
-   * @type {{ [key: string]: number[] }}
-   */
-  export let log = {};
+  /** @type {Props} */
+  let {
+    /* eslint-disable prefer-const */
+    locale = '',
+    stats = {},
+    log = {},
+    /* eslint-enable prefer-const */
+  } = $props();
 
   /**
    * 詳細情報が表示されているかどうか。
    * @type {boolean}
    */
-  let open = false;
+  let open = $state(false);
 
-  $: initAppLocales(locale);
+  $effect(() => {
+    initAppLocales(locale);
+  });
 </script>
 
-<!--
-  ホストされているページ内で CSS を読み込むことで、ウェブコンポーネント内でフォントが読み込まれない問題を回避。
-  @see https://github.com/google/material-design-icons/issues/1165
--->
-<svelte:head>
+{#snippet stylesheets()}
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Mono&display=swap"
   />
   <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
   />
+{/snippet}
+
+<!--
+  ホストされているドキュメントとウェブコンポーネントの両方で CSS を読み込むことで、ウェブコンポーネント内でフォントが
+  読み込まれない問題を回避。
+  @see https://github.com/google/material-design-icons/issues/1165
+-->
+<svelte:head>
+  {@render stylesheets()}
 </svelte:head>
+
+{@render stylesheets()}
 
 <div
   role="button"
   tabindex="0"
   class="root"
-  on:click|preventDefault|stopPropagation={() => {
+  onclick={(event) => {
+    event.preventDefault();
+    event.stopPropagation();
     open = !open;
   }}
-  on:keydown|preventDefault|stopPropagation={(event) => {
+  onkeydown={(event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (event.key === ' ') {
       open = !open;
     }
@@ -68,10 +80,8 @@
   </details>
 </div>
 
-<!-- svelte-ignore css-unused-selector -->
 <style lang="scss">
-  // stylelint-disable scss/load-partial-extension
-  @use 'node_modules/@sveltia/ui/package/styles/core.scss';
+  @use 'node_modules/@sveltia/ui/dist/styles/core';
 
   :host {
     all: initial;

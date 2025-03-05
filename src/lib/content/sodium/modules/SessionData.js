@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
-import msgpack from 'msgpack-lite';
+import { encode } from '@msgpack/msgpack';
 import { v4 as uuidv4 } from 'uuid';
 import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
 import { version } from '../../../../../package.json';
@@ -38,7 +38,7 @@ import VideoData from './VideoData';
  * @param {Payload} payload
  */
 async function send(payload) {
-  const body = msgpack.encode(JSON.parse(JSON.stringify(payload)));
+  const body = encode(JSON.parse(JSON.stringify(payload)));
 
   if (body.length > Config.get_max_send_size()) {
     console.warn(`VIDEOMARK: Too large payload packed body size is ${body.length}`);
