@@ -7,6 +7,7 @@ settings:
 overrides:
   nanoid@<3.3.8: '>=3.3.8'
   esbuild@<=0.24.2: '>=0.25.0'
+  prismjs@<1.30.0: '>=1.30.0'
 
 importers:
 
@@ -2282,8 +2283,8 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prismjs@1.29.0:
-    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
+  prismjs@1.30.0:
+    resolution: {integrity: sha512-DEvV2ZF2r2/63V+tK8hQvrR2ZGn10srHbXviTlcv7Kpzw8jWiNTqbVgjO3IY8RxrrOUF8VPMQQFysYYYv0YZxw==}
     engines: {node: '>=6'}
 
   process-nextick-args@2.0.1:
@@ -3299,7 +3300,7 @@ snapshots:
     dependencies:
       '@lexical/utils': 0.27.1
       lexical: 0.27.1
-      prismjs: 1.29.0
+      prismjs: 1.30.0
 
   '@lexical/dragon@0.27.1':
     dependencies:
@@ -3545,7 +3546,7 @@ snapshots:
       '@lexical/utils': 0.27.1
       '@sveltia/utils': 0.7.0
       lexical: 0.27.1
-      prismjs: 1.29.0
+      prismjs: 1.30.0
       svelte: 5.22.6
 
   '@sveltia/utils@0.7.0':
@@ -5143,7 +5144,7 @@ snapshots:
 
   prettier@3.5.3: {}
 
-  prismjs@1.29.0: {}
+  prismjs@1.30.0: {}
 
   process-nextick-args@2.0.1: {}
 
