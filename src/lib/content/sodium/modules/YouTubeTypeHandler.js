@@ -1161,3 +1161,27 @@ YouTubeTypeHandler.throughputHistories = [];
 YouTubeTypeHandler.trackingId = null;
 
 export default YouTubeTypeHandler;
+
+/**
+ * 動画コーデックとレプレゼンテーション ID のマッピング。データは以下から取得。
+ * @see https://gist.github.com/MartinEesmaa/2f4b261cb90a47e9c41ba115a011a4aa
+ */
+const codecRepIdMap = {
+  h264: [133, 134, 135, 136, 137, 160, 216, 264, 266, 298, 299, 304, 305, 597],
+  vp8: [167, 168, 169, 170],
+  vp9: [
+    242, 243, 244, 247, 248, 271, 272, 278, 302, 303, 308, 313, 315, 330, 331, 332, 333, 334, 335,
+    336, 337, 598, 612, 616,
+  ],
+  av1: [
+    394, 395, 396, 397, 398, 399, 400, 401, 402, 571, 694, 695, 696, 697, 698, 699, 700, 701, 702,
+  ],
+};
+
+/**
+ * 与えられたレプレゼンテーション ID から動画コーデックを判定。
+ * @param {number} id レプレゼンテーション ID。
+ * @returns {'h264' | 'vp8' | 'vp9' | 'av1' | 'unknown'} コーデック。
+ */
+export const detectVideoCodec = (id) =>
+  Object.entries(codecRepIdMap).find(([, ids]) => ids.includes(id))?.[0] ?? 'unknown';
