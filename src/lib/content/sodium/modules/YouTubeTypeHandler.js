@@ -1184,4 +1184,6 @@ const codecRepIdMap = {
  * @returns {'h264' | 'vp8' | 'vp9' | 'av1' | 'unknown'} コーデック。
  */
 export const detectVideoCodec = (id) =>
-  Object.entries(codecRepIdMap).find(([, ids]) => ids.includes(id))?.[0] ?? 'unknown';
+  /** @type {'h264' | 'vp8' | 'vp9' | 'av1' | undefined} */ (
+    Object.entries(codecRepIdMap).find(([, ids]) => ids.includes(id))?.[0]
+  ) ?? 'unknown';
