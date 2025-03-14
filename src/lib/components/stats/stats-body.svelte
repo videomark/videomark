@@ -18,8 +18,23 @@
     /* eslint-enable prefer-const */
   } = $props();
 
-  const { isLowQuality } = $derived(stats);
+  const { qoe, isLowQuality } = $derived(stats);
   const formattedStats = $derived(formatStats($locale, stats));
+
+  /**
+   * 動画コーデックが H.264 以外 (VP8/VP9/AV1) かどうか。(YouTube のみ)
+   * @type {boolean}
+   */
+  const isNewerCodec = $derived.by(() => {
+    try {
+      const { codecs } = document.querySelector('#movie_player')?.getStatsForNerds() ?? {};
+      const isH264 = codecs?.startsWith('avc1.') ?? false;
+
+      return !isH264;
+    } catch {
+      return false;
+    }
+  });
 </script>
 
 <table>
@@ -33,7 +48,12 @@
   {/each}
 </table>
 
-{#if isLowQuality}
+{#if Number.isFinite(qoe) && isNewerCodec}
+  <div class="note">
+    <Icon name="warning" />
+    {$_('stats.quality.newerCodec')}
+  </div>
+{:else if isLowQuality}
   <div class="note">
     <Icon name="warning" />
     {$_('stats.quality.frameDrops')}

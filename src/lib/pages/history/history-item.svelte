@@ -31,7 +31,7 @@
   let itemWrapper = $state();
 
   const { key, platform, url, title, thumbnail, startTime, stats } = $derived(historyItem);
-  const { calculable, provisionalQoe, finalQoe, isLowQuality } = $derived(stats);
+  const { calculable, provisionalQoe, finalQoe, isNewerCodec, isLowQuality } = $derived(stats);
 
   const playAgain = () => {
     if (!platform?.deprecated) {
@@ -137,7 +137,9 @@
         {:else if finalQoe === -2}
           <Icon name="error" aria-label={$_('stats.quality.error')} />
         {:else}
-          {#if isLowQuality}
+          {#if isNewerCodec}
+            <Icon name="warning" aria-label={$_('stats.quality.newerCodec')} />
+          {:else if isLowQuality}
             <Icon name="warning" aria-label={$_('stats.quality.frameDrops')} />
           {:else}
             <Icon name="equalizer" />

@@ -40,6 +40,7 @@
  * 理由による取得エラーを表す。
  * @property {number} throughput スループット。
  * @property {number} transferSize 転送データ量。
+ * @property {boolean} isNewerCodec 動画コーデックが H.264 以外 (VP8/VP9/AV1) かどうか。(YouTube のみ)
  * @property {boolean} isLowQuality QoE が低品質かどうか。
  */
 

@@ -99,7 +99,7 @@
         </div>
         {#each historyItems as item (item.key)}
           {@const { key, region = {}, startTime, stats } = item}
-          {@const { calculable, provisionalQoe, finalQoe, isLowQuality } = stats}
+          {@const { calculable, provisionalQoe, finalQoe, isNewerCodec, isLowQuality } = stats}
           {@const { country, subdivision } = region ?? {}}
           {@const formattedStats = formatStats($locale, stats)}
           {@const deleted = $deletedHistoryItemKeys.includes(key)}
@@ -161,7 +161,15 @@
                       </Alert>
                     {:else}
                       <QualityBar value={finalQoe} />
-                      {#if isLowQuality}
+                      {#if isNewerCodec}
+                        <Alert
+                          status="warning"
+                          aria-live="off"
+                          --font-size="var(--sui-font-size-small)"
+                        >
+                          {$_('stats.quality.newerCodec')}
+                        </Alert>
+                      {:else if isLowQuality}
                         <Alert
                           status="warning"
                           aria-live="off"
