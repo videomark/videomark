@@ -1,5 +1,6 @@
 import { deepEqual } from 'fast-equals';
 import { derived, get, writable } from 'svelte/store';
+import { detectVideoCodec } from '$lib/content/sodium/modules/YouTubeTypeHandler';
 import { deleteHistoryItems, fetchFinalQoeValues, fetchViewerRegion } from '$lib/services/api';
 import { historyRecordsDB, historyStatsDB } from '$lib/services/history/database';
 import { createStorageSync } from '$lib/services/storage';
@@ -111,6 +112,7 @@ export const viewingHistory = writable(undefined, (set) => {
  */
 export const completeViewingHistoryItem = async (historyItem) => {
   const {
+    platform,
     key,
     stats: { finalQoe },
   } = historyItem;
@@ -127,8 +129,14 @@ export const completeViewingHistoryItem = async (historyItem) => {
 
   const latestStats = logs.findLast(({ quality }) => !!quality)?.quality ?? {};
   const provisionalQoe = logs.findLast(({ qoe }) => typeof qoe === 'number')?.qoe;
-  const { droppedVideoFrames = 0, totalVideoFrames = 0 } = latestStats;
+  const { droppedVideoFrames = 0, totalVideoFrames = 0, representation } = latestStats;
   const isLowQuality = Number.isFinite(finalQoe) && droppedVideoFrames / totalVideoFrames > 0.001;
+
+  const isNewerCodec =
+    platform.id === 'youtube' &&
+    typeof representation?.video === 'string' &&
+    representation.video.match(/^\d+$/) &&
+    detectVideoCodec(Number(representation.video)) !== 'h264';
 
   viewingHistory.update((historyItems) => {
     const index = historyItems.findIndex((item) => item.key === key);
@@ -138,6 +146,7 @@ export const completeViewingHistoryItem = async (historyItem) => {
       throughput: averageThroughput,
       provisionalQoe,
       isLowQuality,
+      isNewerCodec,
       transferSize,
     });
 
