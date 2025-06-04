@@ -168,7 +168,7 @@ export default class Config {
 
     const browser_quota_value /* byte */ = browser_quota
       ? browser_quota /* MiB */ * 1024 * 1024
-      : Infinity;
+      : Number.POSITIVE_INFINITY;
 
     const browser_quota_full =
       control_by_browser_quota && browser_quota_value < (transfer_size[month] || 0);
@@ -524,7 +524,7 @@ Config.quality_control = false;
 
 const currentScript =
   typeof document === 'object' // Vitest 内で例外が投げられるのを回避するためのチェック
-    ? document.querySelector(`script[type="module"][src="${import.meta.url}"]`)
+    ? document.querySelector(`script[type="module"][src^="${new URL(import.meta.url).origin}/"]`)
     : null;
 
 if (currentScript !== null) {
