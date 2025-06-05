@@ -65,13 +65,18 @@ const save_settings = async (new_settings) => {
   storage.set({ settings });
 };
 
-const inject_script = async (opt) => {
-  // --- inject script, to opt.target --- ///
-  const target = document.getElementsByTagName(opt.target)[0];
+/**
+ * スクリプトを指定された要素に挿入する。
+ * @param {Object} args 引数。
+ * @param {string} args.src 挿入するスクリプトの URL。
+ * @param {HTMLElement} args.target スクリプトを挿入するターゲット要素。
+ * @returns {Promise<HTMLScriptElement>} 挿入されたスクリプト要素。
+ */
+const inject_script = async ({ src, target }) => {
   const script = document.createElement('script');
 
   script.setAttribute('type', 'module');
-  script.setAttribute('src', opt.script);
+  script.setAttribute('src', src);
 
   const { session, settings, transfer_size, peak_time_limit } = await storage.get([
     'session',
@@ -225,11 +230,37 @@ storage.get('AgreedTerm').then((value) => {
   window.addEventListener('message', message_listener);
 
   inject_script({
-    script: chrome.runtime.getURL('/scripts/sodium.js'),
-    target: 'body',
+    src: chrome.runtime.getURL('/scripts/sodium.js'),
+    target: document.documentElement,
   });
 });
 
 chrome.runtime.onMessage.addListener((request /* , sender, sendResponse */) => {
   window.postMessage(request, '*');
 });
+
+// YouTube の動画ページで、`fetch` の上書きを禁止しているスクリプトを、実行される前に削除する
+// これにより、`YouTubeTypeHandler` 内の `hook_youtube_fetch()` が正常に動作するようになる
+if (window.location.origin === 'https://www.youtube.com') {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((node) => {
+          if (
+            node.nodeType === Node.ELEMENT_NODE &&
+            node.tagName === 'SCRIPT' &&
+            !node.src &&
+            node.textContent.includes('Object.defineProperty') &&
+            node.textContent.match(/window,\s*['"]fetch['"]/)
+          ) {
+            console.debug('VIDEOMARK: Removing fetch override script from YouTube', node);
+            node.remove();
+            observer.disconnect();
+          }
+        });
+      }
+    });
+  });
+
+  observer.observe(document, { childList: true, subtree: true });
+}
