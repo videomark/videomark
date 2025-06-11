@@ -851,10 +851,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     const { video_id: videoId } = this.player.getVideoData();
     const { origin, pathname } = new URL(url);
 
-    if (
-      origin === 'https://www.youtube.com' &&
-      (pathname === '/' || pathname.startsWith('/embed/'))
-    ) {
+    // トップページ、チャンネルページ、埋め込みページなどで再生された場合は再生ページの URL を返す
+    if (origin === 'https://www.youtube.com' && pathname !== '/watch') {
       return `https://www.youtube.com/watch?v=${videoId}`;
     }
 
