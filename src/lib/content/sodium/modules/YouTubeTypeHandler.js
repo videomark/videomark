@@ -847,12 +847,16 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   get_alt_location(url) {
     const { video_id: videoId } = this.player.getVideoData();
+    const { origin, pathname } = new URL(url);
 
-    if (url === 'https://www.youtube.com/') {
+    if (
+      origin === 'https://www.youtube.com' &&
+      (pathname === '/' || pathname.startsWith('/embed/'))
+    ) {
       return `https://www.youtube.com/watch?v=${videoId}`;
     }
 
-    if (new URL(url).origin === 'https://music.youtube.com') {
+    if (origin === 'https://music.youtube.com') {
       return `https://music.youtube.com/watch?v=${videoId}`;
     }
 
