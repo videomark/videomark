@@ -24,7 +24,7 @@ const validateResults = async ({ page, extensionId }, title) => {
     await expect(qoeLabel).toHaveText(/\b\d\.\d\d\b/);
   }).toPass({ timeout });
 
-  const qoe = await page.locator('#__videomark_ui >> vm-stats >> .qoe').textContent();
+  // const qoe = await page.locator('#__videomark_ui >> vm-stats >> .qoe').textContent();
 
   await openPage({ page, extensionId }, 'history');
   await expect(page.locator('.item .title')).toHaveText(title);

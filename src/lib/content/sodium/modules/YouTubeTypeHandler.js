@@ -397,7 +397,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   /**
-   * @type {HTMLElement | null}
+   * @type {HTMLElement & { getVideoStats: function, getPlayerResponse: function } | null}
    */
   static get video_player() {
     return document.querySelector('#movie_player');
@@ -423,7 +423,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
    * @type {Record<string, any>[]}
    */
   static get normalized_adaptive_formats() {
-    return YouTubeTypeHandler.adaptive_formats.reduce((acc, cur) => {
+    const formats = YouTubeTypeHandler.adaptive_formats.reduce((acc, cur) => {
       const v = Object.assign(cur);
 
       v.bitrate = v.bitrate ? v.bitrate : v.averageBitrate;
@@ -446,6 +446,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
       return acc;
     }, []);
+
+    return /** @type {Record<string, any>[]} */ (formats);
   }
 
   static get_play_list_info() {
