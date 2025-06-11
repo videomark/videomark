@@ -44,7 +44,9 @@
     {/each}
   </colgroup>
   {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
-    <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={[...log[prop]]} />
+    {#if prop !== 'qoe'}
+      <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={[...log[prop]]} />
+    {/if}
   {/each}
 </table>
 
