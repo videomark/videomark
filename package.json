@@ -33,7 +33,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-svelte": "^2.46.1",
-    "postcss": "^8.5.4",
+    "postcss": "^8.5.5",
     "postcss-html": "^1.8.0",
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.4.0",
@@ -70,11 +70,6 @@
     "ignoredBuiltDependencies": [
       "@parcel/watcher",
       "es5-ext"
-    ],
-    "auditConfig": {
-      "ignoreCves": [
-        "CVE-2025-5889"
-      ]
-    }
+    ]
   }
 }
