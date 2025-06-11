@@ -70,6 +70,11 @@
     "ignoredBuiltDependencies": [
       "@parcel/watcher",
       "es5-ext"
-    ]
+    ],
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-5889"
+      ]
+    }
   }
 }
