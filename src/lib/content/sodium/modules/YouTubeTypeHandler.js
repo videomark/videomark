@@ -849,18 +849,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   get_alt_location(url) {
     const { video_id: videoId } = this.player.getVideoData();
-    const { origin, pathname } = new URL(url);
 
-    // トップページ、チャンネルページ、埋め込みページなどで再生された場合は再生ページの URL を返す
-    if (origin === 'https://www.youtube.com' && pathname !== '/watch') {
-      return `https://www.youtube.com/watch?v=${videoId}`;
-    }
-
-    if (origin === 'https://music.youtube.com') {
+    if (new URL(url).origin === 'https://music.youtube.com') {
       return `https://music.youtube.com/watch?v=${videoId}`;
     }
 
-    return '';
+    return `https://www.youtube.com/watch?v=${videoId}`;
   }
 
   is_main_video(video) {
