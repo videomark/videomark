@@ -1,3 +1,4 @@
+import { sleep } from '@sveltia/utils/misc';
 import { get, writable } from 'svelte/store';
 import { isMobile } from '$lib/services/runtime';
 
@@ -43,6 +44,15 @@ export const openTab = async (url) => {
   });
 
   if (currentTab) {
+    if (isInternalPage) {
+      // タブを再読み込み
+      // @todo リアルタイム更新を実装した場合は削除すること
+      await chrome.tabs.reload(currentTab.id);
+      // 再読み込みが完了するまで待機
+      await sleep(100);
+    }
+
+    // タブを切り替え
     await chrome.tabs.update(currentTab.id, {
       url: isInternalPage ? url : undefined, // `undefined` であればタブの URL は維持される
       active: true,
