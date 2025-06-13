@@ -197,10 +197,10 @@ class NetflixTypeHandler extends GeneralTypeHandler {
   }
 
   /**
-   * トラッキング ID などを外した正規 URL を取得。
-   * @returns {string} URL。
+   * トラッキング ID などを外した動画再生ページの正規 URL を取得。(HTML 内に Canonical URL が存在しないため)
+   * @returns {string} 正規化された URL。
    */
-  get_alt_location() {
+  get_canonical_url() {
     return `https://www.netflix.com/watch/${this.#videoId}`;
   }
 

@@ -75,7 +75,17 @@ export default class GeneralTypeHandler {
     return [];
   }
 
-  get_alt_location() {
+  /**
+   * 動画再生ページの正規 URL を取得。HTML 内に Canonical URL が存在せず、トラッキング ID などを外して正規化する
+   * 必要がある場合、サブクラス内で上書きすること。
+   * @param {string} url HTML から取得された Canonical URL か現在のタブの URL。
+   * @returns {string} 正規化された URL。
+   * @abstract
+   */
+  get_canonical_url(url) {
+    // eslint-disable-next-line no-void
+    void url;
+
     return '';
   }
 

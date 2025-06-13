@@ -33,6 +33,20 @@ export default class AmazonPrimeVideoTypeHandler extends GeneralTypeHandler {
     }
   }
 
+  /**
+   * トラッキング ID などを外した動画再生ページの正規 URL を取得。(ページ遷移時に HTML 内の Canonical URL が
+   * 更新されず、存在しなかったり前のページの URL が残ってしまうことがあるため)
+   * @returns {string} 正規化された URL。
+   */
+  get_canonical_url() {
+    const { origin, pathname } = window.location;
+    // 10 桁の ASIN を含むパスから動画 ID を抽出
+    // 例: `/gp/video/detail/B0XXXXXXX/`、`/{作品名}/dp/B0XXXXXXX`
+    const id = pathname.match(/\/([A-Z0-9]{10})(?:\/|$)/)?.[1];
+
+    return id ? `https://www.amazon.co.jp/gp/video/detail/${id}/` : `${origin}${pathname}`;
+  }
+
   /** @param {HTMLVideoElement} video */
   is_main_video(video) {
     try {

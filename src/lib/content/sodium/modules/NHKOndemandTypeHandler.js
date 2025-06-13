@@ -9,6 +9,16 @@ export default class NHKOndemandTypeHandler extends GeneralTypeHandler {
     return null; // for fallback;
   }
 
+  /**
+   * トラッキング ID などを外した動画再生ページの正規 URL を取得。(HTML 内に Canonical URL が存在しないため)
+   * @returns {string} 正規化された URL。
+   */
+  get_canonical_url() {
+    const { origin, pathname } = window.location;
+
+    return `${origin}${pathname}`;
+  }
+
   is_main_video() {
     return true;
   }

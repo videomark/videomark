@@ -992,18 +992,19 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     return { video, audio };
   }
 
-  get_alt_location(url) {
+  /**
+   * 動画の正規 URL を取得する。YouTube ショートには未対応。
+   * @param {string} url HTML から取得された Canonical URL。
+   * @returns {string} 開始秒数やプレイリストなどのクエリ文字列を外した個別動画再生ページの URL。
+   */
+  get_canonical_url(url) {
     const { video_id: videoId } = this.player.getVideoData();
-
-    if (url === 'https://www.youtube.com/') {
-      return `https://www.youtube.com/watch?v=${videoId}`;
-    }
 
     if (new URL(url).origin === 'https://music.youtube.com') {
       return `https://music.youtube.com/watch?v=${videoId}`;
     }
 
-    return '';
+    return `https://www.youtube.com/watch?v=${videoId}`;
   }
 
   is_main_video(video) {
