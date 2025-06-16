@@ -6,42 +6,65 @@ import { SCHEMA_VERSION, storage } from '$lib/services/storage';
 import { videoPlatformHosts } from '$lib/services/video-platforms';
 
 (async () => {
-  if ((await chrome.declarativeNetRequest.getDynamicRules()).length) {
-    return;
+  const currentRules = await chrome.declarativeNetRequest.getDynamicRules();
+  const removeRuleIds = [];
+  const addRules = [];
+
+  // Resource Timing API を有効化するためのルールを追加
+  // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Timing-Allow-Origin
+  if (!currentRules.find((rule) => rule.id === 1)) {
+    addRules.push({
+      id: 1,
+      priority: 1,
+      action: {
+        type: 'modifyHeaders',
+        responseHeaders: [
+          {
+            header: 'Timing-Allow-Origin',
+            operation: 'set',
+            value: '*',
+          },
+        ],
+      },
+      condition: {
+        initiatorDomains: videoPlatformHosts.map((host) => host.replace(/^\*\./, '')),
+      },
+    });
   }
 
-  await chrome.declarativeNetRequest.updateDynamicRules({
-    addRules: [
-      {
-        id: 1,
-        priority: 1,
-        action: {
-          type: 'modifyHeaders',
-          responseHeaders: [{ header: 'Timing-Allow-Origin', operation: 'set', value: '*' }],
-        },
-        condition: {
-          initiatorDomains: videoPlatformHosts.map((host) => host.replace(/^\*\./, '')),
-        },
+  // YouTube の埋め込みに対応していなかった古いルールを削除。以下のルール 3 に置き換え
+  if (currentRules.find((rule) => rule.id === 2)) {
+    removeRuleIds.push(2);
+  }
+
+  // Svelte が出力するコードに `innerHTML` が含まれることがあり、これが YouTube で設定されている CSP
+  // `require-trusted-types-for 'script'` に抵触し、`This document requires 'TrustedHTML' assignment`
+  // というエラーを生む原因となる。これを回避するため CSP を削除する。
+  // @see https://github.com/sveltejs/svelte/issues/10826
+  // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for
+  if (!currentRules.find((rule) => rule.id === 3)) {
+    addRules.push({
+      id: 3,
+      priority: 1,
+      action: {
+        type: 'modifyHeaders',
+        responseHeaders: [
+          {
+            header: 'Content-Security-Policy',
+            operation: 'remove',
+          },
+        ],
       },
-      // Svelte が出力するコードに `innerHTML` が含まれることがあり、これが YouTube で設定されている
-      // `Content-Security-Policy: require-trusted-types-for 'script'` に抵触し、「This document
-      // requires 'TrustedHTML' assignment」というエラーを生む原因となる。これを回避するため CSP を削除する。
-      // @see https://github.com/sveltejs/svelte/issues/10826
-      // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for
-      {
-        id: 2,
-        priority: 1,
-        action: {
-          type: 'modifyHeaders',
-          responseHeaders: [{ header: 'Content-Security-Policy', operation: 'remove' }],
-        },
-        condition: {
-          urlFilter: 'https://*.youtube.com',
-          resourceTypes: ['main_frame'],
-        },
+      condition: {
+        regexFilter: '^https://.+\\.youtube(-nocookie)?\\.com/',
+        resourceTypes: ['main_frame', 'sub_frame'],
       },
-    ],
-  });
+    });
+  }
+
+  if (removeRuleIds.length || addRules.length) {
+    await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
+  }
 })();
 
 chrome.webRequest.onResponseStarted.addListener(
