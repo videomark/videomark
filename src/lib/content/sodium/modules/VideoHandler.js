@@ -276,12 +276,13 @@ export default class VideoHandler {
     return video.getVideoPlaybackQuality().droppedVideoFrames;
   }
 
-  get_alt_location(url) {
-    if (typeof this.handler.get_alt_location === 'function') {
-      return this.handler.get_alt_location(url);
-    }
-
-    return '';
+  /**
+   * 動画再生ページの正規 URL を取得。
+   * @param {string} url HTML から取得された Canonical URL か現在のタブの URL。
+   * @returns {string} 正規化された URL。
+   */
+  get_canonical_url(url) {
+    return this.handler.get_canonical_url?.(url) ?? '';
   }
 
   is_main_video(video) {

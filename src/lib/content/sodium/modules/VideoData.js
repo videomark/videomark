@@ -147,6 +147,19 @@ export default class VideoData {
     return this.uuid;
   }
 
+  /**
+   * 動画 URL を取得する。Canonical URL を優先して取得し、取得できない場合は現在の URL を返す。
+   * @returns {string} 動画再生ページの URL。
+   * @see https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls
+   */
+  get_url() {
+    const url =
+      /** @type {HTMLLinkElement} */ (document.querySelector('link[rel="canonical"]'))?.href ||
+      window.location.href;
+
+    return this.video_handler.get_canonical_url(url) || url;
+  }
+
   get_title() {
     return this.title;
   }

@@ -513,10 +513,7 @@ export default class SessionData {
 
     await storage.save({
       userAgent: this.userAgent,
-      location:
-        this.alt_location ||
-        video.video_handler.get_alt_location(this.location.href) ||
-        this.location.href,
+      location: this.alt_location || video.get_url(),
       mediaSize: video.get_media_size(),
       domain: video.get_domain_name(),
       startTime: video.get_start_time(),
@@ -564,10 +561,7 @@ export default class SessionData {
       endTime: this.endTime,
       session: this.session.id,
       sessionType: this.session.type,
-      location:
-        this.alt_location ||
-        video.video_handler.get_alt_location(this.location.href) ||
-        this.location.href,
+      location: this.alt_location || video.get_url(),
       locationIp: this.hostToIp[this.location.host],
       userAgent: this.userAgent,
       sequence: this.sequence,
