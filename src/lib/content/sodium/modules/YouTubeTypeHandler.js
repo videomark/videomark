@@ -10,15 +10,18 @@ import ResourceTiming from './ResourceTiming';
  * @return {boolean} YouTube動画リソースの場合: true、それ以外: false
  */
 function isYouTubeVideoResource(url) {
+  const { host, pathname, searchParams } = url;
+
   return (
-    /** 動画視聴ページ */
-    (url.host === 'www.youtube.com' &&
-      url.pathname.endsWith('watch') &&
-      Boolean(url.searchParams.get('v'))) ||
-    /** get_video_info */
-    (url.host === 'www.youtube.com' && url.pathname.endsWith('get_video_info')) ||
-    /** 動画のチャンク */
-    (url.host.endsWith('.googlevideo.com') && url.pathname.endsWith('videoplayback'))
+    // 個別動画視聴ページ
+    (['www.youtube.com', 'm.youtube.com'].includes(host) &&
+      pathname === '/watch' &&
+      Boolean(searchParams.get('v'))) ||
+    // 埋め込み (`/embed/?{query}` または `/embed/{id}`)
+    (['www.youtube.com', 'www.youtube-nocookie.com'].includes(host) &&
+      pathname.startsWith('/embed/')) ||
+    // 動画のチャンク
+    (host.endsWith('.googlevideo.com') && pathname === 'videoplayback')
   );
 }
 
@@ -88,13 +91,6 @@ const SodiumFetch = Symbol('SodiumFetch');
 class YouTubeTypeHandler extends GeneralTypeHandler {
   static is_youtube_type() {
     try {
-      // トップページ上部の広告動画はiframeになっているため、このurlは計測から除外する
-      const url = new URL(window.location.href);
-
-      if (url.pathname === '/embed/') {
-        return false;
-      }
-
       /** @type {any} */
       const player = document.querySelector('#movie_player');
 
@@ -178,7 +174,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   static async hook_youtube() {
     const { host } = new URL(window.location.href);
 
-    if (!(host === 'www.youtube.com' || host === 'm.youtube.com')) {
+    if (!/^.+\.youtube(-nocookie)?\.com$/.test(host)) {
       return;
     }
 
@@ -212,16 +208,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
           try {
             const url = new URL(/** @type {XMLHttpRequest} */ (event.target).responseURL);
 
-            if (
-              // --- 動画ページ --- //
-              (url.host === 'www.youtube.com' &&
-                url.pathname.endsWith('watch') &&
-                url.searchParams.get('v')) ||
-              // --- get_video_info --- //
-              (url.host === 'www.youtube.com' && url.pathname.endsWith('get_video_info')) ||
-              // --- chunk --- //
-              (url.host.endsWith('googlevideo.com') && url.pathname.endsWith('videoplayback'))
-            ) {
+            if (isYouTubeVideoResource(url)) {
               const id = url.searchParams.get('id');
 
               if (!YouTubeTypeHandler.trackingId && id) {

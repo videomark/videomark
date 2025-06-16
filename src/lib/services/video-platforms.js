@@ -18,7 +18,7 @@ export const videoPlatforms = [
     id: 'youtube',
     url: 'https://www.youtube.com/',
     brandColor: '#cc0000',
-    hosts: ['*.youtube.com'],
+    hosts: ['*.youtube.com', 'www.youtube-nocookie.com'],
   },
   {
     id: 'netflix',
