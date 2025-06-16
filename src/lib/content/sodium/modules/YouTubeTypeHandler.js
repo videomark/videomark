@@ -186,9 +186,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     YouTubeTypeHandler.hook_youtube_xhr();
     // --- fetch --- //
     YouTubeTypeHandler.hook_youtube_fetch();
-
-    // --- PLayer async --- //
-    YouTubeTypeHandler.hook_youtube_player();
   }
 
   /** @todo: hook_youtube_fetch に移行したい */
@@ -286,21 +283,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
                 }, 1000);
               }
             }
-
-            // firefoxでは、トップページや検索結果から動画ページに移動すると
-            // https://www.youtube.com/watch?v=xxxxxxxxxxx&pbj=1 のようなjsonを要求し
-            // その中に streamingData.adaptiveFormats に入っているため
-            // #ytd-playerのイベントに頼らずにxhrをフックして取得する必要がある
-            if (
-              url.host === 'www.youtube.com' &&
-              url.pathname.endsWith('watch') &&
-              url.searchParams.get('v') &&
-              url.searchParams.get('pbj')
-            ) {
-              YouTubeTypeHandler.set_adaptive_formats_json(
-                /** @type {XMLHttpRequest} */ (event.target).responseText,
-              );
-            }
           } catch (e) {
             // nop
           }
@@ -380,145 +362,6 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     window.fetch = fetcher;
   }
 
-  /*
-   * ytd-playerにsodium用のフィールド追加
-   * 初期化が終わっていない段階で値にアクセスした場合エラー値を返す
-   */
-  static async hook_youtube_player() {
-    let elm;
-
-    for (;;) {
-      elm = document.querySelector('#ytd-player');
-
-      if (elm) {
-        break;
-      }
-
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((resolve) => {
-        setTimeout(() => resolve(), 100);
-      });
-    }
-
-    // @ts-expect-error
-    const player = await elm.getPlayerPromise();
-
-    if (
-      !player.sodiumLoadVideoByPlayerVars &&
-      !player.sodiumUpdateVideoData &&
-      !player.sodiumGetAvailableQualityLevels
-    ) {
-      // @ts-expect-error
-      const { ytplayer } = window;
-
-      if (ytplayer.config && ytplayer.config.args) {
-        const arg = ytplayer.config.args;
-
-        if (!YouTubeTypeHandler.set_adaptive_formats_json(arg.player_response)) {
-          if (arg.raw_player_response && arg.raw_player_response.streamingData) {
-            YouTubeTypeHandler.set_adaptive_formats(
-              arg.raw_player_response.streamingData.adaptiveFormats,
-            );
-          }
-        }
-      }
-
-      player.sodiumLoadVideoByPlayerVars = player.loadVideoByPlayerVars;
-      player.sodiumUpdateVideoData = player.updateVideoData;
-      player.sodiumGetAvailableQualityLevels = player.getAvailableQualityLevels;
-
-      // thisを変えられないためアロー演算子は使わない
-      // eslint-disable-next-line func-names
-      player.loadVideoByPlayerVars = function (arg) {
-        if (!YouTubeTypeHandler.set_adaptive_formats(arg.player_response)) {
-          if (arg.raw_player_response && arg.raw_player_response.streamingData) {
-            YouTubeTypeHandler.set_adaptive_formats(
-              arg.raw_player_response.streamingData.adaptiveFormats,
-            );
-          }
-        }
-
-        return this.sodiumLoadVideoByPlayerVars(arg);
-      };
-
-      // thisを変えられないためアロー演算子は使わない
-      // eslint-disable-next-line func-names
-      player.updateVideoData = function (arg) {
-        YouTubeTypeHandler.set_adaptive_formats(arg.adaptive_fmts);
-
-        return this.sodiumUpdateVideoData(arg);
-      };
-    }
-  }
-
-  static set_adaptive_formats_json(response) {
-    if (!response) {
-      return false;
-    }
-
-    try {
-      let json = JSON.parse(response);
-
-      if (Array.isArray(json)) {
-        json = json.find((element) => element.playerResponse).playerResponse;
-      }
-
-      if (json.streamingData) {
-        return YouTubeTypeHandler.set_adaptive_formats(json.streamingData.adaptiveFormats);
-      }
-    } catch (e) {
-      console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
-    }
-
-    return false;
-  }
-
-  static set_adaptive_formats(adaptiveFormats) {
-    if (!adaptiveFormats || !adaptiveFormats.length) {
-      return false;
-    }
-
-    try {
-      YouTubeTypeHandler.check_formats(adaptiveFormats);
-      YouTubeTypeHandler.sodiumAdaptiveFmts = adaptiveFormats;
-
-      return true;
-    } catch (e) {
-      console.warn(`VIDEOMARK: YouTube adaptive format data not found ${e.message}`);
-    }
-
-    return false;
-  }
-
-  static check_formats(adaptiveFormats) {
-    let message;
-    const formats = YouTubeTypeHandler.convert_adaptive_formats(adaptiveFormats);
-
-    const ret = formats.find((e) => {
-      let val = !e.itag || !e.bitrate || !e.type || !e.container || !e.codec;
-
-      if (val) {
-        message = `itag:${e.itag}, bitrate:${e.bitrate}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
-
-        return val;
-      }
-
-      if (e.type === 'video') {
-        val = !e.fps || !e.size || !e.quality;
-      }
-
-      if (val) {
-        message = `itag:${e.itag}, bitrate:${e.bitrate}, fps:${e.fps}, size:${e.size}, type:${e.type}, container:${e.container}, codec:${e.codec}`;
-      }
-
-      return val;
-    });
-
-    if (ret) {
-      throw new Error(message);
-    }
-  }
-
   static add_throughput_history(throughput) {
     console.debug(`add_throughput_history: downloadSize=${throughput.downloadSize}`);
 
@@ -553,8 +396,34 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     return Math.floor(unplayedBufferSize);
   }
 
-  static convert_adaptive_formats(formats) {
-    return formats.reduce((acc, cur) => {
+  /**
+   * @type {HTMLElement & { getVideoStats: function, getPlayerResponse: function } | null}
+   */
+  static get video_player() {
+    return document.querySelector('#movie_player');
+  }
+
+  /**
+   * @type {Record<string, any>}
+   */
+  static get video_stats() {
+    return YouTubeTypeHandler.video_player?.getVideoStats() ?? {};
+  }
+
+  /**
+   * @type {Record<string, any>[]}
+   */
+  static get adaptive_formats() {
+    return (
+      YouTubeTypeHandler.video_player?.getPlayerResponse()?.streamingData?.adaptiveFormats ?? []
+    );
+  }
+
+  /**
+   * @type {Record<string, any>[]}
+   */
+  static get normalized_adaptive_formats() {
+    const formats = YouTubeTypeHandler.adaptive_formats.reduce((acc, cur) => {
       const v = Object.assign(cur);
 
       v.bitrate = v.bitrate ? v.bitrate : v.averageBitrate;
@@ -577,15 +446,13 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
       return acc;
     }, []);
+
+    return /** @type {Record<string, any>[]} */ (formats);
   }
 
   static get_play_list_info() {
     try {
-      const formats = YouTubeTypeHandler.convert_adaptive_formats(
-        YouTubeTypeHandler.sodiumAdaptiveFmts,
-      );
-
-      return formats.map((e) => ({
+      return YouTubeTypeHandler.normalized_adaptive_formats.map((e) => ({
         representationId: e.itag,
         bps: Number.parseInt(e.bitrate, 10),
         videoWidth: e.size ? Number.parseInt(e.size.split('x')[0], 10) : -1,
@@ -603,14 +470,10 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   static get_playable_video_format_list() {
     try {
-      const formats = YouTubeTypeHandler.convert_adaptive_formats(
-        YouTubeTypeHandler.sodiumAdaptiveFmts,
-      );
+      const formats = YouTubeTypeHandler.normalized_adaptive_formats;
+      const { fmt } = YouTubeTypeHandler.video_stats;
 
-      // @ts-expect-error
-      const { fmt } = document.querySelector('#movie_player').getVideoStats();
-
-      if (!fmt || !formats) {
+      if (!fmt || !formats.length) {
         throw new Error('not found');
       }
 
@@ -698,9 +561,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   static get_codec_info() {
-    /** @type {any} */
-    const player = document.querySelector('#movie_player');
-    const stats = player.getVideoStats();
+    const stats = YouTubeTypeHandler.video_stats;
     const list = YouTubeTypeHandler.get_play_list_info();
     const video = list.find((e) => e.representationId === stats.fmt);
     const audio = list.find((e) => e.representationId === stats.afmt);
@@ -718,9 +579,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   static get_representation() {
-    /** @type {any} */
-    const player = document.querySelector('#movie_player');
-    const stats = player.getVideoStats();
+    const stats = YouTubeTypeHandler.video_stats;
 
     return {
       video: stats.fmt,
@@ -829,7 +688,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   get_framerate() {
     try {
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
-        const { optimal_format } = this.player.getVideoStats();
+        const { optimal_format } = YouTubeTypeHandler.video_stats;
 
         return optimal_format.endsWith('60') ? 60 : 30;
       }
@@ -845,7 +704,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   get_segment_domain() {
     try {
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
-        const { lvh } = this.player.getVideoStats();
+        const { lvh } = YouTubeTypeHandler.video_stats;
 
         return lvh;
       }
@@ -980,12 +839,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   get_streaming_info() {
-    const stats = this.player.getVideoStats();
-
-    const formats = YouTubeTypeHandler.convert_adaptive_formats(
-      YouTubeTypeHandler.sodiumAdaptiveFmts,
-    );
-
+    const stats = YouTubeTypeHandler.video_stats;
+    const formats = YouTubeTypeHandler.normalized_adaptive_formats;
     const video = formats.find((e) => e.itag === stats.fmt);
     const audio = formats.find((e) => e.itag === stats.afmt);
 
@@ -1046,12 +901,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   set_max_bitrate(bitrate, resolution) {
     try {
-      const { fmt } = this.player.getVideoStats();
-
-      const formats = YouTubeTypeHandler.convert_adaptive_formats(
-        YouTubeTypeHandler.sodiumAdaptiveFmts,
-      );
-
+      const { fmt } = YouTubeTypeHandler.video_stats;
+      const formats = YouTubeTypeHandler.normalized_adaptive_formats;
       const { container, codec } = formats.find((e) => e.itag === fmt);
       const codecCond = new RegExp(`^${codec.split('.')[0]}`);
       const qualityMap = {};
@@ -1157,7 +1008,6 @@ YouTubeTypeHandler.qualityLabelTable = {
   4320: 'highres',
 };
 YouTubeTypeHandler.DEFAULT_SEGMENT_DURATION = 5000;
-YouTubeTypeHandler.sodiumAdaptiveFmts = null;
 YouTubeTypeHandler.throughputHistories = [];
 YouTubeTypeHandler.trackingId = null;
 

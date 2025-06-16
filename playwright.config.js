@@ -21,6 +21,7 @@ export default defineConfig({
         // Opt-in to new headless
         // https://github.com/microsoft/playwright/issues/33566
         channel: 'chromium',
+        headless: !!process.env.CI,
       },
     },
     {
