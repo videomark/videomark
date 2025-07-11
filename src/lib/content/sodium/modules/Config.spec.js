@@ -3,6 +3,7 @@ import Config from '$lib/content/sodium/modules/Config';
 
 test('get_video_platform', () => {
   expect(Config.get_video_platform('www.youtube.com')).toBe('youtube');
+  expect(Config.get_video_platform('www.youtube-nocookie.com')).toBe('youtube');
   expect(Config.get_video_platform('m.youtube.com')).toBe('m_youtube_com');
   expect(Config.get_video_platform('www.netflix.com')).toBe('netflix');
   expect(Config.get_video_platform('tver.jp')).toBe('tver');
