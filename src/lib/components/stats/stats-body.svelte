@@ -1,7 +1,9 @@
 <script>
   import { Icon } from '@sveltia/ui';
+  import { onMount } from 'svelte';
   import { _, locale } from 'svelte-i18n';
   import StatsRow from '$lib/components/stats/stats-row.svelte';
+  import { YOUTUBE_PLAYER_SELECTOR } from '$lib/content/sodium/modules/Config';
   import { formatStats } from '$lib/services/stats';
 
   /**
@@ -25,14 +27,17 @@
    * 動画コーデックが H.264 以外 (VP8/VP9/AV1) かどうか。(YouTube のみ)
    * @type {boolean}
    */
-  const isNewerCodec = $derived.by(() => {
+  let isNewerCodec = $state(false);
+
+  onMount(() => {
     try {
-      const { codecs } = document.querySelector('#movie_player')?.getStatsForNerds() ?? {};
+      const player = document.querySelector(YOUTUBE_PLAYER_SELECTOR);
+      const { codecs } = player?.getStatsForNerds() ?? {};
       const isH264 = codecs?.startsWith('avc1.') ?? false;
 
-      return !isH264;
+      isNewerCodec = !isH264;
     } catch {
-      return false;
+      //
     }
   });
 </script>

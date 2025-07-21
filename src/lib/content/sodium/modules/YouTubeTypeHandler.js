@@ -1,8 +1,20 @@
 // @ts-check
 import { AdObserver } from './AdObserver';
-import Config from './Config';
+import Config, { YOUTUBE_PLAYER_SELECTOR } from './Config';
 import GeneralTypeHandler from './GeneralTypeHandler';
 import ResourceTiming from './ResourceTiming';
+
+/**
+ * @typedef {object} YouTubePlayerInterface
+ * @property {() => number} getCurrentTime
+ * @property {() => number} getDuration
+ * @property {() => string} getPlaybackQuality
+ * @property {() => Record<string, any>} getPlayerResponse
+ * @property {() => Record<string, any>} getVideoData
+ * @property {() => number} getVideoLoadedFraction
+ * @property {() => Record<string, any>} getVideoStats
+ * @property {(q1: string, q2: string) => void} setPlaybackQualityRange
+ */
 
 /**
  * YouTube動画リソースのURLの判定
@@ -91,8 +103,7 @@ const SodiumFetch = Symbol('SodiumFetch');
 class YouTubeTypeHandler extends GeneralTypeHandler {
   static is_youtube_type() {
     try {
-      /** @type {any} */
-      const player = document.querySelector('#movie_player');
+      const { player } = this;
 
       if (!player) {
         return false;
@@ -366,10 +377,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     let unplayedBufferSize;
 
     try {
-      /** @type {any} */
-      const player = document.querySelector('#movie_player');
-      const received = Number.parseFloat(player.getVideoLoadedFraction());
-      const duration = Number.parseFloat(player.getDuration());
+      const received = Number.parseFloat(this.player.getVideoLoadedFraction());
+      const duration = Number.parseFloat(this.player.getDuration());
 
       if (Number.isNaN(received) || Number.isNaN(duration)) {
         throw new Error(`NaN`);
@@ -384,26 +393,25 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   /**
-   * @type {HTMLElement & { getVideoStats: function, getPlayerResponse: function } | null}
+   * チャンネルホームページもしくは個別動画視聴ページのプレイヤーを取得
+   * @type {(HTMLElement & YouTubePlayerInterface) | null}
    */
-  static get video_player() {
-    return document.querySelector('#movie_player');
+  static get player() {
+    return document.querySelector(YOUTUBE_PLAYER_SELECTOR);
   }
 
   /**
    * @type {Record<string, any>}
    */
   static get video_stats() {
-    return YouTubeTypeHandler.video_player?.getVideoStats() ?? {};
+    return YouTubeTypeHandler.player?.getVideoStats() ?? {};
   }
 
   /**
    * @type {Record<string, any>[]}
    */
   static get adaptive_formats() {
-    return (
-      YouTubeTypeHandler.video_player?.getPlayerResponse()?.streamingData?.adaptiveFormats ?? []
-    );
+    return YouTubeTypeHandler.player?.getPlayerResponse()?.streamingData?.adaptiveFormats ?? [];
   }
 
   /**
@@ -581,14 +589,12 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     YouTubeTypeHandler.trackingId = null;
 
     this.elm = elm;
-    /** @type {any} */
-    this.player = document.querySelector('#movie_player');
-    this.adObserver = new AdObserver(this, this.player);
+    this.adObserver = new AdObserver(this, YouTubeTypeHandler.player);
   }
 
   get_duration() {
     try {
-      const duration = this.player.getDuration();
+      const duration = YouTubeTypeHandler.player?.getDuration();
 
       return duration && Number.isFinite(duration) ? duration : -1;
     } catch (e) {
@@ -616,7 +622,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     try {
       if (!YouTubeTypeHandler.can_get_streaming_info()) {
         const f = this.get_framerate() === 60 ? 'h' : 'l';
-        const q = this.player.getPlaybackQuality();
+        const q = YouTubeTypeHandler.player?.getPlaybackQuality();
 
         return YouTubeTypeHandler.bitrate_table()[q][f];
       }
@@ -659,8 +665,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   get_receive_buffer() {
     try {
-      const received = Number.parseFloat(this.player.getVideoLoadedFraction());
-      const duration = Number.parseFloat(this.player.getDuration());
+      const received = Number.parseFloat(YouTubeTypeHandler.player?.getVideoLoadedFraction());
+      const duration = Number.parseFloat(YouTubeTypeHandler.player?.getDuration());
 
       if (Number.isNaN(duration) || Number.isNaN(received)) {
         throw new Error('NaN');
@@ -707,7 +713,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   get_current_time() {
     // TVerのインターフェースと合わせる
     try {
-      return this.player.getCurrentTime();
+      return YouTubeTypeHandler.player?.getCurrentTime();
     } catch (e) {
       return -1;
     }
@@ -717,7 +723,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     let title;
 
     try {
-      ({ title } = this.player.getVideoData());
+      ({ title } = YouTubeTypeHandler.player?.getVideoData() ?? {});
     } catch (e) {
       return title;
     }
@@ -739,7 +745,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         videoDetails: {
           thumbnail: { thumbnails },
         },
-      } = this.player.getPlayerResponse();
+      } = YouTubeTypeHandler.player?.getPlayerResponse() ?? {};
 
       const thumbnail = thumbnails[thumbnails.length - 1];
 
@@ -755,22 +761,22 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     let videoId;
 
     if (!YouTubeTypeHandler.can_get_streaming_info()) {
-      const q = this.player.getPlaybackQuality();
+      const q = YouTubeTypeHandler.player?.getPlaybackQuality();
 
       if (!q || q === 'unknown') {
         return videoId;
       }
 
-      ({ video_id: videoId } = this.player.getVideoData());
+      ({ video_id: videoId } = YouTubeTypeHandler.player?.getVideoData() ?? {});
 
       return videoId;
     }
 
-    if (!(this.player.getPlayerResponse instanceof Function)) {
+    if (!(YouTubeTypeHandler.player?.getPlayerResponse instanceof Function)) {
       return videoId;
     }
 
-    const response = this.player.getPlayerResponse();
+    const response = YouTubeTypeHandler.player?.getPlayerResponse();
 
     if (!response) {
       return videoId;
@@ -813,7 +819,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
       const {
         videoDetails: { viewCount },
-      } = this.player.getPlayerResponse();
+      } = YouTubeTypeHandler.player?.getPlayerResponse() ?? {};
 
       if (!viewCount) {
         throw new Error();
@@ -840,7 +846,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
    * @returns {string} 開始秒数やプレイリストなどのクエリ文字列を外した個別動画再生ページの URL。
    */
   get_canonical_url(url) {
-    const { video_id: videoId } = this.player.getVideoData();
+    const { video_id: videoId } = YouTubeTypeHandler.player?.getVideoData() ?? {};
 
     if (new URL(url).origin === 'https://music.youtube.com') {
       return `https://music.youtube.com/watch?v=${videoId}`;
@@ -850,11 +856,11 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   is_main_video(video) {
-    return this.player.contains(video);
+    return YouTubeTypeHandler.player?.contains(video);
   }
 
   is_cm() {
-    return this.player.classList.contains('ad-showing');
+    return YouTubeTypeHandler.player?.classList.contains('ad-showing');
   }
 
   is_limited() {
@@ -879,7 +885,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
         console.log(
           `VIDEOMARK: Playback quality [quality:${quality_label}(${quality}), bitrate:${bitrate}, itag:${itag}, type:${type}, size:${size}]`,
         );
-        this.player.setPlaybackQualityRange(quality, quality);
+        YouTubeTypeHandler.player?.setPlaybackQualityRange(quality, quality);
       }
     } catch (e) {
       //
@@ -965,7 +971,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
       if (select.bitrate < current.bitrate) {
         // 再生中のbitrateより小さい値が設定された場合変更する
-        this.player.setPlaybackQualityRange(select.quality, select.quality);
+        YouTubeTypeHandler.player?.setPlaybackQualityRange(select.quality, select.quality);
         this.limited = true;
       } else {
         console.log(
@@ -978,7 +984,7 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
   }
 
   set_default_bitrate() {
-    this.player.setPlaybackQualityRange('default', 'default');
+    YouTubeTypeHandler.player?.setPlaybackQualityRange('default', 'default');
   }
 }
 
