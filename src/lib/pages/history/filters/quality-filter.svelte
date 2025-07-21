@@ -1,5 +1,6 @@
 <script>
   import { Button, Checkbox, CheckboxGroup, Icon, NumberInput, Slider } from '@sveltia/ui';
+  import { untrack } from 'svelte';
   import { _, locale } from 'svelte-i18n';
   import FilterItem from '$lib/pages/history/filters/filter-item.svelte';
   import { searchCriteria, validQualityStatuses } from '$lib/services/history';
@@ -33,7 +34,14 @@
   };
 
   $effect(() => {
-    onSliderUpdate($searchCriteria.qualityRange);
+    // side effect dependencies
+    // eslint-disable-next-line no-void
+    void [$searchCriteria.qualityRange];
+
+    // Avoid infinite loop
+    untrack(() => {
+      onSliderUpdate();
+    });
   });
 
   $effect(() => {
