@@ -6,6 +6,7 @@ import ResourceTiming from './ResourceTiming';
 
 /**
  * @typedef {object} YouTubePlayerInterface
+ * @property {() => number} getAdState
  * @property {() => number} getCurrentTime
  * @property {() => number} getDuration
  * @property {() => string} getPlaybackQuality
@@ -377,8 +378,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
     let unplayedBufferSize;
 
     try {
-      const received = Number.parseFloat(this.player.getVideoLoadedFraction());
-      const duration = Number.parseFloat(this.player.getDuration());
+      const received = this.player?.getVideoLoadedFraction();
+      const duration = this.player?.getDuration();
 
       if (Number.isNaN(received) || Number.isNaN(duration)) {
         throw new Error(`NaN`);
@@ -665,8 +666,8 @@ class YouTubeTypeHandler extends GeneralTypeHandler {
 
   get_receive_buffer() {
     try {
-      const received = Number.parseFloat(YouTubeTypeHandler.player?.getVideoLoadedFraction());
-      const duration = Number.parseFloat(YouTubeTypeHandler.player?.getDuration());
+      const received = YouTubeTypeHandler.player?.getVideoLoadedFraction();
+      const duration = YouTubeTypeHandler.player?.getDuration();
 
       if (Number.isNaN(duration) || Number.isNaN(received)) {
         throw new Error('NaN');
