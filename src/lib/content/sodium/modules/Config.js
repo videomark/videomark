@@ -2,6 +2,12 @@ import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
 import { videoPlatforms } from '$lib/services/video-platforms';
 
 /**
+ * YouTube 動画プレイヤーのクエリセレクター。
+ */
+export const YOUTUBE_PLAYER_SELECTOR =
+  '.ytd-page-manager:not([hidden]) .html5-video-player, #movie_player';
+
+/**
  * 動作設定
  */
 export default class Config {
@@ -317,7 +323,7 @@ Config.ui.m_youtube_com = {
 
 // YouTube
 Config.ui.youtube = {
-  target: '#movie_player',
+  target: YOUTUBE_PLAYER_SELECTOR,
   style: `#${Config.ui.id} {
   position: absolute;
   z-index: 1000001;
