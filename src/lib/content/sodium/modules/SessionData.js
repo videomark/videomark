@@ -149,16 +149,17 @@ export default class SessionData {
   }
 
   /**
-   * videoの利用可否
+   * 現在のページで再生中の動画を取得。
+   * @returns {VideoData | undefined} 動画データ。
    */
-  get_video_availability() {
-    const main_video = this.get_main_video();
+  getActiveVideo() {
+    const mainVideo = this.get_main_video();
 
-    if (main_video === undefined) {
-      return false;
+    if (this.location.href === window.location.href && mainVideo?.is_available()) {
+      return mainVideo;
     }
 
-    return this.location.href === window.location.href && main_video.is_available();
+    return undefined;
   }
 
   /**
@@ -401,7 +402,7 @@ export default class SessionData {
   startDataStore(mainVideo, interval) {
     return setTimeout(async () => {
       for (; mainVideo === this.get_main_video(); ) {
-        if (this.get_video_availability()) {
+        if (this.getActiveVideo()) {
           await this.storeSession(mainVideo);
         }
 

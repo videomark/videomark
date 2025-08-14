@@ -186,13 +186,16 @@ export default class Config {
       : undefined;
   }
 
-  static set_alive(alive) {
-    this.alive = alive;
+  /**
+   * @param {VideoPlaybackInfo} [detail]
+   */
+  static updatePlaybackInfo(detail) {
+    this.alive = !!detail;
     window.postMessage(
       {
-        method: 'set_alive',
+        method: 'update_playback_info',
         type: 'FROM_SODIUM_JS',
-        alive,
+        detail,
       },
       '*',
     );

@@ -33,6 +33,7 @@
 <style lang="scss">
   th,
   td {
+    border: 0;
     padding: 0;
 
     &:not(:last-child) {
