@@ -212,9 +212,13 @@ const getStorageKey = async (viewingId) => {
 };
 
 const communicator = {
-  setAlive: async (tab, alive) => {
+  /**
+   * @param {{ id: string }} tab
+   * @param {VideoPlaybackInfo} [detail]
+   */
+  updatePlaybackInfo: async (tab, detail) => {
     // eslint-disable-next-line no-use-before-define
-    updateIcon(tab.id, alive);
+    updateIcon(tab.id, !!detail);
   },
   updateHistory: async (tab, { id, data }) => {
     if (!id || !data) {

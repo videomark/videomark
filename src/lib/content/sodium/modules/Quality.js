@@ -2,7 +2,11 @@
 
 import { useStorage } from './Storage';
 
-export const qualityStatus = ({ sessionId, videoId }) => {
+export const getLatestStats = ({ sessionId, videoId }) => {
+  if (!sessionId || !videoId) {
+    return {};
+  }
+
   const {
     date,
     bitrate,

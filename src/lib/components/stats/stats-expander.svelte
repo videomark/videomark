@@ -7,25 +7,23 @@
 
   /**
    * @typedef {Object} Props
+   * @property {boolean} open - 詳細情報が表示されているかどうか。
+   * @property {boolean} [showSummary] - サマリーを表示するかどうか。
    * @property {string} [locale] - UI ロケール。
    * @property {{ [key: string]: number | { [key: string]: number } }} [stats] - 最新の統計情報。
-   * @property {{ [key: string]: number[] }} [log] - これまでの統計情報。
+   * @property {{ [key: string]: (number | null)[] }} [log] - これまでの統計情報。
    */
 
   /** @type {Props} */
   let {
     /* eslint-disable prefer-const */
+    open = $bindable(false),
+    showSummary = true,
     locale = '',
     stats = {},
     log = {},
     /* eslint-enable prefer-const */
   } = $props();
-
-  /**
-   * 詳細情報が表示されているかどうか。
-   * @type {boolean}
-   */
-  let open = $state(false);
 
   $effect(() => {
     initAppLocales(locale);
@@ -61,19 +59,22 @@
   onclick={(event) => {
     event.preventDefault();
     event.stopPropagation();
-    open = !open;
+
+    if (showSummary) {
+      open = !open;
+    }
   }}
   onkeydown={(event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    if (event.key === ' ') {
+    if (showSummary && event.key === ' ') {
       open = !open;
     }
   }}
 >
   <details {open}>
-    <StatsSummary {stats} />
+    <StatsSummary {stats} hidden={!showSummary} />
     {#if open}
       <StatsBody {stats} {log} />
     {/if}

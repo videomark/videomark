@@ -1,4 +1,17 @@
 /**
+ * 再生中の動画の関連情報。
+ * @typedef {object} VideoPlaybackInfo
+ * @property {string} sessionId セッション ID。
+ * @property {string} videoId 動画 ID。
+ * @property {object} video 現在の動画情報。
+ * @property {string} video.url 動画の URL。
+ * @property {string} video.title 動画のタイトル。
+ * @property {string | undefined} video.thumbnail 動画のサムネイル URL。
+ * @property {Record<string, any>} latestStats 最新の品質統計情報。
+ * @property {Record<string, any>} statsLog ライブ統計ログデータ。
+ */
+
+/**
  * 動画プラットフォームのプロパティ。
  * @typedef {object} VideoPlatform
  * @property {string} id 固有の ID。
