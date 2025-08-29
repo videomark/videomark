@@ -1,3 +1,8 @@
+/**
+ * ユーザーが利用規約に同意していない場合にリマインダーを表示する間隔。48 時間。
+ */
+const REMINDER_INTERVAL = 1000 * 60 * 60 * 48;
+
 // content.js はモジュールではないので `import` が使えない。本来はビルド時にインライン化できるはずだが、Vite で
 // 共有モジュールの code splitting を無効化する方法がなく、共有されている `storage.js` は別ファイルとして生成
 // されてしまうので、`storage` はインポートせずに使う。 @see https://github.com/rollup/rollup/issues/2756
@@ -125,6 +130,10 @@ class BackgroundCommunicationPort {
   async getIp(host) {
     return (await this.postMessage('getIp', [host])).ip;
   }
+
+  showAgreementReminder() {
+    this.postMessage('showAgreementReminder');
+  }
 }
 
 const communicationPort = new BackgroundCommunicationPort();
@@ -222,8 +231,20 @@ const message_listener = async (event) => {
   }
 };
 
-storage.get('AgreedTerm').then((value) => {
-  if (!value.AgreedTerm) {
+(async () => {
+  const { AgreedTerm, agreementLastReminded = 0 } = await storage.get([
+    'AgreedTerm',
+    'agreementLastReminded',
+  ]);
+
+  if (!AgreedTerm) {
+    const now = Date.now();
+
+    if (agreementLastReminded < now - REMINDER_INTERVAL) {
+      communicationPort.showAgreementReminder();
+      storage.set({ agreementLastReminded: now });
+    }
+
     return;
   }
 
@@ -233,7 +254,7 @@ storage.get('AgreedTerm').then((value) => {
     src: chrome.runtime.getURL('/scripts/sodium.js'),
     target: document.documentElement,
   });
-});
+})();
 
 chrome.runtime.onMessage.addListener((request /* , sender, sendResponse */) => {
   window.postMessage(request, '*');

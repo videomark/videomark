@@ -5,6 +5,11 @@ import { isMobile } from '$lib/services/runtime';
 import { SCHEMA_VERSION, storage } from '$lib/services/storage';
 import { videoPlatformHosts } from '$lib/services/video-platforms';
 
+/**
+ * 利用規約に同意していない場合にリマインダーを表示する通知 ID。
+ */
+const REMINDER_NOTIFICATION_ID = 'agreement-reminder';
+
 (async () => {
   const currentRules = await chrome.declarativeNetRequest.getDynamicRules();
   const removeRuleIds = [];
@@ -258,7 +263,27 @@ const communicator = {
 
     return { ip: hostToIp[host] };
   },
+  showAgreementReminder: () => {
+    // すでに通知が存在する場合は一旦削除
+    chrome.notifications.clear(REMINDER_NOTIFICATION_ID);
+
+    chrome.notifications.create(REMINDER_NOTIFICATION_ID, {
+      type: 'basic',
+      iconUrl: '/images/icons/videomark-128.png',
+      title: chrome.i18n.getMessage('agreementReminderTitle'),
+      message: chrome.i18n.getMessage(
+        get(isMobile) ? 'agreementReminderMessageMobile' : 'agreementReminderMessageDesktop',
+      ),
+    });
+  },
 };
+
+chrome.notifications.onClicked.addListener((id) => {
+  if (id === REMINDER_NOTIFICATION_ID) {
+    openTab('#/onboarding');
+    chrome.notifications.clear(id);
+  }
+});
 
 const popupCommunicator = {
   getTabStatus: async (tabId) => {
