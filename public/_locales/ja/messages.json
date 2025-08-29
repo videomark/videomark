@@ -1,5 +1,14 @@
 {
   "extensionDescription": {
     "message": "動画配信サービス利用時の体感品質 (QoE) を計測します。サイトを横断した視聴履歴の検索も可能です。"
+  },
+  "agreementReminderTitle": {
+    "message": "Web VideoMark"
+  },
+  "agreementReminderMessageDesktop": {
+    "message": "VideoMark 拡張機能がインストールされています。ここをクリックして使い始めましょう！"
+  },
+  "agreementReminderMessageMobile": {
+    "message": "VideoMark 拡張機能がインストールされています。ここをタップして使い始めましょう！"
   }
 }

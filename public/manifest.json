@@ -23,6 +23,7 @@
     "webRequest",
     "storage",
     "unlimitedStorage",
+    "notifications",
     "declarativeNetRequestWithHostAccess"
   ],
   "host_permissions": [
