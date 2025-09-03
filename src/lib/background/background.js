@@ -263,11 +263,11 @@ const communicator = {
 
     return { ip: hostToIp[host] };
   },
-  showAgreementReminder: () => {
+  showAgreementReminder: async () => {
     // すでに通知が存在する場合は一旦削除
-    chrome.notifications.clear(REMINDER_NOTIFICATION_ID);
+    await chrome.notifications.clear(REMINDER_NOTIFICATION_ID);
 
-    chrome.notifications.create(REMINDER_NOTIFICATION_ID, {
+    await chrome.notifications.create(REMINDER_NOTIFICATION_ID, {
       type: 'basic',
       iconUrl: '/images/icons/videomark-128.png',
       title: chrome.i18n.getMessage('agreementReminderTitle'),
