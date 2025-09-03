@@ -1,5 +1,14 @@
 {
   "extensionDescription": {
     "message": "Measure the quality of experience (QoE) as you watch video on streaming services. Search your viewing history across platforms."
+  },
+  "agreementReminderTitle": {
+    "message": "Web VideoMark"
+  },
+  "agreementReminderMessageDesktop": {
+    "message": "You have installed the VideoMark extension. Click here to get started!"
+  },
+  "agreementReminderMessageMobile": {
+    "message": "You have installed the VideoMark extension. Tap here to get started!"
   }
 }
