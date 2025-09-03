@@ -1,8 +1,10 @@
 import StatsExpander from '$lib/components/stats/stats-expander.svelte';
 
 export default class StatsVisualizer {
+  /** @type {HTMLElement} */
   #rootElement = null;
 
+  /** @type {HTMLElement} */
   #statsElement = null;
 
   /**
@@ -29,6 +31,11 @@ export default class StatsVisualizer {
   }
 
   detach() {
+    if (!this.#rootElement || !this.#statsElement) {
+      return;
+    }
+
+    this.#rootElement.removeChild(this.#statsElement);
     this.#rootElement = null;
   }
 

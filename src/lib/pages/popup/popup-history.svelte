@@ -55,7 +55,7 @@
    * から毎秒送信される。{@link playingVideoMap} を使用して再生中の動画情報を保持し、ポップアップ内で現在再生中の
    * 動画を表示する。タイマーを使って動画が再生されなくなった場合にリストから削除する。
    * @param {{ method: string, args: any[] }} request - メソッドと引数を含むリクエストオブジェクト。
-   * @param {{ tab: { id: string } }} sender - タブ情報を含む送信者オブジェクト。
+   * @param {{ tab: { id: number } }} sender - タブ情報を含む送信者オブジェクト。
    */
   const handleMessage = ({ method, args }, { tab }) => {
     if (method !== 'updatePlaybackInfo') {
@@ -70,9 +70,10 @@
     }
 
     const videoURL = playbackInfo.video.url;
+    const { timer } = playingVideoMap[videoURL] ?? {};
 
-    if (playingVideoMap[videoURL]) {
-      window.clearTimeout(playingVideoMap[videoURL].timer);
+    if (timer) {
+      window.clearTimeout(timer);
     }
 
     playingVideoMap[videoURL] = {
