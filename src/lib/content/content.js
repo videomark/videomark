@@ -107,8 +107,11 @@ class BackgroundCommunicationPort {
     return chrome.runtime.sendMessage({ method, args });
   }
 
-  setAlive(alive) {
-    this.postMessage('setAlive', [alive]);
+  /**
+   * @param {VideoPlaybackInfo} [detail]
+   */
+  updatePlaybackInfo(detail) {
+    this.postMessage('updatePlaybackInfo', [detail]);
   }
 
   updateHistory(data) {
@@ -217,8 +220,8 @@ const message_listener = async (event) => {
       break;
     }
 
-    case 'set_alive': {
-      communicationPort.setAlive(event.data.alive);
+    case 'update_playback_info': {
+      communicationPort.updatePlaybackInfo(event.data.detail);
       break;
     }
 

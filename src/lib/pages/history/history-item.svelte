@@ -2,16 +2,19 @@
   import { Alert, Button, Icon } from '@sveltia/ui';
   import { waitForVisibility } from '@sveltia/utils/element';
   import { onMount } from 'svelte';
-  import { _ } from 'svelte-i18n';
+  import { _, locale as appLocale } from 'svelte-i18n';
   import VideoThumbnail from '$lib/pages/history/video-thumbnail.svelte';
   import { completeViewingHistoryItem, viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
   import { goto, openTab } from '$lib/services/navigation';
   import { settings } from '$lib/services/settings';
+  import StatsVisualizer from '$lib/services/stats-visualizer';
 
   /**
    * @typedef {Object} Props
    * @property {HistoryItem} [historyItem] - 履歴アイテム。
+   * @property {number} [tabId] - 再生中のタブの ID。
+   * @property {VideoPlaybackInfo} [playbackInfo] - 再生中の動画の関連情報。
    * @property {boolean} [horizontal] - レイアウトを横並びにするかどうか。
    * @property {boolean} [playing] - 指定された履歴の動画が再生中かどうか。
    */
@@ -20,6 +23,8 @@
   let {
     /* eslint-disable prefer-const */
     historyItem = {},
+    tabId = undefined,
+    playbackInfo,
     horizontal = false,
     playing = false,
     /* eslint-enable prefer-const */
@@ -30,16 +35,45 @@
    */
   let itemWrapper = $state();
 
+  /**
+   * @type {HTMLElement}
+   */
+  let statsVisualizerPlaceholder = $state();
+
+  /**
+   * @type {boolean}
+   */
+  let statsVisualizerHidden = $state(true);
+
+  /**
+   * @type {StatsVisualizer | undefined}
+   */
+  let statsVisualizer = $state();
+
   const { key, platform, url, title, thumbnail, startTime, stats } = $derived(historyItem);
   const { calculable, provisionalQoe, finalQoe, isNewerCodec, isLowQuality } = $derived(stats);
 
-  const playAgain = () => {
-    if (!platform?.deprecated) {
+  const playAgain = async () => {
+    if (platform?.deprecated) {
+      return;
+    }
+
+    if (tabId) {
+      // タブを切り替え
+      await chrome.tabs.update(tabId, { active: true });
+    } else {
       openTab(url);
     }
   };
 
   const viewStats = () => {
+    if (statsVisualizer) {
+      statsVisualizer.open = true;
+      statsVisualizerHidden = !statsVisualizerHidden;
+
+      return;
+    }
+
     const keys = $settings.show_duplicate_videos
       ? [key]
       : $viewingHistory.filter((item) => item.url === url).map((item) => item.key);
@@ -50,6 +84,20 @@
       openTab(`#/history/${keys.join(',')}`);
     }
   };
+
+  $effect(() => {
+    if (playbackInfo) {
+      if (!statsVisualizer) {
+        statsVisualizer = new StatsVisualizer({ locale: $appLocale, showSummary: false });
+        statsVisualizer.attach(statsVisualizerPlaceholder);
+      }
+
+      statsVisualizer.update(playbackInfo);
+    } else if (statsVisualizer) {
+      statsVisualizer.detach();
+      statsVisualizer = undefined;
+    }
+  });
 
   onMount(() => {
     (async () => {
@@ -147,23 +195,37 @@
           {finalQoe.toFixed(2)}
         {/if}
       </div>
-      <div class="actions close-popup">
+      <div class="actions {statsVisualizer ? '' : 'close-popup'}">
         <Button
           variant="secondary"
           size={horizontal ? 'small' : 'medium'}
-          class="close-popup view-stats"
+          class="view-stats {statsVisualizer ? '' : 'close-popup'}"
         >
           {#snippet startIcon()}
             <Icon name="monitoring" />
           {/snippet}
           <span class="label">
-            {$_('history.detail.viewStats')}
+            {#if statsVisualizer}
+              {#if statsVisualizerHidden}
+                {$_('history.detail.showLiveStats')}
+              {:else}
+                {$_('history.detail.hideLiveStats')}
+              {/if}
+            {:else}
+              {$_('history.detail.viewHistory')}
+            {/if}
           </span>
         </Button>
       </div>
     </div>
   </div>
 </div>
+
+<div
+  class="latest-stats"
+  bind:this={statsVisualizerPlaceholder}
+  hidden={statsVisualizerHidden}
+></div>
 
 <style lang="scss">
   .item {

@@ -4,12 +4,14 @@
 
   /**
    * @typedef {Object} Props
+   * @property {boolean} [hidden] - サマリーを隠すかどうか。
    * @property {{ [key: string]: number | { [key: string]: number } }} [stats] - 最新の統計情報。
    */
 
   /** @type {Props} */
   let {
     /* eslint-disable prefer-const */
+    hidden = false,
     stats = {},
     /* eslint-enable prefer-const */
   } = $props();
@@ -18,6 +20,7 @@
 </script>
 
 <summary
+  {hidden}
   onclick={(event) => {
     event.preventDefault();
   }}

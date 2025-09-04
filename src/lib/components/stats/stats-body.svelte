@@ -9,7 +9,7 @@
   /**
    * @typedef {Object} Props
    * @property {{ [key: string]: number | { [key: string]: number } }} [stats] - 最新の統計情報。
-   * @property {{ [key: string]: number[] }} [log] - これまでの統計情報。
+   * @property {{ [key: string]: (number | null)[] }} [log] - これまでの統計情報。
    */
 
   /** @type {Props} */
@@ -28,6 +28,14 @@
    * @type {boolean}
    */
   let isNewerCodec = $state(false);
+
+  /**
+   * チャートに表示するデータを取得する。`runtime.onMessage` で受信したデータは JSON シリアライズされており、
+   * `NaN` が `null` に変換されてしまうため、チャートで描画できるよう再度 `NaN` に変換する。
+   * @param {string} prop - 統計情報のプロパティ名。
+   * @returns {number[]} - チャートに表示するデータの配列。
+   */
+  const getChartData = (prop) => log[prop].map((value) => (value === null ? NaN : value));
 
   onMount(() => {
     try {
@@ -50,7 +58,7 @@
   </colgroup>
   {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
     {#if prop !== 'qoe'}
-      <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={[...log[prop]]} />
+      <StatsRow {prop} label={$_(`stats.${prop}`)} {displayValue} chartData={getChartData(prop)} />
     {/if}
   {/each}
 </table>
@@ -69,12 +77,10 @@
 
 <style lang="scss">
   table {
-    table-layout: fixed;
-    font-size: var(--sui-font-size-small);
-
-    @media (max-width: 599px) {
-      font-size: var(--sui-font-size-x-small);
-    }
+    width: 100%;
+    max-width: 400px;
+    font-size: 11px;
+    white-space: nowrap;
   }
 
   col {
@@ -84,6 +90,10 @@
       @media (max-width: 599px) {
         min-width: 80px;
       }
+    }
+
+    &.chart {
+      width: 0; // 最小幅
     }
   }
 

@@ -2,11 +2,11 @@
 
 import Config from './modules/Config';
 import IIJTypeHandler from './modules/IIJTypeHandler';
-import { qualityStatus } from './modules/Quality';
+import LiveStatsLog from './modules/LiveStatsLog';
+import Overlay from './modules/Overlay';
+import { getLatestStats } from './modules/Quality';
 import SessionData from './modules/SessionData';
-import UI from './modules/UI';
 import { getDataFromContentJs, jsonParseSafe } from './modules/Utils';
-import VideoData from './modules/VideoData';
 import YouTubeTypeHandler from './modules/YouTubeTypeHandler';
 
 const get_ui_target = () => (Config.isMobileScreen() ? window.top : window);
@@ -15,35 +15,16 @@ const get_ui_target = () => (Config.isMobileScreen() ? window.top : window);
 // window.topの場合、active_frame_idはurlではなく固有のidにする
 const get_frame_id = () => (window.top === window ? '#top' : window.location.href);
 
-const update_ui = (state) => {
-  const status = state && state.sessionId && state.videoId ? qualityStatus(state) : {};
-
+/**
+ * @param {VideoPlaybackInfo} [detail]
+ */
+const update_ui = (detail) => {
   get_ui_target().postMessage(
     {
       type: 'FROM_WEB_CONTENT',
       method: 'update_ui',
       frame_id: get_frame_id(),
-      state,
-      qualityStatus: status,
-    },
-    '*',
-  );
-};
-
-const remove_ui = () => {
-  get_ui_target().postMessage(
-    { type: 'FROM_WEB_CONTENT', method: 'remove_ui', frame_id: get_frame_id() },
-    '*',
-  );
-};
-
-const update_alive = (alive) => {
-  get_ui_target().postMessage(
-    {
-      type: 'FROM_WEB_CONTENT',
-      method: 'update_alive',
-      frame_id: get_frame_id(),
-      alive,
+      detail,
     },
     '*',
   );
@@ -90,10 +71,6 @@ const remove_ui_all = () => {
       return;
     }
 
-    if (data.method === 'update_ui') {
-      ui.update_status(data.state, data.qualityStatus);
-    }
-
     // fodの通常表示でも無関係なフレームの監視をやめさせて、再生中を正しく判定させるため
     // 計測中のフレームを全フレームに伝達する
     if (data.method === 'notice_active_frame') {
@@ -113,46 +90,35 @@ const remove_ui_all = () => {
       }
     }
 
-    // 計測対象の動画があるフレームからのメッセージの場合だけ計測uiを消去する
-    // 関係ないフレームもsession.get_video_availability()で動画がないと判定し、計測uiを消去させようとするが
-    // 動画フレーム特定後は、関係ないフレームの状態監視は不要になるため停止させる
-    if (data.method === 'remove_ui') {
+    if (data.method === 'update_ui') {
+      /** @type {{ detail?: VideoPlaybackInfo }} */
+      const { detail } = data;
+
+      // オーバーレイの表示制御
+      if (Config.get_ui_enabled()) {
+        overlay.update_status(detail);
+      }
+
+      Config.updatePlaybackInfo(detail);
+
+      // 計測中のフレームは計測uiの表示制御を行う
+      // それ以外のフレームは監視ループは停止させられる
       if (active_frame_id === data.frame_id) {
-        ui.remove_element();
+        // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
+        if (!detail) {
+          overlay.remove_element();
+        }
       } else if (active_frame_id !== undefined) {
         event.source.postMessage({ type: data.type, method: 'clear_interval' }, '*');
       }
     }
 
-    if (data.method === 'display_ui') {
-      Config.set_ui_enabled(data.enabled);
-
-      if (session.get_video_availability()) {
-        if (data.enabled) {
-          update_ui();
-        } else {
-          remove_ui();
-        }
-      }
-
-      // androidのメニューからではwindow.topにしかメッセージを送れないので、フレームにも伝達させる
-      if (window.top === window) {
-        Array.from(window.frames).forEach((frame) => {
-          frame.postMessage({ type: data.type, method: data.method, enabled: data.enabled }, '*');
-        });
-      }
-    }
-
-    // 計測中のフレームは計測uiの表示制御を行う
-    // それ以外のフレームは監視ループは停止させられる
-    if (data.method === 'update_alive') {
+    // 計測対象の動画があるフレームからのメッセージの場合だけ計測uiを消去する
+    // 関係ないフレームもsession.getActiveVideo()で動画がないと判定し、計測uiを消去させようとするが
+    // 動画フレーム特定後は、関係ないフレームの状態監視は不要になるため停止させる
+    if (data.method === 'remove_ui') {
       if (active_frame_id === data.frame_id) {
-        Config.set_alive(data.alive);
-
-        // ビデオが利用できないとき (YouTube でのビデオ切替時やCM再生中などにも発生)
-        if (!data.alive) {
-          ui.remove_element();
-        }
+        overlay.remove_element();
       } else if (active_frame_id !== undefined) {
         event.source.postMessage({ type: data.type, method: 'clear_interval' }, '*');
       }
@@ -181,7 +147,8 @@ const remove_ui_all = () => {
   // --- UI --- //
   const platform = Config.get_video_platform();
   const locale = await getDataFromContentJs('ui_locale');
-  const ui = new UI(locale, Config.get_ui_target(platform), Config.get_style(platform));
+  const overlay = new Overlay(locale, Config.get_ui_target(platform), Config.get_style(platform));
+  const liveStatsLog = new LiveStatsLog();
 
   /**
    * 監視中の動画リストとオーバーレイ UI の更新。
@@ -190,22 +157,15 @@ const remove_ui_all = () => {
     // video の検索と保持している video リストの更新
     session.set_video_elms(document.querySelectorAll('video'));
 
-    const videoAvailability = session.get_video_availability();
+    const video = session.getActiveVideo();
 
-    update_alive(videoAvailability);
+    if (!video) {
+      update_ui();
 
-    if (!videoAvailability) {
       return;
     }
 
     session.update_quality_info();
-
-    // --- show status  --- //
-    const video = session.get_main_video();
-
-    if (!(video instanceof VideoData)) {
-      return;
-    }
 
     // 計測結果の更新があるフレームを記録する
     // ページ表示直後では、どのフレームに計測対象の動画があるかわからないので、計測結果の更新を待つことになる
@@ -222,14 +182,21 @@ const remove_ui_all = () => {
       );
     }
 
-    if (!Config.get_ui_enabled()) {
-      return;
-    }
+    const sessionId = session.get_session_id();
+    const videoId = video.get_video_id();
+    const latestStats = getLatestStats({ sessionId, videoId });
+    const statsLog = liveStatsLog.update({ videoId, latestStats });
 
     update_ui({
-      maxBitrate: video.max_bitrate,
-      sessionId: session.get_session_id(),
-      videoId: video.get_video_id(),
+      sessionId,
+      videoId,
+      video: {
+        url: video.get_url(),
+        title: video.get_title(),
+        thumbnail: video.get_thumbnail(),
+      },
+      latestStats,
+      statsLog,
     });
   }, Config.mainUpdaterInterval);
 

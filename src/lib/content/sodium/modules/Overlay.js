@@ -1,10 +1,7 @@
-import Config from '../Config';
-import Status from './Status';
+import StatsVisualizer from '$lib/services/stats-visualizer';
+import Config from './Config';
 
-/**
- *
- */
-export default class UI {
+export default class Overlay {
   /**
    * @param {string} locale UI ロケール。
    * @param {string} target UI の挿入先を決定する CSS セレクタ。
@@ -16,20 +13,23 @@ export default class UI {
 
     // Inserted element
     this.element = null;
-    this.status = new Status(locale);
+    this.statsVisualizer = new StatsVisualizer({ locale });
   }
 
-  update_status(state, qualityStatus) {
+  /**
+   * @param {VideoPlaybackInfo} [detail]
+   */
+  update_status(detail) {
     if (!this.element) {
       this.insert_element();
     }
 
-    this.status.update(state, qualityStatus);
+    this.statsVisualizer.update(detail);
   }
 
   remove_element() {
     if (this.element) {
-      this.status.detach();
+      this.statsVisualizer.detach();
       this.element.remove();
       this.element = null;
     }
@@ -79,7 +79,7 @@ export default class UI {
     this.element = e('div')();
     this.element.id = Config.get_ui_id();
     this.element.attachShadow({ mode: 'open' });
-    this.status.attach(this.element.shadowRoot);
+    this.statsVisualizer.attach(this.element.shadowRoot);
   }
 
   insert_element_desktop(target) {
