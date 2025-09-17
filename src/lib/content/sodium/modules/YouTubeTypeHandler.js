@@ -34,7 +34,7 @@ function isYouTubeVideoResource(url) {
     (['www.youtube.com', 'www.youtube-nocookie.com'].includes(host) &&
       pathname.startsWith('/embed/')) ||
     // 動画のチャンク
-    (host.endsWith('.googlevideo.com') && pathname === 'videoplayback')
+    (host.endsWith('.googlevideo.com') && pathname === '/videoplayback')
   );
 }
 
