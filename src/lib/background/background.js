@@ -12,13 +12,14 @@ const REMINDER_NOTIFICATION_ID = 'agreement-reminder';
 
 (async () => {
   const currentRules = await chrome.declarativeNetRequest.getDynamicRules();
-  const removeRuleIds = [];
-  const addRules = [];
+  // 既存のルールをすべて削除
+  // @see https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#update-dynamic-rule-examples
+  const removeRuleIds = currentRules.map((rule) => rule.id);
 
-  // Resource Timing API を有効化するためのルールを追加
-  // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Timing-Allow-Origin
-  if (!currentRules.find((rule) => rule.id === 1)) {
-    addRules.push({
+  const addRules = [
+    // Resource Timing API を有効化するためのルールを追加
+    // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Timing-Allow-Origin
+    {
       id: 1,
       priority: 1,
       action: {
@@ -34,22 +35,14 @@ const REMINDER_NOTIFICATION_ID = 'agreement-reminder';
       condition: {
         initiatorDomains: videoPlatformHosts.map((host) => host.replace(/^\*\./, '')),
       },
-    });
-  }
-
-  // YouTube の埋め込みに対応していなかった古いルールを削除。以下のルール 3 に置き換え
-  if (currentRules.find((rule) => rule.id === 2)) {
-    removeRuleIds.push(2);
-  }
-
-  // Svelte が出力するコードに `innerHTML` が含まれることがあり、これが YouTube で設定されている CSP
-  // `require-trusted-types-for 'script'` に抵触し、`This document requires 'TrustedHTML' assignment`
-  // というエラーを生む原因となる。これを回避するため CSP を削除する。
-  // @see https://github.com/sveltejs/svelte/issues/10826
-  // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for
-  if (!currentRules.find((rule) => rule.id === 3)) {
-    addRules.push({
-      id: 3,
+    },
+    // Svelte が出力するコードに `innerHTML` が含まれることがあり、これが YouTube で設定されている CSP
+    // `require-trusted-types-for 'script'` に抵触し、`This document requires 'TrustedHTML' assignment`
+    // というエラーを生む原因となる。これを回避するため CSP を削除する。
+    // @see https://github.com/sveltejs/svelte/issues/10826
+    // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for
+    {
+      id: 2,
       priority: 1,
       action: {
         type: 'modifyHeaders',
@@ -64,12 +57,10 @@ const REMINDER_NOTIFICATION_ID = 'agreement-reminder';
         regexFilter: '^https://.+\\.youtube(-nocookie)?\\.com/',
         resourceTypes: ['main_frame', 'sub_frame'],
       },
-    });
-  }
+    },
+  ];
 
-  if (removeRuleIds.length || addRules.length) {
-    await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
-  }
+  await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
 })();
 
 chrome.webRequest.onResponseStarted.addListener(
