@@ -30,6 +30,7 @@ words:
   - bitrates
   - camelcase
   - clazz
+  - cooldown
   - corepack
   - CVEs
   - dmkt
