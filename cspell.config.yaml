@@ -37,6 +37,7 @@ words:
   - droprate
   - Ehime
   - eqeqeq
+  - esbuild
   - fluentd
   - Fmts
   - fpkey
@@ -77,6 +78,7 @@ words:
   - playout
   - plmn
   - postcss
+  - prismjs
   - Saitama
   - serviceworker
   - Shiga

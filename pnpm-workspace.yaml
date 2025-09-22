@@ -1,0 +1,10 @@
+overrides:
+  "esbuild@<=0.24.2": ">=0.25.0"
+  "nanoid@<3.3.8": ">=3.3.8"
+  "prismjs@<1.30.0": ">=1.30.0"
+onlyBuiltDependencies:
+  - esbuild
+  - svelte-preprocess
+ignoredBuiltDependencies:
+  - "@parcel/watcher"
+  - "es5-ext"
