@@ -37,7 +37,7 @@ jobs:
           chrome-file: dist/vm-production-chrome.zip
           firefox-file: dist/vm-production-firefox.xpi
       - name: Create Release Note
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const version = require("./package.json").version;
