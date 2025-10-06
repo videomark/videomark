@@ -9,3 +9,9 @@ onlyBuiltDependencies:
 ignoredBuiltDependencies:
   - "@parcel/watcher"
   - "es5-ext"
+auditConfig:
+  ignoreCves:
+    # the patch is not released yet
+    # https://github.com/advisories/GHSA-rx8g-88g5-qh64
+    # https://github.com/Raynos/min-document/pull/55
+    - CVE-2025-57352
