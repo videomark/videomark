@@ -3,6 +3,7 @@ minimumReleaseAgeExclude:
   - "@sveltia/*"
 overrides:
   "esbuild@<=0.24.2": ">=0.25.0"
+  "min-document@<=2.19.0": ">=2.19.1"
   "nanoid@<3.3.8": ">=3.3.8"
   "prismjs@<1.30.0": ">=1.30.0"
 onlyBuiltDependencies:
@@ -11,9 +12,3 @@ onlyBuiltDependencies:
 ignoredBuiltDependencies:
   - "@parcel/watcher"
   - "es5-ext"
-auditConfig:
-  ignoreCves:
-    # the patch is not released yet
-    # https://github.com/advisories/GHSA-rx8g-88g5-qh64
-    # https://github.com/Raynos/min-document/pull/55
-    - CVE-2025-57352
