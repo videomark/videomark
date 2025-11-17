@@ -3,6 +3,7 @@ minimumReleaseAgeExclude:
   - "@sveltia/*"
 overrides:
   "esbuild@<=0.24.2": ">=0.25.0"
+  "glob@>=10.3.7 <=11.0.3": ">=11.1.0"
   "min-document@<=2.19.0": ">=2.19.1"
   "nanoid@<3.3.8": ">=3.3.8"
   "prismjs@<1.30.0": ">=1.30.0"

@@ -27,7 +27,7 @@
     "@playwright/test": "^1.56.1",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "archiver": "^7.0.1",
-    "cspell": "^9.3.0",
+    "cspell": "^9.3.2",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^10.1.8",
@@ -41,8 +41,8 @@
     "stylelint": "^16.25.0",
     "stylelint-config-recommended-scss": "^16.0.2",
     "stylelint-scss": "^6.12.1",
-    "svelte": "^5.43.5",
-    "svelte-check": "^4.3.3",
+    "svelte": "^5.43.8",
+    "svelte-check": "^4.3.4",
     "svelte-i18n": "^4.0.1",
     "svelte-preprocess": "^6.0.3",
     "vite": "^7.2.2",
@@ -53,7 +53,7 @@
     "@sveltia/ui": "^0.31.6",
     "@sveltia/utils": "^0.8.6",
     "@videomark/sparkline": "github:videomark/sparkline",
-    "fast-equals": "^5.3.2",
+    "fast-equals": "^5.3.3",
     "m3u8-parser": "^7.2.0",
     "uuid": "^13.0.0"
   }
