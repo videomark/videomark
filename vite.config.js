@@ -19,7 +19,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     // minify: mode === 'production',
     // sourcemap: mode === 'production',
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         pages: 'src/lib/pages/main.js',
         background: 'src/lib/background/background.js',
