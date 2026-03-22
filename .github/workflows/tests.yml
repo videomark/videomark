@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: latest
       - uses: actions/setup-node@v6
@@ -42,7 +42,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: latest
       - run: sudo xcode-select -s "/Applications/Xcode_12.5.1.app/Contents/Developer"
