@@ -2,6 +2,11 @@ import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
 import { videoPlatforms } from '$lib/services/video-platforms';
 
 /**
+ * QoE 値の計測を行うかどうかのフラグ。
+ */
+export const QOE_ENABLED = false;
+
+/**
  * YouTube 動画プレイヤーのクエリセレクター。
  */
 export const YOUTUBE_PLAYER_SELECTOR =

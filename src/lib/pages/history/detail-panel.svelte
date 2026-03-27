@@ -1,6 +1,7 @@
 <script>
   import { Alert, Button, Drawer, Group, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { QOE_ENABLED } from '$lib/content/sodium/modules/Config';
   import QualityBar from '$lib/pages/history/quality-bar.svelte';
   import VideoThumbnail from '$lib/pages/history/video-thumbnail.svelte';
   import { getHourlyQoe, getRegionalQoe } from '$lib/services/aggregations';
@@ -148,8 +149,10 @@
                         >
                           {$_('stats.quality.provisional')}
                         </Alert>
-                      {:else}
+                      {:else if QOE_ENABLED}
                         {$_('stats.quality.measuring')}
+                      {:else}
+                        {$_('stats.quality.measurementDisabled')}
                       {/if}
                     {:else if finalQoe === -2}
                       <Alert
@@ -181,16 +184,38 @@
                     {/if}
                   </div>
                 </section>
-                {#if country && subdivision}
-                  {#await getRegionalQoe(country, subdivision) then average}
+                {#if QOE_ENABLED}
+                  {#if country && subdivision}
+                    {#await getRegionalQoe(country, subdivision) then average}
+                      {#if average}
+                        <section class="row">
+                          <h4>
+                            {$_('stats.aggregatedRegionalQoe', {
+                              values: {
+                                region: $_(`subdivisions.${country}.${subdivision}`, {
+                                  default: subdivision,
+                                }),
+                              },
+                            })}
+                          </h4>
+                          <div>
+                            <QualityBar value={average} />
+                          </div>
+                        </section>
+                      {/if}
+                    {/await}
+                  {/if}
+                  {#await getHourlyQoe(new Date(startTime).getHours()) then average}
                     {#if average}
                       <section class="row">
                         <h4>
-                          {$_('stats.aggregatedRegionalQoe', {
+                          {$_('stats.aggregatedHourlyQoe', {
                             values: {
-                              region: $_(`subdivisions.${country}.${subdivision}`, {
-                                default: subdivision,
-                              }),
+                              hour: new Date(startTime)
+                                .toLocaleTimeString($locale, { hour: 'numeric', hour12: true })
+                                .replace(/\b(\w+)\b/g, ' $1 ') // 英数字の前後に空白を追加
+                                .replace(/\s{2,}/, ' ')
+                                .trim(),
                             },
                           })}
                         </h4>
@@ -201,26 +226,6 @@
                     {/if}
                   {/await}
                 {/if}
-                {#await getHourlyQoe(new Date(startTime).getHours()) then average}
-                  {#if average}
-                    <section class="row">
-                      <h4>
-                        {$_('stats.aggregatedHourlyQoe', {
-                          values: {
-                            hour: new Date(startTime)
-                              .toLocaleTimeString($locale, { hour: 'numeric', hour12: true })
-                              .replace(/\b(\w+)\b/g, ' $1 ') // 英数字の前後に空白を追加
-                              .replace(/\s{2,}/, ' ')
-                              .trim(),
-                          },
-                        })}
-                      </h4>
-                      <div>
-                        <QualityBar value={average} />
-                      </div>
-                    </section>
-                  {/if}
-                {/await}
                 {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
                   {#if prop !== 'qoe'}
                     <section class="row">

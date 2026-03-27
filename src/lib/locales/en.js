@@ -206,6 +206,7 @@ export const strings = {
     dataMissing: 'Data unavailable',
     quality: {
       unavailable: 'QoE rating is not available for this video platform.',
+      measurementDisabled: 'QoE measurement is disabled at this time.',
       measuringShort: 'Measuring...',
       measuring: 'QoE value is being measured or calculated.',
       provisional: 'This is a provisional QoE value. The final value is being calculated.',
