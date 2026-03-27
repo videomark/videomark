@@ -28,6 +28,9 @@ export default defineConfig({
       },
       output: {
         entryFileNames: 'scripts/[name].js',
+        // Work around the “Prism is not defined” error
+        // @see https://github.com/remix-run/remix/discussions/8182
+        strictExecutionOrder: true,
       },
     },
     outDir: `./dist/${mode}`,
