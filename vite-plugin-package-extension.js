@@ -100,6 +100,10 @@ export default function packageExtension() {
       handler: async () => {
         console.log('Packaging started.');
 
+        // Work around the issue where `content.js` is generated with an `import`, which doesn’t
+        // work in the content script context. @see https://github.com/rollup/rollup/issues/2756
+        await cp('./src/lib/content/content.js', `${distPathTemp}/scripts/content.js`);
+
         await updateJSON(`${distPathTemp}/manifest.json`, (obj) => {
           obj.version = version;
           obj.content_scripts[0].matches = videoPlatformHosts
