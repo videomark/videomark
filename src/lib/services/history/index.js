@@ -1,5 +1,6 @@
 import { deepEqual } from 'fast-equals';
 import { derived, get, writable } from 'svelte/store';
+import { QOE_ENABLED } from '$lib/content/sodium/modules/Config';
 import { detectVideoCodec } from '$lib/content/sodium/modules/YouTubeTypeHandler';
 import { deleteHistoryItems, fetchFinalQoeValues, fetchViewerRegion } from '$lib/services/api';
 import { historyRecordsDB, historyStatsDB } from '$lib/services/history/database';
@@ -358,7 +359,7 @@ const addMissingData = async () => {
 
   const missingRegionItems = _viewingHistory.filter(({ region }) => !region);
 
-  if (missingQoeValueItems.length) {
+  if (QOE_ENABLED && missingQoeValueItems.length) {
     try {
       // 確定 QoE 値は複数まとめて取得可能
       const results = await fetchFinalQoeValues(

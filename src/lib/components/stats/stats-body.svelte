@@ -35,7 +35,7 @@
    * @param {string} prop - 統計情報のプロパティ名。
    * @returns {number[]} - チャートに表示するデータの配列。
    */
-  const getChartData = (prop) => log[prop].map((value) => (value === null ? NaN : value));
+  const getChartData = (prop) => log[prop]?.map((value) => (value === null ? NaN : value)) ?? [];
 
   onMount(() => {
     try {

@@ -3,6 +3,7 @@
   import { waitForVisibility } from '@sveltia/utils/element';
   import { onMount } from 'svelte';
   import { _, locale as appLocale } from 'svelte-i18n';
+  import { QOE_ENABLED } from '$lib/content/sodium/modules/Config';
   import VideoThumbnail from '$lib/pages/history/video-thumbnail.svelte';
   import { completeViewingHistoryItem, viewingHistory } from '$lib/services/history';
   import { formatDateTime } from '$lib/services/i18n';
@@ -178,9 +179,11 @@
         {#if !calculable}
           <!--  -->
         {:else if finalQoe === undefined || finalQoe === -1}
-          <Icon name="hourglass_empty" aria-label={$_('stats.quality.measuring')} />
-          {#if Number.isFinite(provisionalQoe)}
-            {provisionalQoe.toFixed(2)}
+          {#if QOE_ENABLED}
+            <Icon name="hourglass_empty" aria-label={$_('stats.quality.measuring')} />
+            {#if Number.isFinite(provisionalQoe)}
+              {provisionalQoe.toFixed(2)}
+            {/if}
           {/if}
         {:else if finalQoe === -2}
           <Icon name="error" aria-label={$_('stats.quality.error')} />

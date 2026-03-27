@@ -206,6 +206,7 @@ export const strings = {
     dataMissing: 'データ不足',
     quality: {
       unavailable: 'この動画サービスは QoE 評価に対応していません。',
+      measurementDisabled: '現在 QoE 計測は無効になっています。',
       measuringShort: '計測中...',
       measuring: 'QoE 値を計測または計算中です。',
       provisional: 'これは暫定 QoE 値です。確定値は計算中です。',
