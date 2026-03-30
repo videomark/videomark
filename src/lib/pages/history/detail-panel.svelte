@@ -1,6 +1,7 @@
 <script>
   import { Alert, Button, Drawer, Group, Icon } from '@sveltia/ui';
   import { _, locale } from 'svelte-i18n';
+  import { QOE_ENABLED } from '$lib/content/sodium/modules/Config';
   import QualityBar from '$lib/pages/history/quality-bar.svelte';
   import VideoThumbnail from '$lib/pages/history/video-thumbnail.svelte';
   import { getHourlyQoe, getRegionalQoe } from '$lib/services/aggregations';
@@ -122,75 +123,97 @@
             </div>
             <div class="body">
               <div class="detail" inert={deleted || undefined}>
-                <section class="row">
-                  <h4>
-                    {$_('stats.qoeWatching')}
-                    <Button
-                      aria-label={$_('stats.whatIsQOE')}
-                      onclick={() =>
-                        openTab(
-                          `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
-                        )}
-                    >
-                      <Icon name="help" />
-                    </Button>
-                  </h4>
-                  <div>
-                    {#if !calculable}
-                      {$_('stats.quality.unavailable')}
-                    {:else if finalQoe === undefined || finalQoe === -1}
-                      {#if Number.isFinite(provisionalQoe)}
-                        <QualityBar value={provisionalQoe} />
+                {#if QOE_ENABLED || (finalQoe !== undefined && finalQoe > -1)}
+                  <section class="row">
+                    <h4>
+                      {$_('stats.qoeWatching')}
+                      <Button
+                        aria-label={$_('stats.whatIsQOE')}
+                        onclick={() =>
+                          openTab(
+                            `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
+                          )}
+                      >
+                        <Icon name="help" />
+                      </Button>
+                    </h4>
+                    <div>
+                      {#if !calculable}
+                        {$_('stats.quality.unavailable')}
+                      {:else if finalQoe === undefined || finalQoe === -1}
+                        {#if Number.isFinite(provisionalQoe)}
+                          <QualityBar value={provisionalQoe} />
+                          <Alert
+                            status="warning"
+                            aria-live="off"
+                            --font-size="var(--sui-font-size-small)"
+                          >
+                            {$_('stats.quality.provisional')}
+                          </Alert>
+                        {:else}
+                          {$_('stats.quality.measuring')}
+                        {/if}
+                      {:else if finalQoe === -2}
                         <Alert
-                          status="warning"
+                          status="error"
                           aria-live="off"
                           --font-size="var(--sui-font-size-small)"
                         >
-                          {$_('stats.quality.provisional')}
+                          {$_('stats.quality.error')}
                         </Alert>
                       {:else}
-                        {$_('stats.quality.measuring')}
+                        <QualityBar value={finalQoe} />
+                        {#if isNewerCodec}
+                          <Alert
+                            status="warning"
+                            aria-live="off"
+                            --font-size="var(--sui-font-size-small)"
+                          >
+                            {$_('stats.quality.newerCodec')}
+                          </Alert>
+                        {:else if isLowQuality}
+                          <Alert
+                            status="warning"
+                            aria-live="off"
+                            --font-size="var(--sui-font-size-small)"
+                          >
+                            {$_('stats.quality.frameDrops')}
+                          </Alert>
+                        {/if}
                       {/if}
-                    {:else if finalQoe === -2}
-                      <Alert
-                        status="error"
-                        aria-live="off"
-                        --font-size="var(--sui-font-size-small)"
-                      >
-                        {$_('stats.quality.error')}
-                      </Alert>
-                    {:else}
-                      <QualityBar value={finalQoe} />
-                      {#if isNewerCodec}
-                        <Alert
-                          status="warning"
-                          aria-live="off"
-                          --font-size="var(--sui-font-size-small)"
-                        >
-                          {$_('stats.quality.newerCodec')}
-                        </Alert>
-                      {:else if isLowQuality}
-                        <Alert
-                          status="warning"
-                          aria-live="off"
-                          --font-size="var(--sui-font-size-small)"
-                        >
-                          {$_('stats.quality.frameDrops')}
-                        </Alert>
+                    </div>
+                  </section>
+                  {#if country && subdivision}
+                    {#await getRegionalQoe(country, subdivision) then average}
+                      {#if average}
+                        <section class="row">
+                          <h4>
+                            {$_('stats.aggregatedRegionalQoe', {
+                              values: {
+                                region: $_(`subdivisions.${country}.${subdivision}`, {
+                                  default: subdivision,
+                                }),
+                              },
+                            })}
+                          </h4>
+                          <div>
+                            <QualityBar value={average} />
+                          </div>
+                        </section>
                       {/if}
-                    {/if}
-                  </div>
-                </section>
-                {#if country && subdivision}
-                  {#await getRegionalQoe(country, subdivision) then average}
+                    {/await}
+                  {/if}
+                  {#await getHourlyQoe(new Date(startTime).getHours()) then average}
                     {#if average}
                       <section class="row">
                         <h4>
-                          {$_('stats.aggregatedRegionalQoe', {
+                          {$_('stats.aggregatedHourlyQoe', {
                             values: {
-                              region: $_(`subdivisions.${country}.${subdivision}`, {
-                                default: subdivision,
-                              }),
+                              hour: new Date(startTime)
+                                .toLocaleTimeString($locale, { hour: 'numeric', hour12: true })
+                                .replace(/\b(\w+)\b/g, ' $1 ') // 英数字の前後に空白を追加
+                                .replace(/\s{2,}/, ' ')
+                                .trim(),
                             },
                           })}
                         </h4>
@@ -201,26 +224,6 @@
                     {/if}
                   {/await}
                 {/if}
-                {#await getHourlyQoe(new Date(startTime).getHours()) then average}
-                  {#if average}
-                    <section class="row">
-                      <h4>
-                        {$_('stats.aggregatedHourlyQoe', {
-                          values: {
-                            hour: new Date(startTime)
-                              .toLocaleTimeString($locale, { hour: 'numeric', hour12: true })
-                              .replace(/\b(\w+)\b/g, ' $1 ') // 英数字の前後に空白を追加
-                              .replace(/\s{2,}/, ' ')
-                              .trim(),
-                          },
-                        })}
-                      </h4>
-                      <div>
-                        <QualityBar value={average} />
-                      </div>
-                    </section>
-                  {/if}
-                {/await}
                 {#each Object.entries(formattedStats) as [prop, displayValue] (prop)}
                   {#if prop !== 'qoe'}
                     <section class="row">

@@ -11,6 +11,7 @@
   } from '@sveltia/ui';
   import { onMount } from 'svelte';
   import { _, json, locale } from 'svelte-i18n';
+  import { QOE_ENABLED } from '$lib/content/sodium/modules/Config';
   import DefaultLayout from '$lib/pages/layouts/default-layout.svelte';
   import SettingItem from '$lib/pages/settings/setting-item.svelte';
   import { viewingHistory } from '$lib/services/history';
@@ -205,15 +206,17 @@
       >
         <Switch bind:checked={$settings.display_on_player} />
       </SettingItem>
-      <SettingItem
-        title={$_('settings.show_latest_qoe_enabled')}
-        description={loadedSettings &&
-        loadedSettings.show_latest_qoe_enabled !== $settings.show_latest_qoe_enabled
-          ? $_('settings.requirePageReload')
-          : undefined}
-      >
-        <Switch bind:checked={$settings.show_latest_qoe_enabled} />
-      </SettingItem>
+      {#if QOE_ENABLED}
+        <SettingItem
+          title={$_('settings.show_latest_qoe_enabled')}
+          description={loadedSettings &&
+          loadedSettings.show_latest_qoe_enabled !== $settings.show_latest_qoe_enabled
+            ? $_('settings.requirePageReload')
+            : undefined}
+        >
+          <Switch bind:checked={$settings.show_latest_qoe_enabled} />
+        </SettingItem>
+      {/if}
     </section>
     <section>
       <header>

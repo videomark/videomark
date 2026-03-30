@@ -6,17 +6,23 @@
   import RegionFilter from '$lib/pages/history/filters/region-filter.svelte';
   import SourceFilter from '$lib/pages/history/filters/source-filter.svelte';
   import TimeFilter from '$lib/pages/history/filters/time-filter.svelte';
-  import { searchCriteria } from '$lib/services/history';
+  import { searchCriteria, searchResults } from '$lib/services/history';
   import { isSmallScreen } from '$lib/services/runtime';
 
   let showDrawer = $state(false);
+
+  const hasAnyQualityData = $derived(
+    $searchResults.some(({ stats }) => stats.finalQoe !== undefined),
+  );
 </script>
 
 {#snippet filters()}
   <DateFilter />
   <SourceFilter />
   <RegionFilter />
-  <QualityFilter />
+  {#if hasAnyQualityData}
+    <QualityFilter />
+  {/if}
   <TimeFilter />
 {/snippet}
 

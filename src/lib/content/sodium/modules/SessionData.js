@@ -4,7 +4,7 @@ import { encode } from '@msgpack/msgpack';
 import { v4 as uuidv4 } from 'uuid';
 import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
 import { version } from '../../../../../package.json';
-import Config from './Config';
+import Config, { QOE_ENABLED } from './Config';
 import MainVideoChangeException from './MainVideoChangeException';
 import ResourceTiming from './ResourceTiming';
 import {
@@ -352,6 +352,10 @@ export default class SessionData {
   }
 
   async waitFirstQoE(mainVideo, timeoutCount) {
+    if (!QOE_ENABLED || !Config.get_settings().show_latest_qoe_enabled) {
+      return null;
+    }
+
     let qoe = null;
     let counter = 0;
 
@@ -361,9 +365,7 @@ export default class SessionData {
       }
 
       try {
-        if (Config.get_settings().show_latest_qoe_enabled) {
-          qoe = await this.requestQoE(mainVideo);
-        }
+        qoe = await this.requestQoE(mainVideo);
       } catch (e) {
         console.error(`VIDEOMARK: ${e}`);
       }
@@ -414,15 +416,17 @@ export default class SessionData {
   }
 
   startRequestTransaction(mainVideo, interval) {
+    if (!QOE_ENABLED || !Config.get_settings().show_latest_qoe_enabled) {
+      return null;
+    }
+
     return setTimeout(async () => {
       for (; mainVideo === this.get_main_video(); ) {
         if (mainVideo.is_available()) {
           let qoe;
 
           try {
-            if (Config.get_settings().show_latest_qoe_enabled) {
-              qoe = await this.requestQoE(mainVideo);
-            }
+            qoe = await this.requestQoE(mainVideo);
           } catch (e) {
             console.error(`VIDEOMARK: ${e}`);
           }
