@@ -123,68 +123,66 @@
             </div>
             <div class="body">
               <div class="detail" inert={deleted || undefined}>
-                <section class="row">
-                  <h4>
-                    {$_('stats.qoeWatching')}
-                    <Button
-                      aria-label={$_('stats.whatIsQOE')}
-                      onclick={() =>
-                        openTab(
-                          `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
-                        )}
-                    >
-                      <Icon name="help" />
-                    </Button>
-                  </h4>
-                  <div>
-                    {#if !calculable}
-                      {$_('stats.quality.unavailable')}
-                    {:else if finalQoe === undefined || finalQoe === -1}
-                      {#if Number.isFinite(provisionalQoe)}
-                        <QualityBar value={provisionalQoe} />
-                        <Alert
-                          status="warning"
-                          aria-live="off"
-                          --font-size="var(--sui-font-size-small)"
-                        >
-                          {$_('stats.quality.provisional')}
-                        </Alert>
-                      {:else if QOE_ENABLED}
-                        {$_('stats.quality.measuring')}
-                      {:else}
-                        {$_('stats.quality.measurementDisabled')}
-                      {/if}
-                    {:else if finalQoe === -2}
-                      <Alert
-                        status="error"
-                        aria-live="off"
-                        --font-size="var(--sui-font-size-small)"
+                {#if QOE_ENABLED || (finalQoe !== undefined && finalQoe > -1)}
+                  <section class="row">
+                    <h4>
+                      {$_('stats.qoeWatching')}
+                      <Button
+                        aria-label={$_('stats.whatIsQOE')}
+                        onclick={() =>
+                          openTab(
+                            `${SODIUM_MARKETING_SITE_URL}/${$locale}/faq#cda4d70fc74f8371aaf1b5a52144fe6d`,
+                          )}
                       >
-                        {$_('stats.quality.error')}
-                      </Alert>
-                    {:else}
-                      <QualityBar value={finalQoe} />
-                      {#if isNewerCodec}
+                        <Icon name="help" />
+                      </Button>
+                    </h4>
+                    <div>
+                      {#if !calculable}
+                        {$_('stats.quality.unavailable')}
+                      {:else if finalQoe === undefined || finalQoe === -1}
+                        {#if Number.isFinite(provisionalQoe)}
+                          <QualityBar value={provisionalQoe} />
+                          <Alert
+                            status="warning"
+                            aria-live="off"
+                            --font-size="var(--sui-font-size-small)"
+                          >
+                            {$_('stats.quality.provisional')}
+                          </Alert>
+                        {:else}
+                          {$_('stats.quality.measuring')}
+                        {/if}
+                      {:else if finalQoe === -2}
                         <Alert
-                          status="warning"
+                          status="error"
                           aria-live="off"
                           --font-size="var(--sui-font-size-small)"
                         >
-                          {$_('stats.quality.newerCodec')}
+                          {$_('stats.quality.error')}
                         </Alert>
-                      {:else if isLowQuality}
-                        <Alert
-                          status="warning"
-                          aria-live="off"
-                          --font-size="var(--sui-font-size-small)"
-                        >
-                          {$_('stats.quality.frameDrops')}
-                        </Alert>
+                      {:else}
+                        <QualityBar value={finalQoe} />
+                        {#if isNewerCodec}
+                          <Alert
+                            status="warning"
+                            aria-live="off"
+                            --font-size="var(--sui-font-size-small)"
+                          >
+                            {$_('stats.quality.newerCodec')}
+                          </Alert>
+                        {:else if isLowQuality}
+                          <Alert
+                            status="warning"
+                            aria-live="off"
+                            --font-size="var(--sui-font-size-small)"
+                          >
+                            {$_('stats.quality.frameDrops')}
+                          </Alert>
+                        {/if}
                       {/if}
-                    {/if}
-                  </div>
-                </section>
-                {#if QOE_ENABLED}
+                    </div>
+                  </section>
                   {#if country && subdivision}
                     {#await getRegionalQoe(country, subdivision) then average}
                       {#if average}
