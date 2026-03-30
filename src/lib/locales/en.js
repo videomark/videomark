@@ -79,12 +79,12 @@ export const strings = {
     visualize: {
       title: 'Visualize video playback quality in numbers',
       description:
-        'Open YouTube, Netflix, or other compatible sites and watch videos as usual. The closer the Quality of Experience (QoE) value displayed at the top left corner of the video to 5, the smoother the high-resolution video is playing. This will give you an idea of how good your Internet environment is.',
+        'Open YouTube, Netflix, or any other compatible site and watch videos as usual. An overlay displaying various playback quality statistics will appear in the top left corner of the video, giving you an idea of how good your internet connection is.',
     },
     dropdown: {
       title: 'Quickly return to recently viewed videos',
       description:
-        'Adding the VideoMark button to the browser toolbar makes it easy to access recently watched videos along with their QoE values. This is especially useful for video sites that do not offer history.',
+        'Adding the VideoMark button to the browser toolbar makes it easy to access recently watched videos. This is especially useful for video sites that do not offer history.',
     },
     history: {
       title: 'Search past viewing history by criteria',
