@@ -15,8 +15,8 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3
       '@sveltia/ui':
-        specifier: ^0.37.0
-        version: 0.37.0(svelte@5.55.1)
+        specifier: 0.35.6
+        version: 0.35.6(svelte@5.55.1)
       '@sveltia/utils':
         specifier: ^0.10.0
         version: 0.10.0
@@ -934,18 +934,16 @@ packages:
       svelte: ^5.46.4
       vite: ^8.0.0-beta.7 || ^8.0.0
 
-  '@sveltia/i18n@1.0.1':
-    resolution: {integrity: sha512-uOMpm+AbWgLTo74gf/yepClmSu2O4ZLHpn88p3azj98jGQA4kPhqm3jtW0WAAQR0fyWa9FogwhbBjLzzJRsjHQ==}
-    peerDependencies:
-      svelte: ^5.0.0
-
-  '@sveltia/ui@0.37.0':
-    resolution: {integrity: sha512-J/13XfuwYLgJ56x/JMythrzmA0aKyaOYY7j3/zWtuZrEj4u4F2hdNEDBjsaE+DNNYk4DNkPZVa3M0iC7qljiwA==}
+  '@sveltia/ui@0.35.6':
+    resolution: {integrity: sha512-X8yNfOO5kzkHbaQaahy3ZTpz2P4wCkWeJ7fLj6fBA9LxJRuSxDFUavzsfKQthzg3rqT4hKOOhafe/AbRZFpElw==}
     peerDependencies:
       svelte: ^5.0.0
 
   '@sveltia/utils@0.10.0':
     resolution: {integrity: sha512-OpBwNRQAnT3BT91Ywg2qsQgr7aVv0lSp06b0HCVlBNogDoZd2c/woR8v84oU8QxD34KWQxuiSDLwj8ZA09glzw==}
+
+  '@sveltia/utils@0.9.3':
+    resolution: {integrity: sha512-F4dFl4+fe1TqKWbfOZQf4vWbVxKvyTQAfdWICADrCkv7FEOimMsH1D4wV8uZ4Eu0y/BNGbwVzCukuCqyrH/HjQ==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -2257,10 +2255,6 @@ packages:
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
-
-  messageformat@4.0.0:
-    resolution: {integrity: sha512-XKmJ/ffTWToWOlHJzt85ZChQgVGC0LHzNWuNK8zuYpNySsB0nIEmytOdSAOW9ETKtkajAUJf520m5gFHHnrTYg==}
-    engines: {node: ^20.19 || ^22.12 || >=24}
 
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
@@ -3831,12 +3825,7 @@ snapshots:
       vite: 8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(esbuild@0.28.0)(sass@1.99.0)(yaml@2.8.3)
       vitefu: 1.1.3(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(esbuild@0.28.0)(sass@1.99.0)(yaml@2.8.3))
 
-  '@sveltia/i18n@1.0.1(svelte@5.55.1)':
-    dependencies:
-      messageformat: 4.0.0
-      svelte: 5.55.1
-
-  '@sveltia/ui@0.37.0(svelte@5.55.1)':
+  '@sveltia/ui@0.35.6(svelte@5.55.1)':
     dependencies:
       '@lexical/code': 0.42.0
       '@lexical/code-prism': 0.42.0
@@ -3850,14 +3839,17 @@ snapshots:
       '@lexical/selection': 0.42.0
       '@lexical/table': 0.42.0
       '@lexical/utils': 0.42.0
-      '@sveltia/i18n': 1.0.1(svelte@5.55.1)
-      '@sveltia/utils': 0.10.0
+      '@sveltia/utils': 0.9.3
       lexical: 0.42.0
       prismjs: 1.30.0
       svelte: 5.55.1
-      yaml: 2.8.3
+      svelte-i18n: 4.0.1(svelte@5.55.1)
 
   '@sveltia/utils@0.10.0':
+    dependencies:
+      base32-encode: 2.0.0
+
+  '@sveltia/utils@0.9.3':
     dependencies:
       base32-encode: 2.0.0
 
@@ -5332,8 +5324,6 @@ snapshots:
   meow@14.1.0: {}
 
   merge2@1.4.1: {}
-
-  messageformat@4.0.0: {}
 
   micromatch@4.0.8:
     dependencies:
