@@ -7,6 +7,11 @@ import { videoPlatforms } from '$lib/services/video-platforms';
 export const QOE_ENABLED = false;
 
 /**
+ * Sodium サーバー側でデータ収集を行うかどうかのフラグ。
+ */
+export const DATA_COLLECTION_ENABLED = false;
+
+/**
  * YouTube 動画プレイヤーのクエリセレクター。
  */
 export const YOUTUBE_PLAYER_SELECTOR =
