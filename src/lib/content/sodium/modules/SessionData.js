@@ -4,7 +4,7 @@ import { encode } from '@msgpack/msgpack';
 import { v4 as uuidv4 } from 'uuid';
 import { getDataFromContentJs } from '$lib/content/sodium/modules/Utils';
 import { version } from '../../../../../package.json';
-import Config, { DATA_COLLECTION_ENABLED, QOE_ENABLED } from './Config';
+import Config, { DATA_SUBMISSION_ENABLED, QOE_ENABLED } from './Config';
 import MainVideoChangeException from './MainVideoChangeException';
 import ResourceTiming from './ResourceTiming';
 import {
@@ -384,7 +384,7 @@ export default class SessionData {
   }
 
   startDataTransaction(mainVideo, interval) {
-    if (!DATA_COLLECTION_ENABLED) {
+    if (!DATA_SUBMISSION_ENABLED) {
       return null;
     }
 
