@@ -6,3 +6,5 @@ reject:
   - eslint-plugin-svelte
   # Pin @sveltia/ui to v0.35.6 because v0.36.0 switched from svelte-i18n to @sveltia/i18n
   - "@sveltia/ui"
+  # Archiver 8.0.0 causes a build error
+  - archiver
