@@ -4,11 +4,11 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: latest
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -17,7 +17,7 @@ jobs:
         continue-on-error: true
       - run: pnpm run check:cspell
       - run: pnpm run check:svelte
-      - uses: wearerequired/lint-action@v2
+      - uses: wearerequired/lint-action@v3
         with:
           prettier: true
           eslint: true
